@@ -1,0 +1,418 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Product;
+use App\Models\Size;
+use App\Models\Category;
+use App\Models\Quantity;
+use App\Models\Specification;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+
+
+
+class ProductController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+	{
+		// Retrieve products with their related quantities and paginate
+		$products = Product::with('quantities')->latest()->paginate(20);
+
+		foreach ($products as $product) {
+			// Calculate the total quantity for each product
+			$product->total_quantity = $product->quantities->sum('quantity');
+
+			// Calculate the offer price and round it up
+			if ($product->sale) {
+				$offerPrice = $product->price * (1 - ($product->sale / 100)); // Calculate the offer price
+				$product->offer_price = ceil($offerPrice); // Round it up to the nearest integer
+			} else {
+				$product->offer_price = null; // If there's no sale, set offer price to null
+			}
+
+		}
+
+		// Count total products
+		$total = Product::count();
+
+		// Count total published products
+		$published = Product::where('status', 1)->count();
+	
+		// Count discounted products (assuming 'sale' field indicates discount)
+		$discounted = Product::whereNotNull('sale')->count();
+	
+		// Count total quantities using the relationship
+		$quantities = Product::with('quantities')->get()->sum(function ($product) {
+		return $product->quantities->sum('quantity'); // Sum of quantities for each product
+		});
+		// return $quantities;
+	
+		// Pack all data into a single variable
+		$counts = [
+			'total' => $total,
+			'published' => $published,
+			'discounted' => $discounted,
+			'quantities' => $quantities,
+		];
+
+		// Pass the products with categories, quantities, and offer prices to the view
+		return view('backEnd.products.index', [
+			'products' => $products,
+			'counts' => $counts,
+		]);
+	}
+
+
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+		$sizes = Size::all();
+		$categories = Category::all();
+		$specifications = Specification::all();
+		
+        return view('backEnd.products.create', ['sizes' => $sizes, 'categories' => $categories, 'specifications' => $specifications]);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+	public function store(Request $request)
+	{
+		// dd($request->all()); 
+		// Generate a slug from the title
+		$slug = Str::slug($request->title);
+
+		// Validate the input
+		$request->validate([
+			'title' => [
+				'required',
+				'string',
+				'max:255',
+				function ($attribute, $value, $fail) use ($slug) {
+					if (Product::where('title', $value)->exists()) {
+						$fail('The title is already taken.');
+					}
+					if (Product::where('slug', $slug)->exists()) {
+						$fail('A product with a similar title already exists (slug conflict).');
+					}
+				}
+			],
+			'price' => 'required|numeric',
+			'description' => 'required|string',
+			'categories' => 'required|array',
+			'categories.*' => 'exists:categories,id',
+			'quantities' => 'required|array',
+			'quantities.*' => 'nullable|numeric|min:0',
+			'specifications' => 'nullable|array',
+			'specifications.*' => 'exists:specifications,id',
+			'images' => 'required|array',
+			'images.*' => 'bail|required|image|mimes:jpeg,png,jpg,gif|max:2048',
+			'meta_title' => 'nullable|string|max:255',
+			'keywords' => 'nullable|array',
+			'meta_desc' => 'nullable|string',
+			'og_image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+		]);
+
+		
+
+		// Handle uploaded images
+		$images = [];
+		if ($request->hasFile('images')) {
+			foreach ($request->file('images') as $index => $image) {
+				$imageName = $slug . '-' . ($index + 1) . '.' . $image->getClientOriginalExtension();
+				$image->move(public_path('images/products'), $imageName);
+				$images[] = $imageName;
+			}
+		}
+
+		// Handle OG image
+		$ogImageName = null;
+		if ($request->hasFile('og_image')) {
+			$ogImageName = $slug . '-og.' . $request->file('og_image')->getClientOriginalExtension();
+			$request->file('og_image')->move(public_path('images/products'), $ogImageName);
+		}
+
+		// Process keywords and specifications
+		$keywords = !empty($request->keywords) ? json_encode(array_filter($request->keywords)) : null;
+		$specifications = !empty($request->specifications) ? json_encode(array_filter($request->specifications)) : null;
+
+		// Store the product in the database
+		$product = Product::create([
+			'title' => $request->title,
+			'slug' => $slug,
+			'price' => $request->price,
+			'sale' => $request->sale,
+			'description' => $request->description,
+			'specifications' => $specifications,
+			'images' => json_encode($images),
+			'meta_title' => $request->meta_title,
+			'keywords' => $keywords,
+			'meta_desc' => $request->meta_desc,
+			'og_image' => $ogImageName,
+		]);
+
+		// Sync categories to the category_product pivot table
+		$product->categories()->sync($request->categories);
+
+		
+		// Store quantities in the quantities table
+		foreach ($request->quantities as $sizeId => $quantity) {
+			Quantity::create([
+				'product_id' => $product->id,
+				'size_id' => $sizeId,
+				'quantity' => $quantity,
+			]);
+		}
+		return redirect()->route('products.index')->with('success', 'Product created successfully.');
+	}
+
+	public function show(Product $product)
+	{
+		// Increment the views count by 1
+    	$product->increment('views');
+		$categories = $product->categories;
+
+		// return $products;
+        // $categoryProduct = categories()->products;
+
+		return $categories;
+	}
+	
+
+	// public function show($slug)
+	// {
+	// 	$product = Product::where('slug', $slug)->firstOrFail();
+
+	// 	return view('products.show',[
+	// 		'product' => $product,
+	// 	]);
+	// }
+	
+
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Product $product)
+    {
+		// return $product->categories->pluck('name');
+		// return $product->categories();
+		$categories = Category::all();
+		// $selectedCategories = $product->categories()->pluck('id')->toArray(); // Get selected category IDs
+		// $productCategories = $product->categories();
+		$sizes = Size::all();
+		$quantities = $product->quantities->pluck('quantity', 'size_id')->toArray(); // Fetch quantities for each size
+		$specifications = Specification::all();
+		$selectedSpecifications = $product->specifications()->pluck('id')->toArray(); // Get selected specification IDs
+
+
+        return view('backEnd.products.edit', [
+			'product' => $product,
+			'categories' => $categories,
+			'sizes' => $sizes,
+			'specifications' => $specifications,
+			// 'productCategories' => $productCategories,
+			// 'selectedCategories' => $selectedCategories,
+			'quantities' => $quantities,
+			'selectedSpecifications' => $selectedSpecifications,
+		]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Product $product)
+	{
+		$slug = Str::slug($request->title);
+
+		// Validate the input
+		$request->validate([
+			'title' => [
+				'required',
+				'string',
+				'max:255',
+				function ($attribute, $value, $fail) use ($slug, $product) {
+					// Check if the title already exists for another product
+					$existingTitle = Product::where('title', $value)->where('id', '!=', $product->id)->first();
+
+					// Check if the slug generated from title already exists for another product
+					$existingSlug = Product::where('slug', $slug)->where('id', '!=', $product->id)->first();
+
+					if ($existingTitle) {
+						$fail('The title is already taken.');
+					}
+
+					if ($existingSlug) {
+						$fail('A product with a similar title already exists (slug conflict).');
+					}
+				}
+			],
+			'price' => 'required|numeric',
+			'description' => 'required|string',
+			'categories' => 'required|array',
+			'categories.*' => 'exists:categories,id',
+			'quantities' => 'required|array',
+			'quantities.*' => 'nullable|numeric|min:0',
+			'specifications' => 'nullable|array',
+			'specifications.*' => 'exists:specifications,id',
+			'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+			'meta_title' => 'nullable|string|max:255',
+			'keywords' => 'nullable|array',
+			'meta_desc' => 'nullable|string',
+			'og_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+		]);
+
+		// Process the title to create a unique slug for images
+		$images = [];
+
+		// Handle the newly uploaded images
+		if ($request->hasFile('images')) {
+			foreach ($request->file('images') as $index => $image) {
+				$imageName = $slug . '-' . ($index + 1) . '.' . $image->getClientOriginalExtension();
+				$image->move(public_path('images/products'), $imageName);
+				$images[] = $imageName;
+			}
+		}
+
+		// Handle existing images
+		$existingImages = $request->input('existing_images', []); // Get existing images from hidden input fields
+
+		// Merge existing images with newly uploaded ones
+		$allImages = array_merge($existingImages, $images);
+
+		// Handle OG image (delete the old one if a new one is uploaded)
+		$ogImageName = $product->og_image; // Keep the current OG image by default
+		if ($request->hasFile('og_image')) {
+			// Remove the old OG image if it exists
+			if ($product->og_image && file_exists(public_path('images/products/' . $product->og_image))) {
+				unlink(public_path('images/products/' . $product->og_image));
+			}
+
+			// Save the new OG image
+			$ogImageName = $slug . '-og.' . $request->file('og_image')->getClientOriginalExtension();
+			$request->file('og_image')->move(public_path('images/products'), $ogImageName);
+		}
+
+		// Process keywords and specifications
+		$keywords = (!empty($request->keywords) && is_array($request->keywords) && array_filter($request->keywords)) 
+		? json_encode(array_filter($request->keywords)) 
+		: null;
+		
+		$specifications = (!empty($request->specifications) && is_array($request->specifications) && array_filter($request->specifications)) 
+		? json_encode(array_filter($request->specifications)) 
+		: null; // Set to null if empty
+
+		// Update the product in the database
+		$product->update([
+			'title' => $request->title,
+			'slug' => $slug,
+			'price' => $request->price,
+			'description' => $request->description,
+			'specifications' => $specifications,
+			'images' => json_encode($allImages), // Store all images (existing and new) as JSON
+			'meta_title' => $request->meta_title,
+			'keywords' => $keywords,
+			'meta_desc' => $request->meta_desc,
+			'og_image' => $ogImageName, // Save the OG image file name
+		]);
+
+		// Sync categories to the category_product pivot table
+		$product->categories()->sync($request->categories);
+
+		// Update the quantities in the quantities table
+		foreach ($request->quantities as $sizeId => $quantity) {
+			Quantity::updateOrCreate(
+				['product_id' => $product->id, 'size_id' => $sizeId],
+				['quantity' => $quantity]
+			);
+		}
+
+		return redirect()->route('products.index')->with('success', 'Product updated successfully.');
+	}
+
+
+	public function updateStatus(Request $request, Product $product)
+	{
+		// Validate the incoming request
+		$request->validate([
+			'status' => 'required|boolean',
+		]);
+
+		// Update the product's status
+		$product->status = $request->status;
+		$product->save();
+
+		// Return a JSON response
+		return response()->json([
+			'message' => 'Product status updated successfully',
+			'status' => $product->status ? 'Published' : 'Unpublished'
+		]);
+	}
+	
+	public function updateOffer(Request $request, Product $product)
+	{
+		if ($request->has('remove_offer')) {
+			// Remove offer logic
+			$product->sale = null;
+		} else {
+			// Update offer logic
+			$validatedData = $request->validate([
+				'sale' => 'nullable|numeric|min:0|max:100',
+			]);
+			$product->sale = $validatedData['sale'];
+		}
+
+		$product->save();
+
+		return redirect()->route('products.index')->with('success', 'Offer updated successfully.');
+	}
+
+
+
+
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Product $product)
+	{
+		// Delete related quantities first
+		$product->quantities()->delete();
+
+		// Decode the JSON to get the image file names
+		$images = json_decode($product->images, true);
+
+		if (!empty($images)) {
+			foreach ($images as $image) {
+				// Construct the full path
+				$imagePath = 'images/products/' . $image;
+
+				// Log the path for debugging
+				Log::info("Attempting to delete image: " . $imagePath);
+
+				// Check if the file exists and delete it
+				if (Storage::disk('public')->exists($imagePath)) {
+					Storage::disk('public')->delete($imagePath);
+					Log::info("Deleted image: " . $imagePath);
+				} else {
+					Log::warning("Image not found: " . $imagePath);
+				}
+			}
+		}
+
+		// Delete the product
+		$product->delete();
+
+		// Redirect back to the products list with a success message
+		return redirect()->back()->with('success', 'Product and its related quantities and images deleted successfully.');
+	}
+}
