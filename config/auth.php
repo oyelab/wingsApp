@@ -96,7 +96,7 @@ return [
             'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
-			'view' => 'backEnd.auth.passwords.reset',  // Update path here if needed
+			'view' => 'auth.passwords.reset',  // Update path here if needed
         ],
     ],
 

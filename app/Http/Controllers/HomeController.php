@@ -13,13 +13,22 @@ class HomeController extends Controller
 {
 	public function show(Category $category, Product $product)
 	{
-		// return $product;
-		// Both category and product are correctly retrieved based on their slugs.
+		// Calculate the sale price if there is a discount (sale percentage > 0)
+		$salePrice = $product->sale > 0 
+					? $product->price - ($product->price * ($product->sale / 100)) 
+					: $product->price;
+
+		// Add the sale price as part of the product object or array
+		$product->salePrice = $salePrice;
+
+		// Return the view with the category and product including the sale price
 		return view('frontEnd.products.show', [
 			'category' => $category,
-			'product' => $product,
+			'product' => $product->load('availableSizes'), // Eager load available sizes
 		]);
 	}
+
+
 	public function index()
 	{
 

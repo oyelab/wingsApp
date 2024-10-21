@@ -29,7 +29,7 @@ class SliderController extends Controller
 			return $query->where('title', 'like', '%' . $search . '%');
 		})->get();
 	
-		$sliders = Slider::all();
+		$sliders = Slider::orderBy('order', 'desc')->get();
         $sliderPath = $this->getSliderPath(); // Call the private function
 
 		// return $sliderPath;

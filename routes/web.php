@@ -36,7 +36,7 @@ Route::resource('backEnd/sliders', SliderController::class);
 
 
 Route::get('/backEnd', [App\Http\Controllers\DashboardController::class, 'root']);
-Route::get('backEnd/x/{any}', [App\Http\Controllers\DashboardController::class, 'index'])->name('index');
+Route::get('/backEnd/x/{any}', [App\Http\Controllers\DashboardController::class, 'index'])->name('index');
 
 
 
@@ -50,7 +50,15 @@ Route::get('/collections/{category:slug}/{product:slug}', [HomeController::class
 Route::get('/collections/{category:slug}', [HomeController::class, 'showCategory'])->name('category.products');
 
 
-Route::get('/cart', [OrderController::class, 'showCart'])->name('cart');
-Route::post('/cart', [OrderController::class, 'addCart'])->name('cart.add');
-Route::get('/checkout', [OrderController::class, 'create'])->name('checkout');
-Route::post('/checkout', [OrderController::class, 'store'])->name('checkout.store');
+Route::post('/cart/add', [OrderController::class, 'add'])->name('cart.add');
+
+Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
+
+Route::get('/cart', [OrderController::class, 'index'])->name('cart.index');
+Route::post('/cart/update', [OrderController::class, 'update'])->name('cart.update');
+Route::get('/cart/remove/{id}', [OrderController::class, 'remove'])->name('cart.remove');
+
+
+
+
+

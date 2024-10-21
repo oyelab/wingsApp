@@ -1,166 +1,129 @@
-@extends('backEnd.layouts.master-without-nav')
-@section('title')
-Product Detail
-@endsection
-@section('css')
-<!-- swiper css -->
-<link rel="stylesheet" href="{{ asset('build/libs/swiper/swiper-bundle.min.css') }}">
-@endsection
-@section('page-title')
-Product Detail
-@endsection
-@section('body')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .cart-icon {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            font-size: 1.5rem;
+        }
 
+        .cart-icon .badge {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+        }
+    </style>
+</head>
 <body>
-	@endsection
-	@section('content')
-	<div class="row">
-		<div class="col-lg-12">
-			<div class="card">
-				<div class="card-body">
-					<div class="row">
-						<div class="col-xl-4">
-							<div class="product-detail mt-3" dir="ltr">
 
-								<div
-									class="swiper product-thumbnail-slider rounded border overflow-hidden position-relative">
-									<div class="swiper-wrapper">
-										@foreach (json_decode($product->images) as $image)
-											<div class="swiper-slide rounded">
-												<div class="p-3">
-													<div class="product-img bg-light rounded p-3">
-														<img src="{{ asset('images/products/' . $image) }}"
-															class="img-fluid d-block" />
-													</div>
-												</div>
-											</div>
-										@endforeach
-									</div>
-									<div class="d-none d-md-block">
-										<div class="swiper-button-next"></div>
-										<div class="swiper-button-prev"></div>
-									</div>
-								</div>
+<!-- Cart Icon with Notification Badge -->
+<a href="{{ route('cart.index') }}" class="cart-icon">
+    <i class="fas fa-shopping-cart"></i>
+    <span class="badge badge-pill" id="cart-badge">{{ session('cart') ? count(session('cart')) : 0 }}</span>
+</a>
 
-								<div class="mt-4">
-									<div thumbsSlider="" class="swiper product-nav-slider mt-2 overflow-hidden">
-										<div class="swiper-wrapper">
-											@foreach (json_decode($product->images) as $image)
-												<div class="swiper-slide rounded">
-													<div class="nav-slide-item"><img
-															src="{{ asset('images/products/' . $image) }}"
-															class="img-fluid p-1 d-block rounded" /></div>
-												</div>
-											@endforeach
-										</div>
-									</div>
-								</div>
+<div class="container mt-5">
+    <h2 class="text-primary">{{ $product->title }}</h2>
 
-							</div>
-						</div>
-						<div class="col-xl-8">
-							<div class="mt-3 mt-xl-3 ps-xl-5">
-								<h4 class="font-size-20 mb-3"><a href="" class="text-body">{{ $product->title }}</a>
-								</h4>
+    @if($product->sale)
+        <h3>
+            {{ $product->salePrice }}
+            <del class="text-muted">{{ $product->price }}</del>
+            <span class="badge bg-danger">{{ $product->sale }}% off</span>
+        </h3>
+    @else
+        <h3>{{ $product->price }}</h3>
+    @endif
 
-								<p class="text-muted mb-0">
-									<i class="bx bxs-star text-warning"></i>
-									<i class="bx bxs-star text-warning"></i>
-									<i class="bx bxs-star text-warning"></i>
-									<i class="bx bxs-star text-warning"></i>
-									<i class="bx bxs-star-half text-warning"></i>
-								</p>
+    <div class="available-sizes mt-3">
+        <h5>Select Size:</h5>
+        <div class="btn-group-toggle" data-toggle="buttons">
+            @foreach($product->availableSizes as $size)
+                <label class="btn btn-outline-primary size-label">
+                    <input type="radio" name="size" value="{{ $size->id }}" autocomplete="off">
+                    {{ $size->name }} ({{ $size->pivot->quantity }})
+                </label>
+            @endforeach
+        </div>
+    </div>
 
-								<div class="text-muted mt-2">
-									<span class="badge bg-success font-size-14 me-1"><i class="mdi mdi-star"></i>
-										4.5</span> 234 Reviews
-								</div>
+    <div class="row text-center mt-4">
+        <div class="col-sm-6">
+            <form action="{{ route('cart.add') }}" method="POST" id="add-to-cart-form">
+                @csrf
+                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                <input type="hidden" name="size" id="selected-size" value="">
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary mt-2" id="add-to-cart-btn" disabled>
+                        <i class="fas fa-shopping-cart me-2"></i> Add to Cart
+                    </button>
+                </div>
+            </form>
+        </div>
 
-								<h2 class="text-primary mt-4 py-2 mb-0">{{ $product->price }} <del
-										class="text-muted font-size-18 fw-medium ps-1">$520</del>
+        <div class="col-sm-6">
+            <div class="d-grid">
+                <a href="{{ route('checkout') }}" class="btn btn-success mt-2" id="buy-now-btn">
+                    <i class="fas fa-bag-shopping me-2"></i> Buy Now
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 
-									<span class="badge bg-danger font-size-10 ms-1">20 % Off</span>
-								</h2>
+<script>
+    const sizeLabels = document.querySelectorAll('.size-label');
+    const addToCartBtn = document.getElementById('add-to-cart-btn');
+    const selectedSizeInput = document.getElementById('selected-size');
+    const cartBadge = document.getElementById('cart-badge');
+    
+    // Fetch existing cart items from the session (both product_id and size_id)
+    let cartItems = @json(session('cart') ?? []);
 
+    // Enable the Add to Cart button when a size is selected
+    sizeLabels.forEach(function(label) {
+        label.addEventListener('click', function() {
+            const radioInput = this.querySelector('input[type="radio"]');
+            const selectedSizeId = radioInput.value; // Get selected size ID
+            selectedSizeInput.value = selectedSizeId; // Set the selected size
 
-								<div>
-									<div class="row">
-										<div class="col-md-6">
-											<div class="mt-3">
-												<h5 class="font-size-14">Specification :</h5>
-												<div>
-													<!-- Display the Summernote description -->
-													{!! $product->description !!}
-												</div>
-											</div>
-										</div>
-									</div>
+            addToCartBtn.disabled = false; // Enable the button when a valid size is selected
+        });
+    });
 
-									<div class="row">
-										<div class="col-lg-6 col-sm-8">
-											<div class="product-desc-color mt-3">
-												<h5 class="font-size-14">Colors :</h5>
-												<ul class="list-inline mt-3">
-													<li class="list-inline-item">
-														<i class="mdi mdi-circle font-size-18 text-body"></i>
-													</li>
-													<li class="list-inline-item">
-														<i class="mdi mdi-circle font-size-18 text-success"></i>
-													</li>
-													<li class="list-inline-item">
-														<i class="mdi mdi-circle font-size-18 text-primary"></i>
-													</li>
+    // Ensure the form doesn't submit without selecting a size
+    document.getElementById('add-to-cart-form').addEventListener('submit', function(event) {
+        if (!selectedSizeInput.value) {
+            event.preventDefault(); // Prevent form submission if no size is selected
+            alert('Please select a size before adding to the cart.');
+        } else {
+            // Check if the selected size for this product is already in the cart
+            const productId = {{ $product->id }};
+            const selectedSizeId = selectedSizeInput.value;
 
-													<li class="list-inline-item">
-														<a href="#" class="text-primary border-0 p-1">
-															2 + Colors
-														</a>
-													</li>
-												</ul>
+            if (cartItems.some(item => item.product_id == productId && item.size_id == selectedSizeId)) {
+                event.preventDefault(); // Prevent adding the same size for the same product
+                alert('This size is already in the cart. Please select a different size.');
+            }
+        }
+    });
+</script>
 
-											</div>
+<!-- Include Bootstrap JS (optional) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-
-											<div class="row text-center mt-4 pt-1">
-												<div class="col-sm-6">
-													<form action="{{ route('cart.add') }}" method="POST">
-														@csrf
-														<input type="hidden" name="product" value="{{ $product->id }}">
-														<div class="d-grid">
-															<button type="submit" class="btn btn-primary waves-effect waves-light mt-2 me-1">
-																<i class="bx bx-cart me-2"></i> Add to cart
-															</button>
-														</div>
-													</form>
-												</div>
-
-												<div class="col-sm-6">
-													<div class="d-grid">
-														<button type="button"
-															class="btn btn-light waves-effect  mt-2 waves-light">
-															<i class="bx bx-shopping-bag me-2"></i>Buy now
-														</button>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<!-- end row -->
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- end row -->
-	@endsection
-	@section('scripts')
-	<!-- swiper js -->
-	<script src="{{ asset('build/libs/swiper/swiper-bundle.min.js') }}"></script>
-
-	<script src="{{ asset('build/js/pages/ecommerce-product-detail.init.js') }}"></script>
-	<!-- App js -->
-	<script src="{{ asset('build/js/app.js') }}"></script>
-	@endsection
+</body>
+</html>

@@ -22,7 +22,7 @@ class ProductController extends Controller
     public function index()
 	{
 		// Retrieve products with their related quantities and paginate
-		$products = Product::with('quantities')->latest()->paginate(20);
+		$products = Product::with('quantities')->latest()->paginate(5);
 
 		foreach ($products as $product) {
 			// Calculate the total quantity for each product
