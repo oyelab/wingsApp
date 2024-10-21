@@ -25,7 +25,7 @@
 	</div>
 </section>
 <!-- Latest Arrivals -->
-@if ($category = $categories->firstWhere('order', 2))
+@if ($category = $categories->firstWhere('order', 1))
 <section class="latest-arrivals-area section-padding">
 	<div class="container">
 		<div class="row">
