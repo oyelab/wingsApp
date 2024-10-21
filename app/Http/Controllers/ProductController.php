@@ -79,7 +79,10 @@ class ProductController extends Controller
 		$categories = Category::all();
 		$specifications = Specification::all();
 		
-        return view('backEnd.products.create', ['sizes' => $sizes, 'categories' => $categories, 'specifications' => $specifications]);
+        return view('backEnd.products.create', [
+			'sizes' => $sizes, 
+			'categories' => $categories, 
+			'specifications' => $specifications]);
     }
 
     /**

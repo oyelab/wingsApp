@@ -54,9 +54,9 @@ Route::post('/cart/add', [OrderController::class, 'add'])->name('cart.add');
 
 Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout');
 
-Route::get('/cart', [OrderController::class, 'index'])->name('cart.index');
+Route::get('/cart', [OrderController::class, 'index'])->name('cart.view');
 Route::post('/cart/update', [OrderController::class, 'update'])->name('cart.update');
-Route::get('/cart/remove/{id}', [OrderController::class, 'remove'])->name('cart.remove');
+Route::get('/cart/remove/{key}', [OrderController::class, 'remove'])->name('cart.remove');
 
 
 

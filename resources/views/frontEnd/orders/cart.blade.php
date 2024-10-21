@@ -1,61 +1,93 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shopping Cart</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-</head>
-<body>
+@extends('layouts.app')
+
+@section('content')
 
 <div class="container mt-5">
-    <h2>Your Shopping Cart</h2>
+    <h1 class="text-center">Your Cart</h1>
 
-    @if(empty($cart))
-        <p>Your cart is empty. Please add items to your cart.</p>
-    @else
+    @if($cartItems->isNotEmpty())
         <form action="{{ route('cart.update') }}" method="POST">
             @csrf
-            <table class="table">
-				<thead>
-					<tr>
-						<th>Product</th>
-						<th>Size</th>
-						<th>Price</th>
-						<th>Quantity</th>
-						<th>Total</th>
-						<th>Action</th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach($cart as $item)
-						<tr>
-							<td>{{ htmlspecialchars($item['product_title']) }}</td>
-							<td>{{ htmlspecialchars($item['size_name']) }}</td>
-							<td>{{ number_format($item['price'], 2) }} USD</td>
-							<td>
-								<input type="number" name="quantities[{{ $itemId }}]" value="{{ $item['quantity'] }}" min="0" class="form-control" style="width: 70px;">
-							</td>
-							<td>{{ number_format($item['total'], 2) }} USD</td>
-							<td>
-								<a href="{{ route('cart.remove', $itemId) }}" class="btn btn-danger btn-sm">Remove</a>
-							</td>
-						</tr>
-					@endforeach
-				</tbody>
-			</table>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Size</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Total Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($cartItems as $key => $cartItem)
+                        <tr>
+                            <td>{{ $cartItem['product']->title }}</td>
+                            <td>{{ $cartItem['size']->name }}</td>
+                            <td>
+                                <input type="number" name="cart[{{ $key }}][quantity]" 
+                                    value="{{ $cartItem['quantity'] }}" 
+                                    min="1" 
+                                    class="form-control quantity-input">
+                            </td>
+                            <td>Tk {{ number_format($cartItem['unitPrice'], 2) }}</td>
+                            <td class="total-price">Tk {{ number_format($cartItem['totalPrice'], 2) }}</td>
+                            <td>
+                                <a href="{{ route('cart.remove', $key) }}" class="btn btn-danger">Remove</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                    <tr>
+                        <td colspan="4" class="text-right"><strong>Grand Total:</strong></td>
+                        <td colspan="2" id="grand-total">Tk {{ number_format($grandTotal, 2) }}</td>
+                    </tr>
+                </tbody>
+            </table>
 
-            <div class="d-flex justify-content-between align-items-center">
-               
-                <button type="submit" class="btn btn-primary">Update Cart</button>
-            </div>
+            <button type="submit" class="btn btn-primary">Update Cart</button>
         </form>
+
+        <a href="{{ route('checkout') }}" class="btn btn-success mt-3">Proceed to Checkout</a>
+
+    @else
+        <p class="text-center">Your cart is empty.</p>
     @endif
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+@endsection
 
-</body>
-</html>
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const quantityInputs = document.querySelectorAll('.quantity-input');
+        const grandTotalElement = document.getElementById('grand-total');
+
+        function updateTotalPrice() {
+            let grandTotal = 0;
+            quantityInputs.forEach(input => {
+                const row = input.closest('tr');
+                const unitPrice = parseFloat(row.querySelector('td:nth-child(4)').textContent.replace('Tk', '').trim());
+                const quantity = parseInt(input.value);
+                const totalPrice = unitPrice * quantity;
+
+                // Update the total price in the table for the specific row
+                row.querySelector('.total-price').textContent = `Tk ${totalPrice.toFixed(2)}`;
+
+                // Update grand total
+                grandTotal += totalPrice;
+            });
+
+            // Update grand total in the table
+            grandTotalElement.textContent = `Tk ${grandTotal.toFixed(2)}`;
+        }
+
+        // Attach change event to each quantity input
+        quantityInputs.forEach(input => {
+            input.addEventListener('change', updateTotalPrice);
+        });
+
+        // Initial calculation of total price
+        updateTotalPrice();
+    });
+</script>
+@endsection

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Slider;
+use App\Models\Size;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -15,18 +16,21 @@ class HomeController extends Controller
 	{
 		// Calculate the sale price if there is a discount (sale percentage > 0)
 		$salePrice = $product->sale > 0 
-					? $product->price - ($product->price * ($product->sale / 100)) 
-					: $product->price;
+			? $product->price - ($product->price * ($product->sale / 100)) 
+			: $product->price;
 
-		// Add the sale price as part of the product object or array
+		// Attach the sale price directly to the product instance
 		$product->salePrice = $salePrice;
 
-		// Return the view with the category and product including the sale price
-		return view('frontEnd.products.show', [
-			'category' => $category,
-			'product' => $product->load('availableSizes'), // Eager load available sizes
-		]);
+		// Eager load the sizes relation (only available sizes)
+		$product->load('availableSizes');
+
+		// return $product;
+
+		// Return the view with the category and product
+		return view('frontEnd.products.show', compact('category', 'product'));
 	}
+
 
 
 	public function index()

@@ -5,101 +5,103 @@ namespace App\Http\Controllers;
 use App\Models\Size;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Session;
 
 class OrderController extends Controller
 {
-	// Add product to cart
 	public function add(Request $request)
 	{
-		$productId = $request->input('product_id');
-		$sizeId = $request->input('size');
+		 // Retrieve session cart or initialize an empty array
+		 $cart = session()->get('cart', []);
 
-		// Get the current cart from the session or initialize an empty array
-		$cart = session()->get('cart', []);
-
-		// Generate a unique key for the cart item based on product and size
-		$cartKey = $productId . '_' . $sizeId;
-
-		// Check if the product with the selected size already exists in the cart
-		if (isset($cart[$cartKey])) {
-			// If it exists, update the quantity
-			$cart[$cartKey]['quantity'] += 1;
-		} else {
-			// If it doesn't exist, add it as a new entry
-			$cart[$cartKey] = [
-				'product_id' => $productId,
-				'size_id' => $sizeId,
-				'quantity' => 1
-			];
-		}
-
-		// Save the updated cart back to the session
-		session()->put('cart', $cart);
-
-		return redirect()->back()->with('success', 'Product added to cart successfully.');
-	}
-	// Show the cart page
-	public function update(Request $request)
-	{
-		$cart = session()->get('cart', []);
-		
-		foreach ($request->quantities as $itemId => $quantity) {
-			if ($quantity <= 0) {
-				unset($cart[$itemId]); // Remove item if quantity is 0
-			} else {
-				$cart[$itemId]['quantity'] = $quantity; // Update quantity
-			}
-		}
-
-		session()->put('cart', $cart);
-		return redirect()->route('cart.index');
+		 // Create a unique key for the product-size combination
+		 $productId = $request->input('product_id');
+		 $sizeId = $request->input('size_id');
+		 $cartKey = $productId . '_' . $sizeId;
+	 
+		 // Check if the product-size combination already exists in the cart
+		 if (array_key_exists($cartKey, $cart)) {
+			 return redirect()->back()->with('error', 'This size of the product is already in your cart.');
+		 }
+	 
+		 // Add the product-size combination to the cart with the product and size details
+		 $cart[$cartKey] = [
+			 'product_id' => $productId,
+			 'size_id' => $sizeId,
+			 'quantity' => 1, // Default quantity to 1 for now
+		 ];
+	 
+		 // Update the cart in the session
+		 session()->put('cart', $cart);
+	 
+		 // Redirect back with success message
+		 return redirect()->back()->with('success', 'Product added to the cart.');
 	}
 
 	public function index()
 	{
-		$cart = session()->get('cart', []);
-		$cartDetails = [];
+		// Initialize the cart session
+		$cart = session('cart', []);
 
-		foreach ($cart as $itemId => $item) {
-			// Fetch the product details from the database
-			$product = Product::find($itemId);
-			if ($product) {
-				$cartDetails[] = [
-					'product_title' => $item['title'],
-					'size_name' => $item['size_name'],
-					'price' => $item['price'],
-					'quantity' => $item['quantity'],
-					'total' => $item['price'] * $item['quantity'],
-				];
-			}
-		}
-		return $cartDetails;
+		// Fetch products and sizes from the cart
+		$cartItems = collect($cart)->map(function($item) {
+			$product = Product::find($item['product_id']);
+			$size = Size::find($item['size_id']);
+			
+			return [
+				'product' => $product,
+				'size' => $size,
+				'quantity' => $item['quantity'],
+				'unitPrice' => $product->price,
+				'totalPrice' => $product->price * $item['quantity'],
+			];
+		});
 
-		return view('cart.index', [
-			'cart' => $cartDetails,
-		]);
+		// Ensure that the grand total and quantity counting are correct
+		$grandTotal = $cartItems->sum('totalPrice');
+		
+		// Total unique products count (regardless of quantity)
+		$totalItems = $cartItems->count();
+	
+		// Pass cart items and grand total to the view
+		return view('frontEnd.orders.cart', compact('cartItems', 'grandTotal', 'totalItems'));
 	}
 
-    public function remove($id)
-    {
-        $cart = session()->get('cart', []);
+    public function update(Request $request)
+	{
+		// Retrieve the cart from session
+		$cart = session()->get('cart', []);
 
-        if (isset($cart[$id])) {
-            unset($cart[$id]); // Remove the item
-            session()->put('cart', $cart);
-        }
+		// Loop through the updated cart items
+		foreach ($request->cart as $key => $item) {
+			// Update the quantity for each item
+			if (isset($cart[$key])) {
+				$cart[$key]['quantity'] = $item['quantity'];
+			}
+		}
 
-        return redirect()->route('cart.index');
-    }
+		// Update the session with the modified cart
+		session()->put('cart', $cart);
 
-    private function calculateTotalPrice($cart)
-    {
-        $totalPrice = 0;
-        foreach ($cart as $item) {
-            $totalPrice += $item['price'] * $item['quantity'];
-        }
-        return $totalPrice;
-    }
+		return redirect()->back()->with('success', 'Cart updated successfully.');
+	}
+
+	public function remove($key)
+	{
+		// Retrieve the cart from session
+		$cart = session()->get('cart', []);
+
+		// Remove the item from the cart
+		if (isset($cart[$key])) {
+			unset($cart[$key]);
+		}
+
+		// Update the session with the modified cart
+		session()->put('cart', $cart);
+
+		return redirect()->back()->with('success', 'Item removed from cart.');
+	}
+
 }
 	
 
