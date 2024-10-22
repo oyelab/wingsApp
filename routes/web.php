@@ -31,8 +31,6 @@ Route::put('/backEnd/products/{product}/sale', [ProductController::class, 'updat
 
 Route::resource('backEnd/categories', CategoryController::class);
 
-// Route::resource('backEnd/settings', SettingController::class);
-
 Route::resource('backEnd/sliders', SliderController::class);
 
 Route::get('backEnd/siteSettings', [SiteSettingController::class, 'index'])->name('settings.index');

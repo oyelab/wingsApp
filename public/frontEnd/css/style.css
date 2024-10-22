@@ -946,8 +946,32 @@ a {
 	color: var(--wings-secondary);
 }
 
+.social-icon {
+    font-size: 24px; /* Adjust this value as needed */
+    transition: transform 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.social-icon:hover {
+    transform: scale(1.2); /* Slightly increase size on hover */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .social-icon {
+        font-size: 20px; /* Smaller size for mobile */
+    }
+}
+
+@media (max-width: 576px) {
+    .social-icon {
+        font-size: 18px; /* Even smaller size for very small screens */
+    }
+}
+
+
 .footer-logo {
 	margin-bottom: 10px;
+	width: 168px;
 }
 
 .footer-left p {
