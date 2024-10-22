@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\SettingController;
+use App\Http\Controllers\SiteSettingController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SslCommerzPaymentController;
@@ -34,6 +34,9 @@ Route::resource('backEnd/categories', CategoryController::class);
 // Route::resource('backEnd/settings', SettingController::class);
 
 Route::resource('backEnd/sliders', SliderController::class);
+
+Route::get('backEnd/siteSettings', [SiteSettingController::class, 'index'])->name('settings.index');
+Route::put('backEnd/siteSettings', [SiteSettingController::class, 'update'])->name('settings.update');
 
 
 Route::get('/backEnd', [App\Http\Controllers\DashboardController::class, 'root']);
