@@ -141,7 +141,7 @@
 									<ul class="d-flex align-items-center">
 										@foreach ($socialLinks as $link)
 											<li>
-												<a href="{{ 'https://www.' . strtolower($link['platform']) . '.com/' . $link['username'] }}" target="_blank">
+												<a href="{{ 'https://' . strtolower($link['platform']) . '.com/' . $link['username'] }}" target="_blank">
 													<i class="social-icon {{ $iconMapping[strtolower($link['platform'])] }}"></i> 
 												</a>
 											</li>

@@ -57,7 +57,7 @@ class SiteSetting extends Model
         return [
             'facebook' => 'bi bi-facebook',
             'instagram' => 'bi bi-instagram',
-            'twitter' => 'bi bi-twitter-x',
+            'x' => 'bi bi-twitter-x',
             'youtube' => 'bi bi-youtube',
             'linkedin' => 'bi bi-linkedin',
             'whatsapp' => 'bi bi-whatsapp',

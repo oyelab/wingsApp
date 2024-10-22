@@ -194,7 +194,7 @@ Update your site settings
 							<select class="form-select" name="social_platforms[]" onchange="updatePlatformSelection(this)">
 								<option value="">Select Platform</option>
 								<option value="Facebook" {{ $link['platform'] == 'Facebook' ? 'selected' : '' }}>Facebook</option>
-								<option value="Twitter" {{ $link['platform'] == 'Twitter' ? 'selected' : '' }}>Twitter</option>
+								<option value="X" {{ $link['platform'] == 'X' ? 'selected' : '' }}>X</option>
 								<option value="Instagram" {{ $link['platform'] == 'Instagram' ? 'selected' : '' }}>Instagram</option>
 								<option value="LinkedIn" {{ $link['platform'] == 'LinkedIn' ? 'selected' : '' }}>LinkedIn</option>
 								<option value="YouTube" {{ $link['platform'] == 'YouTube' ? 'selected' : '' }}>YouTube</option>
@@ -248,7 +248,7 @@ Update your site settings
 		platformSelect.innerHTML = `
 			<option value="">Select Platform</option>
 			<option value="Facebook">Facebook</option>
-			<option value="Twitter">Twitter</option>
+			<option value="X">X</option>
 			<option value="Instagram">Instagram</option>
 			<option value="LinkedIn">LinkedIn</option>
 			<option value="YouTube">YouTube</option>
