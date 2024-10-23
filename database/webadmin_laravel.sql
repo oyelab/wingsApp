@@ -4,7 +4,7 @@
 -- https://tableplus.com/
 --
 -- Database: webadmin_laravel
--- Generation Time: 2024-10-20 21:49:24.3690
+-- Generation Time: 2024-10-23 05:52:22.9760
 -- -------------------------------------------------------------
 
 
@@ -48,7 +48,15 @@ CREATE TABLE `category_product` (
   KEY `category_product_product_id_foreign` (`product_id`),
   CONSTRAINT `category_product_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
   CONSTRAINT `category_product_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `customers`;
+CREATE TABLE `customers` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `failed_jobs`;
 CREATE TABLE `failed_jobs` (
@@ -69,7 +77,21 @@ CREATE TABLE `migrations` (
   `migration` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `orders`;
+CREATE TABLE `orders` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `email` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `phone` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `amount` double DEFAULT NULL,
+  `address` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
+  `status` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `transaction_id` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `currency` varchar(20) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 DROP TABLE IF EXISTS `password_reset_tokens`;
 CREATE TABLE `password_reset_tokens` (
@@ -124,7 +146,7 @@ CREATE TABLE `products` (
   `views` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `products_slug_unique` (`slug`)
-) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `products_clone`;
 CREATE TABLE `products_clone` (
@@ -161,7 +183,7 @@ CREATE TABLE `quantities` (
   KEY `quantities_size_id_foreign` (`size_id`),
   CONSTRAINT `quantities_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
   CONSTRAINT `quantities_size_id_foreign` FOREIGN KEY (`size_id`) REFERENCES `sizes` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=313 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=318 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `sections`;
 CREATE TABLE `sections` (
@@ -171,6 +193,25 @@ CREATE TABLE `sections` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+DROP TABLE IF EXISTS `site_settings`;
+CREATE TABLE `site_settings` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `keywords` text COLLATE utf8mb4_unicode_ci,
+  `og_image` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `logo_v1` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `logo_v2` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `favicon` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `social_links` text COLLATE utf8mb4_unicode_ci,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `sizes`;
 CREATE TABLE `sizes` (
@@ -192,7 +233,7 @@ CREATE TABLE `sliders` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `sliders_title_unique` (`title`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `specifications`;
 CREATE TABLE `specifications` (
@@ -224,10 +265,10 @@ CREATE TABLE `users` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO `categories` (`id`, `title`, `slug`, `image`, `parent_id`, `description`, `created_at`, `updated_at`, `status`, `order`, `views`) VALUES
-(22, 'Wings Edited', 'wings-edited', 'wings-edited.jpg', NULL, 'This is our custom edited Product category', '2024-10-19 09:56:36', '2024-10-19 21:40:20', 2, 5, NULL),
+(22, 'Wings Edited', 'wings-edited', 'wings-edited.jpg', NULL, 'This is our custom edited Product category', '2024-10-19 09:56:36', '2024-10-22 19:51:59', 1, 1, NULL),
 (24, 'Product order 2', 'product-order-2', 'product-order-2.jpg', NULL, 'Description', '2024-10-19 10:01:41', '2024-10-19 10:28:20', 2, 3, NULL),
 (25, 'Product 2', 'product-2', 'product-2.jpg', NULL, 'Description', '2024-10-19 10:07:01', '2024-10-19 20:39:47', 0, NULL, NULL),
 (26, 'By Replaced Product', 'by-replaced-product', 'by-replaced-product.jpg', NULL, 'This is!', '2024-10-19 10:08:02', '2024-10-19 10:08:02', 1, 2, NULL);
@@ -242,7 +283,11 @@ INSERT INTO `category_product` (`id`, `category_id`, `product_id`, `created_at`,
 (75, 25, 67, NULL, NULL),
 (76, 26, 67, NULL, NULL),
 (77, 22, 66, NULL, NULL),
-(78, 22, 54, NULL, NULL);
+(78, 22, 54, NULL, NULL),
+(79, 22, 69, NULL, NULL),
+(80, 24, 69, NULL, NULL),
+(81, 25, 69, NULL, NULL),
+(82, 26, 69, NULL, NULL);
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (1, '2014_10_12_000000_create_users_table', 1),
@@ -262,7 +307,28 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (15, '2024_10_18_143254_create_sliders_table', 5),
 (16, '2024_10_19_075559_add_views_count_to_products_table', 6),
 (17, '2024_10_19_080020_add_views_count_to_products_table', 7),
-(18, '2024_10_19_103738_create_sections_table', 8);
+(18, '2024_10_19_103738_create_sections_table', 8),
+(19, '2024_10_20_083049_create_customers_table', 9),
+(20, '2024_10_20_083404_create_orders_table', 9),
+(21, '2024_10_22_102807_create_site_settings_table', 10);
+
+INSERT INTO `orders` (`id`, `name`, `email`, `phone`, `amount`, `address`, `status`, `transaction_id`, `currency`) VALUES
+(1, 'Customer Name', 'customer@mail.com', '8801XXXXXXXXX', 10, 'Customer Address', 'Pending', '67173f34a0ea5', 'BDT'),
+(2, 'Customer Name', 'customer@mail.com', '8801XXXXXXXXX', 10, 'Customer Address', 'Pending', '671740741f98e', 'BDT'),
+(3, 'Customer Name', 'customer@mail.com', '8801XXXXXXXXX', 10, 'Customer Address', 'Pending', '67175734a8022', 'BDT'),
+(4, 'Customer Name', 'customer@mail.com', '8801XXXXXXXXX', 10, 'Customer Address', 'Pending', '67175a7d4bf10', 'BDT'),
+(5, 'Customer Name', 'customer@mail.com', '8801XXXXXXXXX', 10, 'Customer Address', 'Pending', '67175b4e0d05f', 'BDT'),
+(6, 'Customer Name', 'customer@mail.com', '8801XXXXXXXXX', 10, 'Customer Address', 'Pending', '67175bd6065aa', 'BDT'),
+(7, 'Customer Name', 'customer@mail.com', '8801XXXXXXXXX', 10, 'Customer Address', 'Pending', '67175c22e9cd9', 'BDT'),
+(8, 'Customer Name', 'customer@mail.com', '8801XXXXXXXXX', 10, 'Customer Address', 'Pending', '67175c791380b', 'BDT'),
+(9, 'Customer Name', 'customer@mail.com', '8801XXXXXXXXX', 10, 'Customer Address', 'Pending', '67175cee1cbe6', 'BDT'),
+(10, 'Customer Name', 'customer@mail.com', '8801XXXXXXXXX', 10, 'Customer Address', 'Pending', '67175cfd7c9ae', 'BDT'),
+(11, 'Customer Name', 'customer@mail.com', '8801XXXXXXXXX', 10, 'Customer Address', 'Pending', '67175faf3620c', 'BDT'),
+(12, 'Customer Name', 'customer@mail.com', '8801XXXXXXXXX', 10, 'Customer Address', 'Pending', '6717608b3a6a4', 'BDT');
+
+INSERT INTO `password_reset_tokens` (`email`, `token`, `created_at`) VALUES
+('hello@oyelab.com', '$2y$10$x.5iUoK1em11HyR9M1xF8.aMfI53iIU7AyfLNNJewGlkiWtBo2WDS', '2024-10-21 08:38:21'),
+('me@faisal.one', '$2y$10$5lwbQG1uK3GegD9yAYFEHe/xOg9eW.90YVKYw46Tk7.wAxm6/Z.9i', '2024-10-21 08:21:20');
 
 INSERT INTO `products` (`id`, `title`, `slug`, `price`, `sale`, `description`, `specifications`, `images`, `meta_title`, `keywords`, `meta_desc`, `og_image`, `status`, `created_at`, `updated_at`, `views`) VALUES
 (41, 'Official Home Jersey 2024  Bangladesh National Football Team', 'official-home-jersey-2024-bangladesh-national-football-team', 700, 25, '<p class=\"p1\" style=\"margin-right: 0px; margin-bottom: 0px; margin-left: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-size-adjust: none; font-kerning: auto; font-optical-sizing: auto; font-feature-settings: normal; font-variation-settings: normal; font-variant-position: normal; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Helvetica;\"><b>#Official Home Jersey 2024</b></p><p class=\"p1\" style=\"margin-right: 0px; margin-bottom: 0px; margin-left: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-size-adjust: none; font-kerning: auto; font-optical-sizing: auto; font-feature-settings: normal; font-variation-settings: normal; font-variant-position: normal; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Helvetica;\"><b>#Bangladesh National Football Team</b></p><p class=\"p1\" style=\"margin-right: 0px; margin-bottom: 0px; margin-left: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-size-adjust: none; font-kerning: auto; font-optical-sizing: auto; font-feature-settings: normal; font-variation-settings: normal; font-variant-position: normal; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Helvetica;\"><b><br></b></p><p class=\"p1\" style=\"margin-right: 0px; margin-bottom: 0px; margin-left: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-size-adjust: none; font-kerning: auto; font-optical-sizing: auto; font-feature-settings: normal; font-variation-settings: normal; font-variant-position: normal; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Helvetica;\">This is the Current official Home Jersey of the Bangladesh National Football Team, The Premium Quality Authentic Jersey is smooth and comfortable. The Jersey is made with 95% polyester and 5% synthetic fabric, which gives it a soft and stretchy feel. The Regular fit and Circular Hem make it flattering and easy to wear.</p>', NULL, '[\"official-home-jersey-2024-bangladesh-national-football-team-1.jpg\", \"official-home-jersey-2024-bangladesh-national-football-team-2.jpg\"]', NULL, NULL, NULL, NULL, 1, '2024-10-15 12:43:56', '2024-10-17 20:14:45', 0),
@@ -274,7 +340,8 @@ INSERT INTO `products` (`id`, `title`, `slug`, `price`, `sale`, `description`, `
 (54, 'Hala Madrid - Real Madrid Concept Fan Jersey', 'hala-madrid-real-madrid-concept-fan-jersey', 700, 25, '<p class=\"p1\" style=\"margin-right: 0px; margin-bottom: 0px; margin-left: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-size-adjust: none; font-kerning: auto; font-optical-sizing: auto; font-feature-settings: normal; font-variation-settings: normal; font-variant-position: normal; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Helvetica;\"><b>#Hala Madrid!!</b></p><p class=\"p1\" style=\"margin-right: 0px; margin-bottom: 0px; margin-left: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-size-adjust: none; font-kerning: auto; font-optical-sizing: auto; font-feature-settings: normal; font-variation-settings: normal; font-variant-position: normal; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Helvetica;\"><b>#Real Madrid Concept Fan Jersey 2024</b></p><p class=\"p1\" style=\"margin-right: 0px; margin-bottom: 0px; margin-left: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-size-adjust: none; font-kerning: auto; font-optical-sizing: auto; font-feature-settings: normal; font-variation-settings: normal; font-variant-position: normal; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Helvetica;\"><b><br></b></p><p class=\"p1\" style=\"margin-right: 0px; margin-bottom: 0px; margin-left: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-size-adjust: none; font-kerning: auto; font-optical-sizing: auto; font-feature-settings: normal; font-variation-settings: normal; font-variant-position: normal; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Helvetica;\">Premium Quality Authentic Jersey is smooth and comfortable.</p><p class=\"p1\" style=\"margin-right: 0px; margin-bottom: 0px; margin-left: 0px; font-variant-numeric: normal; font-variant-east-asian: normal; font-variant-alternates: normal; font-size-adjust: none; font-kerning: auto; font-optical-sizing: auto; font-feature-settings: normal; font-variation-settings: normal; font-variant-position: normal; font-stretch: normal; font-size: 12px; line-height: normal; font-family: Helvetica;\">The Jersey is made with 95% polyester and 5% synthetic fabric, which gives it a soft and stretchy feel. The Regular fit and Circular Hem make it flattering and easy to wear.</p>', '[\"1\", \"2\", \"3\", \"4\", \"5\"]', '[\"hala-madrid-real-madrid-concept-fan-jersey-1.jpg\", \"hala-madrid-real-madrid-concept-fan-jersey-2.jpg\"]', NULL, NULL, NULL, NULL, 1, '2024-10-16 11:54:10', '2024-10-19 20:36:55', 0),
 (66, 'Black and White Kit for Chesham FC', 'black-and-white-kit-for-chesham-fc', 800, NULL, '<p><span style=\"font-size: 14.8px;\">Striking the perfect balance of tradition and flair! Check out the new black and white kit for Chesham FC, crafted by Wings Sportswear. ⚽️💥&nbsp;&nbsp;</span></p><p><span style=\"font-size: 14.8px;\">#OnTheRise #NewBeginnings #CheshamFC #WingsSportswear #NewKit</span></p>', '[\"1\", \"2\", \"3\", \"4\", \"5\"]', '[\"black-and-white-kit-for-chesham-fc-1.jpg\"]', NULL, NULL, NULL, NULL, 0, '2024-10-19 01:03:45', '2024-10-19 20:36:38', 0),
 (67, 'Striking purple and white look', 'striking-purple-and-white-look', 800, 25, '<h1 class=\"\"><b><span style=\"font-size: 14.8px; font-family: Arial; background-color: rgb(156, 0, 255);\"><font color=\"#ffffff\">Striking purple and white look</font></span></b></h1><h1 class=\"\"><b><span style=\"font-size: 14.8px; font-family: Arial; background-color: rgb(156, 0, 255);\"><font color=\"#ffffff\"><br></font></span></b></h1><h1 class=\"\"><b><span style=\"font-size: 14.8px; font-family: Arial; background-color: rgb(156, 0, 255);\"><font color=\"#ffffff\"><br></font></span></b></h1><p><span style=\"font-size: 14.8px;\">We look forward to working for your team and are committed to providing your team with the highest quality, contemporary, creatively designed sportswear. Please get in touch with us. We are waiting for you.</span></p><p><span style=\"font-size: 14.8px;\">#OldMansFC #KitReveal #WingsSportswear</span></p>', '[\"1\", \"2\", \"3\", \"4\", \"5\"]', '[\"striking-purple-and-white-look-4.jpg\", \"striking-purple-and-white-look-5.jpg\", \"striking-purple-and-white-look-6.jpg\", \"striking-purple-and-white-look-7.jpg\"]', NULL, NULL, NULL, NULL, 1, '2024-10-19 01:06:43', '2024-10-20 14:04:09', 0),
-(68, 'Old Man\'s FC Official Jersey', 'old-mans-fc-official-jersey', 1000, NULL, '<p><span style=\"font-size: 14.8px;\">Old Man\'s FC is ready to turn heads with our brand-new kit design! 🟣⚪️</span></p><p><span style=\"font-size: 14.8px;\"><br></span></p><p><span style=\"font-size: 14.8px;\">Say hello to our striking purple and white look, crafted with care by Wings Sportswear. We can’t wait to hit the pitch in style—are you ready to join us? Let the games begin!</span></p><p><span style=\"font-size: 14.8px;\"><br></span></p><p><span style=\"font-size: 14.8px;\">#OldMansFC #KitReveal #WingsSportswear</span></p>', '[\"1\", \"2\", \"3\", \"4\"]', '[\"old-mans-fc-official-jersey-1.jpg\"]', NULL, NULL, NULL, 'old-mans-fc-official-jersey-og.jpg', 1, '2024-10-19 01:09:48', '2024-10-20 15:01:21', 3);
+(68, 'Old Man\'s FC Official Jersey', 'old-mans-fc-official-jersey', 1000, NULL, '<p><span style=\"font-size: 14.8px;\">Old Man\'s FC is ready to turn heads with our brand-new kit design! 🟣⚪️</span></p><p><span style=\"font-size: 14.8px;\"><br></span></p><p><span style=\"font-size: 14.8px;\">Say hello to our striking purple and white look, crafted with care by Wings Sportswear. We can’t wait to hit the pitch in style—are you ready to join us? Let the games begin!</span></p><p><span style=\"font-size: 14.8px;\"><br></span></p><p><span style=\"font-size: 14.8px;\">#OldMansFC #KitReveal #WingsSportswear</span></p>', '[\"1\", \"2\", \"3\", \"4\"]', '[\"old-mans-fc-official-jersey-1.jpg\"]', NULL, NULL, NULL, 'old-mans-fc-official-jersey-og.jpg', 1, '2024-10-19 01:09:48', '2024-10-21 10:30:47', 3),
+(69, 'This is new product with testing issues!', 'this-is-new-product-with-testing-issues', 800, NULL, '<p>New Description</p>', NULL, '[\"this-is-new-product-with-testing-issues-1.jpg\", \"this-is-new-product-with-testing-issues-2.jpg\"]', NULL, '[]', NULL, NULL, 1, '2024-10-21 10:47:48', '2024-10-21 10:47:56', NULL);
 
 INSERT INTO `products_clone` (`id`, `title`, `slug`, `price`, `sale`, `categories`, `description`, `specifications`, `images`, `meta_title`, `keywords`, `meta_desc`, `og_image`, `status`, `created_at`, `updated_at`) VALUES
 (25, 'new product title updated', 'new-product-title-updated', 100, NULL, '[\"2\", \"3\"]', '<p>new description</p>', '[\"2\", \"3\"]', '[\"new-product-title-1.jpg\"]', NULL, '[null]', NULL, 'new-product-title-updated-og.jpg', 1, '2024-10-14 21:11:08', '2024-10-16 10:07:22'),
@@ -305,61 +372,56 @@ INSERT INTO `quantities` (`id`, `product_id`, `size_id`, `quantity`, `created_at
 (183, 41, 3, 300, '2024-10-15 12:43:56', '2024-10-17 20:10:57'),
 (184, 41, 4, 400, '2024-10-15 12:43:56', '2024-10-17 20:10:57'),
 (185, 41, 5, 100, '2024-10-15 12:43:56', '2024-10-17 20:10:57'),
-(186, 41, 6, 50, '2024-10-15 12:43:56', '2024-10-17 20:10:57'),
 (187, 42, 1, 100, '2024-10-15 13:30:17', '2024-10-17 20:07:39'),
 (188, 42, 2, 100, '2024-10-15 13:30:17', '2024-10-17 20:07:39'),
 (189, 42, 3, 100, '2024-10-15 13:30:17', '2024-10-17 20:07:39'),
 (190, 42, 4, 50, '2024-10-15 13:30:17', '2024-10-17 20:07:39'),
 (191, 42, 5, 50, '2024-10-15 13:30:17', '2024-10-17 20:07:39'),
-(192, 42, 6, 50, '2024-10-15 13:30:17', '2024-10-17 20:07:39'),
 (193, 43, 1, 200, '2024-10-15 13:57:52', '2024-10-17 20:04:59'),
 (194, 43, 2, 100, '2024-10-15 13:57:52', '2024-10-17 20:04:59'),
 (195, 43, 3, 0, '2024-10-15 13:57:52', '2024-10-17 20:04:59'),
 (196, 43, 4, 0, '2024-10-15 13:57:52', '2024-10-17 20:04:59'),
 (197, 43, 5, 0, '2024-10-15 13:57:52', '2024-10-17 20:04:59'),
-(198, 43, 6, 0, '2024-10-15 13:57:52', '2024-10-17 20:04:59'),
 (199, 44, 1, 200, '2024-10-15 14:15:03', '2024-10-15 14:15:03'),
 (200, 44, 2, 0, '2024-10-15 14:15:03', '2024-10-17 20:02:11'),
 (201, 44, 3, 0, '2024-10-15 14:15:03', '2024-10-17 20:02:11'),
 (202, 44, 4, 0, '2024-10-15 14:15:03', '2024-10-17 20:02:11'),
 (203, 44, 5, 0, '2024-10-15 14:15:03', '2024-10-17 20:02:11'),
-(204, 44, 6, 0, '2024-10-15 14:15:03', '2024-10-17 20:02:11'),
 (205, 45, 1, 0, '2024-10-16 05:39:49', '2024-10-17 20:00:33'),
 (206, 45, 2, 200, '2024-10-16 05:39:49', '2024-10-16 05:39:49'),
 (207, 45, 3, 0, '2024-10-16 05:39:49', '2024-10-17 20:00:33'),
 (208, 45, 4, 0, '2024-10-16 05:39:49', '2024-10-17 20:00:33'),
 (209, 45, 5, 0, '2024-10-16 05:39:49', '2024-10-17 20:00:33'),
-(210, 45, 6, 0, '2024-10-16 05:39:49', '2024-10-17 20:00:33'),
 (211, 46, 1, 100, '2024-10-16 05:53:59', '2024-10-17 19:58:40'),
 (212, 46, 2, 220, '2024-10-16 05:53:59', '2024-10-16 05:53:59'),
 (213, 46, 3, 0, '2024-10-16 05:53:59', '2024-10-16 10:16:14'),
 (214, 46, 4, 0, '2024-10-16 05:53:59', '2024-10-16 10:16:14'),
 (215, 46, 5, 0, '2024-10-16 05:53:59', '2024-10-16 10:16:14'),
-(216, 46, 6, 0, '2024-10-16 05:53:59', '2024-10-16 10:16:14'),
 (283, 54, 1, 200, '2024-10-16 21:47:37', '2024-10-17 19:55:56'),
 (284, 54, 2, 200, '2024-10-16 21:47:37', '2024-10-17 19:55:56'),
 (285, 54, 3, 100, '2024-10-16 21:47:37', '2024-10-17 19:55:56'),
 (286, 54, 4, 100, '2024-10-16 21:47:37', '2024-10-17 19:55:56'),
 (287, 54, 5, 50, '2024-10-16 21:47:37', '2024-10-17 19:55:56'),
-(288, 54, 6, 25, '2024-10-16 21:47:37', '2024-10-17 19:55:56'),
 (295, 66, 1, 0, '2024-10-19 01:03:45', '2024-10-19 20:36:38'),
 (296, 66, 2, 200, '2024-10-19 01:03:45', '2024-10-19 01:03:45'),
 (297, 66, 3, 0, '2024-10-19 01:03:45', '2024-10-19 20:36:38'),
 (298, 66, 4, 0, '2024-10-19 01:03:45', '2024-10-19 20:36:38'),
 (299, 66, 5, 0, '2024-10-19 01:03:45', '2024-10-19 20:36:38'),
-(300, 66, 6, 0, '2024-10-19 01:03:45', '2024-10-19 20:36:38'),
 (301, 67, 1, 0, '2024-10-19 01:06:43', '2024-10-19 12:23:55'),
 (302, 67, 2, 200, '2024-10-19 01:06:43', '2024-10-19 01:06:43'),
 (303, 67, 3, 100, '2024-10-19 01:06:43', '2024-10-19 01:06:43'),
 (304, 67, 4, 0, '2024-10-19 01:06:43', '2024-10-19 12:23:55'),
 (305, 67, 5, 0, '2024-10-19 01:06:43', '2024-10-19 12:23:55'),
-(306, 67, 6, 0, '2024-10-19 01:06:43', '2024-10-19 12:23:55'),
 (307, 68, 1, 0, '2024-10-19 01:09:48', '2024-10-19 01:10:12'),
 (308, 68, 2, 100, '2024-10-19 01:09:48', '2024-10-19 01:09:48'),
 (309, 68, 3, 0, '2024-10-19 01:09:48', '2024-10-19 01:10:12'),
 (310, 68, 4, 0, '2024-10-19 01:09:48', '2024-10-19 01:10:12'),
 (311, 68, 5, 0, '2024-10-19 01:09:48', '2024-10-19 01:10:12'),
-(312, 68, 6, 0, '2024-10-19 01:09:48', '2024-10-19 01:10:12');
+(313, 69, 1, 200, '2024-10-21 10:47:48', '2024-10-21 10:47:48'),
+(314, 69, 2, 200, '2024-10-21 10:47:48', '2024-10-21 10:47:48'),
+(315, 69, 3, 100, '2024-10-21 10:47:48', '2024-10-21 10:47:48'),
+(316, 69, 4, 200, '2024-10-21 10:47:48', '2024-10-21 10:47:48'),
+(317, 69, 5, 500, '2024-10-21 10:47:48', '2024-10-21 10:47:48');
 
 INSERT INTO `sections` (`id`, `title`, `created_at`, `updated_at`) VALUES
 (1, 'Latest', NULL, NULL),
@@ -369,20 +431,23 @@ INSERT INTO `sections` (`id`, `title`, `created_at`, `updated_at`) VALUES
 (5, 'Portfolio 1', NULL, NULL),
 (6, 'Portfolio 2', NULL, NULL);
 
+INSERT INTO `site_settings` (`id`, `title`, `description`, `keywords`, `og_image`, `logo_v1`, `logo_v2`, `favicon`, `email`, `phone`, `address`, `social_links`, `created_at`, `updated_at`) VALUES
+(10, 'Wings Sportswear', 'Innovative sportswear that blends cutting-edge technology with sleek design. For athletes and active individuals who demand more. Discover high-performance apparel that supports your journey to greatness.', 'Wings, Sportswear, Jersey, Shop, Sports Shop, Sports Market, Buy Jersey, Sell Jersey', 'wings-preview.jpg', 'logo-dark.svg', 'logo-light.svg', 'favicon.ico', 'hello@wingssportswear.shop', '01886424141', 'South Mugda, Mugdapara, Dhaka-1214', '\"[{\\\"platform\\\":\\\"Facebook\\\",\\\"username\\\":\\\"Wingsbd00\\\"},{\\\"platform\\\":\\\"Instagram\\\",\\\"username\\\":\\\"wingssportswearbd\\\"},{\\\"platform\\\":\\\"X\\\",\\\"username\\\":\\\"wingssportswearbd\\\"},{\\\"platform\\\":\\\"YouTube\\\",\\\"username\\\":\\\"wingssportswear\\\"}]\"', '2024-10-22 18:44:41', '2024-10-22 21:46:38');
+
 INSERT INTO `sizes` (`id`, `name`, `created_at`, `updated_at`) VALUES
 (1, 'S', NULL, NULL),
 (2, 'M', NULL, NULL),
 (3, 'L', NULL, NULL),
 (4, 'XL', NULL, NULL),
-(5, 'XXL', NULL, NULL),
-(6, 'XXXL', NULL, NULL);
+(5, 'XXL', NULL, NULL);
 
 INSERT INTO `sliders` (`id`, `title`, `order`, `status`, `image`, `created_at`, `updated_at`) VALUES
 (33, 'Keep Flying', NULL, 0, 'keep-flying.jpg', '2024-10-18 22:07:35', '2024-10-20 13:59:50'),
-(36, 'Wings Edited', 5, 1, 'wings-edited.png', '2024-10-19 00:04:14', '2024-10-19 06:04:56'),
+(36, 'Wings Edited', 3, 1, 'wings-edited.png', '2024-10-19 00:04:14', '2024-10-20 22:01:06'),
 (37, 'Get Our Customised Sportwear', 2, 1, 'get-our-customised-sportwear.jpg', '2024-10-19 00:12:44', '2024-10-19 06:06:13'),
-(38, 'Mohammedan Banner', 3, 1, 'mohammedan-banner.png', '2024-10-19 00:25:51', '2024-10-19 06:04:43'),
-(39, 'New Slider', 1, 1, 'new-slider.jpg', '2024-10-20 13:59:50', '2024-10-20 13:59:50');
+(38, 'Mohammedan Banner', 5, 1, 'mohammedan-banner.png', '2024-10-19 00:25:51', '2024-10-20 22:01:12'),
+(39, 'New Slider', NULL, 0, 'new-slider.jpg', '2024-10-20 13:59:50', '2024-10-20 21:57:18'),
+(40, 'Test Slider', 1, 1, 'test-slider.jpg', '2024-10-20 21:56:10', '2024-10-20 21:57:18');
 
 INSERT INTO `specifications` (`id`, `item`, `created_at`, `updated_at`) VALUES
 (1, 'Fully Digital Sublimation Printed.', NULL, NULL),
@@ -399,8 +464,8 @@ INSERT INTO `specifications_old` (`id`, `item`, `created_at`, `updated_at`) VALU
 (5, 'Twin Needle Topstitch Swing.', NULL, NULL);
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Admin', 'admin@themesbrand.com', NULL, '$2y$10$O85YZelI.z8.UI3Pjk9zi.DPwC8xwN5p.bgvpowSZmtJIIe75c2gW', NULL, '2024-10-13 07:10:32', '2024-10-13 07:10:32'),
-(2, 'Faisal', 'me@faisal.one', NULL, '$2y$10$zCzYfpLZR3NrRw4fW0mkp.ONCdNDKmbS6xDPNmH.ffcuplMUMgcwG', NULL, '2024-10-14 14:04:50', '2024-10-14 14:04:50');
+(2, 'Faisal', 'me@faisal.one', NULL, '$2y$10$zCzYfpLZR3NrRw4fW0mkp.ONCdNDKmbS6xDPNmH.ffcuplMUMgcwG', 'RQMyOuBCcPQKTHW8R1QKgBfP8Chn9puoaNUQV9DxTdPXmhljRvEedHeVx6eT', '2024-10-14 14:04:50', '2024-10-14 14:04:50'),
+(3, 'Faisal', 'hello@oyelab.com', NULL, '$2y$10$XcTdlG7v5jZue3mgV/9nPuCncYLGTgUU7QIk6AqM7jI4Go256A/Z2', NULL, '2024-10-21 08:32:27', '2024-10-21 08:32:27');
 
 
 

@@ -8,6 +8,8 @@ use App\Http\Controllers\SiteSettingController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SslCommerzPaymentController;
+use App\Http\Controllers\PathaoWebhookController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,6 +45,9 @@ Route::get('/backEnd/x/{any}', [App\Http\Controllers\DashboardController::class,
 
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
+
+Route::post('/orders/status', [PathaoWebhookController::class, 'handleWebhook']);
+
 
 // Route::resource('orders', OrderController::class);
 
