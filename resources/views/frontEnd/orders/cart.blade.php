@@ -37,7 +37,9 @@
 									required>
 							</td>
 							<td>Tk {{ number_format($cartItem['unitPrice'], 2) }}</td>
-							<td class="total-price">Tk {{ number_format($cartItem['totalPrice'], 2) }}</td>
+							<td class="total-price" data-raw-total="{{ $cartItem['totalPrice'] }}">
+								Tk {{ number_format($cartItem['totalPrice'], 2) }}
+							</td>
 							<td>
 								<a href="{{ route('cart.remove', $key) }}" class="btn btn-danger">Remove</a>
 							</td>
@@ -64,25 +66,39 @@
         const grandTotalElement = document.getElementById('grand-total');
 
         function updateTotalPrice() {
-            let grandTotal = 0;
-            quantityInputs.forEach(input => {
-                const row = input.closest('tr');
-                const unitPrice = parseFloat(row.querySelector('td:nth-child(4)').textContent.replace('Tk', '').trim());
-                const quantity = parseInt(input.value) || 0; // Default to 0 if not a number
-                const totalPrice = unitPrice * quantity;
+			let grandTotal = 0;
+			quantityInputs.forEach(input => {
+				const row = input.closest('tr'); // Get the closest table row
+				const unitPrice = parseFloat(row.querySelector('td:nth-child(4)').textContent.replace(/Tk|\s/g, '').trim()); // Get the unit price, removing 'Tk' and whitespace
+				const quantity = parseInt(input.value) || 0; // Get the quantity or default to 0
+				const totalPrice = unitPrice * quantity; // Calculate total price for this row
 
-                // Update the total price in the table for the specific row
-                row.querySelector('.total-price').textContent = `Tk ${totalPrice.toFixed(2)}`;
+				// Update the total price in the table for the specific row
+				row.querySelector('.total-price').textContent = `Tk ${totalPrice.toFixed(2)}`;
 
-                // Update grand total
-                grandTotal += totalPrice;
-            });
+				// Update grand total
+				grandTotal += totalPrice;
+			});
 
-            // Check if grandTotalElement exists before setting textContent
-            if (grandTotalElement) {
-                grandTotalElement.textContent = `Tk ${grandTotal.toFixed(2)}`;
-            }
-        }
+			// Update the grand total display, ensuring the element exists
+			const grandTotalElement = document.getElementById('grand-total');
+			if (grandTotalElement) {
+				grandTotalElement.textContent = `Tk ${grandTotal.toFixed(2)}`;
+			}
+		}
+
+		// Attach event listeners to update total price on input change
+		document.addEventListener('DOMContentLoaded', function () {
+			const quantityInputs = document.querySelectorAll('.quantity-input');
+			
+			// Attach input event listeners to each quantity input
+			quantityInputs.forEach(input => {
+				input.addEventListener('input', updateTotalPrice); // Call updateTotalPrice on input change
+			});
+
+			// Initial calculation of total price
+			updateTotalPrice();
+		});
 
         // Attach change event to each quantity input
         quantityInputs.forEach(input => {

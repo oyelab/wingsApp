@@ -215,6 +215,7 @@ var sparklineoptions1 = {
 var sparklinechart1 = new ApexCharts(document.querySelector("#mini-4"), sparklineoptions1);
 sparklinechart1.render();
 
+var assetBaseUrl = "{{ asset('') }}";
 // Basic Table
 new gridjs.Grid({
   columns:
@@ -238,7 +239,10 @@ new gridjs.Grid({
       {
         name: 'Billing Name',
         formatter: (function (cell) {
-          return gridjs.html('<img src="build/images/users/'+ cell[0]+'" alt="" class="avatar-sm rounded-circle me-2" /><a href="#" class="text-body">' + cell[1] + "</a>");
+			return gridjs.html(
+				'<img src="' + assetBaseUrl + 'images/users/' + cell[0] + '" alt="" class="avatar-sm rounded-circle me-2" />' +
+				'<a href="#" class="text-body">' + cell[1] + '</a>'
+			);
         })
       },
       "Date", "Total",

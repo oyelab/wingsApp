@@ -9,6 +9,7 @@ use App\Http\Controllers\SliderController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SslCommerzPaymentController;
 use App\Http\Controllers\PathaoWebhookController;
+use App\Http\Controllers\AdminOrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,8 @@ Route::put('/backEnd/products/{product}/sale', [ProductController::class, 'updat
 Route::resource('backEnd/categories', CategoryController::class);
 
 Route::resource('backEnd/sliders', SliderController::class);
+
+Route::resource('backEnd/orders', AdminOrderController::class);
 
 Route::get('backEnd/siteSettings', [SiteSettingController::class, 'index'])->name('settings.index');
 Route::put('backEnd/siteSettings', [SiteSettingController::class, 'update'])->name('settings.update');

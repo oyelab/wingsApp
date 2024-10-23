@@ -26,7 +26,7 @@ class OrderController extends Controller
 				'size' => $size,
 				'quantity' => $item['quantity'],
 				'unitPrice' => $product->price,
-				'totalPrice' => $product->price * $item['quantity'],
+				'totalPrice' => $product->price * $item['quantity'], // Keep it simple here
 				'availableQuantity' => $availableQuantity // Ensure this is set
 			];
 		});
