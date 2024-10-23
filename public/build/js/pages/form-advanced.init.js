@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function () {
     '#choices-multiple-remove-button',
     {
       removeItemButton: true,
-	  allowHTML: true // Enable HTML rendering
     }
   );
 
@@ -57,25 +56,16 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('choices-multiple-groups')
   );
 
-	// Initialize Choices.js
-	var textRemove = new Choices(
-		document.getElementById('choices-text-remove-button'),
-		{
-			delimiter: ',',
-			editItems: true,
-			maxItemCount: 5,
-			removeItemButton: true,
-		}
-	);
-
-	// Fetch old keywords stored in hidden inputs
-	let oldKeywords = document.querySelectorAll('.old-keywords');
-
-	// Populate Choices.js with the old keywords
-	oldKeywords.forEach(function (keyword) {
-		textRemove.setValue([{ value: keyword.value, label: keyword.value, id: keyword.value }]);
-	});
-
+  // text inputs example
+  var textRemove = new Choices(
+    document.getElementById('choices-text-remove-button'),
+    {
+      delimiter: ',',
+      editItems: true,
+      maxItemCount: 5,
+      removeItemButton: true,
+    }
+  );
 
   // choices-text-unique-values
   var textUniqueVals = new Choices('#choices-text-unique-values', {
