@@ -395,10 +395,8 @@ File: Main Js File
         if (document.getElementById("layout-direction-ltr").checked == true && id === "layout-direction-ltr") {
             document.getElementsByTagName("html")[0].removeAttribute("dir");
             document.getElementById("layout-direction-rtl").checked = false;
-            
-			document.getElementById('bootstrap-style').setAttribute('href', bootstrapStyleUrl);
-			document.getElementById('app-style').setAttribute('href', appStyleUrl);
-
+            document.getElementById('bootstrap-style').setAttribute('href', 'build/css/bootstrap.min.css');
+            document.getElementById('app-style').setAttribute('href', 'build/css/app.min.css');
             sessionStorage.setItem("is_visited", "layout-direction-ltr");
         } else if (document.getElementById("layout-direction-rtl").checked == true && id === "layout-direction-rtl") {
             document.getElementById("layout-direction-ltr").checked = false;
