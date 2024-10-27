@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Tocly'),
+    'name' => env('APP_NAME', 'WingsApp'),
 
     /*
     |--------------------------------------------------------------------------
@@ -70,7 +70,8 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    // 'timezone' => 'UTC',
+	'timezone' => 'Asia/Dhaka', // Set this to your region's timezone
 
     /*
     |--------------------------------------------------------------------------

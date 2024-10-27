@@ -197,100 +197,100 @@ class SliderController extends Controller
      * Update the specified resource in storage.
      */
 	public function update(Request $request, $id)
-{
-    // Find the slider by its ID
-    $slider = Slider::findOrFail($id);
+	{
+		// Find the slider by its ID
+		$slider = Slider::findOrFail($id);
 
-    // Define base validation rules
-    $rules = [
-        'title' => 'required|string|max:255|unique:sliders,title,' . $slider->id,
-        'status' => 'required|boolean',
-        'image' => 'nullable|mimes:jpeg,png,jpg,gif|max:4096',
-    ];
+		// Define base validation rules
+		$rules = [
+			'title' => 'required|string|max:255|unique:sliders,title,' . $slider->id,
+			'status' => 'required|boolean',
+			'image' => 'nullable|mimes:jpeg,png,jpg,gif|max:4096',
+		];
 
-    // Conditionally add the 'order' validation rule
-    if ($request->input('status') == 1) {
-        $rules['order'] = 'required|integer'; // Order is required when publishing
-    } else {
-        $rules['order'] = 'nullable|integer'; // Make order nullable for saving
-    }
+		// Conditionally add the 'order' validation rule
+		if ($request->input('status') == 1) {
+			$rules['order'] = 'required|integer'; // Order is required when publishing
+		} else {
+			$rules['order'] = 'nullable|integer'; // Make order nullable for saving
+		}
 
-    // Validate the request with the defined rules
-    $request->validate($rules);
+		// Validate the request with the defined rules
+		$request->validate($rules);
 
-    // Custom validation to ensure 'order' is not set when status is 0
-    if ($request->input('status') == 0 && $request->filled('order')) {
-        return redirect()->back()->withErrors(['order' => 'You cannot set an order for a saved slider.'])->withInput();
-    }
+		// Custom validation to ensure 'order' is not set when status is 0
+		if ($request->input('status') == 0 && $request->filled('order')) {
+			return redirect()->back()->withErrors(['order' => 'You cannot set an order for a saved slider.'])->withInput();
+		}
 
-    // Check if the order already exists in the database
-    if ($request->filled('order')) {
-        $existingSlider = Slider::where('order', $request->input('order'))->first();
+		// Check if the order already exists in the database
+		if ($request->filled('order')) {
+			$existingSlider = Slider::where('order', $request->input('order'))->first();
 
-        // If an existing slider is found, set its order to null and status to 0
-        if ($existingSlider && $existingSlider->id !== $slider->id) {
-            $existingSlider->update([
-                'order' => null,   // Set the order to null
-                'status' => 0      // Set the status to 0 (not published)
-            ]);
-        }
-    }
+			// If an existing slider is found, set its order to null and status to 0
+			if ($existingSlider && $existingSlider->id !== $slider->id) {
+				$existingSlider->update([
+					'order' => null,   // Set the order to null
+					'status' => 0      // Set the status to 0 (not published)
+				]);
+			}
+		}
 
-    // Generate a slug from the title
-    $slug = Str::slug($request->input('title'));
+		// Generate a slug from the title
+		$slug = Str::slug($request->input('title'));
 
-    // Check if the user wants to remove the image
-    if ($request->input('remove_image')) {
-        // Prevent saving the slider if the image is removed
-        return redirect()->back()->withErrors(['image' => 'Slider cannot be saved without an image.'])->withInput();
-    }
+		// Check if the user wants to remove the image
+		if ($request->input('remove_image')) {
+			// Prevent saving the slider if the image is removed
+			return redirect()->back()->withErrors(['image' => 'Slider cannot be saved without an image.'])->withInput();
+		}
 
-    // Check if a new image is uploaded
-    if ($request->hasFile('image')) {
-        // Delete the old image if it exists
-        $oldImagePath = storage_path('app/public/images/sliders/' . $slider->image);
-        if (file_exists($oldImagePath)) {
-            unlink($oldImagePath); // Delete the old image
-        }
+		// Check if a new image is uploaded
+		if ($request->hasFile('image')) {
+			// Delete the old image if it exists
+			$oldImagePath = storage_path('app/public/images/sliders/' . $slider->image);
+			if (file_exists($oldImagePath)) {
+				unlink($oldImagePath); // Delete the old image
+			}
 
-        // Get the new image file
-        $file = $request->file('image');
+			// Get the new image file
+			$file = $request->file('image');
 
-        // Generate unique filename using the slug
-        $filename = $slug . '.' . $file->getClientOriginalExtension();
+			// Generate unique filename using the slug
+			$filename = $slug . '.' . $file->getClientOriginalExtension();
 
-        // Save the new file to the storage/app/public/sliders directory
-        $path = $file->storeAs('public/images/sliders', $filename);
-        
-        // Update the slider with the new image name
-        $slider->image = basename($path);
-    } elseif ($slider->title !== $request->input('title')) {
-        // Rename the existing image if the title has changed
-        $oldImagePath = storage_path('app/public/images/sliders/' . $slider->image);
-        
-        // Generate the new image name based on the new slug
-        $newFilename = $slug . '.' . pathinfo($slider->image, PATHINFO_EXTENSION);
-        $newImagePath = storage_path('app/public/images/sliders/' . $newFilename);
+			// Save the new file to the storage/app/public/sliders directory
+			$path = $file->storeAs('public/images/sliders', $filename);
+			
+			// Update the slider with the new image name
+			$slider->image = basename($path);
+		} elseif ($slider->title !== $request->input('title')) {
+			// Rename the existing image if the title has changed
+			$oldImagePath = storage_path('app/public/images/sliders/' . $slider->image);
+			
+			// Generate the new image name based on the new slug
+			$newFilename = $slug . '.' . pathinfo($slider->image, PATHINFO_EXTENSION);
+			$newImagePath = storage_path('app/public/images/sliders/' . $newFilename);
 
-        // Rename the old image file
-        if (file_exists($oldImagePath)) {
-            rename($oldImagePath, $newImagePath); // Rename the old image
-        }
+			// Rename the old image file
+			if (file_exists($oldImagePath)) {
+				rename($oldImagePath, $newImagePath); // Rename the old image
+			}
 
-        // Update the slider with the new image name
-        $slider->image = $newFilename; // Update the slider image field
-    }
+			// Update the slider with the new image name
+			$slider->image = $newFilename; // Update the slider image field
+		}
 
-    // Update the slider details
-    $slider->title = $request->input('title');
-    $slider->order = $request->input('status') == 1 ? $request->input('order') : null; // Assign order only if status is 1
-    $slider->status = $request->input('status'); // Set status based on request
+		// Update the slider details
+		$slider->title = $request->input('title');
+		$slider->order = $request->input('status') == 1 ? $request->input('order') : null; // Assign order only if status is 1
+		$slider->status = $request->input('status'); // Set status based on request
 
-    // Save the updated slider
-    $slider->save();
+		// Save the updated slider
+		$slider->save();
 
-    return redirect()->route('sliders.index')->with('success', 'Slider updated successfully.');
-}
+		return redirect()->route('sliders.index')->with('success', 'Slider updated successfully.');
+	}
 
 
 

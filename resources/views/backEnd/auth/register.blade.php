@@ -28,6 +28,11 @@
 
                             <div class="card">
                                 <div class="card-body p-4">
+								@if(session('error'))
+									<div class="alert alert-danger">
+										{{ session('error') }}
+									</div>
+								@endif
                                     <div class="text-center mt-2">
                                         <h5>Register Account</h5>
                                         <p class="text-muted">Get your free Wings account now.</p>

@@ -78,6 +78,7 @@ class SslCommerzPaymentController extends Controller
             ]);
 
         $sslc = new SslCommerzNotification();
+		
         # initiate(Transaction Data , false: Redirect to SSLCOMMERZ gateway/ true: Show all the Payement gateway here )
         $payment_options = $sslc->makePayment($post_data, 'hosted');
 
@@ -90,7 +91,6 @@ class SslCommerzPaymentController extends Controller
 
     public function payViaAjax(Request $request)
     {
-
         # Here you have to receive all the order data to initate the payment.
         # Lets your oder trnsaction informations are saving in a table called "orders"
         # In orders table order uniq identity is "transaction_id","status" field contain status of the transaction, "amount" is the order amount to be paid and "currency" is for storing Site Currency which will be checked with paid currency.
@@ -234,7 +234,7 @@ class SslCommerzPaymentController extends Controller
         if ($order_details->status == 'Pending') {
             $update_product = DB::table('orders')
                 ->where('transaction_id', $tran_id)
-                ->update(['status' => 'Canceled']);
+                ->update(['status' => 'Cancelled']);
             echo "Transaction is Cancel";
         } else if ($order_details->status == 'Processing' || $order_details->status == 'Complete') {
             echo "Transaction is already Successful";

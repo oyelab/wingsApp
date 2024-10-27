@@ -12,10 +12,10 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-		'/success',
-		'/cancel',
-		'/fail',
-		'/ipn',
-		'/pay-via-ajax', // only required to run example codes. Please see bellow.
+		'/payment/success',  // Exempt this route from CSRF protection
+		'/payment/cancel',
+		'/payment/fail',
+		'/payment/ipn',
+		'/payment/pay-via-ajax', // only required to run example codes. Please see bellow.
     ];
 }

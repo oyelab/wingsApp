@@ -10,6 +10,8 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\SslCommerzPaymentController;
 use App\Http\Controllers\PathaoWebhookController;
 use App\Http\Controllers\AdminOrderController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\CustomerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,8 +51,6 @@ Route::get('/backEnd/x/{any}', [App\Http\Controllers\DashboardController::class,
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
 
-Route::post('/orders/status', [PathaoWebhookController::class, 'handleWebhook']);
-
 
 // Route::resource('orders', OrderController::class);
 
@@ -60,27 +60,32 @@ Route::get('/collections/{category:slug}/{product:slug}', [HomeController::class
 Route::get('/collections/{category:slug}', [HomeController::class, 'showCategory'])->name('category.products');
 
 
+// Route::get('/checkout',  function () {
+//     return view('test.success');
+// });
+Route::get('/checkout', [PaymentController::class, 'checkout']);
+
+Route::post('/checkout', [PaymentController::class, 'processCheckout'])->name('process.Checkout');  // Handle form submission
+
+Route::post('/payment/success', [PaymentController::class, 'paymentSuccess'])->name('payment.success'); // Added POST support
+
+Route::post('/payment/fail', [PaymentController::class, 'paymentFail'])->name('payment.fail');
+Route::post('/payment/cancel', [PaymentController::class, 'paymentCancel'])->name('payment.cancel');
+Route::post('/payment/ipn', [PaymentController::class, 'paymentIpn'])->name('payment.ipn');  // For IPN (Instant Payment Notification)
+
+
+
 Route::get('/cart', [OrderController::class, 'index'])->name('cart.view');
-Route::post('/cart/add', [OrderController::class, 'add'])->name('cart.add');
-Route::post('/cart/update', [OrderController::class, 'update'])->name('cart.update');
-Route::get('/cart/remove/{key}', [OrderController::class, 'remove'])->name('cart.remove');
+Route::get('/order/{order:ref}/success', [OrderController::class, 'orderPlaced'])->name('order.placed')->middleware('checkOrderAccess');
 
-Route::get('/checkout', [OrderController::class, 'showCheckout'])->name('checkout');
-Route::post('/checkout/process', [OrderController::class, 'checkout.process'])->name('checkout.process');
+Route::post('/customerRegister', [CustomerController::class, 'customerRegister'])->name('customer.register');
 
-// SSLCOMMERZ Start
-Route::get('/example1', [SslCommerzPaymentController::class, 'exampleEasyCheckout']);
-Route::get('/example2', [SslCommerzPaymentController::class, 'exampleHostedCheckout']);
+// Route::post('/cart/add', [OrderController::class, 'add'])->name('cart.add');
+// Route::post('/cart/update', [OrderController::class, 'update'])->name('cart.update');
+// Route::get('/cart/remove/{key}', [OrderController::class, 'remove'])->name('cart.remove');
 
-Route::post('/pay', [SslCommerzPaymentController::class, 'index']);
-Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);
-
-Route::post('/success', [SslCommerzPaymentController::class, 'success']);
-Route::post('/fail', [SslCommerzPaymentController::class, 'fail']);
-Route::post('/cancel', [SslCommerzPaymentController::class, 'cancel']);
-
-Route::post('/ipn', [SslCommerzPaymentController::class, 'ipn']);
-//SSLCOMMERZ END
+// Route::get('/checkout', [OrderController::class, 'showCheckout'])->name('checkout');
+// Route::post('/checkout/process', [OrderController::class, 'checkout.process'])->name('checkout.process');
 
 
 

@@ -98,9 +98,9 @@
 						<table id="orders-table" class="table table-striped table-bordered" style="width:100%">
 							<thead>
 								<tr>
-									<th>ID</th>
+									<th>Ref</th>
 									<th>Date</th>
-									<th>Customer Info</th>
+									<th>Customer Id</th>
 									<th>Product Info</th>
 									<th>Delivery Method</th>
 									<th>Total Bill</th>

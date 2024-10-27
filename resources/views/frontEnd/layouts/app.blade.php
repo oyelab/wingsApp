@@ -97,9 +97,7 @@
 		</header>
 
 		@yield('content')
-		
-		@include('frontEnd.layouts.vendor-scripts')
-		
+
 		<!-- Need Assistance -->
 		<div class="need-assistance-area text-center">
 			<div class="container">
@@ -242,5 +240,7 @@
 				</div>
 			</div>
 		</footer>
+		
+		@include('frontEnd.layouts.vendor-scripts')
 	</body>
 </html>
