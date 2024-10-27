@@ -78,8 +78,6 @@ Route::post('/payment/ipn', [PaymentController::class, 'paymentIpn'])->name('pay
 Route::get('/cart', [OrderController::class, 'index'])->name('cart.view');
 Route::get('/order/{order:ref}/success', [OrderController::class, 'orderPlaced'])->name('order.placed')->middleware('checkOrderAccess');
 
-Route::post('/customerRegister', [CustomerController::class, 'customerRegister'])->name('customer.register');
-
 // Route::post('/cart/add', [OrderController::class, 'add'])->name('cart.add');
 // Route::post('/cart/update', [OrderController::class, 'update'])->name('cart.update');
 // Route::get('/cart/remove/{key}', [OrderController::class, 'remove'])->name('cart.remove');

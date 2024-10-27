@@ -93,14 +93,14 @@ class PaymentController extends Controller
 
 		// return $products;
 
-		$customerId = auth()->check() ? auth()->user()->id : null;
+		$userId = auth()->check() ? auth()->user()->id : null;
 
 
 
 		// Create the order
 		$order = Order::create([
 			'ref' => $tran_id,
-			'user_id' => $customerId, // Set customer_id or keep it null
+			'user_id' => $userId, // Set customer_id or keep it null
 			'name' => $validated['name'],
 			'email' => $validated['email'],
 			'phone' => $validated['phone'],
