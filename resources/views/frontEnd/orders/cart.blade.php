@@ -1,131 +1,125 @@
-@extends('layouts.app')
+@extends('frontEnd.layouts.app')
 
 @section('content')
+<div class="container my-5">
+    <h2 class="mb-4">Shopping Cart</h2>
 
-<div class="container mt-5">
-    <h1 class="text-center">Your Cart</h1>
+    <div class="row">
+        <!-- Cart Items -->
+        <div class="table-responsive col-md-8">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Size</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+					@php
+						$subtotal = 0; // Sum of regular prices (without sale)
+						$totalDiscount = 0; // Total discount amount
+					@endphp
+					@foreach($cartItems as $index => $item)
+						@php
+							// Calculate line totals
+							$regularPriceTotal = $item['price'] * $item['quantity'];
+							$discountedPriceTotal = $item['salePrice'] * $item['quantity'];
 
-    @if($cartItems->isNotEmpty())
-        <form action="{{ route('cart.update') }}" method="POST">
-            @csrf
-            <table class="table table-bordered">
-				<thead>
-					<tr>
-						<th>Product</th>
-						<th>Size</th>
-						<th>Quantity</th>
-						<th>Unit Price</th>
-						<th>Total Price</th>
-						<th>Action</th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach($cartItems as $key => $cartItem)
+							// Update subtotal and total discount
+							$subtotal += $regularPriceTotal;
+							$totalDiscount += $regularPriceTotal - $discountedPriceTotal;
+						@endphp
 						<tr>
-							<td>{{ $cartItem['product']->title }}</td>
-							<td>{{ $cartItem['size']->name }}</td>
-							<td>
-								<input type="hidden" name="cart[{{ $key }}][product_id]" value="{{ $cartItem['product']->id }}">
-								<input type="hidden" name="cart[{{ $key }}][size_id]" value="{{ $cartItem['size']->id }}">
-								<input type="hidden" name="cart[{{ $key }}][size]" value="{{ $cartItem['size']->name }}">
-								<input type="number" name="cart[{{ $key }}][quantity]" 
-									value="{{ $cartItem['quantity'] }}" 
-									min="1" 
-									max="{{ $cartItem['availableQuantity'] }}" 
-									class="form-control quantity-input" 
-									data-available-quantity="{{ $cartItem['availableQuantity'] }}" 
-									required>
+							<td>{{ $item['title'] }}</td>
+							<td>{{ $item['size_name'] }}</td>
+							<td>{{ $item['categories'] }}</td>
+							
+							<!-- Price Column: Show both regular and sale price if discounted -->
+							<td class="col-2">
+								@if(isset($item['sale']))
+									<span class="text-decoration-line-through text-muted">৳ {{ $item['price'] }}</span>
+
+									<span>৳ {{ $item['salePrice'] }}</span>
+								@else
+									<span>৳ {{ $item['price'] }}</span>
+								@endif
 							</td>
-							<td>Tk {{ number_format($cartItem['unitPrice'], 2) }}</td>
-							<td class="total-price" data-raw-total="{{ $cartItem['totalPrice'] }}">
-								Tk {{ number_format($cartItem['totalPrice'], 2) }}
+							
+							<!-- Quantity with Buttons -->
+							<td class="col-2">
+								<button onclick="updateQuantity({{ $index }}, -1)" class="btn btn-secondary btn-sm">-</button>
+								<span class="mx-2">{{ $item['quantity'] }}</span>
+								<button onclick="updateQuantity({{ $index }}, 1)" class="btn btn-secondary btn-sm">+</button>
 							</td>
+
+							<!-- Total Column: Show both regular and sale total if discounted -->
+							<td class="col-2">
+								@if($item['salePrice'] < $item['price'])
+									<span class="text-decoration-line-through text-muted">৳ {{ number_format($regularPriceTotal, 2) }}</span>
+									<br>
+									<span>৳ {{ number_format(floor($discountedPriceTotal ), 2, '.') }}</span>
+								@else
+									৳ {{ number_format($regularPriceTotal, 2) }}
+								@endif
+							</td>
+
+							<!-- Actions -->
 							<td>
-								<a href="{{ route('cart.remove', $key) }}" class="btn btn-danger">Remove</a>
+								<button onclick="removeFromCart({{ $index }})" class="btn btn-danger btn-sm">Remove</button>
 							</td>
 						</tr>
 					@endforeach
 				</tbody>
-			</table>
 
+            </table>
+        </div>
 
-            <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
-        </form>
-
-    @else
-        <p class="text-center">Your cart is empty.</p>
-    @endif
+        <!-- Summary Section -->
+        <div class="col-md-4">
+            <h4>Summary</h4>
+            <p>Subtotal: ৳ {{ number_format($subtotal, 2) }}</p>
+            <p>Discount: {{ $totalDiscount ? '৳ ' . number_format($totalDiscount, 2) : 'N/A' }}</p>
+            <p class="fw-bold">Total (without shipping): ৳ {{ number_format($subtotal - $totalDiscount, 2) }}</p>
+            
+			<!-- Button to Proceed to Checkout -->
+    		<a href="{{ route('checkout.show') }}" class="btn btn-primary w-100 mt-4">Proceed to Checkout</a>
+        </div>
+    </div>
 </div>
 
-@endsection
-
-@section('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const quantityInputs = document.querySelectorAll('.quantity-input');
-        const grandTotalElement = document.getElementById('grand-total');
-
-        function updateTotalPrice() {
-			let grandTotal = 0;
-			quantityInputs.forEach(input => {
-				const row = input.closest('tr'); // Get the closest table row
-				const unitPrice = parseFloat(row.querySelector('td:nth-child(4)').textContent.replace(/Tk|\s/g, '').trim()); // Get the unit price, removing 'Tk' and whitespace
-				const quantity = parseInt(input.value) || 0; // Get the quantity or default to 0
-				const totalPrice = unitPrice * quantity; // Calculate total price for this row
-
-				// Update the total price in the table for the specific row
-				row.querySelector('.total-price').textContent = `Tk ${totalPrice.toFixed(2)}`;
-
-				// Update grand total
-				grandTotal += totalPrice;
-			});
-
-			// Update the grand total display, ensuring the element exists
-			const grandTotalElement = document.getElementById('grand-total');
-			if (grandTotalElement) {
-				grandTotalElement.textContent = `Tk ${grandTotal.toFixed(2)}`;
-			}
-		}
-
-		// Attach event listeners to update total price on input change
-		document.addEventListener('DOMContentLoaded', function () {
-			const quantityInputs = document.querySelectorAll('.quantity-input');
-			
-			// Attach input event listeners to each quantity input
-			quantityInputs.forEach(input => {
-				input.addEventListener('input', updateTotalPrice); // Call updateTotalPrice on input change
-			});
-
-			// Initial calculation of total price
-			updateTotalPrice();
-		});
-
-        // Attach change event to each quantity input
-        quantityInputs.forEach(input => {
-            const availableQuantity = parseInt(input.dataset.availableQuantity);
-            input.setAttribute('max', availableQuantity); // Set max attribute based on available quantity
-
-            input.addEventListener('input', function () {
-                let quantity = parseInt(this.value);
-
-                // Validate quantity input
-                if (quantity < 1) {
-                    this.value = 1; // Minimum quantity should be 1
-                    alert(`Quantity cannot be less than 1.`);
-                } else if (quantity > availableQuantity) {
-                    this.value = availableQuantity; // Cannot exceed available quantity
-                    alert(`You can only select up to ${availableQuantity} for this size.`);
-                } else if (quantity > 10) {
-                    this.value = 10; // Cannot exceed max limit of 10
-                    alert(`You can only select up to 10 for this item.`);
-                }
-
-                updateTotalPrice();
-            });
+    // Update Quantity AJAX
+    function updateQuantity(index, amount) {
+        $.ajax({
+            url: `/cart/update/${index}`,
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                amount: amount
+            },
+            success: function(response) {
+                location.reload(); // Reload the page to update cart
+            }
         });
+    }
 
-        // Initial calculation of total price
-        updateTotalPrice();
-    });
+    // Remove Item AJAX
+    function removeFromCart(index) {
+        $.ajax({
+            url: `/cart/remove/${index}`,
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                location.reload(); // Reload the page to update cart
+            }
+        });
+    }
 </script>
 @endsection

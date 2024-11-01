@@ -18,6 +18,7 @@ class Order extends Model
         'address',
 		'amount',
 		'status',
+		'terms',
     ];
 
 	public function transactions()
@@ -25,11 +26,15 @@ class Order extends Model
 		return $this->hasMany(Transaction::class);
 	}
 
+	// In your Order model
 	public function products()
+	{
+		return $this->belongsToMany(Product::class)
+					->withPivot('size_id', 'quantity'); // Ensure pivot fields are included
+	}
+	public function delivery()
     {
-        return $this->belongsToMany(Product::class)
-                    ->withPivot('size_id', 'quantity')
-                    ->withTimestamps();
+        return $this->hasOne(Delivery::class);
     }
 
 }

@@ -3,7 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\AdminOrder;
+use App\Models\Order;
+use App\Models\Delivery;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\Size;
+
+
 
 class AdminOrderController extends Controller
 {
@@ -12,8 +18,21 @@ class AdminOrderController extends Controller
      */
     public function index()
     {
-		
-        return view('backEnd.orders.index');
+		$orders = Order::with(['transactions', 'products', 'delivery'])->latest()->get();
+		// return $orders;
+
+		// Iterate over each order to perform the calculations for each transaction
+		foreach ($orders as $order) {
+			foreach ($order->transactions as $transaction) {
+				// Calculate the unpaid amount and add it to each transaction instance
+				$transaction->unpaid = ($transaction->order_total + $transaction->shipping_charge) - $transaction->amount;
+			}
+		}
+
+		return view('backEnd.orders.index', [
+			'orders' => $orders,
+		]);
+
     }
 
     /**
@@ -29,62 +48,100 @@ class AdminOrderController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the request
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:20',
-            'delivery_method' => 'required|string|in:cod,online_payment',
-            'courier_charge' => 'nullable|numeric', // only applicable for COD
-            'total_amount' => 'required|numeric',
-            'payment_method' => 'required|string|in:sslcommerz,cod',
-        ]);
-
-        // Handle conditional fields based on delivery method
-        $courierCharge = $request->input('delivery_method') === 'cod' ? $request->input('courier_charge', 0) : 0;
-
-        // Create the order
-        $order = new AdminOrder();
-        $order->name = $validatedData['name'];
-        $order->address = $validatedData['address'];
-        $order->email = $validatedData['email'];
-        $order->phone = $validatedData['phone'];
-        $order->delivery_method = $validatedData['delivery_method'];
-        $order->courier_charge = $courierCharge;
-        $order->total_amount = $validatedData['total_amount'];
-        $order->payment_method = $validatedData['payment_method'];
-
-        // Save the order to the database
-        $order->save();
-
-        // Redirect to a success page or return a response
-        return redirect()->route('order.success')->with('success', 'Your order has been successfully placed!');
+       
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(AdminOrder $adminOrder)
+    public function show($orderId)
     {
-        //
+		$order = Order::with(['products' => function ($query) {
+			$query->withPivot('size_id', 'quantity');
+		}])->findOrFail($orderId);
+
+		$sizes = Size::all(); // Get all available sizes
+	
+		return response()->json(['order' => $order, 'sizes' => $sizes]);
+
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(AdminOrder $adminOrder)
-    {
-        //
-    }
+    public function edit($orderId)
+	{
+		// Fetch the order with related transactions and products
+		$order = Order::with(['transactions', 'products' => function ($query) {
+			$query->withPivot('size_id', 'quantity'); // Include pivot data
+		}])->findOrFail($orderId);
+
+		$delivery = Delivery::where('order_id', $orderId)->first();
+
+		// Organize quantities specific to this order by product and size
+		$productQuantities = [];
+		$totalQuantity = 0; // Variable to store the total quantity
+
+		foreach ($order->products as $product) {
+			$productId = $product->id;
+			$sizeId = $product->pivot->size_id;
+			$quantity = $product->pivot->quantity;
+
+			// Initialize array for product ID if not already set
+			if (!isset($productQuantities[$productId])) {
+				$productQuantities[$productId] = [];
+			}
+
+			// Store the quantity per size
+			$productQuantities[$productId][$sizeId] = $quantity;
+
+			// Accumulate the total quantity
+			$totalQuantity += $quantity;
+		}
+
+		// Access the first transaction related to the order (assuming it's a single transaction per order)
+		$transaction = $order->transactions->first();
+
+		// Calculate the unpaid amount if the transaction exists
+		if ($transaction) {
+			$transaction->unpaid = ($transaction->order_total + $transaction->shipping_charge) - $transaction->amount;
+		}
+
+		// return $totalQuantity;
+
+		return view('backEnd.orders.delivery', [
+			'order' => $order,
+			'totalQuantity' => $totalQuantity, // Pass the total quantity to the view
+			'transaction' => $transaction, // Pass the total quantity to the view
+			'delivery' => $delivery, // Pass the total quantity to the view
+		]);
+	}
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, AdminOrder $adminOrder)
-    {
-        //
-    }
+	public function update(Request $request)
+	{
+		dd($request);
+
+		return $request;
+		// $productsData = $request->input('products');
+		// return $productsData;
+
+
+
+		// Find the order by ID
+		$order = Order::findOrFail($orderId);
+
+		return $order;
+
+		// Update order status
+		$order->status = $request->status;
+		$order->save();
+
+		return response()->json(['success' => true, 'order' => $order]);
+	}
 
     /**
      * Remove the specified resource from storage.
@@ -93,4 +150,45 @@ class AdminOrderController extends Controller
     {
         //
     }
+
+	// In your controller
+	
+
+	public function updateOrderProduct(Request $request)
+	{
+		return $request;
+		// Validate incoming request
+		$request->validate([
+			'product_id' => 'required|integer',
+			'size_id' => 'required|integer',
+			'quantity' => 'required|integer|min:0',
+		]);
+
+		// Find the order you want to update (assuming you have an order_id from the session or request)
+		$orderId = session('order_id'); // Adjust based on how you handle orders
+
+		// Update the quantity in the pivot table
+		$order = Order::find($orderId);
+		$order->products()->updateExistingPivot(
+			$request->product_id,
+			['size_id' => $request->size_id, 'quantity' => $request->quantity]
+		);
+
+		return response()->json(['message' => 'Order product updated successfully.']);
+	}
+
+	public function deleteOrderProduct($productId, $sizeId)
+	{
+		// Find the order you want to delete from (assuming you have an order_id from the session or request)
+		$orderId = session('order_id'); // Adjust based on how you handle orders
+
+		// Remove the product from the order
+		$order = Order::find($orderId);
+		$order->products()->detach($productId, ['size_id' => $sizeId]);
+
+		return response()->json(['message' => 'Order product deleted successfully.']);
+	}
+
+
+
 }

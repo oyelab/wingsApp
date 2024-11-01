@@ -8,42 +8,59 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Quantity;
+use App\Models\Size;
 use App\Models\Transaction;
 use App\Models\Category;
 use App\Library\SslCommerz\SslCommerzNotification;
 use Illuminate\Support\Str;
+use Session;
 
 
 
 class PaymentController extends Controller
 {
-	private $products;
-
-    public function __construct()
-    {
-        // Initialize the products array
-        $this->products = [
-            ['id' => 68, 'size_id' => 1, 'quantity' => 5],
-            ['id' => 68, 'size_id' => 1, 'quantity' => 5],
-            ['id' => 69, 'size_id' => 4, 'quantity' => 5],
-            ['id' => 69, 'size_id' => 5, 'quantity' => 10],
-            // Add more products as needed
-        ];
-    }
-	
-	public function checkout()
+	public function showCheckout()
 	{
+		// Get cart items from session
+		$cartItems = collect(Session::get('cart', []));
+		// return $cartItems;
+		
+		// Load additional product and size details for each item
+		$cartItems = $cartItems->map(function($item) {
+			$product = Product::with('categories')->find($item['product_id']);
+			$size = Size::find($item['size_id']);
 
-		return view('test.checkout', [
-		]);
+			// Ensure product and size exist
+			if ($product && $size) {
+				return array_merge($item, [
+					'title' => $product->title,
+					'price' => $product->price,
+					'sale' => $product->sale,
+					'salePrice' => $product->offer_price,
+					'categories' => $product->categories->pluck('title')->implode(', '),
+					'size_name' => $size->name,
+				]);
+			}
+			return $item;
+		});
+
+		// Check if the cart is empty
+		if ($cartItems->isEmpty()) {
+			return redirect('/')->with('alert', [
+				'type' => 'warning',
+				'message' => 'Your cart is empty. Please add some products to continue shopping.'
+			]);
+		}
+
+		return view('frontEnd.orders.checkout', compact('cartItems'));
 	}
+
 
 	public function processCheckout(Request $request)
     {
-		$tran_id = 'ws' . substr(Str::uuid()->toString(), 0, 8);
+		// return $request;
 
-		// Get the selected location value
-		$location = $request->input('location');
+		$tran_id = 'ws' . substr(Str::uuid()->toString(), 0, 8);
 
         // Validate the request data
         $validated = $request->validate([
@@ -52,36 +69,42 @@ class PaymentController extends Controller
             'phone' => 'required|string|max:15',
             'address' => 'required|string|max:255',
             'payment_method' => 'required|in:COD,Full Payment', // Ensure it matches your form values
+			'terms' => 'accepted',
+			'recipient_city' => 'required|numeric',
+			'recipient_zone' => 'required|numeric',
+			'recipient_area' => 'nullable|numeric',
         ]);
 
-		// Directly define the products array with sizes and quantities
-		$products = [
-			['id' => 68, 'size_id' => 1, 'quantity' => 5], // Product ID 1, Size ID 2, Quantity 3
-			['id' => 68, 'size_id' => 1, 'quantity' => 5], // Product ID 2, Size ID 1, Quantity 1
-			['id' => 69, 'size_id' => 4, 'quantity' => 5], // Product ID 1, Size ID 2, Quantity 3
-			['id' => 69, 'size_id' => 5, 'quantity' => 10], // Product ID 2, Size ID 1, Quantity 1
-			// Add more products as needed
-		];
-
-
-
 		// Calculate delivery charge based on location
-    	$shipping_charge = ($location === 'inside') ? 60 : 120;
+    	$shipping_charge = $request->input('shipping_charge');
 	
 		// Calculate the base fair (total amount before discount)
-		$base_fair = collect($products)->sum(function ($product) {
+		$base_fair = collect($request->products)->sum(function ($product) {
 			$productDetails = Product::find($product['id']);
-			return $productDetails->price * $product['quantity'];
+			return (float)$productDetails->price * (int)$product['quantity'];
 		});
 
+		$base_fair = number_format($base_fair, 2, '.', ''); // Ensures 2 decimal places
+
+		// return $base_fair;
+
 		// Calculate total discount based on the `sale` field in the products table
-		$discount_amount = collect($products)->sum(function ($product) {
-			$productDetails = Product::find($product['id']);
-			return ($productDetails->price * $product['quantity']) * ($productDetails->sale / 100);
+		$discount_amount = collect($request->products)->sum(function ($productData) {
+			// Find the product by ID
+			$product = Product::find($productData['id']);
+			
+			// Check if the product exists and call the calculateDiscount method
+			return $product ? $product->calculateDiscount($productData['quantity']) : 0;
 		});
+
+		$discount_amount = number_format($discount_amount, 2, '.', ''); // This will return a string
 
 		// Calculate the subtotal after discount
 		$order_total = $base_fair - $discount_amount; // Calculate subtotal
+
+		$order_total = number_format($order_total, 2, '.', '');
+
+		// return $order_total;
 
 		// dd($shipping_charge);
 
@@ -91,11 +114,9 @@ class PaymentController extends Controller
 		// Set total based on the payment method
 		$total = ($payment_method === 'COD') ? $shipping_charge : ($order_total + $shipping_charge);
 
-		// return $products;
+		// return $total;
 
 		$userId = auth()->check() ? auth()->user()->id : null;
-
-
 
 		// Create the order
 		$order = Order::create([
@@ -105,8 +126,11 @@ class PaymentController extends Controller
 			'email' => $validated['email'],
 			'phone' => $validated['phone'],
 			'address' => $validated['address'],
+			'terms' => true, // You can directly set it as true since it's validated
 			'status' => 0, // Set order status as Pending initially
 		]);
+
+		// return $order;
 
 
 		// Create the transaction data
@@ -124,12 +148,25 @@ class PaymentController extends Controller
 		$order->transactions()->create($transaction_data);
 
 	
-		foreach ($products as $product) {
+		foreach ($request->products as $product) {
 			$productId = $product['id'];
 			$sizeId = $product['size_id'];
 			$quantityToOrder = $product['quantity'];
 		
-			// Attach product to order
+			// Fetch the current stock level for the product and size
+			$currentStock = Quantity::where('product_id', $productId)
+				->where('size_id', $sizeId)
+				->value('quantity');
+		
+			// Check if the requested quantity is available
+			if ($currentStock < $quantityToOrder) {
+				// If not enough stock, handle the error (e.g., return an error response)
+				return redirect()->back()->withErrors([
+					'stock' => "The quantity for product ID $productId and size ID $sizeId is insufficient. Only $currentStock items are available.",
+				]);
+			}
+		
+			// If sufficient stock, proceed to attach the product to the order
 			$order->products()->attach($productId, [
 				'size_id' => $sizeId,
 				'quantity' => $quantityToOrder,
@@ -140,6 +177,24 @@ class PaymentController extends Controller
 				->where('size_id', $sizeId)
 				->decrement('quantity', $quantityToOrder);
 		}
+		
+		// Prepare delivery data
+		$delivery_data = [
+			'order_id' => $order->id,
+			'order_ref' => $tran_id,
+			'delivery_fee' => $shipping_charge,
+			'recipient_city' => $validated['recipient_city'],
+			'recipient_zone' => $validated['recipient_zone'],
+			'recipient_area' => $validated['recipient_area'],
+			'order_status' => "Pending", // Initial status, set as needed (e.g., Pending)
+		];
+
+		// return $delivery_data;
+
+		// Save delivery information
+		$order->delivery()->create($delivery_data); // Using the relationship to create the delivery
+
+		// return $order;
 
 		$productNames = collect();
 		$productCategories = collect();
@@ -188,6 +243,8 @@ class PaymentController extends Controller
 
 	public function paymentSuccess(Request $request)
 	{
+		// return $request;
+
 		$sslc = new SslCommerzNotification();
 	
 		// Retrieve order details with related transactions using Eloquent
@@ -273,99 +330,14 @@ class PaymentController extends Controller
 		// return $message;
 		// return $order_details;
 
+		// Clear the cart session
+		session()->forget('cart'); // Replace 'cart' with the actual name of your cart session if it's different
+
 		session(['order_ref' => $order_details->ref]);
 
 		return redirect()->route('order.placed', ['order' => $order_details->ref])->with('message', $message);
 	}
-
-	public function xpaymentSuccess()
-	{
-		// Retrieve unique products related to the order and prepare image paths
-		$order_items = $order_details->products->unique('id')->map(function($product) {
-			$imagePath = 'images/products/' . json_decode($product->images)[0] ?? 'default.jpg'; // Get the first image or default
 	
-			// Get size name via the pivot relationship
-			$sizeName = $product->sizes->firstWhere('id', $product->pivot->size_id)->name ?? 'N/A';
-	
-			return [
-				'id' => $product->id,
-				'title' => $product->title,
-				'price' => $product->price,
-				'sale' => $product->sale ? $product->price * (1 - $product->sale / 100) : $product->price,
-				'categories' => $product->categories->pluck('title')->unique()->implode(', '), // Unique categories
-				'size' => $sizeName, // Assuming 'size_id' is in the pivot
-				'quantity' => $product->pivot->quantity, // Assuming 'quantity' is in the pivot
-				'imagePath' => $imagePath,
-			];
-		});
-
-		// return $order_details;
-
-		$order_details->tran_date = $request->tran_date;
-
-		// $orderId = $order_details->id;
-		// $order_details = Order::with('transactions')->findOrFail($orderId);
-		
-		
-
-		// Initialize total discount and product total
-		$total_discount = 0;
-		$product_total = 0;
-
-		// Iterate through each product in the order
-		foreach ($order_details->products as $product) {
-			// Get the quantity from the pivot table
-			$quantity = $product->pivot->quantity;
-			
-			// Get the product price
-			$product_price = $product->price; // Assuming 'price' is the product's price
-			
-			// Calculate the total amount for this product without discount
-			$product_total += $product_price * $quantity;
-
-			// Get the discount percentage for the product
-			$discount_percentage = $product->sale; // Assuming 'sale' is the discount percentage
-
-			// Calculate the discount for this product if it has a discount
-			if ($discount_percentage > 0) {
-				// Calculate the discount amount
-				$discount_amount = ($product_price * $discount_percentage / 100) * $quantity;
-
-				// Add to total discount
-				$total_discount += $discount_amount;
-			}
-		}
-
-		// Now $total_discount contains the overall discount for the order
-		// $product_total contains the total amount for all products without discounts
-
-
-		// return $total_discount;
-		$order_details->subtotal = $product_total;
-		$order_details->discount = $total_discount;
-		$order_details->shipping_charge = $order_details->transactions->first()->shipping_charge;
-
-		$order_details->order_total = $product_total - $total_discount + $order_details->shipping_charge;
-		$order_details->paid = $request->amount;
-		$order_details->unpaid_amount = $order_details->order_total - $order_details->paid;
-
-		// return $order_details->shipping_charge;
-		
-		// Check if the user is signed up
-		$userSignedUp = auth()->check(); // Check if the user is logged in
-	
-		// Pass order details and products to the view
-		return view('test.success', [
-			'order_details' => $order_details,
-			'order_items' => $order_items,
-			'message' => $message, // Pass the message to the view
-			'userSignedUp' => $userSignedUp,
-		]);
-	}
-	
-	
-
-
     public function paymentFail(Request $request)
 	{
 		$tran_id = $request->input('tran_id');

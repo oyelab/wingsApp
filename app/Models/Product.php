@@ -63,5 +63,25 @@ class Product extends Model
 		// Return an empty collection if no valid specifications are found
 		return collect();
 	}
+
+	public function orders()
+	{
+		return $this->belongsToMany(Order::class)
+					->withPivot('size_id', 'quantity')
+					->withTimestamps();
+	}
+
+	public function getOfferPriceAttribute()
+	{
+		return number_format(floor($this->price - ($this->price * $this->sale / 100)), 2, '.', '');
+	}
+
+	// Calculate discount for a given quantity
+    public function calculateDiscount($quantity)
+    {
+        // Calculate the discount amount based on the offer price
+        $offerPrice = $this->getOfferPriceAttribute();
+        return ($this->price * $quantity) - ($offerPrice * $quantity);
+    }
 	
 }

@@ -14,18 +14,21 @@ class HomeController extends Controller
 {
 	public function show(Category $category, Product $product)
 	{
-		// Calculate the sale price if there is a discount (sale percentage > 0)
+		// Calculate the sale price only if there is a discount
 		$salePrice = $product->sale > 0 
 			? $product->price - ($product->price * ($product->sale / 100)) 
-			: $product->price;
+			: null;
 
-		// Attach the sale price directly to the product instance
+		// Attach the sale price and images directly to the product instance
 		$product->salePrice = $salePrice;
+
+		// Decode and attach images
+		$images = json_decode($product->images, true);
+		$product->imagePaths = array_map(fn($image) => 'images/products/' . $image, $images);
 
 		// Eager load the sizes relation (only available sizes)
 		$product->load('availableSizes');
-
-		// return $product;
+		$product->load('categories');
 
 		// Return the view with the category and product
 		return view('frontEnd.products.show', compact('category', 'product'));

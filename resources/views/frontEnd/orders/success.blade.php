@@ -116,7 +116,7 @@
 				</div>
 				<div class="subtotal-values">
 					<p>Tk. {{ $order_details->subtotal }}</p>
-					<p>Tk. -{{$order_details->discount}}</p>
+					<p>{{ $order_details->discount ? '৳' . $order_details->discount : 'N/A' }}</p>
 					<p>Tk. {{ $order_details->shipping_charge }}</p>
 				</div>
 			</div>

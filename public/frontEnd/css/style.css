@@ -1064,6 +1064,11 @@ a {
 	height: 25px;
 }
 
+.disabled {
+    pointer-events: none; /* Prevents click events */
+    color: gray; /* Change color to indicate it's disabled */
+}
+
 /*---------------------------------
 	 Responsive css start
   ---------------------------------*/

@@ -3,7 +3,7 @@
 
     <!-- LOGO -->
     <div class="navbar-brand-box">
-        <a href="index" class="logo logo-dark">
+        <a href="{{ route('dashboard') }}" class="logo logo-dark">
             <span class="logo-sm">
                 <img src="{{ asset('build/images/logo-dark-sm.png') }}" alt="" height="26">
             </span>
@@ -12,7 +12,7 @@
             </span>
         </a>
 
-        <a href="index" class="logo logo-light">
+        <a href="{{ route('dashboard') }}" class="logo logo-light">
             <span class="logo-lg">
                 <img src="{{ asset('build/images/logo-light.svg') }}" alt="" height="30">
             </span>
@@ -32,19 +32,6 @@
         <div id="sidebar-menu">
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
-                <li class="menu-title" data-key="t-menu">Dashboard</li>
-
-               <li>
-                    <a href="javascript: void(0);">
-                        <i class="bx bx-home-alt icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-dashboard">Dashboard</span>
-                        <span class="badge rounded-pill bg-primary">2</span>
-                    </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="index" data-key="t-ecommerce">Ecommerce</a></li>
-                        <li><a href="dashboard-sales" data-key="t-sales">Sales</a></li>
-                    </ul>
-                </li>
 
                 <li class="menu-title" data-key="t-applications">Applications</li>
                 <li>
@@ -60,6 +47,12 @@
                         <li><a href="{{ route('products.create') }}" data-key="t-add-product">Add Product</a></li>
                     </ul>
                 </li>
+				<li>
+                    <a href="{{ route('orders.index') }}">
+						<i class="bx bx-box icon nav-icon"></i>
+                        <span class="menu-item" data-key="t-order">Orders</span>
+                    </a>
+                </li>
                 <li>
                     <a href="javascript: void(0);" class="has-arrow">
                         <i class="bx bx-envelope icon nav-icon"></i>
@@ -70,6 +63,21 @@
                         <li><a href="email-read" data-key="t-read-email">Read Email</a></li>
                     </ul>
                 </li>
+
+				<li class="menu-title" data-key="t-menu">Dashboard</li>
+
+				<li>
+					<a href="javascript: void(0);">
+						<i class="bx bx-home-alt icon nav-icon"></i>
+						<span class="menu-item" data-key="t-dashboard">Dashboard</span>
+						<span class="badge rounded-pill bg-primary">2</span>
+					</a>
+					<ul class="sub-menu" aria-expanded="false">
+						<li><a href="index" data-key="t-ecommerce">Ecommerce</a></li>
+						<li><a href="dashboard-sales" data-key="t-sales">Sales</a></li>
+					</ul>
+				</li>
+
 
                 <li>
                     <a href="apps-calendar">

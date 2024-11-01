@@ -92,6 +92,22 @@
 
         <div class="row">
             <div class="col-12">
+				@if(session('response'))
+					<div class="alert alert-{{ session('response')['type'] ?? 'info' }} alert-dismissible fade show" role="alert">
+						{{-- Display the main message --}}
+						<strong>{{ session('response')['message'] }}</strong><br>
+
+						{{-- Display additional data from the response --}}
+						<ul>
+							@foreach(session('response')['data'] as $key => $value)
+								<li><strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}</li>
+							@endforeach
+						</ul>
+
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>
+				@endif
+
                 <div class="card">
                     <div class="card-body">
 						<!-- DataTable -->
@@ -100,44 +116,90 @@
 								<tr>
 									<th>Ref</th>
 									<th>Date</th>
-									<th>Customer Id</th>
-									<th>Product Info</th>
-									<th>Delivery Method</th>
-									<th>Total Bill</th>
-									<th>Payment Status</th>
-									<th>Order Status</th>
+									<th>Customer</th>
+									<th>Product</th>
+									<th>Shipping (Pathao)</th>
+									<th>Payments</th>
+									<th>Status</th>
 									<th>Action</th>
 								</tr>
 							</thead>
 							<tbody>
+								@foreach ($orders as $order)
 								<tr>
-									<td>#WS2453</td>
-									<td>12 Dec 24 12:00 AM</td>
+									
+									<td>{{ $order->ref }}</td>
+									<td>
+										@foreach ($order->transactions as $transaction)
+											{{ $transaction->tran_date }}
+										@endforeach
+									</td>
 									<td>
 										<ul class="list-unstyled mb-0">
-											<li>Faisal Hasan</li>
-											<li>01710541719</li>
-											<li>Rangpur</li>
+											<li>{{ $order->name }}</li>
+											<li>{{ $order->phone }}</li>
+											<li>{{ $order->address }}</li>
 										</ul>
 									</td>
 									<td>
 										<ul class="list-unstyled mb-0">
-											<li>Barcelona Concept Jersey</li>
-											<li><strong>Sizes:</strong> L(2), XL(1)</li>										</ul>
+										@foreach ($order->products as $product) <!-- Access products for each order -->
+											<li><b>{{ $product->title }}</b> (Size: {{ $product->pivot->size_id }}, Quantity: {{ $product->pivot->quantity }})</li>
+										@endforeach
+										</ul>
 									</td>
-									<td>Pathao</td>
-									<td>Tk. 1000</td>
-									<td>Pending</td>
-									<td>Pending</td>
+									<td>{{ $order->delivery ? $order->delivery->consignment_id : 'Not Shipped Yet' }}</td>
 									<td>
-										<a href="">
-											<i class="bi bi-eye"></i>
+										<ul class="list-unstyled mb-0">
+										@foreach ($order->transactions as $transaction)
+											<li> Status:
+											@switch($transaction->payment_status)
+												@case(0) Pending @break
+												@case(1) Completed @break
+												@default Unknown Status
+											@endswitch
+											</li>
+											<li>Total: {{ $transaction->order_total }}</li>
+											<li>Shipping: {{ $transaction->shipping_charge }}</li>
+											<li>Paid: {{ $transaction->amount }}</li>
+											<li>Unpaid: {{ $transaction->unpaid }}</li>
+										@endforeach
+										</ul>
+									</td>
+									<td id="order-status-{{ $order->id }}">
+									
+									@switch($order->status)
+										@case(0)
+											Pending
+											@break
+										@case(1)
+											Completed
+											@break
+										@case(2)
+											Processing
+											@break
+										@case(3)
+											Shipped
+											@break
+										@case(4)
+											Refunded
+											@break
+										@case(5)
+											Cancelled
+											@break
+									@endswitch
+
+									</td>
+									<td>
+										<a href="javascript:void(0);" onclick="openOrderStatusModal({{ $order->id }})">
+											<i class="bi bi-eye-fill"></i>
 										</a>
-										<a href="">
-											<i class="bi bi-pencil-square"></i>
+										<a href="{{ route('orders.edit', $order->id) }}">
+											<i class="bi bi-box-seam"></i>
 										</a>
 									</td>
 								</tr>
+								@endforeach
 							</tbody>
 						</table>
                     </div>
@@ -145,6 +207,46 @@
             </div>
         </div>
         <!-- end row -->
+
+		<!-- Order Status Update Modal -->
+		<div class="modal fade" id="orderStatusModal" tabindex="-1" role="dialog" aria-labelledby="orderStatusModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<h5 class="modal-title" id="orderStatusModalLabel">Update Order Status</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					
+					<!-- Modal Body: Order Status Update Form -->
+					<form id="updateOrderStatusForm" method="POST"> 
+						@csrf
+						@method('PATCH')
+						<div class="modal-body">
+							<p><strong>Order Ref:</strong> <span id="orderRef"></span></p>
+							<p><strong>Current Status:</strong> <span id="currentOrderStatus"></span></p>
+							
+							<hr>
+							
+							<!-- Update Order Status -->
+							<label for="status">Order Status</label>
+							<select name="status" id="orderStatus" class="form-control" required>
+								<option value="0">Pending</option>
+								<option value="1">Completed</option>
+								<option value="2">Processing</option>
+								<option value="3">Cancelled</option>
+								<option value="4">Refunded</option>
+							</select>
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-primary mt-3">Update Status</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+
     @endsection
     @section('scripts')
 		<!-- jQuery (required for DataTables) -->
@@ -155,24 +257,81 @@
 		<script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
 
 		<script>
+			function openOrderStatusModal(orderId) {
+				$.get(`orders/${orderId}`, function(response) {
+					const order = response.order;
+					
+					// Display the order reference and current status
+					$('#orderRef').text(order.ref);
+					$('#currentOrderStatus').text(order.status); // Display the current status
+					$('#orderStatus').val(order.status); // Set the dropdown to the current status
+					$('#updateOrderStatusForm').attr('action', `orders/${orderId}`);
+
+					$('#orderStatusModal').modal('show');
+				}).fail(function(xhr) {
+					console.log('Error:', xhr.responseText);
+				});
+			}
+
+			$('#updateOrderStatusForm').on('submit', function(event) {
+				event.preventDefault();
+				let formData = $(this).serialize();
+				console.log('Form Data:', formData); // Log the serialized data
+
+				$.ajax({
+					url: $(this).attr('action'),
+					type: 'PATCH',
+					data: formData,
+					headers: {
+						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF protection
+					},
+					success: function(response) {
+						if (response.success) {
+							$('#orderStatusModal').modal('hide');
+							// Update the order status display on the page if needed
+							$(`#order-status-${response.order.id}`).text($('#orderStatus option:selected').text());
+						}
+					},
+					error: function(xhr) {
+						console.log('Error:', xhr.responseText);
+					}
+				});
+			});
+
+
+			</script>
+
+
+
+
+
+		<script>
 			$(document).ready(function() {
 				$('#orders-table').DataTable({
-					"paging": true,         // Enable pagination
-					"lengthChange": true,    // Allow users to change how many records they want to see
-					"searching": true,       // Enable search feature
-					"order": [[0, 'asc']],  // Default ordering by first column (ID) in ascending order
+					"paging": true,
+					"lengthChange": true,
+					"searching": true,
+					"order": [[1, 'desc']],
 					"columnDefs": [
-						{ "orderable": false, "targets": [6] }, // Disable ordering on the 4th column (Phone)
-						{ "orderable": true, "targets": [1, 2, 3, 4, 5] } // Enable ordering on Name and Email columns
+						{ "orderable": false, "targets": [7] }, // Disable ordering on the 'Action' column
+						{ "width": "5%", "targets": 0 }, // Ref column
+						{ "width": "15%", "targets": 1 }, // Date column
+						{ "width": "15%", "targets": 2 }, // Customer column
+						{ "width": "30%", "targets": 3 }, // Product column
+						{ "width": "5%", "targets": 4 }, // Courier column
+						{ "width": "15%", "targets": 5 }, // Payments column
+						{ "width": "10%", "targets": 6 }, // Status column
+						{ "width": "5%", "targets": 7 }  // Action column
 					],
-					"info": true,            // Show information about the table
-					"autoWidth": false,      // Disable auto-width to better control table's width
-					"pageLength": 5,         // Default number of rows to display
-					"lengthMenu": [5, 10, 25, 50, 100], // Page length options
+					"info": true,
+					"autoWidth": false,
+					"stateSave": true, // Enable state saving
+					"pageLength": 10,
+					"lengthMenu": [10, 25, 50, 100],
 					"language": {
 						"paginate": {
-							"previous": "<", // Previous button icon
-							"next": ">"      // Next button icon
+							"previous": "<",
+							"next": ">"
 						}
 					}
 				});

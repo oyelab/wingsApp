@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use App\Models\SiteSetting;
 use App\Helpers\FilePathHelper;
+use App\Services\OrderService;
+use Illuminate\Support\Facades\Session;
+
+
 
 
 class AppServiceProvider extends ServiceProvider
@@ -16,7 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(OrderService::class, function ($app) {
+            return new OrderService(config('pathao.base_url'), $app['config']['pathao.access_token']);
+        });
     }
 
     /**
@@ -29,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
 
 	public function boot()
 	{
-		// Share site settings and social links with all views
+		// Share site settings, social links, and cart count with all views
 		View::composer('frontEnd.layouts.app', function ($view) {
 			$settings = SiteSetting::first(); // Fetch the first site setting
 
@@ -47,11 +53,15 @@ class AppServiceProvider extends ServiceProvider
 			// Get the icon mapping
 			$iconMapping = $settings->getSocialIconMapping();
 
-			// Pass both settings and socialLinks to the view
+			// Fetch the cart session count
+			$cartCount = count(Session::get('cart', []));
+
+			// Pass settings, social links, icon mapping, and cart count to the view
 			$view->with([
 				'siteSettings' => $settings,
 				'socialLinks' => $socialLinks,
-				'iconMapping' => $iconMapping, // Pass the icon mapping
+				'iconMapping' => $iconMapping,
+				'cartCount' => $cartCount, // Pass cart count for the badge
 			]);
 		});
 	}

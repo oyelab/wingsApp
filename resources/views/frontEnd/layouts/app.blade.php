@@ -79,11 +79,13 @@
 										<i class="fa-solid fa-heart"></i>
 									</a>
 								</li>
+								<!-- Cart Icon with Badge -->
 								<li>
-									<a href="#">
-										<i class="fa-solid fa-cart-shopping"></i>
-									</a>
-								</li>
+    <a href="{{ route('cart.show') }}" id="cart-button" class="{{ session('cart') ? '' : 'disabled' }}">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span id="cart-count-badge" class="badge bg-danger" style="display: {{ session('cart') ? 'inline' : 'none' }}">{{ session('cart') ? count(session('cart')) : '' }}</span>
+    </a>
+</li>
 								<li>
 									<a href="#">
 										<i class="fa-solid fa-user"></i>
@@ -97,7 +99,7 @@
 		</header>
 
 		@yield('content')
-
+		
 		<!-- Need Assistance -->
 		<div class="need-assistance-area text-center">
 			<div class="container">
@@ -240,6 +242,8 @@
 				</div>
 			</div>
 		</footer>
+
+
 		
 		@include('frontEnd.layouts.vendor-scripts')
 	</body>
