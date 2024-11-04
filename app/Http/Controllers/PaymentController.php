@@ -79,14 +79,14 @@ class PaymentController extends Controller
     	$shipping_charge = $request->input('shipping_charge');
 	
 		// Calculate the base fair (total amount before discount)
-		$base_fair = collect($request->products)->sum(function ($product) {
+		$subTotal = collect($request->products)->sum(function ($product) {
 			$productDetails = Product::find($product['id']);
 			return (float)$productDetails->price * (int)$product['quantity'];
 		});
 
-		$base_fair = number_format($base_fair, 2, '.', ''); // Ensures 2 decimal places
+		$subTotal = number_format($subTotal, 2, '.', ''); // Ensures 2 decimal places
 
-		// return $base_fair;
+		// return $subTotal;
 
 		// Calculate total discount based on the `sale` field in the products table
 		$discount_amount = collect($request->products)->sum(function ($productData) {
@@ -100,7 +100,7 @@ class PaymentController extends Controller
 		$discount_amount = number_format($discount_amount, 2, '.', ''); // This will return a string
 
 		// Calculate the subtotal after discount
-		$order_total = $base_fair - $discount_amount; // Calculate subtotal
+		$order_total = $subTotal - $discount_amount; // Calculate subtotal
 
 		$order_total = number_format($order_total, 2, '.', '');
 
@@ -137,7 +137,9 @@ class PaymentController extends Controller
 		$transaction_data = [
 			'ref' => $tran_id,
 			'order_id' => $order->id,
+			'subtotal' => $subTotal,
 			'shipping_charge' => $shipping_charge, // Always store shipping charge
+            'order_discount' => $discount_amount,
 			'order_total' => $order_total,
 			'payment_status' => $payment_method === 'Full Payment', // true if Full Payment, false if COD
 		];
@@ -214,7 +216,6 @@ class PaymentController extends Controller
         $post_data = [
             'tran_id' => $tran_id,
             'product_amount' => $order_total,
-            'base_fair' => $base_fair,
             'total_amount' => $total,
             'currency' => "BDT",
             'cus_name' => $validated['name'],

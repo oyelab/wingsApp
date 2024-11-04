@@ -2,64 +2,38 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Section;
-use Illuminate\Http\Request;
+use App\Repositories\ProductRepository;
 
 class SectionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    protected $productRepo;
+
+    public function __construct(ProductRepository $productRepo)
     {
-        //
+        $this->productRepo = $productRepo;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function shopPage($section)
     {
-        //
-    }
+        switch ($section) {
+            case 'latest':
+                $products = $this->productRepo->getLatestProducts(20); // for example, 20 products per page
+                break;
+            case 'top-picks':
+                $products = $this->productRepo->getTopOrders(20);
+                break;
+            case 'most-viewed':
+                $products = $this->productRepo->getMostViewed(20);
+                break;
+            case 'trending':
+                $products = $this->productRepo->getTrending(20);
+                break;
+            default:
+                abort(404);
+        }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+		return $products;
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Section $section)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Section $section)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Section $section)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Section $section)
-    {
-        //
+        return view('section', compact('products', 'section'));
     }
 }

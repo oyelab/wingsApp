@@ -50,6 +50,7 @@ class DeliveryController extends Controller
 
 	public function createOrder(Request $request)
 	{
+		// return $request;
 		// Validate the incoming request data
 		$request->validate([
 			'recipient_name' => 'required|string',
@@ -83,9 +84,13 @@ class DeliveryController extends Controller
 			'amount_to_collect' => $request->amount_to_collect,
 			'item_description' => $request->item_description,
 		];
+
+		// return $requestBody;
 	
 		// Send the request to create the order
 		$response = $this->orderService->createOrder($requestBody);
+
+		// return $response;
 		
 	
 		// Check the response status and proceed based on the success of the response
@@ -129,54 +134,6 @@ class DeliveryController extends Controller
 		
 	}
 	
-
-	// public function calculateShipping(Request $request)
-	// {
-	// 	// dd($request->all());
-	// 	// Validate the incoming request data
-	// 	$request->validate([
-	// 		'recipient_name' => 'required|string',
-	// 		'recipient_phone' => 'required|string',
-	// 		'recipient_address' => 'required|string',
-	// 		'recipient_city' => 'required|string',
-	// 		'recipient_zone' => 'required|string',
-	// 		'recipient_area' => 'nullable|string',
-	// 		'item_quantity' => 'nullable|integer',
-	// 	]);
-
-	// 	// return $request;
-
-	// 	// Prepare the request body
-	// 	$itemQuantity = 10; // Example quantity
-	// 	$weightPerItem = 0.150; // 200g in kg
-
-	// 	// Calculate item_weight
-	// 	$itemWeight = max($itemQuantity * $weightPerItem, 0.5);
-	// 	// return $itemWeight;
-
-	// 	$requestBody = [
-	// 		'store_id' => '147900',
-	// 		'recipient_name' => $request->recipient_name,
-	// 		'recipient_phone' => $request->recipient_phone,
-	// 		'recipient_address' => $request->recipient_address,
-	// 		'recipient_city' => $request->recipient_city,
-	// 		'recipient_zone' => $request->recipient_zone,
-	// 		'delivery_type' => 24,
-	// 		'item_type' => 2,
-	// 		'item_quantity' => $itemQuantity,
-	// 		'item_weight' => $itemWeight,
-	// 		'amount_to_collect' => 1000,
-	// 	];
-
-	// 	// return $requestBody;
-
-	// 	// Create the order
-    //     $response = $this->orderService->createOrder($requestBody);
-	// 	// return $response;
-
-	// 	return response()->json($response->json(), $response->status());
-	// }
-
 	public function fetchCities()
 	{
 		try {

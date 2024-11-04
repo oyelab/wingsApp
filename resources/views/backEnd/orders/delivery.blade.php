@@ -14,22 +14,25 @@
 		<div class="col-xl-8">
 			<div class="card">
 				<div class="card-body">
-						@if(session('response'))
-							<div class="alert alert-{{ session('response')['type'] ?? 'info' }} alert-dismissible fade show" role="alert">
-								<strong>{{ session('response')['message'] }}</strong><br>
-								
-								{{-- If there's additional data in the response, display it --}}
-								@if(isset(session('response')['data']))
-									<ul>
-										@foreach(session('response')['data'] as $key => $value)
-											<li><strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ $value }}</li>
+					@if(session('response')) 
+						<div class="alert alert-{{ session('response')['type'] ?? 'info' }} alert-dismissible fade show" role="alert">
+							<strong>{{ session('response')['message'] }}</strong><br>
+							
+							{{-- Display validation errors if they exist --}}
+							@if(isset(session('response')['errors']))
+								<ul>
+									@foreach(session('response')['errors'] as $field => $messages)
+										@foreach($messages as $message)
+											<li><strong>{{ ucfirst(str_replace('_', ' ', $field)) }}:</strong> {{ $message }}</li>
 										@endforeach
-									</ul>
-								@endif
+									@endforeach
+								</ul>
+							@endif
 
-								<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-							</div>
-						@endif
+							<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+						</div>
+					@endif
+
 					<div class="table">
 						<!-- Begin form for updating the order -->
 						<form action="{{ route('create.order', $order) }}" method="POST">

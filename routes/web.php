@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SiteSettingController;
 use App\Http\Controllers\SliderController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\SectionController;
 use App\Http\Controllers\SslCommerzPaymentController;
 use App\Http\Controllers\PathaoWebhookController;
 use App\Http\Controllers\AdminOrderController;
@@ -74,11 +75,13 @@ Route::get('/backEnd/x/{any}', [App\Http\Controllers\DashboardController::class,
 
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
+Route::get('/sections/{section}', [SectionController::class, 'shopPage'])->name('shop.page');
+
 
 
 // Route::resource('orders', OrderController::class);
 
-Route::get('/collections/{category:slug}/{product:slug}', [HomeController::class, 'show'])->name('products.details');
+Route::get('/collections/{product:slug}', [HomeController::class, 'show'])->name('products.details');
 
 
 Route::get('/collections/{category:slug}', [HomeController::class, 'showCategory'])->name('category.products');
@@ -95,7 +98,7 @@ Route::post('/payment/fail', [PaymentController::class, 'paymentFail'])->name('p
 Route::post('/payment/cancel', [PaymentController::class, 'paymentCancel'])->name('payment.cancel');
 Route::post('/payment/ipn', [PaymentController::class, 'paymentIpn'])->name('payment.ipn');  // For IPN (Instant Payment Notification)
 
-Route::get('/order/{order:ref}/success', [OrderController::class, 'orderPlaced'])->name('order.placed')->middleware('checkOrderAccess');
+Route::get('/order/{order:ref}/success', [OrderController::class, 'orderPlaced'])->name('order.placed');
 
 
 Route::get('/cart', [OrderController::class, 'showCart'])->name('cart.show');

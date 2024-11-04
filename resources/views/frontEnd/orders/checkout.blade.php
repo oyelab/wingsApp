@@ -18,42 +18,39 @@
 		@endif
         <div class="row">
             <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
-                    <input type="text" class="form-control" name="name" !required>
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" name="email" !required>
-                </div>
-                <div class="mb-3">
-                    <label for="phone" class="form-label">Phone</label>
-                    <input type="text" class="form-control" name="phone" !required>
-                </div>
-                <div class="mb-3">
-                    <label for="address" class="form-label">Address</label>
-                    <input type="text" class="form-control" name="address" !required>
-                </div>
+				<div class="mb-3">
+					<label for="name" class="form-label">Name</label>
+					<input type="text" class="form-control" name="name" value="{{ old('name') }}" !required>
+				</div>
+				<div class="mb-3">
+					<label for="email" class="form-label">Email</label>
+					<input type="email" class="form-control" name="email" value="{{ old('email') }}" !required>
+				</div>
+				<div class="mb-3">
+					<label for="phone" class="form-label">Phone</label>
+					<input type="text" class="form-control" name="phone" value="{{ old('phone') }}" !required>
+				</div>
+				<div class="mb-3">
+					<label for="address" class="form-label">Address</label>
+					<input type="text" class="form-control" name="address" value="{{ old('address') }}" !equired>
+				</div>
 				<div class="row">
 					<div class="col mb-3">
 						<label for="recipient_city" class="form-label">City</label>
 						<select class="form-control" id="recipient_city" name="recipient_city" !required onchange="fetchZones()">
 							<option value="">Select City</option>
-							<!-- Add your city options here -->
 						</select>
 					</div>
 					<div class="col mb-3">
 						<label for="recipient_zone" class="form-label">Zone</label>
 						<select class="form-select" id="recipient_zone" name="recipient_zone" !required onchange="fetchAreas()">
 							<option value="">Select Zone</option>
-							<!-- Add your zone options here -->
 						</select>
 					</div>
 					<div class="col mb-3">
 						<label for="recipient_area" class="form-label">Area</label>
 						<select class="form-select" id="recipient_area" name="recipient_area" !required>
 							<option value="">Select Area</option>
-							<!-- Add your area options here -->
 						</select>
 					</div>
 				</div>
@@ -75,13 +72,16 @@
 				<h5>Select Payment Method</h5>
 				<div class="d-flex">
 					<div class="mb-3 mx-4">
-						<input type="radio" id="cod" name="payment_method" value="COD" !required onclick="updatePayable()">
+						<input type="radio" id="cod" name="payment_method" value="COD" required onclick="updatePayable()"
+							{{ old('payment_method') == 'COD' ? 'checked' : '' }}>
 						<label for="cod">Cash on Delivery</label>
 					</div>
 					<div class="mb-3">
-						<input type="radio" id="online" name="payment_method" value="Full Payment" !required onclick="updatePayable()">
+						<input type="radio" id="online" name="payment_method" value="Full Payment" required onclick="updatePayable()"
+							{{ old('payment_method') == 'Full Payment' ? 'checked' : '' }}>
 						<label for="online">Online Payment</label>
 					</div>
+
 				</div>
 
 				<div class="d-flex justify-content-between align-items-center mb-3">
@@ -174,82 +174,91 @@
 @endsection
 @section('scripts')
 
+<script>
+    const oldCity = "{{ old('recipient_city') }}";
+    const oldZone = "{{ old('recipient_zone') }}";
+    const oldArea = "{{ old('recipient_area') }}";
+</script>
+
 <!-- Add this script to handle the payment selection -->
 <script>
-	async function fetchCities() {
-	const citySelect = document.getElementById("recipient_city");
+    // Fetch and set cities with old selection, if available
+    async function fetchCities() {
+        const citySelect = document.getElementById("recipient_city");
 
-		try {
-			const response = await fetch('/cities');
-			const result = await response.json();
+        try {
+            const response = await fetch('/cities');
+            const result = await response.json();
 
-			// Check if 'data' is an array before looping through it
-			if (Array.isArray(result.data)) {
-				result.data.forEach(city => {
-					citySelect.innerHTML += `<option value="${city.city_id}">${city.city_name}</option>`;
-				});
-			} else {
-				console.error('Data format is unexpected:', result);
-			}
-		} catch (error) {
-			console.error('Error fetching cities:', error);
-		}
-	}
+            if (Array.isArray(result.data)) {
+                result.data.forEach(city => {
+                    const selected = city.city_id == oldCity ? 'selected' : '';
+                    citySelect.innerHTML += `<option value="${city.city_id}" ${selected}>${city.city_name}</option>`;
+                });
 
-	// Call fetchCities when the page loads
-	window.onload = fetchCities;
+                // Fetch zones if an old city is set
+                if (oldCity) fetchZones();
+            }
+        } catch (error) {
+            console.error('Error fetching cities:', error);
+        }
+    }
 
-	// Fetch zones based on selected city
-	async function fetchZones() {
-		const cityId = document.getElementById("recipient_city").value;
-		const zoneSelect = document.getElementById("recipient_zone");
-		const areaSelect = document.getElementById("recipient_area");
+    // Fetch and set zones with old selection, if available
+    async function fetchZones() {
+        const cityId = document.getElementById("recipient_city").value;
+        const zoneSelect = document.getElementById("recipient_zone");
+        const areaSelect = document.getElementById("recipient_area");
 
-		// Reset zone and area dropdowns
-		zoneSelect.innerHTML = '<option value="">Select Zone</option>';
-		areaSelect.innerHTML = '<option value="">Select Area</option>';
+        zoneSelect.innerHTML = '<option value="">Select Zone</option>';
+        areaSelect.innerHTML = '<option value="">Select Area</option>';
 
-		if (!cityId) return;
+        if (!cityId) return;
 
-		try {
-			const response = await fetch(`/zones/${cityId}`);
-			const data = await response.json();
+        try {
+            const response = await fetch(`/zones/${cityId}`);
+            const data = await response.json();
 
-			if (data && data.data) {
-				data.data.forEach(zone => {
-					zoneSelect.innerHTML += `<option value="${zone.zone_id}">${zone.zone_name}</option>`;
-				});
-			}
-		} catch (error) {
-			console.error('Error fetching zones:', error);
-		}
-	}
+            if (data && data.data) {
+                data.data.forEach(zone => {
+                    const selected = zone.zone_id == oldZone ? 'selected' : '';
+                    zoneSelect.innerHTML += `<option value="${zone.zone_id}" ${selected}>${zone.zone_name}</option>`;
+                });
 
-	// Fetch areas based on selected zone
-	async function fetchAreas() {
-		const zoneId = document.getElementById("recipient_zone").value;
-		const areaSelect = document.getElementById("recipient_area");
+                // Fetch areas if an old zone is set
+                if (oldZone) fetchAreas();
+            }
+        } catch (error) {
+            console.error('Error fetching zones:', error);
+        }
+    }
 
-		// Reset area dropdown
-		areaSelect.innerHTML = '<option value="">Select Area</option>';
+    // Fetch and set areas with old selection, if available
+    async function fetchAreas() {
+        const zoneId = document.getElementById("recipient_zone").value;
+        const areaSelect = document.getElementById("recipient_area");
 
-		if (!zoneId) return;
+        areaSelect.innerHTML = '<option value="">Select Area</option>';
 
-		try {
-			const response = await fetch(`/areas/${zoneId}`);
-			const data = await response.json();
+        if (!zoneId) return;
 
-			if (data && data.data) {
-				data.data.forEach(area => {
-					areaSelect.innerHTML += `<option value="${area.area_id}">${area.area_name}</option>`;
-				});
-			}
-		} catch (error) {
-			console.error('Error fetching areas:', error);
-		}
-	}
+        try {
+            const response = await fetch(`/areas/${zoneId}`);
+            const data = await response.json();
 
+            if (data && data.data) {
+                data.data.forEach(area => {
+                    const selected = area.area_id == oldArea ? 'selected' : '';
+                    areaSelect.innerHTML += `<option value="${area.area_id}" ${selected}>${area.area_name}</option>`;
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching areas:', error);
+        }
+    }
 
+    // Call fetchCities when the page loads
+    window.onload = fetchCities;
 </script>
 
 <script>

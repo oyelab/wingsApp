@@ -88,7 +88,7 @@
 
 			@foreach ($order_items as $item)
 				<article class="product-items">
-					<img src="{{ asset($item['imagePath']) }}" alt="{{ $item['title'] }}" class="product-image" />
+					<img src="{{ $item['imagePath'] }}" alt="{{ $item['title'] }}" class="product-image" />
 
 					<div class="product-details">
 						<h4>{{ $item['title'] }}</h4>

@@ -149,92 +149,22 @@ class OrderController extends Controller
 
 	public function orderPlaced(Order $order)
 	{
-		// Check for the order_ref session variable
-		$orderRef = session('order_ref');
-
-		if ($orderRef) {
-			// Retrieve order details with related transactions using Eloquent
-			$order_details = Order::with('transactions') // Replace 'transactions' with the actual relationship name
-			->where('ref', $order->ref)
-			->first();
-
-			// Retrieve unique products related to the order and prepare image paths
-			$order_items = $order_details->products->unique('id')->map(function($product) {
-				$imagePath = 'images/products/' . json_decode($product->images)[0] ?? 'default.jpg'; // Get the first image or default
-		
-				// Get size name via the pivot relationship
-				$sizeName = $product->sizes->firstWhere('id', $product->pivot->size_id)->name ?? 'N/A';
-		
-				return [
-					'id' => $product->id,
-					'title' => $product->title,
-					'price' => $product->price,
-					'sale' => $product->sale ? $product->price * (1 - $product->sale / 100) : $product->price,
-					'categories' => $product->categories->pluck('title')->unique()->implode(', '), // Unique categories
-					'size' => $sizeName, // Assuming 'size_id' is in the pivot
-					'quantity' => $product->pivot->quantity, // Assuming 'quantity' is in the pivot
-					'imagePath' => $imagePath,
-				];
-			});
-
-			$order_details->tran_date = $order_details->transactions->first()->tran_date;
-			
-			// Initialize total discount and product total
-			$total_discount = 0;
-			$product_total = 0;
-
-			// Iterate through each product in the order
-			foreach ($order_details->products as $product) {
-				// Get the quantity from the pivot table
-				$quantity = $product->pivot->quantity;
-				
-				// Get the product price
-				$product_price = $product->price; // Assuming 'price' is the product's price
-				
-				// Calculate the total amount for this product without discount
-				$product_total += $product_price * $quantity;
-
-				// Get the discount percentage for the product
-				$discount_percentage = $product->sale; // Assuming 'sale' is the discount percentage
-
-				// Calculate the discount for this product if it has a discount
-				if ($discount_percentage > 0) {
-					// Calculate the discount amount
-					$discount_amount = ($product_price * $discount_percentage / 100) * $quantity;
-
-					// Add to total discount
-					$total_discount += $discount_amount;
-				}
-			}
-
-			// return $total_discount;
-			$order_details->subtotal = $product_total;
-			$order_details->discount = $total_discount;
-			$order_details->shipping_charge = $order_details->transactions->first()->shipping_charge;
-
-			$order_details->order_total = $product_total - $total_discount + $order_details->shipping_charge;
-			$order_details->paid = $order_details->transactions->first()->amount;
-			$order_details->unpaid_amount = $order_details->order_total - $order_details->paid;
-
-			// Check if the user is signed up or exists in the database
-			$userSignedUp = auth()->check(); // Checks if the user is logged in
-			$userExists = User::where('email', $order->email)->exists();
-
-			// Pass a single variable to check both conditions
-			$showModal = !$userSignedUp && !$userExists;
-
-		
-			// Pass order details and products to the view
+		if ($orderRef = session('order_ref')) {
+			$orderDetails = $order->getOrderDetails()->calculateTotals();
+	
+			// Check if the user is logged in or exists in the database
+			$showModal = !auth()->check() && !User::where('email', $order->email)->exists();
+	
+			// session()->forget('order_ref');
+	
 			return view('frontEnd.orders.success', [
-				'order_details' => $order_details,
-				'order_items' => $order_items,
+				'order_details' => $orderDetails,
+				'order_items' => $orderDetails->getOrderItems(),
 				'showModal' => $showModal,
 			]);
 		}
-		
-		// After the view is returned
-		session()->flush(); // Clear all session data
-
+	
+		return redirect()->route('index')->with('error', 'Access denied. Please login or register to find your existing order!');
 	}
 }
 	

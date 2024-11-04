@@ -101,7 +101,7 @@
 
 	// Top Picks
 	var swiper = new Swiper('.top-picks', {
-		slidesPerView: 3,
+		slidesPerView: 4,
 		spaceBetween: 38,
 		keyboard: {
 			enabled: true,
@@ -121,7 +121,7 @@
 				slidesPerView: 3,
 			},
 			1200: {
-				slidesPerView: 3,
+				slidesPerView: 4,
 			},
 		},
 	});

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Storage;
 
 class Slider extends Model
 {
@@ -16,4 +17,9 @@ class Slider extends Model
 		'order',
         'image',
     ];
+
+	public function getSliderPathAttribute()
+    {
+        return Storage::url('public/images/sliders/' . $this->image);
+    }
 }

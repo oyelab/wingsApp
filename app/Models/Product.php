@@ -27,6 +27,7 @@ class Product extends Model
 		'og_image',
     ];
 
+
 	public function sizes()
 	{
 		return $this->belongsToMany(Size::class, 'quantities')->withPivot('quantity');
@@ -83,5 +84,54 @@ class Product extends Model
         $offerPrice = $this->getOfferPriceAttribute();
         return ($this->price * $quantity) - ($offerPrice * $quantity);
     }
+
+	// Product model
+	public function getImagePathsAttribute(): array
+	{
+		$images = json_decode($this->images) ?? [];
+		$baseURL = url('/'); // Get the base URL of the application
 	
+		return array_map(fn($image) => $baseURL . '/images/products/' . $image, $images) ?: [$baseURL . '/images/products/default.jpg'];
+	}
+	
+	// Latest Products (e.g., created within the last 30 days, ordered by creation date)
+	public function scopeLatestProducts($query)
+	{
+		return $query->where('status', 1) // Ensure status is true (active)
+					->where('created_at', '>=', now()->subDays(30))
+					->orderBy('created_at', 'desc');
+	}
+
+	// Top Ordered Products
+	public function scopeTopOrders($query)
+	{
+		return $query->where('status', 1) // Ensure status is true (active)
+					->withCount('orders')
+					->orderBy('orders_count', 'desc');
+	}
+
+	// Most Viewed Products
+	public function scopeMostViewed($query)
+	{
+		return $query->where('status', 1) // Ensure status is true (active)
+					->orderBy('views', 'desc');
+	}
+
+	// Offer Products: Products that are active and have a non-null sale field
+	public function scopeOfferProducts($query)
+	{
+		return $query->where('status', 1) // Ensure status is true (active)
+					->whereNotNull('sale') // Ensure the sale field is not null
+					->orderBy('views', 'desc'); // Order by views in descending order
+	}
+
+
+	// Trending Products (based on custom trend score)
+	public function scopeTrending($query)
+	{
+		return $query->where('status', 1) // Ensure status is true (active)
+					->withCount('orders')
+					->orderByRaw('(views * 0.6) + (orders_count * 1.5) DESC');
+	}
+
 }
