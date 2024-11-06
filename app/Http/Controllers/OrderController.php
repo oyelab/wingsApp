@@ -149,7 +149,7 @@ class OrderController extends Controller
 
 	public function orderPlaced(Order $order)
 	{
-		if ($orderRef = session('order_ref')) {
+		if (session('order_ref')) {
 			$orderDetails = $order->getOrderDetails()->calculateTotals();
 	
 			// Check if the user is logged in or exists in the database

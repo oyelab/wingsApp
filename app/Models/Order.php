@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+
 
 class Order extends Model
 {
@@ -101,5 +103,14 @@ class Order extends Model
 		});
 	}
 
-
+	public function getTranDateAttribute()
+	{
+		// Filter transactions to find the first one where status is "VALID"
+		$validTransaction = $this->transactions->firstWhere('status', 'VALID');
+		
+		// Format the date if a valid transaction is found
+		return $validTransaction
+        ? Carbon::parse($validTransaction->tran_date)->format('F j, Y, g:i A')
+        : null;
+	}
 }
