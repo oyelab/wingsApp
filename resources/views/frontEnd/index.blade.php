@@ -620,7 +620,7 @@
 							</a>
 							<div class="product-price">
 								@if($product->sale)
-                                    <h4 >{{ $product->offerPrice }}</h4>
+                                    <h4>{{ $product->offerPrice }}</h4>
                                     <h5>{{ $product->price }}</h5>
                                 @else
                                     <h4>{{ $product->price }}</h4>

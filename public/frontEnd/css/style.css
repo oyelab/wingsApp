@@ -753,8 +753,7 @@ a {
 }
 .discount-price {
 	color: var(--wings-off);
-	font-weight: 400;
-	text-decoration: line-through;
+	font-weight: 800;
 }
 .discount-percent {
 	border-radius: 62px;
