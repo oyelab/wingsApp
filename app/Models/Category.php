@@ -8,6 +8,11 @@ use Storage;
 
 class Category extends Model
 {
+	public function getRouteKeyName()
+    {
+        return 'slug'; // This tells Laravel to use 'slug' for model binding
+    }
+
     use HasFactory;
 
     protected $fillable = [
@@ -16,14 +21,20 @@ class Category extends Model
         'status',
         'order',
         'image', // Assuming this will store JSON data for images
-        'parent_id',
+        'parent_ids',
         'description',
     ];
 
-    public function products()
-    {
-        return $this->belongsToMany(Product::class, 'category_product');
-    }
+	public function products()
+	{
+		return $this->belongsToMany(Product::class, 'category_product')
+			->withPivot('category_id', 'subcategory_id'); // Ensure that we load pivot data
+	}
+
+	public function subcategories()
+	{
+		return $this->hasMany(Category::class, 'parent_category_id');
+	}
 
     /**
      * Fetch categories for a specific product.
@@ -48,6 +59,19 @@ class Category extends Model
 	public function getImagePathAttribute()
     {
         return Storage::url('public/images/categories/' . $this->image);
+    }
+
+	// Get the child categories (categories that have this category as their parent)
+
+
+	public function parents()
+    {
+        return $this->belongsToMany(Category::class, 'category_parent', 'child_id', 'category_id');
+    }
+
+    public function children()
+    {
+        return $this->belongsToMany(Category::class, 'category_parent', 'category_id', 'child_id');
     }
 }
 

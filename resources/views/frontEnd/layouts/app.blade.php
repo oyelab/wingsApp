@@ -34,6 +34,19 @@
 		<link rel="icon" href="{{ $siteSettings->favicon ?? asset('favicon.ico') }}" type="image/x-icon">
 
 		@include('frontEnd.layouts.head-css')
+		<style>
+			#searchForm {
+				transition: all 0.3s ease;
+			}
+
+			#searchForm.show {
+				display: block; /* or use a class like "d-block" */
+			}
+
+			#searchInput {
+				padding: 5px 10px;
+			}
+		</style>
 	</head>
 	<body>
 		<!-- Header -->
@@ -54,43 +67,62 @@
 						<div class="menu-area">
 							<ul class="d-flex align-items-center">
 								<li>
-									<a href="#">NEW ARRIVALS</a>
+									<a href="{{ route('shop.page', ['section' => 'latest']) }}">NEW ARRIVALS</a>
 								</li>
 								<li>
-									<a href="#">COLLECTIONS</a>
+									<a href="{{ route('collections') }}">COLLECTIONS</a>
 								</li>
 								<li>
-									<a href="#">WINGS EDITED</a>
+									<a href="{{ route('wings.edited') }}">WINGS EDITED</a>
 								</li>
 								<li>
-									<a href="#">TRENDING</a>
+									<a href="{{ route('shop.page', parameters: ['section' => 'trending']) }}">TRENDING</a>
 								</li>
 							</ul>
 						</div>
 						<div class="right-area">
 							<ul class="d-flex align-items-center">
+							<!-- Search Button (Magnifying Glass Icon) -->
+								<!-- Search Button (Magnifying Glass Icon) -->
 								<li>
-									<a href="#"
-										><i class="fa-solid fa-magnifying-glass"></i>
+									<a href="#" id="searchIcon">
+										<i class="fa-solid fa-magnifying-glass"></i>
 									</a>
 								</li>
-								<li>
+
+								<!-- Search Form (Initially Hidden) -->
+								<div id="searchForm" class="d-none">
+									<form id="searchFormContent" action="{{ route('collections') }}" method="GET">
+										<input type="text" id="searchInput" name="query" placeholder="Search..." />
+										<!-- Submit Button (Replaces icon inside the field when it appears) -->
+										<button type="submit" id="submitSearch" class="d-none">
+											<i class="fa-solid fa-search"></i>
+										</button>
+									</form>
+								</div>
+
+								<!-- <li>
 									<a href="#">
 										<i class="fa-solid fa-heart"></i>
 									</a>
-								</li>
+								</li> -->
 								<!-- Cart Icon with Badge -->
 								<li>
-    <a href="{{ route('cart.show') }}" id="cart-button" class="{{ session('cart') ? '' : 'disabled' }}">
-        <i class="fa-solid fa-cart-shopping"></i>
-        <span id="cart-count-badge" class="badge bg-danger" style="display: {{ session('cart') ? 'inline' : 'none' }}">{{ session('cart') ? count(session('cart')) : '' }}</span>
-    </a>
-</li>
-								<li>
-									<a href="#">
-										<i class="fa-solid fa-user"></i>
+									<a href="{{ route('cart.show') }}" id="cart-button" class="{{ session('cart') ? '' : 'disabled' }}">
+										<i class="fa-solid fa-cart-shopping"></i>
+										<span id="cart-count-badge" class="badge bg-danger" style="display: {{ session('cart') ? 'inline' : 'none' }}">{{ session('cart') ? count(session('cart')) : '' }}</span>
 									</a>
 								</li>
+								<li>
+									@if (Auth::check())
+										<!-- Display user icon when logged in -->
+										<a href="{{ route('dashboard') }}"><i class="fa-solid fa-user"></i></a>
+									@else
+										<!-- Link to the login page (sign-in route) -->
+										<a href="{{ route('login') }}"><i class="fas fa-sign-in-alt"></i></a>
+									@endif
+								</li>
+
 							</ul>
 						</div>
 					</div>
@@ -100,6 +132,23 @@
 
 		@yield('content')
 		
+		<!-- Call to action -->
+		<div class="call-to-action-area text-center">
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+						<div
+							class="call-to-action-content d-flex align-items-center justify-content-center"
+						>
+							<p>
+								We’d love to hear from you >
+							</p>
+							<a href="{{ route('getInTouch') }}">Get In Touch</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<!-- Need Assistance -->
 		<div class="need-assistance-area text-center">
 			<div class="container">
@@ -180,35 +229,21 @@
 								<div class="footer-menu">
 									<h2>About</h2>
 									<ul>
-										<li><a href="#">About Us</a></li>
-										<li><a href="#">Contact Us</a></li>
-										<li><a href="#">Privacy Policy</a></li>
+									@foreach ($footerLinks as $link)
 										<li>
-											<a href="#">Terms & Conditions</a>
+											<a href="{{ route('help.index') }}#{{ $link->slug }}" class="footer-link">{{ $link->title }}</a>
 										</li>
-										<li>
-											<a href="#"
-												>Refund & Return Policy</a
-											>
-										</li>
+									@endforeach
 									</ul>
 								</div>
 								<div class="footer-menu">
 									<h2>Quick Links</h2>
 									<ul>
+									@foreach ($quickLinks as $link)
 										<li>
-											<a href="#">Submit Your Idea</a>
+											<a href="{{ route('help.index') }}#{{ $link->slug }}" class="footer-link">{{ $link->title }}</a>
 										</li>
-										<li>
-											<a href="#">Affiliate Program</a>
-										</li>
-										<li><a href="#">Career</a></li>
-										<li>
-											<a href="#">Blog</a>
-										</li>
-										<li>
-											<a href="#">Help</a>
-										</li>
+									@endforeach
 									</ul>
 								</div>
 							</div>
@@ -229,7 +264,7 @@
 							</p>
 							<div class="design-by d-flex align-items-center">
 								<p>Design & Developed by-</p>
-								<a href="#" target="_blank">
+								<a href="https://oyelab.com" target="_blank">
 									<img
 										src="{{ asset('frontEnd/images/oyelab.png') }}"
 										draggable="false"
@@ -242,9 +277,50 @@
 				</div>
 			</div>
 		</footer>
-
-
 		
 		@include('frontEnd.layouts.vendor-scripts')
+		<script>
+			$(document).ready(function() {
+				// Show the search field when the magnifying glass is clicked
+				$('#searchIcon').on('click', function(event) {
+					event.preventDefault(); // Prevent the default anchor behavior
+
+					// Toggle visibility of the search form
+					$('#searchForm').toggleClass('d-none'); 
+					$('#searchInput').focus(); // Focus on the search input for the user to type
+
+					// Change the icon from magnifying glass to search
+					$('#searchIcon i').toggleClass('fa-magnifying-glass fa-search');
+				});
+
+				// When the form is submitted (via the search icon inside the form)
+				$('#searchFormContent').on('submit', function(event) {
+					// Check if there's text inside the input field to search for
+					if ($('#searchInput').val().trim() === '') {
+						event.preventDefault(); // Prevent form submission if the field is empty
+					}
+				});
+
+				// Close the search form when clicking outside of it
+				$(document).on('click', function(event) {
+					if (!$(event.target).closest('#searchForm').length && !$(event.target).closest('#searchIcon').length) {
+						$('#searchForm').addClass('d-none'); // Hide search form
+						$('#searchIcon i').toggleClass('fa-search fa-magnifying-glass'); // Revert icon to magnifying glass
+					}
+				});
+			});
+
+			document.querySelectorAll('.footer-link').forEach(link => {
+				link.addEventListener('click', function (event) {
+					// Check if the link is pointing to the current page hash
+					if (window.location.hash === `#${this.hash.substring(1)}`) {
+						event.preventDefault(); // Prevent the default behavior of the link
+						window.location.reload(); // Reload the page to jump to the section
+					}
+				});
+			});
+
+
+		</script>
 	</body>
 </html>

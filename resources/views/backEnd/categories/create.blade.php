@@ -39,13 +39,12 @@ Create Category
 
 			<div class="col-7 d-flex justify-content-end">
 				<button type="submit" class="btn btn-outline-secondary me-2 w-25" onclick="setStatus(0)">Draft</button>
-				<button type="submit" class="btn btn-outline-primary me-2 w-25" onclick="setStatus(2)">Publish as Item</button>
-				<button type="submit" class="btn btn-primary w-25" onclick="setStatus(1)">Publish as Product</button>
+				<button type="submit" class="btn btn-primary w-25" onclick="setStatus(1)">Publish</button>
 			</div>
 		</div>
 
 		<!-- Hidden Status Field -->
-		<input type="hidden" name="status" id="status" value="0">
+		<input type="hidden" name="status" id="status">
 
 		<!-- Title and Display Order Row -->
 		<div class="row mb-3">
@@ -58,22 +57,25 @@ Create Category
 			</div>
 
 			<div class="col-md-4">
-				<label for="order" class="col-form-label text-start">Display Order:</label>
-				<select class="form-select" name="order" aria-label="Select Order">
-					<option value="">Select Order</option>
-					@foreach ($sections as $section)
-						<option value="{{ $section->id }}" {{ old('order') == $section->id ? 'selected' : '' }}>{{ $section->title }}</option>
+				<label for="choices-multiple-remove-button" class="col-form-label text-start">Select Parent:</label>
+				<select name="parent_ids[]" class="form-select" id="choices-multiple-remove-button" multiple>
+					<option value="">Choose one or more items!</option>
+					@foreach ($categories as $category)
+						@if ($category->parents->isEmpty()) <!-- Only display main categories -->
+							<option value="{{ $category->id }}" 
+								{{ in_array($category->id, old('parent_ids', [])) ? 'selected' : '' }}>
+								{{ $category->title }}
+							</option>
+						@endif
 					@endforeach
 				</select>
-				@error('order')
-					<div class="text-danger">{{ $message }}</div>
-				@enderror
 			</div>
+			
 		</div>
 		
 		<!-- Description -->
 		<div class="row mb-3">
-			<div class="col-md-8">
+			<div class="col-md-12">
 				<label class="form-label" for="productdesc">Description:</label>
 
 				<!-- Textarea to store Summernote content -->
@@ -83,21 +85,7 @@ Create Category
 				@enderror
 			</div>
 
-			<div class="col-md-4">
-				<label class="form-label" for="categories">Parent:</label>
-				<select name="parent_id" class="form-select">
-					<option value="" {{ old('parent_id') == '' ? 'selected' : '' }}>Choose a parent category</option>
-					@foreach ($categories as $category)
-						<option value="{{ $category->id }}" {{ old('parent_id') == $category->id ? 'selected' : '' }}>
-							{{ $category->title }}
-						</option>
-					@endforeach
-				</select>
 
-				@error('parent_id')
-					<div class="text-danger">{{ $message }}</div>
-				@enderror
-			</div>
 		</div>
 
 		<!-- Category Image Upload Row -->
@@ -143,6 +131,15 @@ Create Category
 				reader.readAsDataURL(file);
 			}
 		}
+
+		// multiple Remove CancelButton
+		var multipleCancelButton = new Choices(
+			'#choices-multiple-remove-button',
+			{
+			removeItemButton: true,
+			allowHTML: true // Enable HTML rendering
+			}
+		);
 
 	</script>
 	

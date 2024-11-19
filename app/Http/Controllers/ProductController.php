@@ -16,18 +16,40 @@ use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
+	public function show(Category $category, Product $product)
+	{
+		$product->increment('views');
+		
+		$relatedProducts = Product::relatedProducts($product)->get();
+
+		// Eager load the sizes relation (only available sizes)
+		$product->load('availableSizes');
+		$product->load('categories');
+
+
+		// Return the view with the category and product
+		return view('frontEnd.products.index', compact('category', 'product', 'relatedProducts'));
+	}
+	
+	public function __construct()
+    {
+        $this->middleware('auth');
+		$this->middleware('role'); // Only allow role 1 users
+
+    }
+	
     /**
      * Display a listing of the resource.
      */
-    public function index()
+	public function index()
 	{
-		// Retrieve products with their related quantities and paginate
-		$products = Product::with('quantities')->latest()->paginate(5);
-
+		// Retrieve products with their related quantities and categories, and paginate
+		$products = Product::with('quantities', 'categories')->latest()->paginate(5);
+	
 		foreach ($products as $product) {
 			// Calculate the total quantity for each product
 			$product->total_quantity = $product->quantities->sum('quantity');
-
+	
 			// Calculate the offer price and round it up
 			if ($product->sale) {
 				$offerPrice = $product->price * (1 - ($product->sale / 100)); // Calculate the offer price
@@ -35,12 +57,31 @@ class ProductController extends Controller
 			} else {
 				$product->offer_price = null; // If there's no sale, set offer price to null
 			}
-
+	
+			// Prepare the category display text
+			$category_display = [];
+	
+			// Loop through the categories of the product to display category > subcategory
+			foreach ($product->categories as $category) {
+				// Get the parent category and subcategory from the pivot
+				$parentCategory = Category::find($category->pivot->category_id); // Parent category
+				$subCategory = Category::find($category->pivot->subcategory_id); // Subcategory
+	
+				// Format the display text as Category > Subcategory
+				if ($parentCategory && $subCategory) {
+					$category_display[] = $parentCategory->title . ' > ' . $subCategory->title;
+				} else {
+					$category_display[] = $category->title;
+				}
+			}
+	
+			// Save the category display to the product for later use in the view
+			$product->category_display = implode(', ', $category_display); // Concatenate the display as a string
 		}
-
+	
 		// Count total products
 		$total = Product::count();
-
+	
 		// Count total published products
 		$published = Product::where('status', 1)->count();
 	
@@ -49,9 +90,8 @@ class ProductController extends Controller
 	
 		// Count total quantities using the relationship
 		$quantities = Product::with('quantities')->get()->sum(function ($product) {
-		return $product->quantities->sum('quantity'); // Sum of quantities for each product
+			return $product->quantities->sum('quantity'); // Sum of quantities for each product
 		});
-		// return $quantities;
 	
 		// Pack all data into a single variable
 		$counts = [
@@ -60,15 +100,14 @@ class ProductController extends Controller
 			'discounted' => $discounted,
 			'quantities' => $quantities,
 		];
-
+	
 		// Pass the products with categories, quantities, and offer prices to the view
 		return view('backEnd.products.index', [
 			'products' => $products,
 			'counts' => $counts,
 		]);
 	}
-
-
+	
 
     /**
      * Show the form for creating a new resource.
@@ -76,7 +115,9 @@ class ProductController extends Controller
     public function create()
     {
 		$sizes = Size::all();
-		$categories = Category::all();
+		$categories = Category::with('children')->whereDoesntHave('parents')->get(); // Get only parent categories
+		
+		// return $categories;
 		$specifications = Specification::all();
 		
         return view('backEnd.products.create', [
@@ -90,10 +131,9 @@ class ProductController extends Controller
      */
 	public function store(Request $request)
 	{
-		// dd($request->all()); 
 		// Generate a slug from the title
 		$slug = Str::slug($request->title);
-
+	
 		// Validate the input
 		$request->validate([
 			'title' => [
@@ -111,9 +151,8 @@ class ProductController extends Controller
 			],
 			'price' => 'required|numeric',
 			'description' => 'required|string',
-			'categories' => 'required|array',
-			'categories.*' => 'exists:categories,id',
-			'quantities' => 'required|array',
+			'category' => 'required|exists:categories,id', // Ensure the category exists
+			'subcategory' => 'required|exists:categories,id', // Ensure the subcategory exists
 			'quantities.*' => 'nullable|numeric|min:0',
 			'specifications' => 'nullable|array',
 			'specifications.*' => 'exists:specifications,id',
@@ -124,9 +163,7 @@ class ProductController extends Controller
 			'meta_desc' => 'nullable|string',
 			'og_image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
 		]);
-
-		
-
+	
 		// Handle uploaded images
 		$images = [];
 		if ($request->hasFile('images')) {
@@ -136,18 +173,18 @@ class ProductController extends Controller
 				$images[] = $imageName;
 			}
 		}
-
+	
 		// Handle OG image
 		$ogImageName = null;
 		if ($request->hasFile('og_image')) {
 			$ogImageName = $slug . '-og.' . $request->file('og_image')->getClientOriginalExtension();
 			$request->file('og_image')->move(public_path('images/products'), $ogImageName);
 		}
-
+	
 		// Process keywords and specifications
 		$keywords = !empty($request->keywords) ? json_encode(array_filter($request->keywords)) : null;
 		$specifications = !empty($request->specifications) ? json_encode(array_filter($request->specifications)) : null;
-
+	
 		// Store the product in the database
 		$product = Product::create([
 			'title' => $request->title,
@@ -162,11 +199,14 @@ class ProductController extends Controller
 			'meta_desc' => $request->meta_desc,
 			'og_image' => $ogImageName,
 		]);
-
-		// Sync categories to the category_product pivot table
-		$product->categories()->sync($request->categories);
-
-		
+	
+		// Attach the category and subcategory to the product via the pivot table
+		$categoryId = $request->category; // Main category ID
+		$subcategoryId = $request->subcategory; // Subcategory ID
+	
+		// Attach both category and subcategory to the product
+		$product->categories()->attach($categoryId, ['subcategory_id' => $subcategoryId]);
+	
 		// Store quantities in the quantities table
 		foreach ($request->quantities as $sizeId => $quantity) {
 			Quantity::create([
@@ -175,68 +215,54 @@ class ProductController extends Controller
 				'quantity' => $quantity,
 			]);
 		}
+	
 		return redirect()->route('products.index')->with('success', 'Product created successfully.');
 	}
-
-	public function show(Product $product)
-	{
-		// Increment the views count by 1
-    	$product->increment('views');
-		$categories = $product->categories;
-
-		// return $products;
-        // $categoryProduct = categories()->products;
-
-		return $categories;
-	}
-	
-
-	// public function show($slug)
-	// {
-	// 	$product = Product::where('slug', $slug)->firstOrFail();
-
-	// 	return view('products.show',[
-	// 		'product' => $product,
-	// 	]);
-	// }
 	
 
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Product $product)
-    {
-		// return $product->categories->pluck('name');
-		// return $product->categories();
-		$categories = Category::all();
-		// $selectedCategories = $product->categories()->pluck('id')->toArray(); // Get selected category IDs
-		// $productCategories = $product->categories();
+	public function edit(Product $product)
+	{
+		// Fetch only parent categories
+		$categories = Category::whereDoesntHave('parents')->get(); // This will only fetch categories without parents
+
+		// Get the main category and subcategory linked to the product using the pivot table
+		$productCategory = $product->categories->first(); // Assuming the product is only linked to one main category
+
+		// Retrieve subcategory ID from the pivot table
+		$productSubcategoryId = $productCategory ? $productCategory->pivot->subcategory_id : null;
+
+		// Other data fetching
 		$sizes = Size::all();
 		$quantities = $product->quantities->pluck('quantity', 'size_id')->toArray(); // Fetch quantities for each size
 		$specifications = Specification::all();
 		$selectedSpecifications = $product->specifications()->pluck('id')->toArray(); // Get selected specification IDs
 
-
-        return view('backEnd.products.edit', [
+		return view('backEnd.products.edit', [
 			'product' => $product,
 			'categories' => $categories,
 			'sizes' => $sizes,
 			'specifications' => $specifications,
-			// 'productCategories' => $productCategories,
-			// 'selectedCategories' => $selectedCategories,
 			'quantities' => $quantities,
 			'selectedSpecifications' => $selectedSpecifications,
+			'productCategory' => $productCategory,
+			'productSubcategoryId' => $productSubcategoryId, // Pass the subcategory ID to the view
 		]);
-    }
+	}
 
+
+	
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+	public function update(Request $request, Product $product)
 	{
+		// return $request;
 		$slug = Str::slug($request->title);
-
+	
 		// Validate the input
 		$request->validate([
 			'title' => [
@@ -246,14 +272,14 @@ class ProductController extends Controller
 				function ($attribute, $value, $fail) use ($slug, $product) {
 					// Check if the title already exists for another product
 					$existingTitle = Product::where('title', $value)->where('id', '!=', $product->id)->first();
-
+	
 					// Check if the slug generated from title already exists for another product
 					$existingSlug = Product::where('slug', $slug)->where('id', '!=', $product->id)->first();
-
+	
 					if ($existingTitle) {
 						$fail('The title is already taken.');
 					}
-
+	
 					if ($existingSlug) {
 						$fail('A product with a similar title already exists (slug conflict).');
 					}
@@ -261,8 +287,8 @@ class ProductController extends Controller
 			],
 			'price' => 'required|numeric',
 			'description' => 'required|string',
-			'categories' => 'required|array',
-			'categories.*' => 'exists:categories,id',
+			'category' => 'required|exists:categories,id', // Ensure the main category is valid
+			'subcategory' => 'required|exists:categories,id', // Validate against the pivot table id
 			'quantities' => 'required|array',
 			'quantities.*' => 'nullable|numeric|min:0',
 			'specifications' => 'nullable|array',
@@ -273,10 +299,10 @@ class ProductController extends Controller
 			'meta_desc' => 'nullable|string',
 			'og_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
 		]);
-
+	
 		// Process the title to create a unique slug for images
 		$images = [];
-
+	
 		// Handle the newly uploaded images
 		if ($request->hasFile('images')) {
 			foreach ($request->file('images') as $index => $image) {
@@ -285,13 +311,13 @@ class ProductController extends Controller
 				$images[] = $imageName;
 			}
 		}
-
+	
 		// Handle existing images
 		$existingImages = $request->input('existing_images', []); // Get existing images from hidden input fields
-
+	
 		// Merge existing images with newly uploaded ones
 		$allImages = array_merge($existingImages, $images);
-
+	
 		// Handle OG image (delete the old one if a new one is uploaded)
 		$ogImageName = $product->og_image; // Keep the current OG image by default
 		if ($request->hasFile('og_image')) {
@@ -299,12 +325,12 @@ class ProductController extends Controller
 			if ($product->og_image && file_exists(public_path('images/products/' . $product->og_image))) {
 				unlink(public_path('images/products/' . $product->og_image));
 			}
-
+	
 			// Save the new OG image
 			$ogImageName = $slug . '-og.' . $request->file('og_image')->getClientOriginalExtension();
 			$request->file('og_image')->move(public_path('images/products'), $ogImageName);
 		}
-
+	
 		// Process keywords and specifications
 		$keywords = (!empty($request->keywords) && is_array($request->keywords) && array_filter($request->keywords)) 
 		? json_encode(array_filter($request->keywords)) 
@@ -313,7 +339,7 @@ class ProductController extends Controller
 		$specifications = (!empty($request->specifications) && is_array($request->specifications) && array_filter($request->specifications)) 
 		? json_encode(array_filter($request->specifications)) 
 		: null; // Set to null if empty
-
+	
 		// Update the product in the database
 		$product->update([
 			'title' => $request->title,
@@ -327,10 +353,12 @@ class ProductController extends Controller
 			'meta_desc' => $request->meta_desc,
 			'og_image' => $ogImageName, // Save the OG image file name
 		]);
-
-		// Sync categories to the category_product pivot table
-		$product->categories()->sync($request->categories);
-
+	
+		// Sync categories and subcategories in the pivot table
+		$product->categories()->sync([
+			$request->category => ['subcategory_id' => $request->subcategory] // Sync with the selected category and subcategory
+		]);
+	
 		// Update the quantities in the quantities table
 		foreach ($request->quantities as $sizeId => $quantity) {
 			Quantity::updateOrCreate(
@@ -338,9 +366,10 @@ class ProductController extends Controller
 				['quantity' => $quantity]
 			);
 		}
-
+	
 		return redirect()->route('products.index')->with('success', 'Product updated successfully.');
 	}
+	
 
 
 	public function updateStatus(Request $request, Product $product)

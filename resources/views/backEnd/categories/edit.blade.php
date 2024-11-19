@@ -40,13 +40,12 @@ Create Category
 
         <div class="col-7 d-flex justify-content-end">
             <button type="submit" class="btn btn-outline-secondary me-2 w-25" onclick="setStatus(0)">Draft</button>
-            <button type="submit" class="btn btn-outline-primary me-2 w-25" onclick="setStatus(2)">Publish as Item</button>
-            <button type="submit" class="btn btn-primary w-25" onclick="setStatus(1)">Publish as Product</button>
+            <button type="submit" class="btn btn-primary w-25" onclick="setStatus(1)">Publish</button>
         </div>
     </div>
 
     <!-- Hidden Status Field -->
-    <input type="hidden" name="status" id="status" value="{{ $category->status }}">
+    <input type="hidden" name="status" id="status">
 
     <!-- Title and Display Order Row -->
     <div class="row mb-3">
@@ -58,47 +57,31 @@ Create Category
             @enderror
         </div>
 
-        <div class="col-md-4">
-			<label for="order" class="col-form-label text-start">Display Order:</label>
-			<select class="form-select" name="order" aria-label="Select Order">
-				<option value="">Select Order</option>
-				@foreach ($sections as $section)
-					<option value="{{ $section->id }}" 
-						{{ old('order', $category->order) == $section->id ? 'selected' : '' }}>
-						{{ $section->title }}
-					</option>
+		<div class="col-md-4">
+			<label for="choices-multiple-remove-button" class="col-form-label text-start">Select Parent:</label>
+			<select name="parent_ids[]" class="form-select" id="choices-multiple-remove-button" multiple>
+				<option value="">Choose one or more items!</option>
+				@foreach ($categories as $categoryOption)
+					@if ($categoryOption->parents->isEmpty()) <!-- Only show main categories -->
+						<option value="{{ $categoryOption->id }}"
+							{{-- Check if the categoryOption is one of the parents of the current category --}}
+							{{ $category->parents->contains($categoryOption->id) ? 'selected' : '' }}>
+							{{ $categoryOption->title }}
+						</option>
+					@endif
 				@endforeach
 			</select>
-
-            @error('order')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
-        </div>
+		</div>
     </div>
     
     <!-- Description -->
     <div class="row mb-3">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <label class="form-label" for="productdesc">Description:</label>
 
             <!-- Textarea to store Summernote content -->
             <textarea name="description" class="form-control">{{ old('description', $category->description) }}</textarea>
             @error('description')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
-        </div>
-
-        <div class="col-md-4">
-			<label class="form-label" for="categories">Parent:</label>
-			<select name="parent_id" class="form-select">
-				<option value="" {{ old('parent_id', $category->parent_id) == '' ? 'selected' : '' }}>Choose a parent category</option>
-				@foreach ($categories as $cat)
-					<option value="{{ $cat->id }}" {{ old('parent_id', $category->parent_id) == $cat->id ? 'selected' : '' }}>
-						{{ $cat->title }}
-					</option>
-				@endforeach
-			</select>
-            @error('parent_id')
                 <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
@@ -153,6 +136,15 @@ Create Category
             reader.readAsDataURL(file);
         }
     }
+	
+	// multiple Remove CancelButton
+	var multipleCancelButton = new Choices(
+			'#choices-multiple-remove-button',
+			{
+			removeItemButton: true,
+			allowHTML: true // Enable HTML rendering
+			}
+		);
 </script>
 @endsection
 

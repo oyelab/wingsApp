@@ -28,39 +28,48 @@ class HomeController extends Controller
     {
 		$wingsEdited = Category::with(['products' => function ($query) {
 			$query->where('status', 1) // Only include active products
-			      ->take(4); // Limit to 4 products
+				  ->take(4); // Limit to 4 products
 		}])
-		->where('order', 3) // Only include categories with type 0
-		->where('status', 1) // Only include active categories
+		->where('slug', 'wings-edited')
 		->first();
+		
+
+		// return $wingsEdited;
 
 
 		$sliders = Slider::where('status', 1)->orderBy('order', 'asc')->get();
         $data = $this->homePageService->getHomePageData();
-        $titles = [
-            'latest' => 'Latest Arrivals, Ready to Fly!',
-            'topPicks' => 'Top Picks, Always in Style!',
-            'mostViewed' => 'No Message!',
-            'hotDeals' => 'Hot Deals, Just for You!',
-            'trending' => 'On Trend, On Point!',
-        ];
+
+		// Fetch titles dynamically from the database
+		$titlesData = Section::all(); // Assuming you have a `Title` model
+
+		// Convert titles to an associative array
+		$titles = $titlesData->pluck('title', 'type')->toArray();
+        
 
         return view('frontEnd.index', compact('data', 'titles', 'sliders', 'wingsEdited', ));
     }
 
-	public function show(Category $category, Product $product)
+	public function show(Category $category, $subcategorySlug, Product $product)
 	{
-		// Calculate the sale price only if there is a discount
-		$salePrice = $product->offerPrice;
+		// Increment product views
+		$product->increment('views');
+		
+		// Get the subcategory based on the slug
+		
+		// Get related products based on the current product
+		$relatedProducts = Product::relatedProducts($product)->get();
 
-		// Attach the sale price and images directly to the product instance
-		$product->salePrice = $salePrice;
+		$breadcrumbSection = Section::find($product->section_id); // Adjust as needed
+		$mainCategory = $product->mainCategory; // Assuming there's a method or relation
 
-		// Eager load the sizes relation (only available sizes)
+		
+		// Eager load the sizes relation (only available sizes) and categories
 		$product->load('availableSizes');
 		$product->load('categories');
-
-		// Return the view with the category and product
-		return view('frontEnd.products.show', compact('category', 'product'));
+		
+		// Return the view with the category, subcategory, and product
+		return view('frontEnd.products.index', compact('category',  'product', 'relatedProducts', 'breadcrumbSection', 'mainCategory',));
 	}
+	
 }

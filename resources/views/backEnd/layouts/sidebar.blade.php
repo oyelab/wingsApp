@@ -32,7 +32,7 @@
         <div id="sidebar-menu">
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
-
+			@if(Auth::check() && Auth::user()->role === 1)
                 <li class="menu-title" data-key="t-applications">Applications</li>
                 <li>
                     <a href="javascript: void(0);" class="has-arrow">
@@ -47,6 +47,7 @@
                         <li><a href="{{ route('products.create') }}" data-key="t-add-product">Add Product</a></li>
                     </ul>
                 </li>
+				
 				<li>
                     <a href="{{ route('orders.index') }}">
 						<i class="bx bx-box icon nav-icon"></i>
@@ -64,6 +65,7 @@
                     </ul>
                 </li>
 
+				
 				<li class="menu-title" data-key="t-menu">Dashboard</li>
 
 				<li>
@@ -77,8 +79,17 @@
 						<li><a href="dashboard-sales" data-key="t-sales">Sales</a></li>
 					</ul>
 				</li>
+				@endif
+				@if(Auth::check() && (Auth::user()->role === 1 || Auth::user()->role === 0))
+					<li>
+						<a href="{{ route('profile') }}">
+							<i class="bx bx-user-circle icon nav-icon"></i>
+							<span class="menu-item" data-key="t-contacts">My Profile</span>
+						</a>
+					</li>
+				@endif
 
-
+				@if(Auth::check() && Auth::user()->role === 1)
                 <li>
                     <a href="apps-calendar">
                         <i class="bx bx-calendar-event icon nav-icon"></i>
@@ -138,10 +149,10 @@
                     </ul>
                 </li>
 
-                <li>
+				<li>
                     <a href="javascript: void(0);" class="has-arrow">
                         <i class="bx bx-user-circle icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-contacts">Contacts</span>
+                        <span class="menu-item" data-key="t-contacts">My Profile</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="contacts-grid" data-key="t-user-grid">User Grid</a></li>
@@ -149,7 +160,6 @@
                         <li><a href="contacts-profile" data-key="t-user-profile">Profile</a></li>
                     </ul>
                 </li>
-
                 <li class="menu-title" data-key="t-layouts">Layouts</li>
                 
                 <li>
@@ -308,7 +318,7 @@
                         </li>
                     </ul>
                 </li>
-
+			@endif
             </ul>
         </div>
         <!-- Sidebar -->

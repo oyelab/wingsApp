@@ -76,23 +76,37 @@
 											</div>
 										</div>
 
-										<div class="col-lg-4">
-											<div class="mb-3">
-												<label class="form-label" for="categories">Categories <span class="text-danger">*</span></label>
-												<div id="categorySelector" class="form-control">
-													<span>Select Category</span>
-												</div>
-												<select id="categories" name="categories[]" class="form-control" multiple style="display: none;">
+										<div class="col-lg-8 d-flex gap-3">
+											<!-- Main Category -->
+											<div class="flex-grow-1">
+												<label class="form-label" for="mainCategory">Select Category <span class="text-danger">*</span></label>
+												<select id="mainCategory" name="category" class="form-control">
+													<option value="">-- Select Main Category --</option>
 													@foreach ($categories as $category)
-														<option value="{{ $category->id }}" 
-															{{ (collect(old('categories'))->contains($category->id)) ? 'selected' : '' }}>
+														<option value="{{ $category->id }}" {{ old('category') == $category->id ? 'selected' : '' }}>
 															{{ $category->title }}
 														</option>
 													@endforeach
 												</select>
+												@error('category') <div class="text-danger">{{ $message }}</div> @enderror
+											</div>
+
+											<!-- Subcategory -->
+											<div class="flex-grow-1">
+												<label class="form-label" for="subCategory">Select Subcategory <span class="text-danger">*</span></label>
+												<select id="subCategory" name="subcategory" class="form-control">
+													<option value="">-- Select Subcategory --</option>
+													<!-- Options will be populated dynamically -->
+												</select>
+												@error('subcategory') <div class="text-danger">{{ $message }}</div> @enderror
 											</div>
 										</div>
-										
+
+
+
+
+
+
 									</div>
 										
 									<div class="col-lg-4 col-md-6">
@@ -244,8 +258,52 @@
 			</div>
 		</div>
 	@endsection
+	
 
     @section('scripts')
+	<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const mainCategorySelect = document.getElementById('mainCategory');
+        const subCategorySelect = document.getElementById('subCategory');
+
+        // Preselect old subcategory value if it exists
+        const oldSubcategory = '{{ old('subcategory') }}';
+        if (oldSubcategory) {
+            subCategorySelect.value = oldSubcategory;
+        }
+
+        // When a main category is selected, fetch subcategories
+        mainCategorySelect.addEventListener('change', function () {
+            const mainCategoryId = this.value;
+
+            // Clear existing subcategory options
+            subCategorySelect.innerHTML = '<option value="">-- Select Subcategory --</option>';
+
+            if (mainCategoryId) {
+                // Fetch subcategories for the selected main category (adapt URL as needed)
+                fetch(`/get-subcategories/${mainCategoryId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            data.forEach(subcategory => {
+                                const option = document.createElement('option');
+                                // Use subcategory.id directly instead of pivot.id
+                                option.value = subcategory.id;  // This should be subcategory.id, not pivot.id
+                                option.textContent = subcategory.title;
+                                subCategorySelect.appendChild(option);
+                            });
+                        } else {
+                            subCategorySelect.innerHTML = '<option value="">No subcategories available</option>';
+                        }
+                    });
+            } else {
+                subCategorySelect.innerHTML = '<option value="">-- Select Subcategory --</option>';
+            }
+        });
+    });
+</script>
+
+
 		<script>
 			// Function to preview images
 			function previewImages(event) {
@@ -285,6 +343,7 @@
 				const imgDiv = button.parentElement.parentElement; // Get the parent div
 				imgDiv.remove(); // Remove the image div
 			}
+			
 		</script>
 		<!-- Add JavaScript to handle the click event -->
         <script src="{{ asset('build/js/main.js') }}"></script>

@@ -13,12 +13,27 @@ use App\Models\Size;
 
 class AdminOrderController extends Controller
 {
+	public function __construct()
+    {
+        $this->middleware('auth');
+		$this->middleware('role'); // Only allow role 1 users
+    }
+	
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-		$orders = Order::with(['transactions', 'products', 'delivery'])->latest()->get();
+		$orders = Order::with([
+			'transactions' => function ($query) {
+				$query->where('status', 'VALID');
+			},
+			'products',
+			'delivery'
+		])
+		->latest()
+		->get();
+		
 		// return $orders;
 
 		// Iterate over each order to perform the calculations for each transaction

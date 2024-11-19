@@ -9,6 +9,12 @@ use App\Models\Slider;
 
 class SliderController extends Controller
 {
+	public function __construct()
+    {
+        $this->middleware('auth');
+		$this->middleware('role'); // Only allow role 1 users
+
+    }
 
 	 // Private function to get the slider path
 	 private function getSliderPath()

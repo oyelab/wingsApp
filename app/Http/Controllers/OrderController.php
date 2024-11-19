@@ -18,23 +18,23 @@ class OrderController extends Controller
 		$productId = $request->input('product_id');
 		$sizeId = $request->input('size_id');
 		$quantityToAdd = $request->input('quantity', 1); // Default to 1 if quantity is not specified
-	
+
 		// Get the product along with its quantities
 		$product = Product::with('quantities')->find($productId);
-	
+
 		// Find the available quantity for the specific size
 		$availableQuantity = $product->quantities->where('size_id', $sizeId)->first()->quantity ?? 0;
-	
+
 		// Check if the requested quantity exceeds available quantity
 		if ($quantityToAdd > $availableQuantity) {
 			return response()->json(['message' => 'Requested quantity exceeds available quantity.'], 400);
 		}
-	
+
 		// Get existing cart from session or initialize a new one
 		$cart = Session::get('cart', []);
-	
-		// Check if the product with the selected size already exists in the cart
 		$found = false;
+
+		// Check if the product with the selected size already exists in the cart
 		foreach ($cart as &$item) {
 			if ($item['product_id'] == $productId && $item['size_id'] == $sizeId) {
 				// Increment quantity, but check against available quantity
@@ -46,21 +46,26 @@ class OrderController extends Controller
 				break;
 			}
 		}
-	
-		// If product with selected size is not in cart, add it as a new item
+
+		// If product with selected size is not in cart, add it as a new item and destroy voucher session
 		if (!$found) {
+			// Destroy the voucher session when a new product is added
+			Session::forget('voucher_success');
+			Session::forget('applied_voucher');
+
 			$cart[] = [
 				'product_id' => $productId,
 				'size_id' => $sizeId,
 				'quantity' => $quantityToAdd,
 			];
 		}
-	
+
 		// Update the session with the new cart array
 		Session::put('cart', $cart);
-	
+
 		return response()->json(['message' => 'Product added to cart successfully']);
 	}
+
 	
 
 
@@ -105,35 +110,48 @@ class OrderController extends Controller
 	public function updateQuantity($index, Request $request)
 	{
 		$cart = Session::get('cart', []);
-
+	
 		// Check if the item exists in the cart
 		if (isset($cart[$index])) {
 			// Get the product ID and size ID from the cart item
 			$productId = $cart[$index]['product_id'];
 			$sizeId = $cart[$index]['size_id'];
-
+	
 			// Get the product along with its quantities
 			$product = Product::with('quantities')->find($productId);
-
+	
 			// Find the available quantity for the specific size
 			$availableQuantity = $product->quantities->where('size_id', $sizeId)->first()->quantity ?? 0;
-
-			// Update the quantity
-			$cart[$index]['quantity'] += $request->amount;
-
+	
+			// Calculate the new quantity
+			$newQuantity = $cart[$index]['quantity'] + $request->amount;
+	
 			// Check if the new quantity exceeds available quantity or is less than 1
-			if ($cart[$index]['quantity'] < 1) {
-				$cart[$index]['quantity'] = 1; // Prevents quantity from going below 1
-			} elseif ($cart[$index]['quantity'] > $availableQuantity) {
+			if ($newQuantity < 1) {
+				$newQuantity = 1; // Prevents quantity from going below 1
+			} elseif ($newQuantity > $availableQuantity) {
 				return response()->json(['message' => 'Requested quantity exceeds available quantity.'], 400);
 			}
-
+	
+			// Check if the quantity is decreased
+			if ($newQuantity < $cart[$index]['quantity']) {
+				// Destroy voucher session if quantity is decreased
+				Session::forget('voucher_success');
+				Session::forget('applied_voucher');
+			}
+	
+			// Update the quantity
+			$cart[$index]['quantity'] = $newQuantity;
+	
 			// Update the cart in the session
 			Session::put('cart', $cart);
+	
+			return response()->json(['success' => true, 'newQuantity' => $newQuantity]);
 		}
-
-		return response()->json(['success' => true]);
+	
+		return response()->json(['message' => 'Item not found in cart.'], 400);
 	}
+	
 
 
 	public function removeFromCart($index)
@@ -154,6 +172,10 @@ class OrderController extends Controller
 	
 			// Check if the user is logged in or exists in the database
 			$showModal = !auth()->check() && !User::where('email', $order->email)->exists();
+
+			// $order_items = $orderDetails->getOrderItems();
+
+			// return $orderDetails;
 	
 			// session()->forget('order_ref');
 	
@@ -165,6 +187,17 @@ class OrderController extends Controller
 		}
 	
 		return redirect()->route('index')->with('error', 'Access denied. Please login or register to find your existing order!');
+	}
+
+	public function orderFailed(Request $request, Order $order)
+	{
+		if (session('order_ref')) {
+			$orderDetails = $order->calculateTotals();
+			return $orderDetails->transactions->pluck('error');
+		}
+
+		return redirect()->route('index')->with('error', 'Access denied. Please login or register to find your existing order!');
+
 	}
 }
 	

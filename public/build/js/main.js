@@ -139,38 +139,38 @@ function validateForm(event) {
     return isValid; // Return the validity state
 }
 
-// Document Ready Function
-document.addEventListener('DOMContentLoaded', function () {
-    const categorySelector = document.getElementById('categorySelector');
-    const selectElement = document.getElementById('categories');
+// // Document Ready Function
+// document.addEventListener('DOMContentLoaded', function () {
+//     const categorySelector = document.getElementById('categorySelector');
+//     const selectElement = document.getElementById('categories');
 
-    // Function to update the category selector with selected options
-    function updateCategorySelector() {
-        const selectedOptions = Array.from(selectElement.selectedOptions).map(option => option.text);
-        categorySelector.innerHTML = selectedOptions.length > 0 ? selectedOptions.join(', ') : 'Select one or more categories from here';
-    }
+//     // Function to update the category selector with selected options
+//     function updateCategorySelector() {
+//         const selectedOptions = Array.from(selectElement.selectedOptions).map(option => option.text);
+//         categorySelector.innerHTML = selectedOptions.length > 0 ? selectedOptions.join(', ') : 'Select one or more categories from here';
+//     }
 
-    // Initialize on page load to show already selected categories
-    updateCategorySelector();
+//     // Initialize on page load to show already selected categories
+//     updateCategorySelector();
 
-    // Show the select dropdown when clicking on the custom selector
-    categorySelector.addEventListener('click', function () {
-        selectElement.style.display = 'block';
-        selectElement.focus();
-    });
+//     // Show the select dropdown when clicking on the custom selector
+//     categorySelector.addEventListener('click', function () {
+//         selectElement.style.display = 'block';
+//         selectElement.focus();
+//     });
 
-    // Update the category selector when categories are changed
-    selectElement.addEventListener('change', function () {
-        updateCategorySelector();
-    });
+//     // Update the category selector when categories are changed
+//     selectElement.addEventListener('change', function () {
+//         updateCategorySelector();
+//     });
 
-    // Hide the select dropdown when clicking outside of it
-    document.addEventListener('click', function (event) {
-        if (!categorySelector.contains(event.target) && !selectElement.contains(event.target)) {
-            selectElement.style.display = 'none';
-        }
-    });
-});
+//     // Hide the select dropdown when clicking outside of it
+//     document.addEventListener('click', function (event) {
+//         if (!categorySelector.contains(event.target) && !selectElement.contains(event.target)) {
+//             selectElement.style.display = 'none';
+//         }
+//     });
+// });
 
 // Choices.js Initialization
 var textRemove = new Choices(

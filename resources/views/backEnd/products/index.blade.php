@@ -160,10 +160,14 @@
                                         </p>
                                     </td>
                                     <td class="col">
-										@foreach ($product->categories as $category)
-											<span class="badge bg-success-subtle text-success mb-0">{{ $category->title }}</span>
-										@endforeach
+										@if ($product->category_display)
+											<span class="badge bg-success-subtle text-success mb-0">{{ $product->category_display }}</span>
+										@else
+											<span class="badge bg-danger-subtle text-danger mb-0">Category not found</span>
+										@endif
 									</td>
+
+
                                     <td>{{ $product->total_quantity }}</td>
                                     <td>
 										<div class="{{ $product->offer_price !== null ? 'text-decoration-line-through' : '' }}">

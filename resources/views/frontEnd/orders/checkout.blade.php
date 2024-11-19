@@ -1,4 +1,20 @@
 @extends('frontEnd.layouts.app')
+@section('css')
+<style>
+    /* Style to make the label look clickable */
+    .clickable {
+        color: #007bff; /* Blue color to indicate it's clickable */
+        cursor: pointer; /* Pointer cursor when hovering over the label */
+        text-decoration: underline; /* Underline to make it look like a link */
+    }
+
+    /* Change color on hover */
+    .clickable:hover {
+        color: #0056b3; /* Darker blue when hovering */
+    }
+</style>
+
+@endsection
 @section('content')
 <div class="container my-5">
     <h2 class="mb-4">Checkout</h2>
@@ -16,6 +32,13 @@
 				</ul>
 			</div>
 		@endif
+		
+		@if(session('message'))
+			<div class="alert alert-info">
+				{{ session('message') }}
+			</div>
+		@endif
+
         <div class="row">
             <div class="col-md-6">
 				<div class="mb-3">
@@ -81,7 +104,6 @@
 							{{ old('payment_method') == 'Full Payment' ? 'checked' : '' }}>
 						<label for="online">Online Payment</label>
 					</div>
-
 				</div>
 
 				<div class="d-flex justify-content-between align-items-center mb-3">
@@ -92,10 +114,10 @@
 				<table class="table">
 					<thead>
 						<tr>
-							<th>Product</th>
+							<th class="">Product</th>
 							<th class="text-end">Size</th>
 							<th class="text-end">Quantity</th>
-							<th class="text-end">Price</th>
+							<th class="col-2 text-end">Price</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -129,14 +151,6 @@
 							</tr>
 							<tr>
 								<td colspan="3" class="text-end">
-									<strong>Discount</strong>
-								</td>
-								<td class="text-end">
-									<strong id="discount"></strong>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="3" class="text-end">
 									<strong>Shipping</strong>
 								</td>
 								<td class="text-end">
@@ -144,6 +158,24 @@
 									<!-- Shipping Charge Field -->
 									<input type="hidden" id="hidden_shipping_charge" name="shipping_charge" value="0">
 								</td>
+							</tr>
+							<tr>
+								<td colspan="3" class="text-end">
+									<strong>(-)Discount</strong>
+								</td>
+								<td class="text-end">
+									<strong id="discount"></strong>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="3" class="text-end">
+									<strong>(-)Voucher</strong>
+								</td>
+								<td class="text-end">
+									<strong id="voucher"></strong>
+									<input type="hidden" id="voucherInput" name="voucher">
+								</td>
+
 							</tr>
 							<tr>
 								<td colspan="3" class="text-end">
@@ -164,7 +196,6 @@
 					</tbody>
 				</table>
 				
-				
                 <button type="submit" class="btn btn-primary w-100">Pay Now</button>
             </div>
         </div>
@@ -173,6 +204,8 @@
 
 @endsection
 @section('scripts')
+
+
 
 <script>
     const oldCity = "{{ old('recipient_city') }}";
@@ -302,30 +335,66 @@
         }
     }
 
-    // Function to calculate subtotal, discount, total, and update payable
-    function calculateCartSummary(shipping) {
-        let subtotal = 0;
-        let discount = 0;
-        const cartItems = @json($cartItems);
+	function calculateCartSummary(shipping) {
+		let subtotal = 0;
+		let discount = 0;
+		const cartItems = @json($cartItems);
+		const voucherDiscountPercentage = @json($voucherDiscount);
+		let voucherDiscountAmount = 0;
 
-        cartItems.forEach(item => {
-            const quantity = item.quantity;
-            const salePrice = item.salePrice;
-            const price = item.price;
+		// Calculate subtotal and discount
+		cartItems.forEach(item => {
+			const quantity = item.quantity;
+			const salePrice = item.salePrice ? item.salePrice : item.price;
+			const price = item.price;
 
-            subtotal += price * quantity;
-            discount += (price - salePrice) * quantity;
-        });
+			subtotal += price * quantity;
+			discount += (price - salePrice) * quantity;
+		});
 
-        const total = subtotal - discount + shipping;
+		// Calculate the total before applying the voucher
+		const totalBeforeVoucher = subtotal - discount;
 
-        document.getElementById('subtotal').textContent = `৳ ${subtotal.toFixed(2)}`;
-		document.getElementById('discount').textContent = discount ? `৳ ${discount.toFixed(2)}` : 'N/A';
-        document.getElementById('total').textContent = `৳ ${total.toFixed(2)}`;
+		// Calculate the voucher discount amount and format to two decimal places
+		voucherDiscountAmount = (totalBeforeVoucher * voucherDiscountPercentage) / 100;
+		voucherDiscountAmount = parseFloat(voucherDiscountAmount.toFixed(2));
 
-        // Update payable based on payment method
-        updatePayable(total, shipping);
-    }
+		// Calculate the final total with the voucher discount applied
+		const total = totalBeforeVoucher - voucherDiscountAmount + shipping;
+
+		// Update the DOM elements with the calculated values
+		document.getElementById('subtotal').textContent = `৳ ${subtotal.toFixed(2)}`;
+
+		const discountElement = document.getElementById('discount');
+		const discountRow = discountElement.closest('tr');
+		if (discount > 0) {
+			discountElement.textContent = `৳ ${discount.toFixed(2)}`;
+			discountRow.style.display = ''; // Show the row if discount is present
+		} else {
+			discountElement.textContent = 'N/A';
+			discountRow.style.display = 'none'; // Hide the row if no discount
+		}
+
+		const voucherElement = document.getElementById('voucher');
+		const voucherInput = document.getElementById('voucherInput'); // Ensure your hidden input has an ID
+		const voucherRow = voucherElement.closest('tr');
+		if (voucherDiscountAmount > 0) {
+			voucherElement.textContent = `৳ ${voucherDiscountAmount.toFixed(2)}`; // Ensure two decimal places
+			voucherInput.value = voucherDiscountAmount; // Update hidden input value
+			voucherRow.style.display = ''; // Show the row if voucher discount is present
+		} else {
+			voucherElement.textContent = 'N/A';
+			voucherInput.value = ''; // Clear hidden input value
+			voucherRow.style.display = 'none'; // Hide the row if no voucher discount
+		}
+
+		document.getElementById('total').textContent = `৳ ${total.toFixed(2)}`;
+
+		// Update payable based on payment method
+		updatePayable(total, shipping);
+	}
+
+
 
     // Function to update the payable amount based on payment method
     function updatePayable(total, shipping) {
@@ -341,6 +410,7 @@
         }
 
         document.getElementById('payable').textContent = `৳ ${payable.toFixed(2)}`;
+
     }
 
     // Event listeners

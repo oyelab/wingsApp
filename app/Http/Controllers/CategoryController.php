@@ -6,10 +6,243 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\Section;
 
 class CategoryController extends Controller
 {
+	public function mainCategory(Category $category)
+	{
+		return $category->products;
+	}
+
+	// In your CategoryController
+
+	public function subCategory(Category $category, $subcategorySlug)
+	{
+		// Find the subcategory within the current category by slug
+		$subcategory = $category->children()->where('slug', $subcategorySlug)->first();
+
+		// Check if the subcategory exists, otherwise return a 404 error
+		if (!$subcategory) {
+			abort(404, 'Subcategory not found');
+		}
+
+		// Fetch products that are related to this subcategory through the pivot table
+		$products = Product::whereHas('categories', function($query) use ($subcategory) {
+			$query->where('category_product.subcategory_id', $subcategory->id);
+		})->get();
+
+		// If no products are found, you can handle it with a message or empty list
+		if ($products->isEmpty()) {
+			return response()->json(['message' => 'No products found in this subcategory.'], 404);
+		}
+
+		// return $products;
+
+
+		return view('frontEnd.categories.test', compact('category', 'subcategory', 'products'));
+	}
+
+	public function wingsEdited(Request $request)
+	{
+		$CategoryId = 1; // ID of the category you want to load
+
+		// Fetch the query parameters
+		$mainCategoryId = $request->query('category');
+		$subCategoryId = $request->query('subCategory');
+		$sortOption = $request->query('sort'); // Capture the sort query parameter
+		$searchTerm = $request->query('query'); // Capture the search query parameter
+
+		// Initialize category and subcategory titles
+		$categoryTitle = null;
+		$subCategoryTitle = null;
+
+		// Fetch the category and subcategory titles if available
+		if ($mainCategoryId) {
+			$category = Category::find($mainCategoryId);
+			$categoryTitle = $category ? $category->title : null;
+		}
+
+		if ($subCategoryId) {
+			$subCategory = Category::find($subCategoryId);
+			$subCategoryTitle = $subCategory ? $subCategory->title : null;
+		}
+
+		// Base query for fetching products with their categories
+		$productsQuery = Product::with('categories')
+			->where('status', 1) // Ensure only active products are included
+			->whereHas('categories', function ($query) use ($CategoryId) {
+				$query->where('category_product.category_id', $CategoryId); // Filter by category_id = 1
+			});
+
+		// Apply filters based on main category and subcategory if provided
+		if ($mainCategoryId) {
+			$productsQuery->whereHas('categories', function ($query) use ($mainCategoryId) {
+				$query->where('category_product.category_id', $mainCategoryId);
+			});
+		}
+
+		if ($subCategoryId) {
+			$productsQuery->whereHas('categories', function ($query) use ($subCategoryId) {
+				$query->where('category_product.subcategory_id', $subCategoryId);
+			});
+		}
+
+		// Apply search and sorting if provided
+		if ($searchTerm) {
+			$productsQuery->search($searchTerm); // Assuming you have a custom search scope
+		}
+		
+		if ($sortOption) {
+			$productsQuery->sort($sortOption); // Assuming you have a custom sort scope
+		}
+
+		// Count the products after applying filters
+		$productCount = $productsQuery->count(); // Total product count after filters
+
+		// Paginate the products, let's say 6 products per page
+		$products = $productsQuery->paginate(6)->appends([
+			'category' => $mainCategoryId,
+			'subCategory' => $subCategoryId,
+			'sort' => $sortOption,
+			'query' => $searchTerm
+		]);
+
+		// Fetch all categories excluding a specific category ID if needed (e.g., 1)
+		$categories = Category::with(['parents', 'children'])
+			->where('id', $CategoryId) // Only fetch category ID = 1
+			->get();
+
+		// Get the main category and subcategory ID from the request, or set them to null if not provided
+		$selectedMainCategoryId = $request->query('category') ?? null;
+		$selectedSubcategoryId = $request->query('subCategory') ?? null;
+
+		return view('frontEnd.categories.index', compact(
+			'categories',
+			'products',
+			'categoryTitle',
+			'subCategoryTitle',
+			'productCount',
+			'mainCategoryId',
+			'subCategoryId',
+			'selectedMainCategoryId',
+			'selectedSubcategoryId'
+		));
+	}
+
+	
+
+	public function frontShow(Request $request)
+	{
+		// Fetch the query parameters
+		$mainCategoryId = $request->query('category');
+		$subCategoryId = $request->query('subCategory');
+		$sortOption = $request->query('sort'); // Capture the sort query parameter
+		$searchTerm = $request->query('query'); // Capture the search query parameter
+
+
+		// Initialize category and subcategory titles
+		$categoryTitle = null;
+		$subCategoryTitle = null;
+		$excludedCategoryId = 1; // ID of the category you want to exclude
+
+
+		// Fetch the category and subcategory titles if available
+		if ($mainCategoryId) {
+			$category = Category::find($mainCategoryId);
+			$categoryTitle = $category ? $category->title : null;
+		}
+
+		if ($subCategoryId) {
+			$subCategory = Category::find($subCategoryId);
+			$subCategoryTitle = $subCategory ? $subCategory->title : null;
+		}
+
+		// Base query for fetching products with their categories
+		$productsQuery = Product::with('categories')->where('status', 1);
+		// Exclude products that belong to category ID 1
+		$productsQuery->whereDoesntHave('categories', function ($query) {
+			$query->where('category_product.category_id', 1);
+		});
+
+		// Apply filters based on main category and subcategory
+		if ($mainCategoryId) {
+			$productsQuery->whereHas('categories', function ($query) use ($mainCategoryId) {
+				$query->where('category_product.category_id', $mainCategoryId);
+			});
+		}
+
+		if ($subCategoryId) {
+			$productsQuery->whereHas('categories', function ($query) use ($subCategoryId) {
+				$query->where('category_product.subcategory_id', $subCategoryId);
+			});
+		}
+
+		// Apply search and sorting
+		if ($searchTerm) {
+			$productsQuery->search($searchTerm);
+		}
+	
+		if ($sortOption) {
+			$productsQuery->sort($sortOption);
+		}
+
+
+		// Count the products after applying filters
+		$productCount = $productsQuery->count(); // Total product count after filters
+
+		// Paginate the products, let's say 6 products per page
+		$products = $productsQuery->paginate(6)->appends([
+			'category' => $mainCategoryId,
+			'subCategory' => $subCategoryId,
+			'sort' => $sortOption,
+			'query' => $searchTerm
+		]);
+
+
+
+		// Fetch all categories excluding a specific category ID if needed (e.g., 1)
+		$categories = Category::with(['parents', 'children'])
+			->where('id', '!=', $excludedCategoryId)
+			->get();
+
+		// Get the main category and subcategory ID from the request, or set them to null if not provided
+		$selectedMainCategoryId = $request->query('category') ?? null;
+		$selectedSubcategoryId = $request->query('subCategory') ?? null;
+
+
+		return view('frontEnd.categories.index', compact(
+			'categories',
+			'products',
+			'categoryTitle',
+			'subCategoryTitle',
+			'productCount',
+			'mainCategoryId',
+			'subCategoryId',
+			'selectedMainCategoryId',
+			'selectedSubcategoryId',
+		));
+	}
+
+
+	public function __construct()
+    {
+        $this->middleware('auth')->except('subCategory');
+		$this->middleware('role'); // Only allow role 1 users
+
+    }
+
+	public function getSubcategories($mainCategoryId)
+	{
+		// Get subcategories for the selected main category
+		$mainCategory = Category::find($mainCategoryId);
+
+		// Assuming a 'children' relationship exists on the Category model
+		$subcategories = $mainCategory->children;
+
+		return response()->json($subcategories);
+	}
 
 	 // Private function to get the slider path
 	 private function getCategoryPath()
@@ -20,69 +253,79 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-		$categories = Category::all();
-        $categoryPath = $this->getCategoryPath(); // Call the private function
-
-		// return $sliderPath;
-
-        return view('backEnd.categories.index', [
-            'categories' => $categories,
-            'categoryPath' => $categoryPath,
-        ]);
-    }
+	// public function index()
+	// {
+	// 	// Fetch all categories with their parent and child categories
+	// 	$categories = Category::all();
+	
+	// 	// Loop through each category and load parent and child categories
+	// 	foreach ($categories as $category) {
+	// 		// Fetch the child categories (subcategories) for the current category
+	// 		$category->child_categories = $category->children;  // All subcategories (children)
+	
+	// 		// Fetch the parent categories for the current category
+	// 		$category->parent_categories = $category->parents;  // All parent categories
+	// 	}
 
 	
-    
+	// 	// Get category path or other required data
+	// 	$categoryPath = $this->getCategoryPath(); // Call your private method if needed
+	
+	// 	// Return the data to the view
+	// 	return view('backEnd.categories.index', [
+	// 		'categories' => $categories,
+	// 		'categoryPath' => $categoryPath,
+	// 	]);
+	// }
+	
+// 	public function index()
+// {
+//     // Fetch all categories with their children (if any) and parents
+//     $categories = Category::with('parents', 'children')->get();
+
+//     // Group categories by parent (or no parent)
+//     $groupedCategories = $categories->groupBy(function ($category) {
+//         return $category->parents->isEmpty() ? 'Main Category' : 'Sub Category';
+//     });
+
+// 	$categoryPath = $this->getCategoryPath(); // Call your private method if needed
+
+//     // Pass the grouped categories to the view
+//     return view('backEnd.categories.index', [
+//         'groupedCategories' => $groupedCategories,
+//     ]);
+// }
+
+	public function index()
+	{
+		// Get all main categories (those that have no parents) and load their children recursively
+		$parentCategories = Category::whereDoesntHave('parents')->with('children')->get();
+
+		return view('backEnd.categories.index', compact('parentCategories'));
+	}
+
+
 	public function create()
     {
-		$sections = Section::all();
-		$categories = Category::all();
+		$categories = Category::with('parents')->get();
+		// return $categories;
         return view('backEnd.categories.create', [
 			'categories' => $categories,
-			'sections' => $sections,
 		]);
     }
 
 	public function store(Request $request)
 	{
 		// Define base validation rules
-		$rules = [
+		$request->validate([
 			'title' => 'required|string|max:255|unique:categories,title',
 			'slug' => 'unique:categories,slug',
 			'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096', // Image validation
 			'description' => 'required|string',
-			'parent_id' => 'nullable|exists:categories,id', // Parent ID should exist in the categories table
-		];
-
-		// Add order validation rule based on status
-		if (in_array($request->input('status'), [1, 2])) {
-			$rules['order'] = 'required|integer'; // Order is required for Product and Item
-		} else {
-			$rules['order'] = 'nullable|integer'; // Order is nullable for Unpublished
-		}
-
-		// Validate the request with the defined rules
-		$request->validate($rules);
-
-		// Custom validation to ensure 'order' is not set when status is 0
-		if ($request->input('status') == 0 && $request->filled('order')) {
-			return redirect()->back()->withErrors(['order' => 'You cannot assign an order to an unpublished category.'])->withInput();
-		}
-
-		// Check if the order already exists in the database
-		if ($request->filled('order')) {
-			$existingCategory = Category::where('order', $request->input('order'))->first();
-			
-			// If an existing category is found, set its order to null and status to 0
-			if ($existingCategory) {
-				$existingCategory->update([
-					'order' => null, // Set the order to null
-					'status' => 0    // Set the status to 0 (unpublished)
-				]);
-			}
-		}
+			'status' => 'required',
+			'parent_ids' => 'nullable|array', // Ensure parent_ids is an array
+			'parent_ids.*' => 'exists:categories,id', // Each parent_id should exist in categories table
+		]);
 
 		// Generate a slug from the title
 		$slug = Str::slug($request->input('title'));
@@ -95,19 +338,24 @@ class CategoryController extends Controller
 		// Save the file to the storage/app/public/categories directory
 		$path = $file->storeAs('public/images/categories', $filename);
 
-		// Create a new category, ensuring order is only included if status is 1 or 2
-		Category::create([
+		// Create a new category
+		$category = Category::create([
 			'title' => $request->input('title'),
 			'slug' => $slug,
 			'description' => $request->input('description'),
 			'image' => basename($path),
-			'parent_id' => $request->input('parent_id'), // Parent category if applicable
-			'order' => in_array($request->input('status'), [1, 2]) ? $request->input('order') : null, // Assign order only if status is 1 or 2
 			'status' => $request->input('status'), // Set status based on request
 		]);
 
+		// If parent_ids are provided, attach them to the new category using the pivot table
+		if ($request->has('parent_ids') && count($request->input('parent_ids')) > 0) {
+			$category->parents()->attach($request->input('parent_ids'));
+		}
+
+		// Redirect back with a success message
 		return redirect()->route('categories.index')->with('success', 'Category created successfully.');
 	}
+
 
     /**
      * Display the specified resource.
@@ -121,64 +369,37 @@ class CategoryController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Category $category)
-    {
-		$sections = Section::all();
-		$categories = Category::all();
-        // Category image path
+	{
+		// Fetch all categories to display as parent options
+		$categories = Category::whereDoesntHave('parents')->get(); // Only fetch categories without parents (main categories)
+
+		// Category image path
 		$categoryPath = $this->getCategoryPath();
 
-		// Return the view with the slider data
+		// Return the view with the category data
 		return view('backEnd.categories.edit', [
 			'category' => $category,
 			'categoryPath' => $categoryPath,
-			'categories' => $categories,
-			'sections' => $sections,
+			'categories' => $categories, // Categories that can be selected as parents
 		]);
-    }
+	}
+
 
     /**
      * Update the specified resource in storage.
      */
 	public function update(Request $request, Category $category)
 	{
-		// Define base validation rules
-		$rules = [
-			'title' => 'required|string|max:255|unique:categories,title,' . $category->id, // Exclude the current category from unique validation
-			'slug' => 'unique:categories,slug,' . $category->id, // Exclude the current category from unique slug validation
-			'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096', // Image validation, nullable for update
+		// Validate the input data
+		$request->validate([
+			'title' => 'required|string|max:255|unique:categories,title,' . $category->id,
+			'slug' => 'unique:categories,slug,' . $category->id,
+			'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096',
 			'description' => 'required|string',
-			'parent_id' => 'nullable|exists:categories,id', // Parent ID should exist in the categories table
-		];
-
-		// Add order validation rule based on status
-		if (in_array($request->input('status'), [1, 2])) {
-			$rules['order'] = 'required|integer'; // Order is required for Product and Item
-		} else {
-			$rules['order'] = 'nullable|integer'; // Order is nullable for Unpublished
-		}
-
-		// Validate the request with the defined rules
-		$request->validate($rules);
-
-		// Custom validation to ensure 'order' is not set when status is 0
-		if ($request->input('status') == 0 && $request->filled('order')) {
-			return redirect()->back()->withErrors(['order' => 'You cannot assign an order to an unpublished category.'])->withInput();
-		}
-
-		// Check if the order already exists in the database
-		if ($request->filled('order')) {
-			$existingCategory = Category::where('order', $request->input('order'))
-				->where('id', '!=', $category->id) // Ensure the current category is excluded
-				->first();
-
-			// If an existing category is found, set its order to null and status to 0
-			if ($existingCategory) {
-				$existingCategory->update([
-					'order' => null, // Set the order to null
-					'status' => 0    // Set the status to 0 (unpublished)
-				]);
-			}
-		}
+			'status' => 'required',
+			'parent_ids' => 'array', // Validate that parent_ids is an array if provided
+			'parent_ids.*' => 'exists:categories,id', // Ensure each parent ID exists in the categories table
+		]);
 
 		// Generate a slug from the title
 		$slug = Str::slug($request->input('title'));
@@ -186,28 +407,27 @@ class CategoryController extends Controller
 		// Check if an image is uploaded
 		if ($request->hasFile('image')) {
 			$file = $request->file('image');
-
-			// Generate unique filename using the slug
 			$filename = $slug . '.' . $file->getClientOriginalExtension();
-
-			// Save the file to the storage/app/public/categories directory
 			$path = $file->storeAs('public/images/categories', $filename);
 
-			// Update the category with the new image
-			$category->update([
-				'image' => basename($path), // Update the image field with the new filename
-			]);
+			// Update the category's image field
+			$category->image = basename($path);
 		}
 
 		// Update the category's other fields
-		$category->update([
-			'title' => $request->input('title'),
-			'slug' => $slug,
-			'description' => $request->input('description'),
-			'parent_id' => $request->input('parent_id'), // Parent category if applicable
-			'order' => in_array($request->input('status'), [1, 2]) ? $request->input('order') : null, // Assign order only if status is 1 or 2
-			'status' => $request->input('status'), // Set status based on request
-		]);
+		$category->title = $request->input('title');
+		$category->slug = $slug;
+		$category->description = $request->input('description');
+		$category->status = $request->input('status');
+		$category->save();
+
+		// Sync the parent categories in the pivot table
+		if ($request->has('parent_ids')) {
+			$category->parents()->sync($request->input('parent_ids'));
+		} else {
+			// If no parents are selected, detach any existing relationships
+			$category->parents()->detach();
+		}
 
 		return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
 	}
@@ -217,21 +437,21 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+	public function destroy($id)
 	{
-		 // Find the slider by its ID
-		 $category = Category::findOrFail($id);
-
-		 // Check if the image exists and delete it using Storage
-		 if (Storage::disk('public')->exists('images/categories/' . $category->image)) {
-			 Storage::disk('public')->delete('images/categories/' . $category->image);
-		 }
-	 
-		 // Delete the slider record from the database
-		 $category->delete();
-	 
-		 // Redirect back with a success message
-		 return redirect()->back()->with('success', 'Category deleted successfully.');
+		// Find the category by its ID
+		$category = Category::findOrFail($id);
+	
+		// If this category has parents, just detach it from them
+		if ($category->parents()->exists()) {
+			$category->parents()->detach();
+		} else {
+			// Otherwise, delete the category itself (if it's a main category)
+			$category->delete();
+		}
+	
+		return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
 	}
+	
 
 }

@@ -44,4 +44,9 @@ class ProductRepository
     {
         return Product::trending()->take($limit)->get();
     }
+
+    public function getBulks()
+    {
+        return Product::bulks()->get();
+    }
 }

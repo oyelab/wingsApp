@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use App\Models\SiteSetting;
+use App\Models\Page;
 use App\Helpers\FilePathHelper;
 use App\Services\OrderService;
 use Illuminate\Support\Facades\Session;
@@ -38,6 +39,8 @@ class AppServiceProvider extends ServiceProvider
 		// Share site settings, social links, and cart count with all views
 		View::composer('frontEnd.layouts.app', function ($view) {
 			$settings = SiteSetting::first(); // Fetch the first site setting
+			$footerLinks = Page::where('type', 1)->get();
+			$quickLinks = Page::where('type', 2)->orderBy('created_at', 'asc')->get();
 
 			// Initialize socialLinks array
 			$socialLinks = [];
@@ -62,6 +65,8 @@ class AppServiceProvider extends ServiceProvider
 				'socialLinks' => $socialLinks,
 				'iconMapping' => $iconMapping,
 				'cartCount' => $cartCount, // Pass cart count for the badge
+				'footerLinks' => $footerLinks, // Pass cart count for the badge
+				'quickLinks' => $quickLinks, // Pass cart count for the badge
 			]);
 		});
 	}

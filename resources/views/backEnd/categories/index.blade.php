@@ -61,58 +61,79 @@
 
 					<div class="table-responsive">
 						<table class="table table-nowrap justify-between-end mb-0 table-striped table-bordered table-hover" id="categoryTable">
+							<thead>
+								<tr>
+									<th>Title</th>
+									<th>Type</th>
+									<th>Status</th>
+									<th>Image</th>
+									<th>Action</th>
+								</tr>
+							</thead>
 							<tbody>
-								<tr>
-									<td>Checkbox</td>
-									<td>Title</td>
-									<td>Order</td>
-									<td>Status</td>
-									<td>Image</td>
-									<td>Action</td>
-								</tr>
-								@foreach ($categories as $category)
-								<tr>
-									<td style="width: 40px;">
-										<div class="form-check font-size-16">
-											<input class="form-check-input" type="checkbox" id="upcomingtaskCheck01">
-											<label class="form-check-label" for="upcomingtaskCheck01"></label>
-										</div>
-									</td>
-									<td>
-										<h5 class="text-truncate font-size-14 m-0"><a href="javascript: void(0);"
-												class="text-body">{{ $category->title }}</a></h5>
-									</td>
-
-									<td>
-										<p class="mb-0">{{ $category->order }}</p>
-									</td>
-
-									<td class="text-center">
-										<div class="text-center">
-											<span class="badge rounded-pill 
-												{{ $category->status == 1 ? 'bg-secondary-subtle text-secondary' : ($category->status == 2 ? 'bg-primary-subtle text-primary' : 'bg-danger-subtle text-danger') }}">
-												{{ $category->status == 1 ? 'Product' : ($category->status == 2 ? 'Item' : 'Unpublished') }}
+								@foreach ($parentCategories as $parent)
+									<tr>
+										<!-- Display Parent Category -->
+										<td>
+											<h5 class="text-truncate font-size-14 m-0">
+												<a href="javascript: void(0);" class="text-body">{{ $parent->title }}</a>
+											</h5>
+										</td>
+										<td>Main Category</td>
+										<td class="text-center">
+											<span class="badge rounded-pill {{ $parent->status == 1 ? 'bg-secondary-subtle text-secondary' : 'bg-danger-subtle text-danger' }}">
+												{{ $parent->status == 1 ? 'Published' : 'Unpublished' }}
 											</span>
-										</div>
-									</td>
-									<td class="text-center mx-auto">
-										<img class="rounded w-50" src="{{ $categoryPath . $category->image }}" alt="{{ $category->title }}" style="max-width: 100px; max-height: 100px;">
-									</td>
-									<td>
-										<a href="{{ route('categories.edit', $category->id) }}" class="mr-3"><i class="las la-pen text-secondary font-30"></i></a>
-										
-										<form action="{{ route('categories.destroy', $category->id) }}" method="POST" style="display: inline;">
-											@csrf
-											@method('DELETE')
-											<a href="javascript:void(0);" class="mr-3" onclick="confirmDelete(this)">
-												<i class="las la-trash-alt text-secondary font-30"></i>
-											</a>
-										</form>
-									</td>
-								</tr>
+										</td>
+										<td class="text-center mx-auto">
+											<img class="rounded w-50" src="{{ asset('storage/images/categories/' . $parent->image) }}"
+												alt="{{ $parent->title }}" style="max-width: 100px; max-height: 100px;">
+										</td>
+										<td>
+											<a href="{{ route('categories.edit', $parent->id) }}" class="mr-3"><i class="las la-pen text-secondary font-30"></i></a>
+											<form action="{{ route('categories.destroy', $parent->id) }}" method="POST" style="display: inline;">
+												@csrf
+												@method('DELETE')
+												<a href="javascript:void(0);" class="mr-3" onclick="confirmDelete(this)">
+													<i class="las la-trash-alt text-secondary font-30"></i>
+												</a>
+											</form>
+										</td>
+									</tr>
+
+									<!-- Display Child Categories (if any) -->
+									@foreach ($parent->children as $child)
+										<tr>
+											<td>
+												&nbsp;&nbsp;&nbsp;&nbsp;- {{ $child->title }}
+											</td>
+											<td>Sub Category</td>
+											<td class="text-center">
+												<span class="badge rounded-pill {{ $child->status == 1 ? 'bg-secondary-subtle text-secondary' : 'bg-danger-subtle text-danger' }}">
+													{{ $child->status == 1 ? 'Published' : 'Unpublished' }}
+												</span>
+											</td>
+											<td class="text-center mx-auto">
+												<img class="rounded w-50" src="{{ asset('storage/images/categories/' . $child->image) }}"
+													alt="{{ $child->title }}" style="max-width: 100px; max-height: 100px;">
+											</td>
+											<td>
+												<a href="{{ route('categories.edit', $child->id) }}" class="mr-3"><i class="las la-pen text-secondary font-30"></i></a>
+												<form action="{{ route('categories.destroy', $child->id) }}" method="POST" style="display: inline;">
+													@csrf
+													@method('DELETE')
+													<a href="javascript:void(0);" class="mr-3" onclick="confirmDelete(this)">
+														<i class="las la-trash-alt text-secondary font-30"></i>
+													</a>
+												</form>
+											</td>
+										</tr>
+									@endforeach
 								@endforeach
 							</tbody>
 						</table>
+
+
 					</div>
 				</div>
 			</div>

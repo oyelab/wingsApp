@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -27,7 +28,10 @@ class LoginController extends Controller
      * @var string
      */
     protected $redirectTo = RouteServiceProvider::DASHBOARD;
-
+	// public function authenticated(Request $request, $user)
+	// {
+	// 	return back(); // Redirects back to the previous page
+	// }
     /**
      * Create a new controller instance.
      *

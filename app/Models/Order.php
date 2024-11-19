@@ -23,6 +23,11 @@ class Order extends Model
 		'terms',
     ];
 
+	public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 	public function transactions()
 	{
 		return $this->hasMany(Transaction::class);
@@ -75,19 +80,20 @@ class Order extends Model
 		$validTransaction = $this->transactions->firstWhere('status', 'VALID');
 
 		$this->subtotal = $validTransaction->subtotal ?? 0;
-		$this->discount = $validTransaction->order_discount ?? 0;
 		$this->shipping_charge = $validTransaction->shipping_charge ?? 0;
-		$this->order_total = $this->subtotal - $this->discount + $this->shipping_charge;
+		$this->discount = $validTransaction->order_discount ?? 0;
+		$this->voucher = $validTransaction->voucher ?? 0;
+		$this->order_total = number_format($this->subtotal - $this->discount - $this->voucher + $this->shipping_charge, 2, '.', '');
 		$this->paid = $validTransaction->amount ?? 0;
-		$this->unpaid_amount = $this->order_total - $this->paid;
+		$this->unpaid_amount = number_format($this->order_total - $this->paid, 2, '.', '');
 
 		return $this;
 	}
 
 	public function getOrderItems()
 	{
-		return $this->products->unique('id')->map(function ($product) {
-			$imagePath = $product->image_paths[0] ?? 'images/products/default.jpg'; 
+		return $this->products->map(function ($product) {
+			$imagePath = $product->image_paths[0];
 			$sizeName = $product->sizes->firstWhere('id', $product->pivot->size_id)->name ?? 'N/A';
 
 			return [
@@ -102,6 +108,7 @@ class Order extends Model
 			];
 		});
 	}
+
 
 	public function getTranDateAttribute()
 	{

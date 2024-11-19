@@ -8,6 +8,13 @@ use Storage;
 
 class SiteSettingController extends Controller
 {
+	public function __construct()
+    {
+        $this->middleware('auth');
+		$this->middleware('role'); // Only allow role 1 users
+
+    }
+	
     // Display the settings form
     public function index()
 	{

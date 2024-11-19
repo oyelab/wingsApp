@@ -85,7 +85,44 @@
             <p>Subtotal: ৳ {{ number_format($subtotal, 2) }}</p>
             <p>Discount: {{ $totalDiscount ? '৳ ' . number_format($totalDiscount, 2) : 'N/A' }}</p>
             <p class="fw-bold">Total (without shipping): ৳ {{ number_format($subtotal - $totalDiscount, 2) }}</p>
-            
+
+			@if (session('voucher_success'))
+				<!-- Display the applied voucher as a badge -->
+				<div class="d-flex align-items-center">
+					<span class="badge bg-success me-2">
+						Voucher Applied: {{ session('applied_voucher') }}
+					</span>
+					<form action="{{ route('voucher.edit') }}" method="POST" class="d-inline">
+						@csrf
+						<button type="submit" class="btn btn-sm btn-warning">Edit</button>
+					</form>
+					<form action="{{ route('voucher.remove') }}" method="POST" class="d-inline ms-2">
+						@csrf
+						<button type="submit" class="btn btn-sm btn-danger">Remove</button>
+					</form>
+				</div>
+			@else
+				<!-- Show the voucher input field if no voucher is applied -->
+				<form action="{{ route('voucher.apply') }}" method="POST" class="d-flex align-items-center">
+					@csrf
+					<input type="text" class="form-control me-2" name="voucher" value="{{ old('voucher') }}" placeholder="Enter voucher code">
+					<button type="submit" class="btn btn-primary">Apply</button>
+				</form>
+			@endif
+
+			@if (session('voucher_success'))
+				<div class="alert alert-success mt-2">
+					Voucher applied successfully! Voucher Discount: {{ session('voucher') }}%
+				</div>
+			@endif
+
+			@if (session('error'))
+				<div class="alert alert-danger mt-2">
+					{{ session('error') }}
+				</div>
+			@endif
+
+
 			<!-- Button to Proceed to Checkout -->
     		<a href="{{ route('checkout.show') }}" class="btn btn-primary w-100 mt-4">Proceed to Checkout</a>
         </div>

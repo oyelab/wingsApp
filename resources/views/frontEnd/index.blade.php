@@ -53,7 +53,11 @@
                 <div class="swiper-slide">
                     <div class="product-item">
                         <div class="product-img">
-                            <a href="{{ route('products.details', $product->slug) }}">
+							<a href="{{ route('products.details', [
+									'category' => $product->categories->first()->slug,
+									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
+									'product' => $product->slug
+								]) }}">
                                 <img src="{{ $product->imagePaths[0] }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
                             </a>
                             <a href="#" class="wishlist-icon">
@@ -61,7 +65,11 @@
                             </a>
                         </div>
                         <div class="product-content d-flex justify-content-between">
-                            <a href="{{ route('products.details', $product->slug) }}">
+							<a href="{{ route('products.details', [
+									'category' => $product->categories->first()->slug,
+									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
+									'product' => $product->slug
+								]) }}">
                                 <h3>{{ $product->title }}</h3>
                             </a>
                             <div class="product-price">
@@ -92,7 +100,7 @@
 					<h2>{{ $titles['topPicks'] }}</h2>
 				</div>
 				<div class="navigation-items d-flex align-items-center">
-				<h3><a href="{{ route('shop.page', ['section' => 'top-picks']) }}">Shop</a></h3>
+				<h3><a href="{{ route('shop.page', ['section' => 'topPicks']) }}">Shop</a></h3>
 				<div
 						class="navigation-item tp-prev d-flex align-items-center justify-content-center"
 					>
@@ -136,7 +144,12 @@
 						<div class="product-img">
 						<img src="{{ $product->imagePaths[0] }}" alt="{{ $product->title }}"/>
 
-							<a href="{{ route('products.details', $product->slug) }}" class="wishlist-icon">
+
+							<a href="{{ route('products.details', [
+									'category' => $product->categories->first()->slug,
+									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
+									'product' => $product->slug
+								]) }}">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									width="20"
@@ -154,7 +167,11 @@
 						<div
 							class="product-content d-flex justify-content-between"
 						>
-							<a href="{{ route('products.details', $product->slug) }}">
+							<a href="{{ route('products.details', [
+									'category' => $product->categories->first()->slug,
+									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
+									'product' => $product->slug
+								]) }}">
 								<h3>
 									{{ $product->title }}
 								</h3>
@@ -183,7 +200,7 @@
 		<div class="row">
 			<div class="col-12">
 				<div class="bulk-banner">
-					<a href="#">
+					<a href="{{ route('collections') }}">
 						Explore More
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -215,7 +232,7 @@
 							</g>
 						</svg>
 					</a>
-					<a href="#">
+					<a href="{{ route('collections') }}">
 						<img
 							src="{{ asset('frontEnd/images/bulk-order.png') }}"
 							draggable="false"
@@ -245,7 +262,7 @@
 			<div class="row">
 				<div class="col-12">
 					<div class="explore-btn">
-						<a href="{{ route('category.products', ['category' => $wingsEdited->slug]) }}">
+						<a href="{{ route('collections', ['category' => $wingsEdited->slug]) }}">
 							Explore All
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -401,14 +418,18 @@
 						<div
 							class="product-content d-flex justify-content-between"
 						>
-							<a href="{{ route('products.details', $product->slug) }}">
+							<a href="{{ route('products.details', [
+									'category' => $product->categories->first()->slug,
+									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
+									'product' => $product->slug
+								]) }}">
 								<h3>
 									{{ $product->title }}
 								</h3>
 							</a>
 							<div class="product-price">
 								@if($product->sale)
-                                    <h4>{{ $product->offerPrice }}</h4>
+                                    <h4 >{{ $product->offerPrice }}</h4>
                                     <h5>{{ $product->price }}</h5>
                                 @else
                                     <h4>{{ $product->price }}</h4>
@@ -839,6 +860,130 @@
 		</div>
 	</div>
 </section>
+<!-- Official Manufacturer / Proud Kit Partners -->
+<div class="official-manufacture">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="official-manufacture-content">
+					<h3>Official Manufacturer</h3>
+					<img
+						src="assets/images/manufacturer-logo.png"
+						class="img-fluid"
+						alt="Manufacture Logo"
+						draggable="false"
+					/>
+				</div>
+			</div>
+			<div class="col-md-8">
+				<div class="proud-kit-partner-content">
+					<h3>Proud Kit Partners</h3>
+					<div
+						class="partner_logo_wrap swiper proudKitPartner"
+					>
+						<div class="swiper-wrapper">
+							<div class="logo_item swiper-slide">
+								<img
+									draggable="false"
+									src="https://wingssportsapparel.com/images/partner/1722239687.png"
+									class="img-fluid"
+									alt=""
+								/>
+							</div>
+							<div class="logo_item swiper-slide">
+								<img
+									draggable="false"
+									src="https://wingssportsapparel.com/images/partner/1722239704.png"
+									class="img-fluid"
+									alt=""
+								/>
+							</div>
+							<div class="logo_item swiper-slide">
+								<img
+									draggable="false"
+									src="https://wingssportsapparel.com/images/partner/1722239725.png"
+									class="img-fluid"
+									alt=""
+								/>
+							</div>
+							<div class="logo_item swiper-slide">
+								<img
+									draggable="false"
+									src="https://wingssportsapparel.com/images/partner/1722239744.png"
+									class="img-fluid"
+									alt=""
+								/>
+							</div>
+							<div class="logo_item swiper-slide">
+								<img
+									draggable="false"
+									src="https://wingssportsapparel.com/images/partner/1722239799.png"
+									class="img-fluid"
+									alt=""
+								/>
+							</div>
+							<div class="logo_item swiper-slide">
+								<img
+									draggable="false"
+									src="https://wingssportsapparel.com/images/partner/1722239820.png"
+									class="img-fluid"
+									alt=""
+								/>
+							</div>
+							<div class="logo_item swiper-slide">
+								<img
+									draggable="false"
+									src="https://wingssportsapparel.com/images/partner/1722239845.png"
+									class="img-fluid"
+									alt=""
+								/>
+							</div>
+							<div class="logo_item swiper-slide">
+								<img
+									draggable="false"
+									src="https://wingssportsapparel.com/images/partner/1722239866.png"
+									class="img-fluid"
+									alt=""
+								/>
+							</div>
+							<div class="logo_item swiper-slide">
+								<img
+									draggable="false"
+									src="https://wingssportsapparel.com/images/partner/1722239887.png"
+									class="img-fluid"
+									alt=""
+								/>
+							</div>
+						</div>
+						<div class="swiper-button-next"></div>
+						<div class="swiper-button-prev"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Payment banner -->
+<div class="we-accept-payments-wrap">
+	<div class="container">
+		<div class="row">
+			<div class="col-12 d-flex align-items-center gap-style">
+				<h2>
+					We Accept <br />
+					Payments
+				</h2>
+				<div class="payment-banner">
+					<img
+						src="assets/images/payment-banner.png"
+						draggable="false"
+						class="img-fluid"
+						alt="We Accept Payments"
+					/>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 @endsection
 @section('scripts')
 @endsection

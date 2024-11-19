@@ -111,12 +111,14 @@
 			<div class="cost-summary">
 				<div class="subtotal-labels">
 					<p>Subtotal</p>
-					<p>Discount</p>
+					<p>Product Discount</p>
+					<p>Voucher Discount</p>
 					<p>Delivery Charge</p>
 				</div>
 				<div class="subtotal-values">
 					<p>Tk. {{ $order_details->subtotal }}</p>
 					<p>{{ $order_details->discount ? '৳' . $order_details->discount : 'N/A' }}</p>
+					<p>{{ $order_details->voucher ? '৳' . $order_details->voucher : 'N/A' }}</p>
 					<p>Tk. {{ $order_details->shipping_charge }}</p>
 				</div>
 			</div>

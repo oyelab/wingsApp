@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Quantity;
 use App\Models\Size;
+use App\Models\Voucher;
 use App\Models\Transaction;
 use App\Models\Category;
 use App\Library\SslCommerz\SslCommerzNotification;
@@ -32,6 +33,9 @@ class PaymentController extends Controller
 
 			// Ensure product and size exist
 			if ($product && $size) {
+				// Use salePrice if available, otherwise use regular price
+				$price = $product->salePrice ?: $product->price;
+
 				return array_merge($item, [
 					'title' => $product->title,
 					'price' => $product->price,
@@ -39,6 +43,7 @@ class PaymentController extends Controller
 					'salePrice' => $product->offer_price,
 					'categories' => $product->categories->pluck('title')->implode(', '),
 					'size_name' => $size->name,
+					'total_price' => $price * $item['quantity'], // Calculate total price based on salePrice or price
 				]);
 			}
 			return $item;
@@ -52,14 +57,28 @@ class PaymentController extends Controller
 			]);
 		}
 
-		return view('frontEnd.orders.checkout', compact('cartItems'));
+		$orderTotal = $cartItems->sum('total_price');
+
+
+		$voucherDiscount = session('voucher', 0); // Default to 0 if no voucher is applied
+		// return $voucherDiscount;
+
+		// Step 1: Calculate the discount amount
+		// $voucherDiscount = round(($orderTotal * $voucher) / 100, 2);
+
+		// // Step 2: Format the value for display (optional, for presentation)
+		// $voucherDiscountAmount = number_format($voucherDiscount, 2, '.', '');
+
+		// return $voucherDiscountAmount;
+
+
+		return view('frontEnd.orders.checkout', compact('cartItems', 'voucherDiscount'));
 	}
 
 
 	public function processCheckout(Request $request)
     {
 		// return $request;
-
 		$tran_id = 'ws' . substr(Str::uuid()->toString(), 0, 8);
 
         // Validate the request data
@@ -88,6 +107,9 @@ class PaymentController extends Controller
 
 		// return $subTotal;
 
+		$voucher = $request->input('voucher');
+		// return $voucher;
+
 		// Calculate total discount based on the `sale` field in the products table
 		$discount_amount = collect($request->products)->sum(function ($productData) {
 			// Find the product by ID
@@ -97,16 +119,16 @@ class PaymentController extends Controller
 			return $product ? $product->calculateDiscount($productData['quantity']) : 0;
 		});
 
-		$discount_amount = number_format($discount_amount, 2, '.', ''); // This will return a string
+		// Format the discount amount, but only if it's greater than 0
+		$discount_amount = $discount_amount > 0 ? number_format($discount_amount, 2, '.', '') : null;
+
 
 		// Calculate the subtotal after discount
-		$order_total = $subTotal - $discount_amount; // Calculate subtotal
+		$order_total = $subTotal - $discount_amount - $voucher; // Calculate subtotal
+
+		// return $order_total;  
 
 		$order_total = number_format($order_total, 2, '.', '');
-
-		// return $order_total;
-
-		// dd($shipping_charge);
 
 		// Define the payment method (you will set this based on customer selection)
 		$payment_method = $validated['payment_method']; // 'COD' or 'Full Payment'
@@ -140,6 +162,7 @@ class PaymentController extends Controller
 			'subtotal' => $subTotal,
 			'shipping_charge' => $shipping_charge, // Always store shipping charge
             'order_discount' => $discount_amount,
+            'voucher' => $voucher,
 			'order_total' => $order_total,
 			'payment_status' => $payment_method === 'Full Payment', // true if Full Payment, false if COD
 		];
@@ -244,6 +267,7 @@ class PaymentController extends Controller
 
 	public function paymentSuccess(Request $request)
 	{
+		
 		// return $request;
 
 		$sslc = new SslCommerzNotification();
@@ -328,66 +352,203 @@ class PaymentController extends Controller
 			// If order doesn't exist
 			$message = 'Order not found.';
 		}
-		// return $message;
-		// return $order_details;
 
 		// Clear the cart session
 		session()->forget('cart'); // Replace 'cart' with the actual name of your cart session if it's different
+		session()->forget(['voucher_success', 'applied_voucher', 'voucher']);
 
 		session(['order_ref' => $order_details->ref]);
 
 		return redirect()->route('order.placed', ['order' => $order_details->ref])->with('message', $message);
 	}
 	
-    public function paymentFail(Request $request)
+	public function paymentFail(Request $request)
 	{
+		// Retrieve the transaction ID from the request
 		$tran_id = $request->input('tran_id');
+	
+		// Retrieve the order details with related transactions
+		$order_details = Order::with('transactions', 'products')
+			->where('ref', $tran_id)
+			->first();
+	
+		// Initialize a message variable
+		$message = 'Invalid Transaction';
+	
+		// Check if the order exists
+		if ($order_details) {
+			// Check if the order status is 'Pending' (0)
+			if ($order_details->status == 0) {
+				// Check for existing transaction
+				$existingTransaction = $order_details->transactions()
+					->where('ref', $tran_id)
+					->whereNull('status') // Check if the status is NULL
+					->first();
+	
+				// Prepare transaction data based on the failed request response
+				$transaction_data = [
+					'ref' => $tran_id,
+					'order_id' => $order_details->id,
+					'val_id' => $request->val_id,
+					'amount' => $request->amount,
+					'card_type' => $request->card_type,
+					'store_amount' => $request->store_amount,
+					'card_no' => $request->card_no,
+					'bank_tran_id' => $request->bank_tran_id,
+					'status' => $request->status,
+					'tran_date' => $request->tran_date,
+					'error' => $request->error,
+					'currency' => $request->currency,
+					'card_issuer' => $request->card_issuer,
+					'card_brand' => $request->card_brand,
+					'card_sub_brand' => $request->card_sub_brand,
+					'card_issuer_country' => $request->card_issuer_country,
+					'card_issuer_country_code' => $request->card_issuer_country_code,
+					'store_id' => $request->store_id,
+					'verify_sign' => $request->verify_sign,
+					'verify_key' => $request->verify_key,
+					'verify_sign_sha2' => $request->verify_sign_sha2,
+					'currency_type' => $request->currency_type,
+					'currency_amount' => $request->currency_amount,
+					'currency_rate' => $request->currency_rate,
+					'base_fair' => $request->base_fair,
+					'value_a' => $request->value_a,
+					'value_b' => $request->value_b,
+					'value_c' => $request->value_c,
+					'value_d' => $request->value_d,
+					'subscription_id' => $request->subscription_id,
+					'risk_level' => $request->risk_level,
+					'risk_title' => $request->risk_title,
+				];
+	
+				if ($existingTransaction) {
+					// Update existing transaction with the failed data
+					$existingTransaction->update($transaction_data);
+					$message = 'Transaction failed, please try again!';
+				} else {
+					// Create a new failed transaction record
+					$order_details->transactions()->create($transaction_data);
+					$message = 'Transaction failed, please try again!';
+				}
+	
+				// Update the order status to 'Failed' (6)
+				$order_details->update(['status' => 6]);
+	
+				// Restore product quantities
+				foreach ($order_details->products as $product) {
+					Quantity::where('product_id', $product->id)
+						->where('size_id', $product->pivot->size_id)
+						->increment('quantity', $product->pivot->quantity);
+				}
+			} else {
+				// If the order is already completed or processing
+				$message = 'Transaction is already completed or in processing.';
+			}
+		} else {
+			// If order does not exist
+			$message = 'Order not found.';
+		}
+	
+		// Redirect back to processCheckout
+		return redirect()->route('checkout.process')->with('message', $message);
+	}
+	
+	
 
-		// Retrieve order details
+
+    public function paymentCancel(Request $request)
+    {
+        $tran_id = $request->input('tran_id');
+
+        // Retrieve the order details with related transactions
 		$order_details = Order::with('transactions')
 			->where('ref', $tran_id)
 			->first();
 
-		// Initialize a default message for clarity
+        // Initialize a message variable
 		$message = 'Invalid Transaction';
-
+	
 		// Check if the order exists
 		if ($order_details) {
+			// Check if the order status is 'Pending' (0)
 			if ($order_details->status == 0) {
-				// Update status to 'Cancelled' (3)
-				$order_details->update(['status' => 3]);
-				$message = 'Transaction was cancelled.';
-			} else if (in_array($order_details->status, [1, 2])) {
-				// Status is already completed or processing
-				$message = 'Transaction is successfully completed.';
+				// Check for existing transaction
+				$existingTransaction = $order_details->transactions()
+				->where('ref', $tran_id)
+				->whereNull('status') // Check if the status is NULL
+				->first();
+			
+
+				// Prepare transaction data based on the failed request response
+				$transaction_data = [
+					'ref' => $tran_id,
+					'order_id' => $order_details->id,
+					'val_id' => $request->val_id,
+					'amount' => $request->amount,
+					'card_type' => $request->card_type,
+					'store_amount' => $request->store_amount,
+					'card_no' => $request->card_no,
+					'bank_tran_id' => $request->bank_tran_id,
+					'status' => $request->status,
+					'tran_date' => $request->tran_date,
+					'error' => $request->error,
+					'currency' => $request->currency,
+					'card_issuer' => $request->card_issuer,
+					'card_brand' => $request->card_brand,
+					'card_sub_brand' => $request->card_sub_brand,
+					'card_issuer_country' => $request->card_issuer_country,
+					'card_issuer_country_code' => $request->card_issuer_country_code,
+					'store_id' => $request->store_id,
+					'verify_sign' => $request->verify_sign,
+					'verify_key' => $request->verify_key,
+					'verify_sign_sha2' => $request->verify_sign_sha2,
+					'currency_type' => $request->currency_type,
+					'currency_amount' => $request->currency_amount,
+					'currency_rate' => $request->currency_rate,
+					'base_fair' => $request->base_fair,
+					'value_a' => $request->value_a,
+					'value_b' => $request->value_b,
+					'value_c' => $request->value_c,
+					'value_d' => $request->value_d,
+					'subscription_id' => $request->subscription_id,
+					'risk_level' => $request->risk_level,
+					'risk_title' => $request->risk_title,
+				];
+	
+				if ($existingTransaction) {
+					// Update existing transaction with the failed data
+					$existingTransaction->update($transaction_data);
+					$message = 'Transaction cancelled, Please try again!';
+				} else {
+					// Create a new failed transaction record
+					$order_details->transactions()->create($transaction_data);
+					$message = 'Transaction cancelled, Please try again!';
+				}
+	
+				// Update the order status to 'Cancelled' (5)
+				$order_details->update(['status' => 5]);
+
+				// Restore product quantities
+				foreach ($order_details->products as $product) {
+					Quantity::where('product_id', $product->id)
+						->where('size_id', $product->pivot->size_id)
+						->increment('quantity', $product->pivot->quantity);
+				}
+			} else {
+				// If the order is already completed or processing
+				$message = 'Transaction is already completed or in processing.';
 			}
+		} else {
+			// If order does not exist
+			$message = 'Order not found.';
 		}
-
-		return $message;
+	
+		// Store the order reference in the session for redirection
+		session(['order_ref' => $order_details->ref ?? null]);
+	
+		// Redirect back to processCheckout
+		return redirect()->route('checkout.process')->with('message', $message);
 	}
-
-
-    public function cancel(Request $request)
-    {
-        $tran_id = $request->input('tran_id');
-
-        $order_details = DB::table('orders')
-            ->where('transaction_id', $tran_id)
-            ->select('transaction_id', 'status', 'currency', 'amount')->first();
-
-        if ($order_details->status == 'Pending') {
-            $update_product = DB::table('orders')
-                ->where('transaction_id', $tran_id)
-                ->update(['status' => 'Canceled']);
-            echo "Transaction is Cancel";
-        } else if ($order_details->status == 'Processing' || $order_details->status == 'Complete') {
-            echo "Transaction is already Successful";
-        } else {
-            echo "Transaction is Invalid";
-        }
-
-
-    }
 
     public function ipn(Request $request)
     {
