@@ -11,6 +11,12 @@ use App\Models\Section;
 
 class CategoryController extends Controller
 {
+	public function __construct()
+    {
+        $this->middleware('auth')->except('mainCategory', 'wingsEdited', 'subCategory', 'frontShow');
+		$this->middleware('role')->except('mainCategory', 'wingsEdited', 'subCategory', 'frontShow'); // Only allow role 1 users
+    }
+
 	public function mainCategory(Category $category)
 	{
 		return $category->products;
@@ -226,12 +232,6 @@ class CategoryController extends Controller
 	}
 
 
-	public function __construct()
-    {
-        $this->middleware('auth')->except('subCategory');
-		$this->middleware('role'); // Only allow role 1 users
-
-    }
 
 	public function getSubcategories($mainCategoryId)
 	{

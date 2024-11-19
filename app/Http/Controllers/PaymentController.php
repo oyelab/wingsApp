@@ -86,7 +86,7 @@ class PaymentController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:15',
-            'address' => 'required|string|max:255',
+			'address' => 'required|string|min:10|max:255',
             'payment_method' => 'required|in:COD,Full Payment', // Ensure it matches your form values
 			'terms' => 'accepted',
 			'recipient_city' => 'required|numeric',
