@@ -885,7 +885,7 @@
 							<div class="logo_item swiper-slide">
 								<img
 									draggable="false"
-									src="https://wingssportsapparel.com/images/partner/1722239687.png"
+									src="images/partner/1722239687.png"
 									class="img-fluid"
 									alt=""
 								/>
@@ -893,7 +893,7 @@
 							<div class="logo_item swiper-slide">
 								<img
 									draggable="false"
-									src="https://wingssportsapparel.com/images/partner/1722239704.png"
+									src="images/partner/1722239687.png"
 									class="img-fluid"
 									alt=""
 								/>
@@ -901,7 +901,7 @@
 							<div class="logo_item swiper-slide">
 								<img
 									draggable="false"
-									src="https://wingssportsapparel.com/images/partner/1722239725.png"
+									src="images/partner/1722239687.png"
 									class="img-fluid"
 									alt=""
 								/>
@@ -909,7 +909,7 @@
 							<div class="logo_item swiper-slide">
 								<img
 									draggable="false"
-									src="https://wingssportsapparel.com/images/partner/1722239744.png"
+									src="images/partner/1722239687.png"
 									class="img-fluid"
 									alt=""
 								/>
@@ -917,7 +917,7 @@
 							<div class="logo_item swiper-slide">
 								<img
 									draggable="false"
-									src="https://wingssportsapparel.com/images/partner/1722239799.png"
+									src="images/partner/1722239687.png"
 									class="img-fluid"
 									alt=""
 								/>
@@ -925,7 +925,7 @@
 							<div class="logo_item swiper-slide">
 								<img
 									draggable="false"
-									src="https://wingssportsapparel.com/images/partner/1722239820.png"
+									src="images/partner/1722239687.png"
 									class="img-fluid"
 									alt=""
 								/>
@@ -933,7 +933,7 @@
 							<div class="logo_item swiper-slide">
 								<img
 									draggable="false"
-									src="https://wingssportsapparel.com/images/partner/1722239845.png"
+									src="images/partner/1722239687.png"
 									class="img-fluid"
 									alt=""
 								/>
@@ -941,7 +941,7 @@
 							<div class="logo_item swiper-slide">
 								<img
 									draggable="false"
-									src="https://wingssportsapparel.com/images/partner/1722239866.png"
+									src="images/partner/1722239687.png"
 									class="img-fluid"
 									alt=""
 								/>
@@ -949,7 +949,7 @@
 							<div class="logo_item swiper-slide">
 								<img
 									draggable="false"
-									src="https://wingssportsapparel.com/images/partner/1722239887.png"
+									src="images/partner/1722239687.png"
 									class="img-fluid"
 									alt=""
 								/>
