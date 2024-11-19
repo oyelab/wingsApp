@@ -170,14 +170,15 @@
 
                                     <td>{{ $product->total_quantity }}</td>
                                     <td>
-										<div class="{{ $product->offer_price !== null ? 'text-decoration-line-through' : '' }}">
+										<div class="{{ $product->sale !== null ? 'text-decoration-line-through' : '' }}">
 											{{ $product->price }}
 										</div>
-										@if($product->offer_price !== null)
+										@if($product->sale !== null)
 											<div class="text-danger">
-												{{ $product->offer_price }}
+												{{ $product->offerPrice }}
 											</div>
 										@endif
+
 									</td>
 									<td>
 										<div class="form-check form-switch">
