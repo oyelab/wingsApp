@@ -63,7 +63,7 @@
 									<div class="row">
 										<div class="col-lg-4">
 											<div class="mb-3">
-												<label class="form-label" for="price">Price <span class="text-danger">*</span></label>
+												<label class="form-label" for="price">Price</label>
 												<input 
 													id="price" 
 													name="price" 

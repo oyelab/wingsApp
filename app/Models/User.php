@@ -17,11 +17,14 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    // protected $fillable = [
+    //     'name',
+    //     'email',
+    //     'password',
+    // ];
+
+	protected $fillable = ['name', 'email', 'password', 'phone', 'city', 'zone', 'area', 'country', 'zip', 'avatar'];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -47,4 +50,25 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
+
+	public function reviews()
+	{
+		return $this->hasMany(Review::class);
+	}
+
+	public function getReviewsCountAttribute()
+	{
+		return $this->reviews()->count(); // Count the number of reviews for this user
+	}
+
+	public function getOrdersCountAttribute()
+	{
+		return $this->orders()->count(); // Count the number of reviews for this user
+	}
+
+	public function getAvatarPathAttribute()
+	{
+		return $this->avatar ? asset('storage/avatars/' . $this->avatar) : asset('storage/avatars/default-avatar.jpeg');
+	}
+
 }

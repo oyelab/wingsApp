@@ -133,6 +133,10 @@ class ProductController extends Controller
 	{
 		// Generate a slug from the title
 		$slug = Str::slug($request->title);
+
+		// Attach the category and subcategory to the product via the pivot table
+		$categoryId = $request->category; // Main category ID
+		$subcategoryId = $request->subcategory; // Subcategory ID
 	
 		// Validate the input
 		$request->validate([
@@ -149,7 +153,7 @@ class ProductController extends Controller
 					}
 				}
 			],
-			'price' => 'required|numeric',
+			'price' => 'nullable|numeric|required_unless:category,1',
 			'description' => 'required|string',
 			'category' => 'required|exists:categories,id', // Ensure the category exists
 			'subcategory' => 'required|exists:categories,id', // Ensure the subcategory exists
@@ -200,9 +204,7 @@ class ProductController extends Controller
 			'og_image' => $ogImageName,
 		]);
 	
-		// Attach the category and subcategory to the product via the pivot table
-		$categoryId = $request->category; // Main category ID
-		$subcategoryId = $request->subcategory; // Subcategory ID
+
 	
 		// Attach both category and subcategory to the product
 		$product->categories()->attach($categoryId, ['subcategory_id' => $subcategoryId]);
@@ -285,7 +287,7 @@ class ProductController extends Controller
 					}
 				}
 			],
-			'price' => 'required|numeric',
+			'price' => 'nullable|numeric|required_unless:category,1',
 			'description' => 'required|string',
 			'category' => 'required|exists:categories,id', // Ensure the main category is valid
 			'subcategory' => 'required|exists:categories,id', // Validate against the pivot table id

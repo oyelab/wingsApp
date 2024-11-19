@@ -1,4 +1,5 @@
 @extends('frontEnd.layouts.app')
+@section('pageTitle', $product->title . ' | ')
 @section('content')
 <!-- breadcrumb section -->
 <div class="breadcrumb-section">

@@ -17,6 +17,7 @@ use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Session;
 
 
@@ -94,6 +95,8 @@ Route::resource('backEnd/products', ProductController::class);
 Route::put('/backEnd/products/{product}/status', [ProductController::class, 'updateStatus'])->name('products.updateStatus');
 Route::put('/backEnd/products/{product}/sale', [ProductController::class, 'updateOffer'])->name('products.updateOffer');
 
+Route::resource('backEnd/reviews', ReviewController::class);
+
 Route::resource('backEnd/categories', CategoryController::class);
 
 Route::resource('backEnd/sliders', SliderController::class);
@@ -120,3 +123,4 @@ Route::get('/backEnd', [App\Http\Controllers\DashboardController::class, 'root']
 Route::get('/backEnd/x/{any}', [App\Http\Controllers\DashboardController::class, 'index'])->name('back.index');
 
 Route::get('/backEnd/profile', [UserController::class, 'profile'])->name('profile');
+Route::put('/profile/update', [UserController::class, 'update'])->name('profile.update');

@@ -39,6 +39,7 @@ class Order extends Model
 		return $this->belongsToMany(Product::class)
 					->withPivot('size_id', 'quantity'); // Ensure pivot fields are included
 	}
+	
 	public function delivery()
     {
         return $this->hasOne(Delivery::class);

@@ -20,7 +20,7 @@
 							<div class="overlay-content rounded-top">
 								<div class="user-nav p-3">
 									<div class="d-flex justify-content-end">
-										<a href="#" class="text-muted font-size-16" title="Edit">
+										<a href="#" class="text-muted font-size-16" data-bs-toggle="modal" data-bs-target="#editModal" title="Edit">
 											<i class="bx bx-edit text-white font-size-20"></i>
 										</a>
 									</div>
@@ -29,11 +29,110 @@
                         </div>
                         <!-- end user-profile-img -->
 
+						<!-- Modal -->
+						<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="editModalLabel">Edit Profile</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<!-- Modal Form for User Profile -->
+										<form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+											@csrf
+											@method('PUT')
+											<div class="modal-body">
+												<div class="mb-3">
+													<label for="name" class="form-label">Name</label>
+													<input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', auth()->user()->name) }}">
+													@error('name')
+														<div class="invalid-feedback">{{ $message }}</div>
+													@enderror
+												</div>
+
+												<div class="mb-3">
+													<label for="email" class="form-label">Email</label>
+													<input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', auth()->user()->email) }}">
+													@error('email')
+														<div class="invalid-feedback">{{ $message }}</div>
+													@enderror
+												</div>
+
+												<div class="mb-3">
+													<label for="phone" class="form-label">Phone</label>
+													<input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone', auth()->user()->phone) }}">
+													@error('phone')
+														<div class="invalid-feedback">{{ $message }}</div>
+													@enderror
+												</div>
+
+												<div class="mb-3">
+													<label for="city" class="form-label">City</label>
+													<input type="text" class="form-control @error('city') is-invalid @enderror" id="city" name="city" value="{{ old('city', auth()->user()->city) }}">
+													@error('city')
+														<div class="invalid-feedback">{{ $message }}</div>
+													@enderror
+												</div>
+
+												<div class="mb-3">
+													<label for="zone" class="form-label">Zone</label>
+													<input type="text" class="form-control @error('zone') is-invalid @enderror" id="zone" name="zone" value="{{ old('zone', auth()->user()->zone) }}">
+													@error('zone')
+														<div class="invalid-feedback">{{ $message }}</div>
+													@enderror
+												</div>
+
+												<div class="mb-3">
+													<label for="area" class="form-label">Area</label>
+													<input type="text" class="form-control @error('area') is-invalid @enderror" id="area" name="area" value="{{ old('area', auth()->user()->area) }}">
+													@error('area')
+														<div class="invalid-feedback">{{ $message }}</div>
+													@enderror
+												</div>
+
+												<div class="mb-3">
+													<label for="country" class="form-label">Country</label>
+													<input type="text" class="form-control @error('country') is-invalid @enderror" id="country" name="country" value="{{ old('country', auth()->user()->country) }}">
+													@error('country')
+														<div class="invalid-feedback">{{ $message }}</div>
+													@enderror
+												</div>
+
+												<div class="mb-3">
+													<label for="zip" class="form-label">Zip Code</label>
+													<input type="text" class="form-control @error('zip') is-invalid @enderror" id="zip" name="zip" value="{{ old('zip', auth()->user()->zip) }}">
+													@error('zip')
+														<div class="invalid-feedback">{{ $message }}</div>
+													@enderror
+												</div>
+
+												<div class="mb-3">
+													<label for="avatar" class="form-label">Avatar</label>
+													<input type="file" class="form-control @error('avatar') is-invalid @enderror" id="avatar" name="avatar">
+													@error('avatar')
+														<div class="invalid-feedback">{{ $message }}</div>
+													@enderror
+												</div>
+											</div>
+
+											<div class="modal-footer">
+												<button type="submit" class="btn btn-primary">Update</button>
+												<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+											</div>
+										</form>
+
+									</div>
+								</div>
+							</div>
+						</div>
+
+
 
                         <div class="p-4 pt-0">
 
                             <div class="mt-n5 position-relative text-center border-bottom pb-3">
-                                <img src="{{ asset('build/images/users/avatar-3.jpg') }}" alt=""
+                                <img src="{{ $user->avatarPath }}" alt=""
                                     class="avatar-xl rounded-circle img-thumbnail">
 
                                 <div class="mt-3">
@@ -104,13 +203,13 @@
                                 <div class="row text-center">
                                     <div class="col-6 border-end">
                                         <div class="p-1">
-                                            <h5 class="mb-1">1,269</h5>
+                                            <h5 class="mb-1">{{ $user->ordersCount }}</h5>
                                             <p class="text-muted mb-0">Orders</p>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="p-1">
-                                            <h5 class="mb-1">5.2k</h5>
+                                            <h5 class="mb-1">{{ $user->reviewsCount }}</h5>
                                             <p class="text-muted mb-0">Reviews</p>
                                         </div>
                                     </div>
@@ -127,12 +226,12 @@
                         <!-- Nav tabs -->
                         <ul class="nav nav-pills nav-justified" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" data-bs-toggle="tab" href="#overview" role="tab">
+                                <a class="nav-link" data-bs-toggle="tab" href="#overview" role="tab">
                                     <span>Active Orders</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#messages" role="tab">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#messages" role="tab">
                                     <span>Active Reviews</span>
                                 </a>
                             </li>
@@ -142,7 +241,7 @@
 
                 <!-- Tab content -->
                 <div class="tab-content">
-                    <div class="tab-pane active" id="overview" role="tabpanel">
+                    <div class="tab-pane" id="overview" role="tabpanel">
                         <div class="card">
                             <div class="card-body">
 								
@@ -208,157 +307,79 @@
 										</table>
 									</div>
 								</div>
-
-                                <h5 class="font-size-16 mb-3">Summary</h5>
-                                <div class="mt-3">
-                                    <p class="font-size-15 mb-1">Hi my name is Jennifer Bennett.</p>
-                                    <p class="font-size-15">I'm the Co-founder and Head of Design at Company agency.</p>
-
-                                    <p class="text-muted">Been the industry's standard dummy text To an English person.
-                                        Our team collaborators and clients to achieve cupidatat non proident, sunt in culpa
-                                        qui officia deserunt mollit anim id est some advantage from it? But who has any
-                                        right to find fault with a man who chooses to enjoy a pleasure that has no annoying
-                                        consequences debitis aut rerum necessitatibus saepe eveniet ut et voluptates laborum
-                                        growth.</p>
-                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="tab-pane" id="messages" role="tabpanel">
+                    <div class="tab-pane active" id="messages" role="tabpanel">
                         <div class="card">
                             <div class="card-body">
 
                                 <div class="py-2">
 
                                     <div class="mx-n4 px-4" data-simplebar style="max-height: 360px;">
-                                        <div class="border-bottom pb-3">
-                                            <p class="float-sm-end text-muted font-size-13">12 July, 2021</p>
-                                            <div class="badge bg-success mb-2"><i class="mdi mdi-star"></i> 4.1</div>
-                                            <p class="text-muted mb-4">Maecenas non vestibulum ante, nec efficitur orci.
-                                                Duis eu ornare mi, quis bibendum quam. Etiam imperdiet aliquam purus sit
-                                                amet rhoncus. Vestibulum pretium consectetur leo, in mattis ipsum
-                                                sollicitudin eget. Pellentesque vel mi tortor.
-                                                Nullam vitae maximus dui dolor sit amet, consectetur adipiscing elit.</p>
-                                            <div class="d-flex align-items-start">
-                                                <div class="flex-grow-1">
-                                                    <div class="d-flex">
-                                                        <img src="{{ asset('build/images/users/avatar-2.jpg') }}"
-                                                            class="avatar-sm rounded-circle" alt="">
-                                                        <div class="flex-1 ms-2 ps-1">
-                                                            <h5 class="font-size-15 mb-0">Samuel</h5>
-                                                            <p class="text-muted mb-0 mt-1">65 Followers, 86 Reviews</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
+									@foreach ($reviews as $review)
+										<div class="border-bottom pb-3">
+											<p class="float-sm-end text-muted font-size-13">{{ $review->created_at->format('d M, Y') }}</p>
+											
+											<!-- Star rating badge -->
+											<div class="d-inline-flex align-items-center mb-2" id="rating-display-{{ $review->id }}">
+												<div class="badge bg-success"><i class="mdi mdi-star"></i>Rating {{ $review->rating }}</div>
+											</div>
 
-                                                <div class="flex-shrink-0">
-                                                    <ul class="list-inline product-review-link mb-0">
-                                                        <li class="list-inline-item">
-                                                            <a href="#"><i class="bx bx-like"></i></a>
-                                                        </li>
-                                                        <li class="list-inline-item">
-                                                            <a href="#"><i class="bx bx-comment-dots"></i></a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
+											<p class="text-muted mb-4">{{ $review->content }}</p>
+											
+											<div class="flex">
+												<strong>Review Added to >> &nbsp;</strong>
+												@if ($review->products->isEmpty())
+													<span>Site</span>
+												@else
+													@foreach ($review->products as $product)
+														<span>{{ $product->title }}</span>
+														@if (!$loop->last),@endif <!-- Optional: Adds a comma between product titles, except after the last one -->
+													@endforeach
+												@endif
 
-                                        </div>
+											</div>
+										</div>
+									@endforeach
 
-                                        <div class="border-bottom py-3">
-                                            <p class="float-sm-end text-muted font-size-13">06 July, 2021</p>
-                                            <div class="badge bg-success mb-2"><i class="mdi mdi-star"></i> 4.0</div>
-                                            <p class="text-muted mb-4">Cras ac condimentum velit. Quisque vitae elit auctor
-                                                quam egestas congue. Duis eget lorem fringilla, ultrices justo consequat,
-                                                gravida lorem. Maecenas orci enim, sodales id condimentum et, nisl arcu
-                                                aliquam velit,
-                                                sit amet vehicula turpis metus cursus dolor cursus eget dui.</p>
-                                            <div class="d-flex align-items-start">
-                                                <div class="flex-grow-1">
-                                                    <div class="d-flex">
-                                                        <img src="{{ asset('build/images/users/avatar-3.jpg') }}"
-                                                            class="avatar-sm rounded-circle" alt="">
-                                                        <div class="flex-1 ms-2 ps-1">
-                                                            <h5 class="font-size-15 mb-0">Joseph</h5>
-                                                            <p class="text-muted mb-0 mt-1">85 Followers, 102 Reviews</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="flex-shrink-0">
-                                                    <ul class="list-inline product-review-link mb-0">
-                                                        <li class="list-inline-item">
-                                                            <a href="#"><i class="bx bx-like"></i></a>
-                                                        </li>
-                                                        <li class="list-inline-item">
-                                                            <a href="#"><i class="bx bx-comment-dots"></i></a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="pt-3">
-                                            <p class="float-sm-end text-muted font-size-13">26 June, 2021</p>
-                                            <div class="badge bg-success mb-2"><i class="mdi mdi-star"></i> 4.2</div>
-                                            <p class="text-muted mb-4">Aliquam sit amet eros eleifend, tristique ante sit
-                                                amet, eleifend arcu. Cras ut diam quam. Fusce quis diam eu augue semper
-                                                ullamcorper vitae sed massa. Mauris lacinia, massa a feugiat mattis, leo
-                                                massa porta eros, sed congue arcu sem nec orci.
-                                                In ac consectetur augue. Nullam pulvinar risus non augue tincidunt blandit.
-                                            </p>
-                                            <div class="d-flex align-items-start">
-                                                <div class="flex-grow-1">
-                                                    <div class="d-flex">
-                                                        <img src="{{ asset('build/images/users/avatar-6.jpg') }}"
-                                                            class="avatar-sm rounded-circle" alt="">
-                                                        <div class="flex-1 ms-2 ps-1">
-                                                            <h5 class="font-size-15 mb-0">Paul</h5>
-                                                            <p class="text-muted mb-0 mt-1">27 Followers, 66 Reviews</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="flex-shrink-0">
-                                                    <ul class="list-inline product-review-link mb-0">
-                                                        <li class="list-inline-item">
-                                                            <a href="#"><i class="bx bx-like"></i></a>
-                                                        </li>
-                                                        <li class="list-inline-item">
-                                                            <a href="#"><i class="bx bx-comment-dots"></i></a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-
-                                        </div>
                                     </div>
 
                                     <div class="mt-2">
-                                        <div class="border rounded mt-4">
-                                            <form action="#">
-                                                <div class="px-2 py-1 bg-light">
-                                                    <div class="btn-group" role="group">
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-link text-darbodyxt-decoration-none"><i
-                                                                class="bx bx-link"></i></button>
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-link text-darbodyxt-decoration-none"><i
-                                                                class="bx bx-smile"></i></button>
-                                                        <button type="button"
-                                                            class="btn btn-sm btn-link text-darbodyxt-decoration-none"><i
-                                                                class="bx bx-at"></i></button>
-                                                    </div>
-                                                </div>
-                                                <textarea rows="3" class="form-control border-0 resize-none" placeholder="Your Message..."></textarea>
-                                            </form>
-                                        </div>
+                                       
+										<form action="{{ route('reviews.store') }}" method="POST">
+											@csrf
+											<div class="border rounded mt-4 bg-light">
+												<div class="ms-3 d-flex align-items-center" role="group">
+													<div id="basic-rater" class="me-2"></div> <!-- Add margin to separate the stars and text -->
+													<span class="p-3">
+														<strong>Rate from 1 to 5 stars to share your opinion.</strong>
+													</span>
+												</div>
 
-                                        <div class="text-end mt-3">
-                                            <button type="button" class="btn btn-success w-sm text-truncate ms-2"> Send
-                                                <i class="bx bx-send ms-2 align-middle"></i></button>
-                                        </div>
+												<!-- Hidden input to store the star rating -->
+												<input type="hidden" name="rating" id="ratingValue">
+
+												<textarea rows="3" class="form-control border-0 resize-none" placeholder="Write Your Review..." name="content"></textarea>
+											</div>
+
+											<!-- Error message display -->
+											@if ($errors->any())
+												<div class="mt-2 ms-3 text-danger">
+													@foreach ($errors->all() as $error)
+														<p class="mb-0">{{ $error }}</p>
+													@endforeach
+												</div>
+											@endif
+
+											<div class="text-end mt-3">
+												<button type="submit" class="btn btn-success w-sm text-truncate ms-2">Submit Review
+													<i class="bx bx-send ms-2 align-middle"></i>
+												</button>
+											</div>
+										</form>
+
                                     </div>
 
                                 </div>
@@ -375,6 +396,7 @@
     @endsection
     @section('scripts')
 		<script>
+			
 			function copyToClipboard(element, text) {
 				navigator.clipboard.writeText(text).then(function() {
 					// Temporarily change the text to indicate it has been copied
@@ -394,8 +416,33 @@
 		</script>
         <!-- apexcharts -->
         <script src="{{ asset('build/libs/apexcharts/apexcharts.min.js') }}"></script>
+		
+		<script src="{{ asset('build/libs/rater-js/index.js') }}"></script>
+
 
         <script src="{{ asset('build/js/pages/profile.init.js') }}"></script>
         <!-- App js -->
         <script src="{{ asset('build/js/app.js') }}"></script>
+        <!-- rating init -->
+
+		<script>
+			// Define the initial rating value
+			var initialRating = 4; // You can change this to 5 if needed
+
+			// Initialize raterJs
+			var basicRating = raterJs({
+				starSize: 22,
+				rating: initialRating, // Use the variable for initial display
+				element: document.querySelector("#basic-rater"),
+				rateCallback: function rateCallback(rating, done) {
+					// Set the rating value to the hidden input field when a user interacts
+					document.getElementById("ratingValue").value = rating;
+					this.setRating(rating); // Reflects the selected rating in the widget
+					done();
+				}
+			});
+
+			// Set the initial value of the hidden input field using the variable
+			document.getElementById("ratingValue").value = initialRating;
+		</script>
     @endsection

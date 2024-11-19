@@ -55,6 +55,12 @@ class Product extends Model
 			->withPivot('category_id', 'subcategory_id'); // Make sure we load the pivot data
 	}
 
+	// Define the relationship with the Review model
+    public function reviews()
+    {
+        return $this->belongsToMany(Review::class, 'product_review', 'product_id', 'review_id');
+    }
+
 	
 
 	public function getSubcategoryAttribute()

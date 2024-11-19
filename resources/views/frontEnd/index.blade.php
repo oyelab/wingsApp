@@ -1,7 +1,5 @@
 @extends('frontEnd.layouts.app')
-@section('css')
-    
-@endsection
+
 @section('content')
 <!-- Hero -->
 <section class="hero_slider_wrapper">

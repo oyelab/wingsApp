@@ -4,9 +4,10 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,maximum-scale=2.0,minimum-scale=1.0">
 
-
 		{{-- Page-specific Title --}}
-		<title>{{ isset($pageTitle) ? $pageTitle . ' | ' : '' }}{{ $siteSettings->title ?? 'Wings Sportswear' }}</title>
+		<!-- <title>{{ isset($pageTitle) ? $pageTitle . ' | ' : '' }}{{ $siteSettings->title ?? 'Wings Sportswear' }}</title> -->
+		<title>@yield('pageTitle'){{ $siteSettings->title ?? 'Wings Sportswear' }}</title>
+
 
 		{{-- Page-specific Description --}}
 		<meta name="description" content="{{ isset($pageDescription) ? $pageDescription : ($siteSettings->description ?? 'Innovative sportswear that blends cutting-edge technology with sleek design. For athletes and active individuals who demand more. Discover high-performance apparel that supports your journey to greatness.') }}">
