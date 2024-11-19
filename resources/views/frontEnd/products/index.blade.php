@@ -257,7 +257,9 @@
 						</div>
 					</div>
 					<div class="social-share-wrap">
+						
 						<h2>Social Share:</h2>
+						
 						<div class="social-share-icon">
 							<a href="#">
 								<svg
