@@ -61,7 +61,17 @@ class Product extends Model
         return $this->belongsToMany(Review::class, 'product_review', 'product_id', 'review_id');
     }
 
-	
+	// Add this accessor for the review count
+	public function getReviewsCountAttribute()
+	{
+		return $this->reviews()->count();
+	}
+
+	// Method to calculate average rating
+	public function getAverageRatingAttribute()
+	{
+		return $this->reviews()->avg('rating');  // Average of the 'rating' column in the 'reviews' table
+	}
 
 	public function getSubcategoryAttribute()
 	{

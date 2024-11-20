@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Review;
 use App\Models\User;
+use Storage;
 use Auth;
 
 class UserController extends Controller
@@ -48,6 +49,12 @@ class UserController extends Controller
 
 		// Handle avatar upload
 		if ($request->hasFile('avatar')) {
+			// Check if a previous avatar exists and delete it
+			if ($user->avatar && Storage::disk('public')->exists('avatars/' . $user->avatar)) {
+				Storage::disk('public')->delete('avatars/' . $user->avatar);
+			}
+
+			// Generate a meaningful filename and store the new avatar
 			$filename = 'user_' . $user->id . '_' . time() . '.' . $request->file('avatar')->getClientOriginalExtension();
 			$avatarPath = $request->file('avatar')->storeAs('avatars', $filename, 'public');
 			$user->avatar = $filename; // Update avatar field with new filename
@@ -55,6 +62,7 @@ class UserController extends Controller
 
 		// Save the user profile
 		$user->save();
+
 
 		return redirect()->route('profile')->with('success', 'Profile updated successfully!');
 	}

@@ -23,4 +23,16 @@ class Review extends Model
 		return $this->belongsTo(User::class);
 	}
 
+	public function getRatingStarsAttribute()
+	{
+		// Round the rating to the nearest integer
+		$fullStars = floor($this->rating); // Full stars
+		$emptyStars = 5 - $fullStars; // Remaining empty stars
+
+		return [
+			'filled' => $fullStars,  // Number of filled stars
+			'empty' => $emptyStars,  // Number of empty stars
+		];
+	}
+
 }

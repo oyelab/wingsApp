@@ -100,7 +100,8 @@
 					<h1>
 						<span>{{ $product->title }}</span>
 					</h1>
-					<h5><strong>★ 5.0 Rating</strong> (10 Reviews)</h5>
+					<h6><strong class="text-warning">★ {{ number_format($product->averageRating, 1) }} Rating ({{ $product->reviews->count() }} Reviews)</strong></h6>
+
 					<div class="pricing-block">
 					@if ($product->sale)
 						<div class="discount-price">৳{{ $product->offerPrice }}</div>
@@ -399,16 +400,8 @@
 									aria-expanded="true"
 									aria-controls="reviewCollapse"
 								>
-									Review (10)
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										viewBox="0 0 24 24"
-										fill="rgba(30,30,30,1)"
-									>
-										<path
-											d="M11.9999 10.8284L7.0502 15.7782L5.63599 14.364L11.9999 8L18.3639 14.364L16.9497 15.7782L11.9999 10.8284Z"
-										></path>
-									</svg>
+									Review ({{ $product->reviewsCount }})
+									<i class="bi bi-chevron-down"></i>
 								</button>
 							</h2>
 							<div
@@ -420,310 +413,50 @@
 								<div class="accordion-body">
 									<div class="product-description">
 										<div class="review-analysis">
-											<h2>4.7</h2>
-											<div
-												class="starts d-flex align-items-center"
-											>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													viewBox="0 0 24 24"
-													fill="rgba(30,30,30,1)"
-												>
-													<path
-														d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-													></path>
-												</svg>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													viewBox="0 0 24 24"
-													fill="rgba(30,30,30,1)"
-												>
-													<path
-														d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-													></path>
-												</svg>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													viewBox="0 0 24 24"
-													fill="rgba(30,30,30,1)"
-												>
-													<path
-														d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-													></path>
-												</svg>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													viewBox="0 0 24 24"
-													fill="rgba(30,30,30,1)"
-												>
-													<path
-														d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-													></path>
-												</svg>
-												<svg
-													xmlns="http://www.w3.org/2000/svg"
-													viewBox="0 0 24 24"
-													fill="rgba(30,30,30,1)"
-												>
-													<path
-														d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-													></path>
-												</svg>
+											<h2>{{ number_format($product->averageRating, 1) }}</h2>
+											
+											<div class="rating">
+												@for ($i = 0; $i < 5; $i++)
+													@if ($i < floor($product->averageRating))
+														<i class="bi bi-star-fill text-warning"></i>  <!-- Filled star -->
+													@elseif ($i == floor($product->averageRating) && $product->averageRating - floor($product->averageRating) >= 0.5)
+														<i class="bi bi-star-half text-warning"></i>  <!-- Half-filled star -->
+													@else
+														<i class="bi bi-star text-warning"></i>  <!-- Empty star -->
+													@endif
+												@endfor
 											</div>
 										</div>
+
 										<div class="review-lists">
+											@foreach ($product->reviews as $review)
 											<div class="list d-flex">
 												<div class="user-wrap">
-													<div
-														class="starts d-flex align-items-center"
-													>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
+													<div class="starts d-flex align-items-center">
+														{{-- Display the filled stars --}}
+														@for ($i = 0; $i < $review->ratingStars['filled']; $i++)
+															<i class="bi bi-star-fill text-warning"></i>
+														@endfor
+
+														{{-- Display the empty stars --}}
+														@for ($i = 0; $i < $review->ratingStars['empty']; $i++)
+															<i class="bi bi-star text-warning"></i>
+														@endfor
+
 													</div>
 													<h3>
-														@faisalhasan
+														{{ $review->user->name }}
 													</h3>
 												</div>
-												<div
-													class="review-details"
-												>
-													<div
-														class="review-details-top d-flex align-items-center justify-content-between"
-													>
-														<h3>
-															Excellent
-															Product
-														</h3>
-														<p>
-															03 October,
-															2024
-														</p>
+												<div class="review-details">
+													<div class="review-details-top d-flex align-items-center justify-content-between">
+														
+														<p>{{ $review->created_at->format('d F, Y') }}</p>
 													</div>
-													<p>
-														Great brand very
-														confortable. I
-														will buy again i
-														usually never
-														order nothing
-														online but this
-														time i order
-														this and looks
-														great and feels
-														good.
-													</p>
+													<p>{{ $review->content }}</p>
 												</div>
 											</div>
-											<div class="list d-flex">
-												<div class="user-wrap">
-													<div
-														class="starts d-flex align-items-center"
-													>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
-													</div>
-													<h3>
-														@faisalhasan
-													</h3>
-												</div>
-												<div
-													class="review-details"
-												>
-													<div
-														class="review-details-top d-flex align-items-center justify-content-between"
-													>
-														<h3>
-															Excellent
-															Product
-														</h3>
-														<p>
-															03 October,
-															2024
-														</p>
-													</div>
-													<p>
-														Great brand very
-														confortable. I
-														will buy again i
-														usually never
-														order nothing
-														online but this
-														time i order
-														this and looks
-														great and feels
-														good.
-													</p>
-												</div>
-											</div>
-											<div class="list d-flex">
-												<div class="user-wrap">
-													<div
-														class="starts d-flex align-items-center"
-													>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
-														<svg
-															xmlns="http://www.w3.org/2000/svg"
-															viewBox="0 0 24 24"
-															fill="rgba(30,30,30,1)"
-														>
-															<path
-																d="M12.0006 18.26L4.94715 22.2082L6.52248 14.2799L0.587891 8.7918L8.61493 7.84006L12.0006 0.5L15.3862 7.84006L23.4132 8.7918L17.4787 14.2799L19.054 22.2082L12.0006 18.26Z"
-															></path>
-														</svg>
-													</div>
-													<h3>
-														@faisalhasan
-													</h3>
-												</div>
-												<div
-													class="review-details"
-												>
-													<div
-														class="review-details-top d-flex align-items-center justify-content-between"
-													>
-														<h3>
-															Excellent
-															Product
-														</h3>
-														<p>
-															03 October,
-															2024
-														</p>
-													</div>
-													<p>
-														Great brand very
-														confortable. I
-														will buy again i
-														usually never
-														order nothing
-														online but this
-														time i order
-														this and looks
-														great and feels
-														good.
-													</p>
-												</div>
-											</div>
+											@endforeach
 										</div>
 									</div>
 								</div>
@@ -814,10 +547,10 @@
 							class="product-content d-flex justify-content-between"
 						>
 							<a href="{{ route('products.details', [
-									'category' => $product->categories->first()->slug,
-									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-									'product' => $product->slug
-								]) }}">
+			'category' => $product->categories->first()->slug,
+			'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
+			'product' => $product->slug
+		]) }}">
 								<h3>
 									{{ $product->title }}
 								</h3>
