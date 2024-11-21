@@ -119,7 +119,7 @@ Route::put('backEnd/siteSettings', [SiteSettingController::class, 'update'])->na
 
 
 Route::get('/backEnd', [App\Http\Controllers\DashboardController::class, 'root'])->name('dashboard');
-Route::get('/backEnd/x/{any}', [App\Http\Controllers\DashboardController::class, 'index'])->name('back.index');
+// Route::get('/backEnd/x/{any}', [App\Http\Controllers\DashboardController::class, 'index'])->name('back.index');
 
 Route::get('/backEnd/profile', [UserController::class, 'profile'])->name('profile');
 Route::put('/profile/update', [UserController::class, 'update'])->name('profile.update');
