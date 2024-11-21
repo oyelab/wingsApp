@@ -77,13 +77,12 @@ Create Voucher
 	@endsection
 
 	@section('scripts')
-
+	<!-- App js -->
+	<script src="{{ asset('build/js/app.js') }}"></script>
 	<script>
 		// Function to hold the status
 		function setStatus(value) {
 			document.getElementById('status').value = value;
 		}
-
 	</script>
-	
 	@endsection

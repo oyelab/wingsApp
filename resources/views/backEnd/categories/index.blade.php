@@ -140,6 +140,8 @@
 		</div>
     @endsection
     @section('scripts')
+	<!-- App js -->
+	<script src="{{ asset('build/js/app.js') }}"></script>
 		<script>
 			function confirmDelete(element) {
 				const confirmation = confirm('Are you sure you want to delete this product?');

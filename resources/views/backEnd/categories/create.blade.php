@@ -110,7 +110,8 @@ Create Category
 	@endsection
 
 	@section('scripts')
-
+	<!-- App js -->
+	<script src="{{ asset('build/js/app.js') }}"></script>
 	<script>
 		// Function to hold the status
 		function setStatus(value) {

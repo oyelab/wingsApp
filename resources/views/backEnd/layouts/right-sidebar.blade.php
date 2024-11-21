@@ -19,17 +19,7 @@
         <hr class="m-0" />
 
         <div class="p-4">
-            <h6 class="mb-3">Layout</h6>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="layout"
-                    id="layout-vertical" value="vertical">
-                <label class="form-check-label" for="layout-vertical">Vertical</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="layout"
-                    id="layout-horizontal" value="horizontal">
-                <label class="form-check-label" for="layout-horizontal">Horizontal</label>
-            </div>
+
 
             <h6 class="mt-4 mb-3">Layout Mode</h6>
 
@@ -51,32 +41,7 @@
                 <label class="form-check-label" for="layout-mode-bordered">Bordered</label>
             </div>
 
-            <h6 class="mt-4 mb-3">Layout Width</h6>
-
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="layout-width"
-                    id="layout-width-fluid" value="fluid" onchange="document.body.setAttribute('data-layout-size', 'fluid')">
-                <label class="form-check-label" for="layout-width-fluid">Fluid</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="layout-width"
-                    id="layout-width-boxed" value="boxed" onchange="document.body.setAttribute('data-layout-size', 'boxed')">
-                <label class="form-check-label" for="layout-width-boxed">Boxed</label>
-            </div>
-
-            <h6 class="mt-4 mb-3">Layout Position</h6>
-
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="layout-position"
-                    id="layout-position-fixed" value="fixed" onchange="document.body.setAttribute('data-layout-scrollable', 'false')">
-                <label class="form-check-label" for="layout-position-fixed">Fixed</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="layout-position"
-                    id="layout-position-scrollable" value="scrollable" onchange="document.body.setAttribute('data-layout-scrollable', 'true')">
-                <label class="form-check-label" for="layout-position-scrollable">Scrollable</label>
-            </div>
-
+			
             <h6 class="mt-4 mb-3">Topbar Type</h6>
 
             
@@ -135,20 +100,6 @@
                 <label class="form-check-label" for="sidebar-color-brand">Brand</label>
             </div>
         </div>
-
-            <h6 class="mt-4 mb-3">Direction</h6>
-
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="layout-direction"
-                    id="layout-direction-ltr" value="ltr">
-                <label class="form-check-label" for="layout-direction-ltr">LTR</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="layout-direction"
-                    id="layout-direction-rtl" value="rtl">
-                <label class="form-check-label" for="layout-direction-rtl">RTL</label>
-            </div>
-
         </div>
 
     </div> <!-- end slimscroll-menu-->

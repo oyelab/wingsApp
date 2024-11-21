@@ -217,6 +217,8 @@ Update your site settings
 	@endsection
 
 	@section('scripts')
+	<!-- App js -->
+	<script src="{{ asset('build/js/app.js') }}"></script>
 	<script>
     function previewImage(event, previewId) {
         const output = document.getElementById(previewId);

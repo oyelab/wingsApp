@@ -224,6 +224,8 @@
 	<!-- end row -->
 	@endsection
 	@section('scripts')
+	<!-- App js -->
+	<script src="{{ asset('build/js/app.js') }}"></script>
 
 	<script>
 		// Example values from the $delivery object

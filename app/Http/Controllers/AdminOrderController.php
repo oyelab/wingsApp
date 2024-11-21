@@ -136,11 +136,11 @@ class AdminOrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-	public function update(Request $request)
+	public function update(Request $request, $orderId)
 	{
 		dd($request);
 
-		return $request;
+		// return $request;
 		// $productsData = $request->input('products');
 		// return $productsData;
 
@@ -149,7 +149,7 @@ class AdminOrderController extends Controller
 		// Find the order by ID
 		$order = Order::findOrFail($orderId);
 
-		return $order;
+		// return $order;
 
 		// Update order status
 		$order->status = $request->status;
@@ -171,7 +171,7 @@ class AdminOrderController extends Controller
 
 	public function updateOrderProduct(Request $request)
 	{
-		return $request;
+		// return $request;
 		// Validate incoming request
 		$request->validate([
 			'product_id' => 'required|integer',
@@ -192,17 +192,17 @@ class AdminOrderController extends Controller
 		return response()->json(['message' => 'Order product updated successfully.']);
 	}
 
-	public function deleteOrderProduct($productId, $sizeId)
-	{
-		// Find the order you want to delete from (assuming you have an order_id from the session or request)
-		$orderId = session('order_id'); // Adjust based on how you handle orders
+	// public function deleteOrderProduct($productId, $sizeId)
+	// {
+	// 	// Find the order you want to delete from (assuming you have an order_id from the session or request)
+	// 	$orderId = session('order_id'); // Adjust based on how you handle orders
 
-		// Remove the product from the order
-		$order = Order::find($orderId);
-		$order->products()->detach($productId, ['size_id' => $sizeId]);
+	// 	// Remove the product from the order
+	// 	$order = Order::find($orderId);
+	// 	$order->products()->detach($productId, ['size_id' => $sizeId]);
 
-		return response()->json(['message' => 'Order product deleted successfully.']);
-	}
+	// 	return response()->json(['message' => 'Order product deleted successfully.']);
+	// }
 
 
 

@@ -108,5 +108,6 @@ Create Slider
 		}
 	</script>
 
-	
+	<!-- App js -->
+	<script src="{{ asset('build/js/app.js') }}"></script>
 	@endsection

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Specification;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SpecificationController;
 use Illuminate\Support\Facades\Session;
 
 
@@ -103,6 +105,8 @@ Route::resource('backEnd/sliders', SliderController::class);
 Route::resource('backEnd/orders', AdminOrderController::class);
 
 Route::resource('backEnd/vouchers', VoucherController::class);
+
+Route::resource('backEnd/specifications', SpecificationController::class);
 
 Route::post('/voucher/apply', [VoucherController::class, 'applyVoucher'])->name('voucher.apply');
 Route::post('/voucher/edit', [VoucherController::class, 'editVoucher'])->name('voucher.edit');

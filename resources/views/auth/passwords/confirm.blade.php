@@ -18,10 +18,10 @@
                         <div class="col-md-8 col-lg-6 col-xl-5">
 
                             <div class="mb-4 pb-2">
-                                <a href="index" class="d-block auth-logo">
-                                    <img src="{{ URL::asset('build/images/logo-dark.svg') }}" alt="" height="30"
+                                <a href="{{ route('index') }}" class="d-block auth-logo">
+                                    <img src="{{ asset('build/images/logo-dark.svg') }}" alt="" height="30"
                                         class="auth-logo-dark me-start">
-                                    <img src="{{ URL::asset('build/images/logo-light.svg') }}" alt="" height="30"
+                                    <img src="{{ asset('build/images/logo-light.svg') }}" alt="" height="30"
                                         class="auth-logo-light me-start">
                                 </a>
                             </div>
@@ -34,7 +34,7 @@
                                     </div>
                                     <div class="p-2 mt-4">
                                         <div class="user-thumb text-center mb-4">
-                                            <img src="{{ URL::asset('build/images/users/avatar-3.jpg') }}"
+                                            <img src="{{ asset('build/images/users/avatar-3.jpg') }}"
                                                 class="rounded-circle img-thumbnail avatar-lg" alt="thumbnail">
                                             <h5 class="font-size-15 mt-3">Martin Gurley</h5>
                                         </div>
@@ -79,7 +79,7 @@
                                     </script> Wings Sportswear. Crafted with <i
                                         class="mdi mdi-heart text-danger"></i> by 
 									<a href="https://oyelab.com" class="flex auth-logo">
-										<img src="{{ URL::asset('build/images/oyelab-dark-logo.svg') }}" alt="" height="25">
+										<img src="{{ asset('build/images/oyelab-dark-logo.svg') }}" alt="" height="25">
 									</a>
                                 </p>
                             </div>

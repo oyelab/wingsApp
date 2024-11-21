@@ -6,7 +6,6 @@
 <!-- DataTables CSS -->
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
 @endsection
 @section('page-title')
     Orders
@@ -341,10 +340,13 @@
         <script src="{{ asset('build/libs/apexcharts/apexcharts.min.js') }}"></script>
 
         <!-- gridjs js -->
-        <script src="{{ asset('build/libs/gridjs/gridjs.umd.js') }}"></script>
 
         <!-- datepicker js -->
         <script src="{{ asset('build/libs/flatpickr/flatpickr.min.js') }}"></script>
+
+	
+		<script src="{{ asset('build/js/pages/ecommerce-orders.init.js') }}"></script>
+
         <!-- App js -->
         <script src="{{ asset('build/js/app.js') }}"></script>
     @endsection

@@ -1,10 +1,10 @@
 @extends('backEnd.layouts.master')
 @section('title')
-   Sliders
+   	Sliders
 @endsection
 @section('css')
     <!-- datepicker css -->
-    <link rel="stylesheet" href="{{ URL::asset('build/libs/flatpickr/flatpickr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/libs/flatpickr/flatpickr.min.css') }}">
 @endsection
 @section('page-title')
     Sliders
@@ -160,4 +160,14 @@
 				}
 			}
 		</script>
+		<!-- apexcharts -->
+		<script src="{{ asset('build/libs/apexcharts/apexcharts.min.js') }}"></script>
+
+		<!-- gridjs js -->
+		<script src="{{ asset('build/libs/gridjs/gridjs.umd.js') }}"></script>
+
+		<!-- datepicker js -->
+		<script src="{{ asset('build/libs/flatpickr/flatpickr.min.js') }}"></script>
+		<!-- App js -->
+		<script src="{{ asset('build/js/app.js') }}"></script>
     @endsection

@@ -17,7 +17,9 @@ class UserController extends Controller
 	
     public function profile()
 	{
-		$reviews = Review::where('user_id', auth()->id())->get();
+		$reviews = Review::where('user_id', auth()->id())
+			->orderBy('created_at', 'desc')
+			->get();
 
 		// return $reviews;
 		$user = Auth::user();

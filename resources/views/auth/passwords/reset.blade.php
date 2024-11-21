@@ -19,9 +19,9 @@
 
                             <div class="mb-4 pb-2">
                                 <a href="index" class="d-block auth-logo">
-                                    <img src="{{ URL::asset('build/images/logo-dark.svg') }}" alt="" height="30"
+                                    <img src="{{ asset('build/images/logo-dark.svg') }}" alt="" height="30"
                                         class="auth-logo-dark me-start">
-                                    <img src="{{ URL::asset('build/images/logo-light.svg') }}" alt="" height="30"
+                                    <img src="{{ asset('build/images/logo-light.svg') }}" alt="" height="30"
                                         class="auth-logo-light me-start">
                                 </a>
                             </div>
@@ -99,7 +99,7 @@
                                     </script> Wings Sportswear. Crafted with <i
                                         class="mdi mdi-heart text-danger"></i> by 
 									<a href="https://oyelab.com" class="flex auth-logo">
-										<img src="{{ URL::asset('build/images/oyelab-dark-logo.svg') }}" alt="" height="25">
+										<img src="{{ asset('build/images/oyelab-dark-logo.svg') }}" alt="" height="25">
 									</a>
                                 </p>
                             </div>

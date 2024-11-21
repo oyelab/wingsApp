@@ -440,7 +440,6 @@
         <!-- datepicker js -->
         <script src="{{ asset('build/libs/flatpickr/flatpickr.min.js') }}"></script>
 
-        <script src="{{ asset('build/js/pages/ecommerce-orders.init.js') }}"></script>
 
         <!-- App js -->
         <script src="{{ asset('build/js/app.js') }}"></script>
