@@ -13,8 +13,8 @@ class CategoryController extends Controller
 {
 	public function __construct()
     {
-        $this->middleware('auth')->except('mainCategory', 'wingsEdited', 'subCategory', 'frontShow');
-		$this->middleware('role')->except('mainCategory', 'wingsEdited', 'subCategory', 'frontShow'); // Only allow role 1 users
+        $this->middleware('auth')->except('mainCategory', 'wingsEdited', 'subCategory', 'frontShow', 'search');
+		$this->middleware('role')->except('mainCategory', 'wingsEdited', 'subCategory', 'frontShow', 'search'); // Only allow role 1 users
     }
 
 	public function mainCategory(Category $category)
@@ -53,10 +53,15 @@ class CategoryController extends Controller
 	public function wingsEdited(Request $request)
 	{
 		$CategoryId = 1; // ID of the category you want to load
+		$pageTitle = Category::findOrFail($CategoryId)->title;
+
+		// return $pageTitle;
 
 		// Fetch the query parameters
-		$mainCategoryId = $request->query('category');
-		$subCategoryId = $request->query('subCategory');
+		$mainCategoryId = $request->query('category') ?? null;
+		$subCategoryId = $request->query('subCategory') ?? null;
+	
+
 		$sortOption = $request->query('sort'); // Capture the sort query parameter
 		$searchTerm = $request->query('query'); // Capture the search query parameter
 
@@ -95,15 +100,6 @@ class CategoryController extends Controller
 			});
 		}
 
-		// Apply search and sorting if provided
-		if ($searchTerm) {
-			$productsQuery->search($searchTerm); // Assuming you have a custom search scope
-		}
-		
-		if ($sortOption) {
-			$productsQuery->sort($sortOption); // Assuming you have a custom sort scope
-		}
-
 		// Count the products after applying filters
 		$productCount = $productsQuery->count(); // Total product count after filters
 
@@ -120,9 +116,89 @@ class CategoryController extends Controller
 			->where('id', $CategoryId) // Only fetch category ID = 1
 			->get();
 
-		// Get the main category and subcategory ID from the request, or set them to null if not provided
-		$selectedMainCategoryId = $request->query('category') ?? null;
-		$selectedSubcategoryId = $request->query('subCategory') ?? null;
+		return view('frontEnd.categories.index', compact(
+			'categories',
+			'products',
+			'categoryTitle',
+			'subCategoryTitle',
+			'productCount',
+			'mainCategoryId',
+			'subCategoryId',
+			'pageTitle',
+		));
+	}
+
+	
+
+	public function frontShow(Request $request)
+	{
+		// Fetch the query parameters
+		$mainCategoryId = $request->query('category');
+		$subCategoryId = $request->query('subCategory');
+		$sortOption = $request->query('sort'); // Capture the sort query parameter
+		$searchTerm = $request->query('query'); // Capture the search query parameter
+
+
+		// Initialize category and subcategory titles
+		$categoryTitle = null;
+		$subCategoryTitle = null;
+		$excludedCategoryId = 1; // ID of the category you want to exclude
+		$pageTitle = "Collections";
+
+
+		// Fetch the category and subcategory titles if available
+		if ($mainCategoryId) {
+			$category = Category::find($mainCategoryId);
+			$categoryTitle = $category ? $category->title : null;
+		}
+
+		if ($subCategoryId) {
+			$subCategory = Category::find($subCategoryId);
+			$subCategoryTitle = $subCategory ? $subCategory->title : null;
+		}
+
+		// Base query for fetching products with their categories
+		$productsQuery = Product::with('categories')->where('status', 1);
+		// return $productsQuery;
+		// Exclude products that belong to category ID 1
+		// $productsQuery->whereDoesntHave('categories', function ($query) {
+		// 	$query->where('category_product.category_id', 1);
+		// });
+
+		// return $productsQuery;
+
+		// Apply filters based on main category and subcategory
+		if ($mainCategoryId) {
+			$productsQuery->whereHas('categories', function ($query) use ($mainCategoryId) {
+				$query->where('category_product.category_id', $mainCategoryId);
+			});
+		}
+
+		if ($subCategoryId) {
+			$productsQuery->whereHas('categories', function ($query) use ($subCategoryId) {
+				$query->where('category_product.subcategory_id', $subCategoryId);
+			});
+		}
+
+
+		// Count the products after applying filters
+		$productCount = $productsQuery->count(); // Total product count after filters
+
+		// Paginate the products, let's say 6 products per page
+		$products = $productsQuery->paginate(6)->appends([
+			'category' => $mainCategoryId,
+			'subCategory' => $subCategoryId,
+			'sort' => $sortOption,
+			'query' => $searchTerm
+		]);
+
+		// return $products;
+
+
+
+		// Fetch all categories excluding a specific category ID if needed (e.g., 1)
+		$categories = Category::with(['parents', 'children'])->get();
+
 
 		return view('frontEnd.categories.index', compact(
 			'categories',
@@ -132,15 +208,13 @@ class CategoryController extends Controller
 			'productCount',
 			'mainCategoryId',
 			'subCategoryId',
-			'selectedMainCategoryId',
-			'selectedSubcategoryId'
+			'pageTitle',
 		));
 	}
-
 	
-
-	public function frontShow(Request $request)
+	public function search(Request $request)
 	{
+		// return $request;
 		// Fetch the query parameters
 		$mainCategoryId = $request->query('category');
 		$subCategoryId = $request->query('subCategory');
@@ -185,15 +259,6 @@ class CategoryController extends Controller
 			});
 		}
 
-		// Apply search and sorting
-		if ($searchTerm) {
-			$productsQuery->search($searchTerm);
-		}
-	
-		if ($sortOption) {
-			$productsQuery->sort($sortOption);
-		}
-
 
 		// Count the products after applying filters
 		$productCount = $productsQuery->count(); // Total product count after filters
@@ -226,8 +291,6 @@ class CategoryController extends Controller
 			'productCount',
 			'mainCategoryId',
 			'subCategoryId',
-			'selectedMainCategoryId',
-			'selectedSubcategoryId',
 		));
 	}
 

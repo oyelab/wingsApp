@@ -31,7 +31,7 @@ class SortProducts implements Scope
                 break;
             default:
                 // Default sorting logic, if any
-                $builder->latestProducts();
+                $builder->orderBy('id', 'asc'); 
         }
     }
 }

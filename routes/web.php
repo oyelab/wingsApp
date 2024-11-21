@@ -40,7 +40,6 @@ Auth::routes();
 Route::get('/', [HomeController::class, 'index'])->name('index');
 
 Route::get('/search', [CategoryController::class, 'search'])->name('search');
-
 Route::get('/collections', [CategoryController::class, 'frontShow'])->name('collections');
 Route::get('/wings-edited', [CategoryController::class, 'wingsEdited'])->name('wings.edited');
 

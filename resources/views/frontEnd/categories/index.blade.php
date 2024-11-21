@@ -37,42 +37,54 @@
         <div class="row">
             <div class="col-12">
                 <div class="breadcrumb-content">
-                    <ul class="d-flex align-items-center">
-                        <!-- Home -->
-                        <li class="home-menu">
-                            <a href="{{ route('index') }}">Home</a>
-                        </li>
+					<ul class="d-flex align-items-center">
+						<!-- Home -->
+						<li class="home-menu">
+							<a href="{{ route('index') }}">Home</a>
+						</li>
 
-                        <!-- Categories Link -->
-                        <li>
-                            <a href="{{ route('collections') }}"
-                               class="{{ !request()->has('category') && !request()->has('subCategory') ? 'disabled' : '' }}">
-                                Collections
-                            </a>
-                        </li>
+						<!-- Categories Link -->
+						<li>
+							@if (request()->has('query'))
+								<!-- Display the search query -->
+								<a href=""
+								class="disabled">
+									{{ request()->query('query') }}
+								</a>
+							@else
+								<!-- Default Collections link -->
+								<a href="{{ route('collections') }}"
+								class="{{ !request()->has('category') && !request()->has('subCategory') ? 'disabled' : '' }}">
+									{{ $pageTitle ?? 'Collections' }}
+								</a>
+							@endif
+						</li>
 
-                        <!-- Main Category Link -->
-                        @if ($categoryTitle)
-                            <li>
-                                <a href="{{ route('collections', ['category' => $mainCategoryId]) }}"
-                                   class="{{ request()->query('category') == $mainCategoryId && !request()->has('subCategory') ? 'disabled' : '' }}">
-                                    {{ $categoryTitle }}
-                                </a>
-                            </li>
-                        @endif
+						<!-- Main Category Link -->
+						@if ($categoryTitle)
+							<li>
+								<a href="{{ route('collections', ['category' => $mainCategoryId]) }}"
+								class="{{ request()->query('category') == $mainCategoryId && !request()->has('subCategory') ? 'disabled' : '' }}">
+									{{ $categoryTitle }}
+								</a>
+							</li>
+						@endif
 
-                        <!-- Subcategory Link -->
-                        @if ($subCategoryTitle)
-                            <li class="disabled">
-                                {{ $subCategoryTitle }}
-                            </li>
-                        @endif
-                    </ul>
+						<!-- Subcategory Link -->
+						@if ($subCategoryTitle)
+							<li class="disabled">
+								{{ $subCategoryTitle }}
+							</li>
+						@endif
+					</ul>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
 
 
 
@@ -94,22 +106,22 @@
 								<div class="accordion" id="accordion{{ $mainCategory->id }}">
 									<div class="accordion-item">
 										<h2 class="accordion-header" id="heading{{ $mainCategory->id }}">
-											<button class="accordion-button {{ $selectedMainCategoryId == $mainCategory->id ? '' : 'collapsed' }}"
+											<button class="accordion-button {{ $mainCategoryId == $mainCategory->id ? '' : 'collapsed' }}"
 													type="button" data-bs-toggle="collapse"
 													data-bs-target="#collapse{{ $mainCategory->id }}"
-													aria-expanded="{{ $selectedMainCategoryId == $mainCategory->id ? 'true' : 'false' }}"
+													aria-expanded="{{ $mainCategoryId == $mainCategory->id ? 'true' : 'false' }}"
 													aria-controls="collapse{{ $mainCategory->id }}">
 												{{ $mainCategory->title }}
 												<i class="bi bi-chevron-down"></i>
 											</button>
 										</h2>
-										<div id="collapse{{ $mainCategory->id }}" class="accordion-collapse collapse {{ $selectedMainCategoryId == $mainCategory->id ? 'show' : '' }}"
+										<div id="collapse{{ $mainCategory->id }}" class="accordion-collapse collapse {{ $mainCategoryId == $mainCategory->id ? 'show' : '' }}"
 											aria-labelledby="heading{{ $mainCategory->id }}" data-bs-parent="#accordion{{ $mainCategory->id }}">
 											<div class="accordion-body">
 												<div class="items">
 													<ul class="filter-category-menu">
 														<!-- 'All Items' list item -->
-														<li class="category-item {{ $selectedMainCategoryId == $mainCategory->id && !$selectedSubcategoryId ? 'active' : '' }}"
+														<li class="category-item {{ $mainCategoryId == $mainCategory->id && !$subCategoryId ? 'active' : '' }}"
 															data-main-category-id="{{ $mainCategory->id }}"
 															data-category-id="">
 															All Items
@@ -117,7 +129,7 @@
 
 														<!-- Loop through child categories -->
 														@foreach ($mainCategory->children as $childCategory)
-															<li class="category-item {{ $selectedSubcategoryId == $childCategory->id && $selectedMainCategoryId == $mainCategory->id ? 'active' : '' }}"
+															<li class="category-item {{ $subCategoryId == $childCategory->id && $mainCategoryId == $mainCategory->id ? 'active' : '' }}"
 																data-main-category-id="{{ $mainCategory->id }}"
 																data-category-id="{{ $childCategory->id }}">
 																{{ $childCategory->title }}

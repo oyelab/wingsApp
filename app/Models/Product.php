@@ -5,6 +5,7 @@ use App\Models\Category;
 
 
 use App\Models\Scopes\SortProducts;
+use App\Models\Scopes\SearchProducts;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,8 +13,14 @@ class Product extends Model
 {
 	protected static function booted()
     {
+        // Add SortProducts global scope
         static::addGlobalScope(new SortProducts);
+
+        // Add SearchProducts global scope
+        static::addGlobalScope(new SearchProducts);
     }
+
+	
 
     use HasFactory;
 
@@ -229,20 +236,20 @@ class Product extends Model
 	}
 
 	// In your Product model (Product.php)
-	public function scopeSearch($query, $searchTerm)
-	{
-		if (!empty($searchTerm)) {
-			return $query->where('title', 'like', '%' . $searchTerm . '%')
-						->orWhere('description', 'like', '%' . $searchTerm . '%')
-						->orWhere('meta_desc', 'like', '%' . $searchTerm . '%')
-						->orWhere('meta_title', 'like', '%' . $searchTerm . '%')
-						->orWhere('keywords', 'like', '%' . $searchTerm . '%')
-						->orWhereRaw("title SOUNDS LIKE ?", [$searchTerm]) // Fuzzy match on 'title'
-						->orWhereRaw("description SOUNDS LIKE ?", [$searchTerm]) // Fuzzy match on 'description'
-						->orWhereRaw("keywords SOUNDS LIKE ?", [$searchTerm]); // Fuzzy match on 'keywords'
-		}
+	// public function scopeSearchProducts($query, $searchTerm)
+	// {
+	// 	if (!empty($searchTerm)) {
+	// 		return $query->where('title', 'like', '%' . $searchTerm . '%')
+	// 					->orWhere('description', 'like', '%' . $searchTerm . '%')
+	// 					->orWhere('meta_desc', 'like', '%' . $searchTerm . '%')
+	// 					->orWhere('meta_title', 'like', '%' . $searchTerm . '%')
+	// 					->orWhere('keywords', 'like', '%' . $searchTerm . '%')
+	// 					->orWhereRaw("title SOUNDS LIKE ?", [$searchTerm]) // Fuzzy match on 'title'
+	// 					->orWhereRaw("description SOUNDS LIKE ?", [$searchTerm]) // Fuzzy match on 'description'
+	// 					->orWhereRaw("keywords SOUNDS LIKE ?", [$searchTerm]); // Fuzzy match on 'keywords'
+	// 	}
 
-		return $query;
-	}
+	// 	return $query;
+	// }
 
 }

@@ -45,6 +45,7 @@ class ProductController extends Controller
 	{
 		// Retrieve products with their related quantities and categories, and paginate
 		$products = Product::with('quantities', 'categories')->latest()->paginate(5);
+		// return $products;
 	
 		foreach ($products as $product) {
 			// Calculate the total quantity for each product
