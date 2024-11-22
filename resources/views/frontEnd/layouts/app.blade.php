@@ -204,7 +204,8 @@
 										<img
 											src="{{ $siteSettings->getImagePath('logo_v2') }}"
 											draggable="false"
-											alt="Footer Logo"
+											alt="{{ $siteSettings->title }} Logo"
+											height="50"
 										/>
 									</a>
 								</div>

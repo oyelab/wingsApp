@@ -33,18 +33,17 @@
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
 				@if(Auth::check() && Auth::user()->role === 1)
-				<li class="menu-title" data-key="t-menu">Dashboard</li>
+				<li class="menu-title" data-key="t-dashboard">Dashboard</li>
 
 				<li>
-					<a href="javascript: void(0);">
+					<a href="{{ route('dashboard') }}">
 						<i class="bx bx-home-alt icon nav-icon"></i>
-						<span class="menu-item" data-key="t-dashboard">Dashboard</span>
-						<span class="badge rounded-pill bg-primary">2</span>
+						<span class="menu-item" data-key="t-overview">Overview</span>
 					</a>
-					<ul class="sub-menu" aria-expanded="true">
+					<!-- <ul class="sub-menu" aria-expanded="true">
 						<li><a href="#" data-key="t-ecommerce">Ecommerce</a></li>
 						<li><a href="#" data-key="t-sales">Sales</a></li>
-					</ul>
+					</ul> -->
 				</li>
                 <li class="menu-title" data-key="t-applications">Applications</li>
                 <li>
@@ -108,7 +107,7 @@
 					<li>
 						<a href="{{ route('profile') }}">
 							<i class="bx bx-user-circle icon nav-icon"></i>
-							<span class="menu-item" data-key="t-contacts">My Profile</span>
+							<span class="menu-item" data-key="t-my-profile">My Profile</span>
 						</a>
 					</li>
 				@endif

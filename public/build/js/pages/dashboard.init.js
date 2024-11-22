@@ -25,110 +25,124 @@ function getChartColorsArray(chartId) {
   }
 }
 
-// Chart Mini-1
-var barchartColors = getChartColorsArray("mini-1");
-var sparklineoptions1 = {
-  series: [{
-    data: [12, 14, 2, 47, 42, 15, 47, 75, 65, 19, 14]
-  }],
-  chart: {
-    type: 'area',
-    width: 110,
-    height: 35,
-    sparkline: {
-      enabled: true
-    }
-  },
-  fill: {
-    type: 'gradient',
-    gradient: {
-      shadeIntensity: 1,
-      inverseColors: false,
-      opacityFrom: 0.45,
-      opacityTo: 0.05,
-      stops: [20, 100, 100, 100]
-    },
-  },
-  stroke: {
-    curve: 'smooth',
-    width: 2,
-  },
-  colors: barchartColors,
-  tooltip: {
-    fixed: {
-      enabled: false
-    },
-    x: {
-      show: false
-    },
-    y: {
-      title: {
-        formatter: function (seriesName) {
-          return ''
-        }
-      }
-    },
-    marker: {
-      show: false
-    }
-  }
-};
+document.addEventListener('DOMContentLoaded', function () {
+	// Fetch sales and orders data from backend
+	fetch('/monthly-data')
+		.then(response => response.json())
+		.then(data => {
+			const salesData = data.sales; // Monthly sales data
+			const ordersData = data.orders; // Monthly order counts
 
-var sparklinechart1 = new ApexCharts(document.querySelector("#mini-1"), sparklineoptions1);
-sparklinechart1.render();
+			console.log('Sales Data:', salesData); // Log sales data
+			console.log('Orders Data:', ordersData); // Log orders data
 
+			// Chart for sales data (mini-1)
+			const salesColors = getChartColorsArray("mini-1");
+			const salesChartOptions = {
+				series: [{
+					data: salesData, // Pass sales data to the chart
+				}],
+				chart: {
+					type: 'area',
+					width: 110,
+					height: 35,
+					sparkline: {
+						enabled: true
+					}
+				},
+				fill: {
+					type: 'gradient',
+					gradient: {
+						shadeIntensity: 1,
+						inverseColors: false,
+						opacityFrom: 0.45,
+						opacityTo: 0.05,
+						stops: [20, 100, 100, 100]
+					},
+				},
+				stroke: {
+					curve: 'smooth',
+					width: 2,
+				},
+				colors: salesColors,
+				tooltip: {
+					fixed: {
+						enabled: false
+					},
+					x: {
+						show: false
+					},
+					y: {
+						title: {
+							formatter: function () {
+								return 'Sales';
+							}
+						}
+					},
+					marker: {
+						show: false
+					}
+				}
+			};
 
-// Chart Mini-2
-var barchartColors = getChartColorsArray("mini-2");
-var sparklineoptions1 = {
-    series: [{
-      data: [65, 14, 2, 47, 42, 15, 47, 75, 65, 19, 14]
-    }],
-    chart: {
-      type: 'area',
-      width: 110,
-      height: 35,
-      sparkline: {
-        enabled: true
-      }
-    },
-    fill: {
-      type: 'gradient',
-      gradient: {
-        shadeIntensity: 1,
-        inverseColors: false,
-        opacityFrom: 0.45,
-        opacityTo: 0.05,
-        stops: [20, 100, 100, 100]
-      },
-    },
-    stroke: {
-      curve: 'smooth',
-      width: 2,
-    },
-    colors: barchartColors,
-    tooltip: {
-      fixed: {
-        enabled: false
-      },
-      x: {
-        show: false
-      },
-      y: {
-        title: {
-          formatter: function (seriesName) {
-            return ''
-          }
-        }
-      },
-      marker: {
-        show: false
-      }
-    }
-  };
-  
-  var sparklinechart1 = new ApexCharts(document.querySelector("#mini-2"), sparklineoptions1);
-  sparklinechart1.render();
+			const salesChart = new ApexCharts(document.querySelector("#mini-1"), salesChartOptions);
+			salesChart.render();
+
+			// Chart for orders data (mini-2)
+			const ordersColors = getChartColorsArray("mini-2");
+			const ordersChartOptions = {
+				series: [{
+					data: ordersData, // Pass orders data to the chart
+				}],
+				chart: {
+					type: 'area',
+					width: 110,
+					height: 35,
+					sparkline: {
+						enabled: true
+					}
+				},
+				fill: {
+					type: 'gradient',
+					gradient: {
+						shadeIntensity: 1,
+						inverseColors: false,
+						opacityFrom: 0.45,
+						opacityTo: 0.05,
+						stops: [20, 100, 100, 100]
+					},
+				},
+				stroke: {
+					curve: 'smooth',
+					width: 2,
+				},
+				colors: ordersColors,
+				tooltip: {
+					fixed: {
+						enabled: false
+					},
+					x: {
+						show: false
+					},
+					y: {
+						title: {
+							formatter: function () {
+								return 'Orders';
+							}
+						}
+					},
+					marker: {
+						show: false
+					}
+				}
+			};
+
+			const ordersChart = new ApexCharts(document.querySelector("#mini-2"), ordersChartOptions);
+			ordersChart.render();
+		})
+		.catch(error => console.error('Error fetching sales and orders data:', error));
+});
+
 
 // Chart Mini-3
 var barchartColors = getChartColorsArray("mini-3");
@@ -235,55 +249,77 @@ var sparklineoptions1 = {
   sparklinechart1.render();
 
   
-//  Sales Statistics
-var barchartColors = getChartColorsArray("overview");
-var options = {
-    series: [{
-        data: [4, 6, 10, 17, 15, 19, 23, 27, 29, 25, 32, 35]
-    }],
-    chart: {
-        toolbar: {
-            show: false,
-        },
-        height: 323,
-        type: 'bar',
-        events: {
-            click: function (chart, w, e) {
-            }
-        }
-    },
-   
-    plotOptions: {
-        bar: {
-            columnWidth: '80%',
-            distributed: true,
-            horizontal: false,
-            borderRadius: 8,
-        }
-    },
-    
+  document.addEventListener('DOMContentLoaded', function () {
+    // Fetch data from the updated route
+    axios.get('/monthly-data')
+        .then(function (response) {
+            // Extract sales data from the response
+            const salesData = response.data.sales; // Access "sales" data from the response
+            const orderData = response.data.orders; // Access "orders" data from the response
 
-    fill: {
-      opacity: 1,
-    },
+            // Define the threshold for dynamic coloring
+            const threshold = 10000;
 
-    stroke: {
-      show: false, 
-    },
-    dataLabels: {
-        enabled: false,
-    },
-    legend: {
-        show: false
-    },
-    colors: barchartColors,
-    xaxis: {
-        categories: ['Jan', 'Feb','Mar','Apr','May', 'jun', 'Jul','Aug', 'Sep', 'Oct','Nov', 'Dec'],
-    }
-};
+            // Generate dynamic colors based on the sales threshold
+            const dynamicColors = salesData.map(amount => amount > threshold ? '#1f58c7' : '#e6ecf9');
 
-var chart = new ApexCharts(document.querySelector("#overview"), options);
-chart.render();
+            // Define chart options
+            const options = {
+                series: [{
+                    name: 'Amount',
+                    data: salesData,
+                }],
+                chart: {
+                    toolbar: { show: false },
+                    height: 323,
+                    type: 'bar',
+                },
+                plotOptions: {
+                    bar: {
+                        columnWidth: '80%',
+                        distributed: true, // Use different colors for each bar
+                        horizontal: false,
+                        borderRadius: 8,
+                    },
+                },
+                fill: { opacity: 1 },
+                stroke: { show: false },
+                dataLabels: { enabled: false },
+                legend: { show: false },
+                colors: dynamicColors, // Apply dynamic colors to bars
+                xaxis: {
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    labels: {
+                        style: {
+                            fontSize: '12px',
+                            colors: ['#6c757d'], // Optional: Customize label colors
+                        },
+                    },
+                },
+                yaxis: {
+                    labels: {
+                        formatter: function (value) {
+                            return value.toLocaleString(); // Format numbers for better readability
+                        },
+                        style: {
+                            fontSize: '12px',
+                            colors: ['#6c757d'],
+                        },
+                    },
+                },
+            };
+
+            // Render the chart
+            const chart = new ApexCharts(document.querySelector("#overview"), options);
+            chart.render();
+
+            // Optionally log order data for further use
+            console.log("Order Data:", orderData);
+        })
+        .catch(function (error) {
+            console.error("Error fetching monthly data:", error);
+        });
+});
 
 
 // Saleing Categories

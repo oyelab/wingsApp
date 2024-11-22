@@ -262,101 +262,101 @@
 
     @section('scripts')
 	<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const mainCategorySelect = document.getElementById('mainCategory');
-        const subCategorySelect = document.getElementById('subCategory');
+		document.addEventListener('DOMContentLoaded', function () {
+			const mainCategorySelect = document.getElementById('mainCategory');
+			const subCategorySelect = document.getElementById('subCategory');
 
-        // Preselect old subcategory value if it exists
-        const oldSubcategory = '{{ old('subcategory') }}';
-        if (oldSubcategory) {
-            subCategorySelect.value = oldSubcategory;
-        }
+			// Preselect old subcategory value if it exists
+			const oldSubcategory = '{{ old('subcategory') }}';
+			if (oldSubcategory) {
+				subCategorySelect.value = oldSubcategory;
+			}
 
-        // When a main category is selected, fetch subcategories
-        mainCategorySelect.addEventListener('change', function () {
-            const mainCategoryId = this.value;
+			// When a main category is selected, fetch subcategories
+			mainCategorySelect.addEventListener('change', function () {
+				const mainCategoryId = this.value;
 
-            // Clear existing subcategory options
-            subCategorySelect.innerHTML = '<option value="">-- Select Subcategory --</option>';
+				// Clear existing subcategory options
+				subCategorySelect.innerHTML = '<option value="">-- Select Subcategory --</option>';
 
-            if (mainCategoryId) {
-                // Fetch subcategories for the selected main category (adapt URL as needed)
-                fetch(`/get-subcategories/${mainCategoryId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.length > 0) {
-                            data.forEach(subcategory => {
-                                const option = document.createElement('option');
-                                // Use subcategory.id directly instead of pivot.id
-                                option.value = subcategory.id;  // This should be subcategory.id, not pivot.id
-                                option.textContent = subcategory.title;
-                                subCategorySelect.appendChild(option);
-                            });
-                        } else {
-                            subCategorySelect.innerHTML = '<option value="">No subcategories available</option>';
-                        }
-                    });
-            } else {
-                subCategorySelect.innerHTML = '<option value="">-- Select Subcategory --</option>';
-            }
-        });
-    });
-</script>
-
-
-		<script>
-			// Function to preview images
-			function previewImages(event) {
-				const imagePreviewContainer = document.getElementById('previewProductImage');
-				imagePreviewContainer.innerHTML = ''; // Clear previous images
-
-				const files = event.target.files;
-
-				// Loop through each selected file
-				for (let i = 0; i < files.length; i++) {
-					const file = files[i];
-					const reader = new FileReader();
-
-					reader.onload = function (e) {
-						// Create a div for each image
-						const imgDiv = document.createElement('div');
-						imgDiv.className = 'img-div';
-						imgDiv.id = 'prev-img-div-' + i; // Assign an ID to the div
-						imgDiv.innerHTML = `
-							<img src="${e.target.result}" class="img-responsive image img-thumbnail" title="${file.name}">
-							<input type="hidden" name="existing_images[]" value="${file.name}"> <!-- Hidden input for existing images -->
-							<div class="middle">
-								<button id="remove-prev-image" class="btn btn-danger" onclick="removeImage(this)">
-									<i class="fa fa-trash"></i>
-								</button>
-							</div>
-						`;
-						imagePreviewContainer.appendChild(imgDiv);
-					};
-
-					reader.readAsDataURL(file); // Read the file as a data URL
+				if (mainCategoryId) {
+					// Fetch subcategories for the selected main category (adapt URL as needed)
+					fetch(`/get-subcategories/${mainCategoryId}`)
+						.then(response => response.json())
+						.then(data => {
+							if (data.length > 0) {
+								data.forEach(subcategory => {
+									const option = document.createElement('option');
+									// Use subcategory.id directly instead of pivot.id
+									option.value = subcategory.id;  // This should be subcategory.id, not pivot.id
+									option.textContent = subcategory.title;
+									subCategorySelect.appendChild(option);
+								});
+							} else {
+								subCategorySelect.innerHTML = '<option value="">No subcategories available</option>';
+							}
+						});
+				} else {
+					subCategorySelect.innerHTML = '<option value="">-- Select Subcategory --</option>';
 				}
+			});
+		});
+	</script>
+
+
+	<script>
+		// Function to preview images
+		function previewImages(event) {
+			const imagePreviewContainer = document.getElementById('previewProductImage');
+			imagePreviewContainer.innerHTML = ''; // Clear previous images
+
+			const files = event.target.files;
+
+			// Loop through each selected file
+			for (let i = 0; i < files.length; i++) {
+				const file = files[i];
+				const reader = new FileReader();
+
+				reader.onload = function (e) {
+					// Create a div for each image
+					const imgDiv = document.createElement('div');
+					imgDiv.className = 'img-div';
+					imgDiv.id = 'prev-img-div-' + i; // Assign an ID to the div
+					imgDiv.innerHTML = `
+						<img src="${e.target.result}" class="img-responsive image img-thumbnail" title="${file.name}">
+						<input type="hidden" name="existing_images[]" value="${file.name}"> <!-- Hidden input for existing images -->
+						<div class="middle">
+							<button id="remove-prev-image" class="btn btn-danger" onclick="removeImage(this)">
+								<i class="fa fa-trash"></i>
+							</button>
+						</div>
+					`;
+					imagePreviewContainer.appendChild(imgDiv);
+				};
+
+				reader.readAsDataURL(file); // Read the file as a data URL
 			}
+		}
 
-			// Function to remove an image preview
-			function removeImage(button) {
-				const imgDiv = button.parentElement.parentElement; // Get the parent div
-				imgDiv.remove(); // Remove the image div
-			}
-			
-		</script>
-		<!-- Add JavaScript to handle the click event -->
-        <script src="{{ asset('build/js/main.js') }}"></script>
-				
-        <!-- choices js -->
-        <script src="{{ asset('build/libs/choices.js/public/assets/scripts/choices.min.js') }}"></script>
-
-        <!-- dropzone plugin -->
-        <script src="{{ asset('build/libs/dropzone/dropzone-min.js') }}"></script>
-
-        <!-- init js -->
-        <script src="{{ asset('build/js/pages/ecommerce-choices.init.js') }}"></script>
+		// Function to remove an image preview
+		function removeImage(button) {
+			const imgDiv = button.parentElement.parentElement; // Get the parent div
+			imgDiv.remove(); // Remove the image div
+		}
 		
-        <!-- App js -->
-        <script src="{{ asset('build/js/app.js') }}"></script>
+	</script>
+	<!-- Add JavaScript to handle the click event -->
+	<script src="{{ asset('build/js/main.js') }}"></script>
+			
+	<!-- choices js -->
+	<script src="{{ asset('build/libs/choices.js/public/assets/scripts/choices.min.js') }}"></script>
+
+	<!-- dropzone plugin -->
+	<script src="{{ asset('build/libs/dropzone/dropzone-min.js') }}"></script>
+
+	<!-- init js -->
+	<script src="{{ asset('build/js/pages/ecommerce-choices.init.js') }}"></script>
+	
+	<!-- App js -->
+	<script src="{{ asset('build/js/app.js') }}"></script>
     @endsection

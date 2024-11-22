@@ -33,7 +33,7 @@ class Order extends Model
 		return $this->hasMany(Transaction::class);
 	}
 
-	// In your Order model
+
 	public function products()
 	{
 		return $this->belongsToMany(Product::class)
@@ -121,4 +121,76 @@ class Order extends Model
         ? Carbon::parse($validTransaction->tran_date)->format('F j, Y, g:i A')
         : null;
 	}
+
+	public static function totalSalesVolume($year = null)
+    {
+        // Default to the current year if no year is passed
+        $year = $year ?? now()->year;
+
+        // Fetch completed orders and sum their related transaction amounts
+        return self::where('status', 3) // Filter by completed orders (status = 3)
+                    ->whereYear('created_at', $year) // Filter by the provided year
+                    ->get() // Fetch all completed orders for the year
+                    ->sum(function ($order) {
+                        // Sum the 'amount' field from related transactions for each order
+                        return $order->transactions->sum('order_total');
+                    });
+    }
+
+	public static function getMonthlySales($year = null)
+    {
+        // Default to the current year if no year is passed
+        $year = $year ?? now()->year;
+
+        // Fetch orders with completed status
+        $orders = self::where('status', 3) // Filter by completed orders (status = 3)
+                    ->whereYear('created_at', $year) // Filter by the provided year
+                    ->get();
+
+        // Map the sales data by month
+        $monthlySales = collect(range(1, 12))->map(function ($month) use ($orders) {
+            // Filter transactions for each order and sum their order_total for each month
+            $salesForMonth = $orders->filter(function ($order) use ($month) {
+                // Only consider transactions from the current month
+                return $order->created_at->month == $month;
+            })->sum(function ($order) {
+                // Sum the order_total for each order, including its related transactions
+                return $order->transactions->sum('order_total');
+            });
+
+            return $salesForMonth;
+        });
+
+        return $monthlySales;
+    }
+
+	public static function getMonthlyOrders($year = null)
+    {
+        // Default to the current year if no year is passed
+		$year = $year ?? now()->year;
+
+		// Fetch orders with completed status
+		$orders = self::where('status', 3) // Filter by completed orders (status = 3)
+					->whereYear('created_at', $year) // Filter by the provided year
+					->get();
+
+		// Map the counts by month
+		$monthlyOrderCounts = collect(range(1, 12))->map(function ($month) use ($orders) {
+			// Count the orders for each month
+			$ordersForMonth = $orders->filter(function ($order) use ($month) {
+				// Only consider orders from the current month
+				return $order->created_at->month == $month;
+			})->count();
+
+			return $ordersForMonth;
+		});
+
+		// Calculate the total number of completed orders for the year
+		$totalOrders = $orders->count();
+
+		return [
+			'monthly' => $monthlyOrderCounts,
+			'total' => $totalOrders,
+		];
+    }
 }

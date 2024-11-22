@@ -189,9 +189,11 @@ class Product extends Model
 	public function scopeTopOrders($query)
 	{
 		return $query->where('status', 1) // Ensure status is true (active)
-					->withCount('orders')
-					->orderBy('orders_count', 'desc');
+					 ->withCount('orders')
+					 ->having('orders_count', '>=', 1) // Only include products with at least 1 order
+					 ->orderBy('orders_count', 'desc');
 	}
+	
 
 	// Most Viewed Products
 	public function scopeMostViewed($query)
@@ -234,6 +236,25 @@ class Product extends Model
 					})
 					->orderBy('created_at', 'desc'); // Order by creation date
 	}
+
+	// Accessor for total sales
+	public function getTotalSalesAttribute()
+	{
+		return $this->orders->sum('quantity'); // Assuming orders relation exists
+	}
+
+	// Accessor for total stock
+	public function getTotalStockAttribute()
+	{
+		// Sum up the quantity for all size_id entries of the product
+		return $this->quantities->sum('quantity');
+	}
+
+	// Accessor for total clicks (e.g., from a Clicks table)
+    public function getTotalClicksAttribute()
+    {
+        return $this->views->count(); // Assuming clicks relation exists
+    }
 
 	// In your Product model (Product.php)
 	// public function scopeSearchProducts($query, $searchTerm)
