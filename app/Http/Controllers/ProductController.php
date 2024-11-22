@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Size;
 use App\Models\Category;
 use App\Models\Quantity;
+use App\Models\Section;
 use App\Models\Specification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -16,25 +17,50 @@ use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
-	public function show(Category $category, Product $product)
+	public function show(Category $category, $subcategorySlug, Product $product)
 	{
+		// Increment product views
 		$product->increment('views');
-		
+
+		// Get related products based on the current product
 		$relatedProducts = Product::relatedProducts($product)->get();
 
-		// Eager load the sizes relation (only available sizes)
-		$product->load('availableSizes');
-		$product->load('categories');
+		// Breadcrumb section
+		$breadcrumbSection = Section::find($product->section_id); // Adjust as needed
+		$mainCategory = $product->mainCategory; // Assuming there's a method or relation
 
+		// Eager load the sizes relation (only available sizes) and categories
+		$product->load('availableSizes', 'categories');
 
-		// Return the view with the category and product
-		return view('frontEnd.products.index', compact('category', 'product', 'relatedProducts'));
+		// Determine the view based on the category slug
+		$view = $category->slug === 'wings-edited' 
+			? 'frontEnd.products.wings-edited' 
+			: 'frontEnd.products.index';
+
+		// Return the view with the necessary data
+		return view($view, compact('category', 'product', 'relatedProducts', 'breadcrumbSection', 'mainCategory'));
 	}
+
+
+	// public function show(Category $category, Product $product)
+	// {
+	// 	$product->increment('views');
+		
+	// 	$relatedProducts = Product::relatedProducts($product)->get();
+
+	// 	// Eager load the sizes relation (only available sizes)
+	// 	$product->load('availableSizes');
+	// 	$product->load('categories');
+
+
+	// 	// Return the view with the category and product
+	// 	return view('frontEnd.products.index', compact('category', 'product', 'relatedProducts'));
+	// }
 	
 	public function __construct()
     {
-        $this->middleware('auth');
-		$this->middleware('role'); // Only allow role 1 users
+        $this->middleware('auth')->except('show' );;
+		$this->middleware('role')->except('show');; // Only allow role 1 users
 
     }
 	

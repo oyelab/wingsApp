@@ -60,6 +60,18 @@
                 </li>
 
 				<li>
+					<a href="javascript: void(0);" class="has-arrow">
+						<i class="bx bx-briefcase icon nav-icon"></i>
+						<span class="menu-item" data-key="t-portfolio">Wings Showcase</span>
+					</a>
+					<ul class="sub-menu" aria-expanded="false">
+						<li><a href="{{ route('showcases.create') }}" data-key="t-add-showcase">Add Showcase</a></li>
+						<li><a href="{{ route('showcases.index') }}" data-key="t-all-showcase">All Showcase</a></li>
+					</ul>
+				</li>
+
+
+				<li>
                     <a href="javascript: void(0);" class="has-arrow">
                         <i class="bx bx-box icon nav-icon"></i>
                         <span class="menu-item" data-key="t-orders">Orders</span>

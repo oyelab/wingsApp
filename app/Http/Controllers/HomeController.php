@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Section;
 use App\Models\Order;
 use App\Models\Slider;
+use App\Models\Showcase;
 use App\Models\Size;
 use Illuminate\Support\Facades\Storage;
 
@@ -32,6 +33,8 @@ class HomeController extends Controller
 		}])
 		->where('slug', 'wings-edited')
 		->first();
+
+		$showcases = Showcase::with('details')->orderBy('order')->limit(5)->get();
 		
 
 		// return $wingsEdited;
@@ -48,29 +51,29 @@ class HomeController extends Controller
 		$titles = $titlesData->pluck('title', 'type')->toArray();
         
 
-        return view('frontEnd.index', compact('data', 'titles', 'sliders', 'wingsEdited', ));
+        return view('frontEnd.index', compact('data', 'titles', 'sliders', 'wingsEdited', 'showcases', ));
     }
 
-	public function show(Category $category, $subcategorySlug, Product $product)
-	{
-		// Increment product views
-		$product->increment('views');
+	// public function show(Category $category, $subcategorySlug, Product $product)
+	// {
+	// 	// Increment product views
+	// 	$product->increment('views');
 		
-		// Get the subcategory based on the slug
+	// 	// Get the subcategory based on the slug
 		
-		// Get related products based on the current product
-		$relatedProducts = Product::relatedProducts($product)->get();
+	// 	// Get related products based on the current product
+	// 	$relatedProducts = Product::relatedProducts($product)->get();
 
-		$breadcrumbSection = Section::find($product->section_id); // Adjust as needed
-		$mainCategory = $product->mainCategory; // Assuming there's a method or relation
+	// 	$breadcrumbSection = Section::find($product->section_id); // Adjust as needed
+	// 	$mainCategory = $product->mainCategory; // Assuming there's a method or relation
 
 		
-		// Eager load the sizes relation (only available sizes) and categories
-		$product->load('availableSizes');
-		$product->load('categories');
+	// 	// Eager load the sizes relation (only available sizes) and categories
+	// 	$product->load('availableSizes');
+	// 	$product->load('categories');
 		
-		// Return the view with the category, subcategory, and product
-		return view('frontEnd.products.index', compact('category',  'product', 'relatedProducts', 'breadcrumbSection', 'mainCategory',));
-	}
+	// 	// Return the view with the category, subcategory, and product
+	// 	return view('frontEnd.products.index', compact('category',  'product', 'relatedProducts', 'breadcrumbSection', 'mainCategory',));
+	// }
 	
 }

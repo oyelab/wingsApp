@@ -15,6 +15,8 @@ return [
     | any other location as required by the application or its packages.
     |
     */
+	'whatsapp_number' => env('WHATSAPP_NUMBER'),
+
 
     'name' => env('APP_NAME', 'WingsApp'),
 

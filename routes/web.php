@@ -20,6 +20,7 @@ use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SpecificationController;
+use App\Http\Controllers\ShowcaseController;
 use Illuminate\Support\Facades\Session;
 
 
@@ -45,7 +46,8 @@ Route::get('/search', [CategoryController::class, 'search'])->name('search');
 Route::get('/collections', [CategoryController::class, 'frontShow'])->name('collections');
 Route::get('/wings-edited', [CategoryController::class, 'wingsEdited'])->name('wings.edited');
 
-Route::get('/collections/{category:slug}/{subcategory:slug}/{product:slug}', [HomeController::class, 'show'])->name('products.details');
+Route::get('/collections/{category:slug}/{subcategory:slug}/{product:slug}', [ProductController::class, 'show'])->name('products.details');
+
 Route::get('/collections/{category:slug}', [CategoryController::class, 'mainCategory'])->name('category');
 Route::get('/collections/{category:slug}/{subcategory:slug}', [CategoryController::class, 'subCategory'])->name('category');
 Route::get('/get-subcategories/{mainCategoryId}', [CategoryController::class, 'getSubcategories']);
@@ -107,6 +109,12 @@ Route::resource('backEnd/orders', AdminOrderController::class);
 Route::resource('backEnd/vouchers', VoucherController::class);
 
 Route::resource('backEnd/specifications', SpecificationController::class);
+
+Route::resource('backEnd/showcases', ShowcaseController::class)->except(['show']);
+
+Route::get('/showcases', [ShowcaseController::class, 'showcases'])->name('showcases');
+Route::get('/showcases/{showcase}', [ShowcaseController::class, 'show'])->name('showcase.show');
+
 
 Route::post('/voucher/apply', [VoucherController::class, 'applyVoucher'])->name('voucher.apply');
 Route::post('/voucher/edit', [VoucherController::class, 'editVoucher'])->name('voucher.edit');

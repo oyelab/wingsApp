@@ -547,10 +547,10 @@
 							class="product-content d-flex justify-content-between"
 						>
 							<a href="{{ route('products.details', [
-			'category' => $product->categories->first()->slug,
-			'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-			'product' => $product->slug
-		]) }}">
+								'category' => $product->categories->first()->slug,
+								'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
+								'product' => $product->slug
+							]) }}">
 								<h3>
 									{{ $product->title }}
 								</h3>
