@@ -47,6 +47,107 @@
 			#searchInput {
 				padding: 5px 10px;
 			}
+			/* Dropdown Container */
+			.custom-dropdown {
+				position: relative;
+			}
+
+			/* User Icon (Avatar or Placeholder) */
+			.nav-link {
+				padding: 0;
+				border: none;
+				background: none;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 50px; /* Adjust for desired size */
+				height: 50px;
+				border-radius: 50%;
+				overflow: hidden;
+				transition: transform 0.2s ease;
+			}
+
+			.nav-link:hover {
+				transform: scale(1.1);
+			}
+
+			/* User Avatar */
+			.user-avatar {
+				width: 35px; /* Smaller size */
+				height: 35px; /* Make it circular */
+				border-radius: 50%; /* Round the edges */
+				border: 2px solid var(--wings-off); /* Pretty border with theme color */
+				object-fit: cover; /* Make sure the image fits well */
+			}
+
+			.user-placeholder {
+				width: 35px;
+				height: 35px;
+				border-radius: 50%;
+				background-color: var(--wings-primary); /* Use theme color for placeholder background */
+				color: white;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-weight: bold;
+				font-size: 16px; /* Adjust the font size as needed */
+			}
+
+
+			/* Dropdown Menu */
+			.dropdown-menu-custom {
+				display: none;
+				position: absolute;
+				top: 120%; /* Adjusts vertical spacing */
+				right: -10%; /* Moves dropdown slightly to the right */
+				background-color: var(--wings-primary);
+				border-radius: 8px;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+				z-index: 1000;
+				width: 250px;
+				overflow: hidden;
+				opacity: 0;
+				transform: translateY(10px);
+				transition: opacity 0.3s ease, transform 0.3s ease;
+			}
+
+			/* Show Dropdown Menu (when active) */
+			.custom-dropdown.active .dropdown-menu-custom {
+				display: block;
+				opacity: 1;
+				transform: translateY(0);
+			}
+
+			/* Dropdown Item */
+			.dropdown-item-custom {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				padding: 12px 15px;
+				color: var(--wings-white);
+				text-decoration: none;
+				font-size: 1rem;
+				transition: background-color 0.3s ease, color 0.3s ease;
+			}
+
+			.dropdown-item-custom i {
+				font-size: 1.2rem;
+				color: var(--wings-alternative);
+			}
+
+			.dropdown-item-custom:hover {
+				background-color: var(--wings-alternative);
+				color: var(--wings-white);
+			}
+
+			/* Divider */
+			.dropdown-divider-custom {
+				border: 0;
+				height: 1px;
+				background-color: var(--wings-light);
+				margin: 10px 0;
+			}
+
 		</style>
 	</head>
 	<body>
@@ -102,11 +203,11 @@
 									</form>
 								</div>
 
-								<!-- <li>
+								<li>
 									<a href="#">
 										<i class="fa-solid fa-heart"></i>
 									</a>
-								</li> -->
+								</li>
 								<!-- Cart Icon with Badge -->
 								<li>
 									<a href="{{ route('cart.show') }}" id="cart-button" class="{{ session('cart') ? '' : 'disabled' }}">
@@ -114,16 +215,42 @@
 										<span id="cart-count-badge" class="badge bg-danger" style="display: {{ session('cart') ? 'inline' : 'none' }}">{{ session('cart') ? count(session('cart')) : '' }}</span>
 									</a>
 								</li>
-								<li>
+								<li class="nav-item custom-dropdown">
 									@if (Auth::check())
-										<!-- Display user icon when logged in -->
-										<a href="{{ route('dashboard') }}"><i class="fa-solid fa-user"></i></a>
+										<!-- User Avatar or First Letter -->
+										<a class="nav-link" href="#" id="userDropdown" role="button">
+											@if (Auth::user()->avatar)
+												<!-- User's Avatar -->
+												<img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" alt="User Avatar" class="user-avatar">
+											@else
+												<!-- First Letter of Name -->
+												<div class="user-placeholder">
+													{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+												</div>
+											@endif
+										</a>
+
+
+										<!-- Dropdown Menu -->
+										<div class="dropdown-menu-custom">
+											<a href="{{ route('profile') }}" class="dropdown-item-custom">
+												<i class="fa-solid fa-user-circle"></i> My Profile
+											</a>
+											<a href="{{ route('dashboard') }}" class="dropdown-item-custom">
+												<i class="fa-solid fa-chart-line"></i> Dashboard
+											</a>
+											<hr class="dropdown-divider-custom">
+											<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+												@csrf
+											</form>
+											<a href="#" class="dropdown-item-custom" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+												<i class="fa-solid fa-sign-out-alt"></i> Logout
+											</a>
+										</div>
 									@else
-										<!-- Link to the login page (sign-in route) -->
 										<a href="{{ route('login') }}"><i class="fas fa-sign-in-alt"></i></a>
 									@endif
 								</li>
-
 							</ul>
 						</div>
 					</div>
@@ -321,7 +448,24 @@
 					}
 				});
 			});
+			
+			//custom dropdown
+			document.addEventListener('DOMContentLoaded', () => {
+				const dropdown = document.querySelector('.custom-dropdown');
+				const userLink = dropdown.querySelector('.nav-link');
+				const menu = dropdown.querySelector('.dropdown-menu-custom');
 
+				userLink.addEventListener('click', (e) => {
+					e.preventDefault();
+					dropdown.classList.toggle('active');
+				});
+
+				document.addEventListener('click', (e) => {
+					if (!dropdown.contains(e.target)) {
+						dropdown.classList.remove('active');
+					}
+				});
+			});
 
 		</script>
 	</body>

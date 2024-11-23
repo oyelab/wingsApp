@@ -62,7 +62,7 @@
 				<li>
 					<a href="javascript: void(0);" class="has-arrow">
 						<i class="bx bx-briefcase icon nav-icon"></i>
-						<span class="menu-item" data-key="t-portfolio">Wings Showcase</span>
+						<span class="menu-item" data-key="t-portfolio">Showcase</span>
 					</a>
 					<ul class="sub-menu" aria-expanded="false">
 						<li><a href="{{ route('showcases.create') }}" data-key="t-add-showcase">Add Showcase</a></li>

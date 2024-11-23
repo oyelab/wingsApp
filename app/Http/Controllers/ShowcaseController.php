@@ -49,10 +49,10 @@ class ShowcaseController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Showcase $showcase)
     {
         // Show the form to add a new wing
-        return view('backEnd.showcases.create');
+        return view('backEnd.showcases.create', compact('showcase'));
     }
 
     /**

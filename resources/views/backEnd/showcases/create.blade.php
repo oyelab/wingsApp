@@ -1,12 +1,17 @@
 @extends('backEnd.layouts.master')
-
+@section('title')
+    Add Showcase
+@endsection
+@section('page-title')
+    Add Showcase
+@endsection
 @section('body')
 <body>
 @endsection
 
 @section('content')
 <div class="container">
-    <form action="{{ route('showcases.update', $showcase->slug) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('showcases.store', $showcase) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -173,4 +178,6 @@
         });
     });
 </script>
+<!-- App js -->
+<script src="{{ asset('build/js/app.js') }}"></script>
 @endsection

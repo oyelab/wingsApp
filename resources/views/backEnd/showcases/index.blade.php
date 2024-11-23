@@ -1,6 +1,9 @@
 @extends('backEnd.layouts.master')
+@section('title')
+    Showcase
+@endsection
 @section('page-title')
-    Products
+   Showcase
 @endsection
 @section('body')
 
@@ -23,9 +26,7 @@
 					<p class="text-muted">{{ $showcase->short_description }}</p>
 				</div>
 				<div class="col-lg-4 text-end">
-					<img src="{{ $showcase->banner_image_path }}" alt="Banner" class="img-fluid rounded shadow-sm mb-2">
-					<img src="{{ $showcase->thumbnail_image_path }}" alt="Thumbnail" class="img-fluid rounded shadow-sm">
-					
+					<img src="{{ $showcase->banner_image_path }}" alt="Banner" class="img-fluid rounded shadow-sm mb-2">					
 					<!-- Edit Button -->
 					<form action="{{ route('showcases.destroy', $showcase) }}" method="POST" data-action="delete">
 						@csrf
@@ -76,5 +77,6 @@
 });
 
 </script>
-
+<!-- App js -->
+<script src="{{ asset('build/js/app.js') }}"></script>
 @endsection
