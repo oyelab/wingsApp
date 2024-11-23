@@ -250,6 +250,13 @@ class Product extends Model
 		return $this->quantities->sum('quantity');
 	}
 
+	public function isAvailable()
+	{
+		// Check if the total stock is greater than zero
+		return $this->getTotalStockAttribute() > 0;
+	}
+
+
 	// Accessor for total clicks (e.g., from a Clicks table)
     public function getTotalClicksAttribute()
     {

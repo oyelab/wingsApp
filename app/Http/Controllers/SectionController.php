@@ -25,6 +25,10 @@ class SectionController extends Controller
 	{
 		// Fetch the section record from the database
 		$sectionRecord = Section::where('slug', $section)->first();
+		$sectionTitle = Section::where('slug', $section)->first()->title;
+
+		// return $sectionTitle;
+
 	
 		if (!$sectionRecord || !$sectionRecord->scopeMethod) {
 			abort(404); // Section not found or no method specified
@@ -33,14 +37,18 @@ class SectionController extends Controller
 		// Ensure the method exists in the productRepo
 		if (method_exists($this->productRepo, $sectionRecord->scopeMethod)) {
 			// Call the corresponding method dynamically
-			$products = $this->productRepo->{$sectionRecord->scopeMethod}(20); // Pass the number of products as needed
+			$products = $this->productRepo->{$sectionRecord->scopeMethod}(4); // Pass the number of products as needed
 		} else {
 			abort(404); // Method does not exist in the repository
 		}
 
-		return $products;
+		// return $products;
 	
-		return view('section', compact('products', 'section'));
+		return view('frontEnd.sections.show', [
+			'products' => $products,
+			'section' => $section,
+			'sectionTitle' => $sectionTitle,
+		]);
 	}
 	
 }

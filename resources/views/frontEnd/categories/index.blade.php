@@ -201,7 +201,7 @@
 									{{ $product->title }}
 								</h4>
 							</a>
-							<div class="rating-area d-flex align-items-center mb-1">
+							<div class="rating-area d-flex align-items-center mb-2">
 								<ul class="d-flex align-items-center">
 									<li><i class="bi bi-star-fill" style="color: #ffc107;"></i></li>
 									<li><i class="bi bi-star-fill" style="color: #ffc107;"></i></li>
@@ -211,6 +211,7 @@
 								</ul>
 								<h5>5/5</h5>
 							</div>
+							@if ($product->price)
 							<div class="pricing-area d-flex align-items-center">
 								@if ($product->sale)
 									<!-- Offer Price First -->
@@ -234,6 +235,8 @@
 									</div>
 								@endif
 							</div>
+						@endif
+
 						</div>
 					</div>
 				@endforeach

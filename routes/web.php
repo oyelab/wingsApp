@@ -47,6 +47,7 @@ Route::get('/collections', [CategoryController::class, 'frontShow'])->name('coll
 Route::get('/wings-edited', [CategoryController::class, 'wingsEdited'])->name('wings.edited');
 
 Route::get('/collections/{category:slug}/{subcategory:slug}/{product:slug}', [ProductController::class, 'show'])->name('products.details');
+Route::get('/sections/{section}/{product:slug}', [ProductController::class, 'show'])->name('sections.products.details');
 
 Route::get('/collections/{category:slug}', [CategoryController::class, 'mainCategory'])->name('category');
 Route::get('/collections/{category:slug}/{subcategory:slug}', [CategoryController::class, 'subCategory'])->name('category');
@@ -136,4 +137,5 @@ Route::get('/monthly-data', [App\Http\Controllers\DashboardController::class, 'g
 // Route::get('/backEnd/x/{any}', [App\Http\Controllers\DashboardController::class, 'index'])->name('back.index');
 
 Route::get('/backEnd/profile', [UserController::class, 'profile'])->name('profile');
+Route::get('/backEnd/userOrders', [UserController::class, 'userOrders'])->name('user.orders');
 Route::put('/profile/update', [UserController::class, 'update'])->name('profile.update');

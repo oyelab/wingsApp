@@ -122,6 +122,13 @@
 							<span class="menu-item" data-key="t-my-profile">My Profile</span>
 						</a>
 					</li>
+					<li>
+						<a href="{{ route('user.orders') }}">
+							<i class="bx bx-box icon nav-icon"></i>
+							<span class="menu-item" data-key="t-my-orders">My Orders</span>
+						</a>
+					</li>
+
 				@endif
 
 				@if(Auth::check() && Auth::user()->role === 1)

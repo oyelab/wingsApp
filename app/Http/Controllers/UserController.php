@@ -15,6 +15,19 @@ class UserController extends Controller
         $this->middleware('auth');
     }
 	
+	public function userOrders()
+	{
+		// Get the currently authenticated user
+		$user = Auth::user();
+
+		// Retrieve all orders for the authenticated user
+		$orders = $user->orders; // Assuming 'orders' is a relationship defined in the User model
+
+		// return $orders;
+	
+		return view('backEnd.user.orders', compact('orders'));
+	}
+	
     public function profile()
 	{
 		$reviews = Review::where('user_id', auth()->id())

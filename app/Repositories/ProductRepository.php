@@ -26,9 +26,9 @@ class ProductRepository
 			$query->where('slug', '!=', 'wings-edited');
 		})
 		->latest()
-		->take($limit)
-		->get();
+		->paginate($limit); // Use only paginate, it will automatically limit and handle pagination
 	}
+	
 	
 
 	public function getTopOrders($limit = 8)
@@ -37,8 +37,7 @@ class ProductRepository
 			$query->where('slug', '!=', 'wings-edited'); // Exclude products from the 'wings-edited' category
 		})
 		->topOrders()
-		->take($limit)
-		->get();
+		->paginate($limit);
 	}
 	
 
@@ -48,8 +47,7 @@ class ProductRepository
 			$query->where('slug', '!=', 'wings-edited'); // Exclude products from the 'wings-edited' category
 		})
 		->mostViewed()
-		->take($limit)
-		->get();
+		->paginate($limit);
 	}
 	
    
@@ -59,8 +57,7 @@ class ProductRepository
 			$query->where('slug', '!=', 'wings-edited'); // Exclude products from the 'wings-edited' category
 		})
 		->offerProducts()
-		->take($limit)
-		->get();
+		->paginate($limit);
 	}
 	
 
@@ -70,8 +67,7 @@ class ProductRepository
 			$query->where('slug', '!=', 'wings-edited'); // Exclude products from the 'wings-edited' category
 		})
 		->trending()
-		->take($limit)
-		->get();
+		->paginate($limit);
 	}
 	
 
