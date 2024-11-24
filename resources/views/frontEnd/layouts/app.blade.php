@@ -38,7 +38,7 @@
 
 		{{-- Other Static Meta Tags --}}
 		<meta property="fb:app_id" content="1081491186574205">
-		<meta property="fb:pages" content="wingssportswear.shop">
+		<meta property="fb:pages" content="109412804187971">
 		<meta name="theme-color" content="#000000">
 		
 		<link rel="icon" href="{{ $siteSettings->favicon ?? asset('favicon.ico') }}" type="image/x-icon">
