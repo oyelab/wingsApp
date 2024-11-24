@@ -146,16 +146,32 @@ class Product extends Model
 
 	public function getOfferPriceAttribute()
 	{
-		return number_format(floor($this->price - ($this->price * $this->sale / 100)), 2, '.', '');
+		// Check if the sale percentage is greater than 0
+		if ($this->sale && $this->sale > 0) {
+			// Calculate the offer price based on the sale percentage
+			return number_format(floor($this->price - ($this->price * $this->sale / 100)), 2, '.', '');
+		}
+	
+		// If no sale, return null or the original price as offer price
+		return null; // or you can return $this->price if you prefer
 	}
+	
 
 	// Calculate discount for a given quantity
-    public function calculateDiscount($quantity)
-    {
-        // Calculate the discount amount based on the offer price
-        $offerPrice = $this->getOfferPriceAttribute();
-        return ($this->price * $quantity) - ($offerPrice * $quantity);
-    }
+	public function calculateDiscount($quantity)
+	{
+		// Get the offer price using the getOfferPriceAttribute method
+		$offerPrice = $this->getOfferPriceAttribute();
+	
+		// If there's no offer price, return null (no discount)
+		if ($offerPrice === null) {
+			return null;
+		}
+	
+		// Calculate and return the discount amount directly
+		return ($this->price * $quantity) - ($offerPrice * $quantity) === 0 ? null : ($this->price * $quantity) - ($offerPrice * $quantity);
+	}
+	
 
 	// Product model
 	public function getImagePathsAttribute(): array

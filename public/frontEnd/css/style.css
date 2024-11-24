@@ -1518,44 +1518,7 @@ a {
 	border-radius: 50%;
 	background-color: var(--wings-light);
 }
-.discount-input-container {
-	display: flex;
-	align-items: center;
-	position: relative;
-	width: 400px;
-	gap: 10px;
-	margin-bottom: 24px;
-}
-.icon {
-	position: absolute;
-	top: 50%;
-	left: 10px;
-	transform: translateY(-50%);
-}
-.discount-input {
-	flex: 1;
-	padding: 10px 10px 10px 40px;
-	border: 1px solid var(--wings-secondary);
-	background: var(--wings-light);
-	font-size: 16px;
-	border-radius: 8px;
-	box-sizing: border-box;
-	outline: none;
-	transition: border-color 0.3s ease;
-}
-.discount-input:focus {
-	border-color: var(--wings-primary);
-}
-.apply-btn {
-	padding: 10px 20px;
-	background-color: transparent;
-	color: var(--wings-primary);
-	border: none;
-	font-size: 18px;
-	font-weight: 800;
-	position: absolute;
-	right: 0;
-}
+
 .total-product-pricing {
 	display: flex;
 	flex-direction: column;

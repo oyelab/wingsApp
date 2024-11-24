@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\Order;
 use App\Models\Delivery;
 use App\Services\OrderService;
+use Log;
 
 
 class DeliveryController extends Controller
@@ -25,23 +26,24 @@ class DeliveryController extends Controller
 		// 
 		$recipientCity = $request->input('recipient_city');
 		$recipientZone = $request->input('recipient_zone');
+		$quantity = $request->input('quantity');
 	
 		$response = Http::withHeaders([
-			'Authorization' => "Bearer " . env('PATHAO_ACCESS_TOKEN_TEST'),
+			'Authorization' => "Bearer " . env('PATHAO_ACCESS_TOKEN'),
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
-		])->post(env('PATHAO_BASE_URL_TEST') . '/aladdin/api/v1/merchant/price-plan',
+		])->post(env('PATHAO_BASE_URL') . '/aladdin/api/v1/merchant/price-plan',
 
 		[
-			'store_id' => '147848',
+			'store_id' => '133730',
 			'item_type' => 2,
 			'delivery_type' => 48,
-			'item_weight' => 0.5,
+			'item_weight' => 0.250 * $quantity,
 			'recipient_city' => $recipientCity,
 			'recipient_zone' => $recipientZone,
 		]);
 
-		// return $response;
+		Log::debug('Shipping Calculation Response:', $response->json());
 	
 		return response()->json($response->json(), $response->status());
 	}

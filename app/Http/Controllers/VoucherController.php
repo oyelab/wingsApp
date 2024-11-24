@@ -80,8 +80,8 @@ class VoucherController extends Controller
 
 	public function __construct()
     {
-        $this->middleware('auth');
-		$this->middleware('role'); // Only allow role 1 users
+        $this->middleware('auth')->except('applyVoucher', 'editVoucher', 'removeVoucher');
+		$this->middleware('role')->except('applyVoucher', 'editVoucher', 'removeVoucher');; // Only allow role 1 users
     }
 
     /**

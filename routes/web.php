@@ -22,6 +22,9 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SpecificationController;
 use App\Http\Controllers\ShowcaseController;
 use Illuminate\Support\Facades\Session;
+use App\Http\Controllers\AssetController;
+
+
 
 
 
@@ -76,6 +79,9 @@ Route::get('/cart/count', function () {
     return response()->json(['count' => count(Session::get('cart', []))]);
 });
 
+Route::post('/voucher/apply', [VoucherController::class, 'applyVoucher'])->name('voucher.apply');
+Route::post('/voucher/edit', [VoucherController::class, 'editVoucher'])->name('voucher.edit');
+Route::post('/voucher/remove', [VoucherController::class, 'removeVoucher'])->name('voucher.remove');
 
 Route::get('/checkout', [PaymentController::class, 'showCheckout'])->name('checkout.show');
 Route::post('/checkout', [PaymentController::class, 'processCheckout'])->name('checkout.process');  // Handle form submission
@@ -109,7 +115,15 @@ Route::resource('backEnd/orders', AdminOrderController::class);
 
 Route::resource('backEnd/vouchers', VoucherController::class);
 
-Route::resource('backEnd/specifications', SpecificationController::class);
+Route::prefix('backEnd')->middleware(['auth'])->group(function() {
+    Route::resource('assets', AssetController::class);
+});
+
+Route::get('/specifications', [SpecificationController::class, 'index'])->name('specifications.index');
+Route::post('/specifications', [SpecificationController::class, 'store'])->name('specifications.store');
+Route::post('/specifications/update', [SpecificationController::class, 'update'])->name('specifications.update');
+Route::delete('/specifications/destroy', [SpecificationController::class, 'destroy'])->name('specifications.destroy');
+Route::post('/specifications/updateOrder', [SpecificationController::class, 'updateOrder'])->name('specifications.updateOrder');
 
 Route::resource('backEnd/showcases', ShowcaseController::class)->except(['show']);
 
@@ -117,9 +131,7 @@ Route::get('/showcases', [ShowcaseController::class, 'showcases'])->name('showca
 Route::get('/showcases/{showcase}', [ShowcaseController::class, 'show'])->name('showcase.show');
 
 
-Route::post('/voucher/apply', [VoucherController::class, 'applyVoucher'])->name('voucher.apply');
-Route::post('/voucher/edit', [VoucherController::class, 'editVoucher'])->name('voucher.edit');
-Route::post('/voucher/remove', [VoucherController::class, 'removeVoucher'])->name('voucher.remove');
+
 
 
 

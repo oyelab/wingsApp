@@ -1,430 +1,429 @@
 @extends('frontEnd.layouts.app')
 @section('css')
-<style>
-    /* Style to make the label look clickable */
-    .clickable {
-        color: #007bff; /* Blue color to indicate it's clickable */
-        cursor: pointer; /* Pointer cursor when hovering over the label */
-        text-decoration: underline; /* Underline to make it look like a link */
-    }
-
-    /* Change color on hover */
-    .clickable:hover {
-        color: #0056b3; /* Darker blue when hovering */
-    }
-</style>
 
 @endsection
 @section('content')
-<div class="container my-5">
-    <h2 class="mb-4">Checkout</h2>
+<!-- Checkout -->
+<section class="checkout-wrap section-padding">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="checkout-heading text-center">
+					<h1>Checkout</h1>
+					<div class="item-and-price">
+						<!-- Display Item or Items based on total quantity -->
+						<p>
+							@if($totalQuantity == 1)
+								({{ $totalQuantity }} Item)
+							@else
+								({{ $totalQuantity }} Items)
+							@endif
+						</p>
 
-    <form action="{{ route('checkout.process') }}" method="POST">
-        @csrf
-
-        <!-- Customer Information -->
-		@if ($errors->any())
-			<div class="alert alert-danger">
-				<ul>
-					@foreach ($errors->all() as $error)
-						<li>{{ $error }}</li>
-					@endforeach
-				</ul>
+						<!-- Display the order total value with commas as thousand separators and ensure 2 decimal places -->
+						<p>৳ {{ number_format($orderTotal, 2, '.', '') }}</p>
+					</div>
+				</div>
 			</div>
-		@endif
-		
-		@if(session('message'))
-			<div class="alert alert-info">
-				{{ session('message') }}
-			</div>
-		@endif
-
-        <div class="row">
-            <div class="col-md-6">
-				<div class="mb-3">
-					<label for="name" class="form-label">Name</label>
-					<input type="text" class="form-control" name="name" value="{{ old('name') }}" !required>
-				</div>
-				<div class="mb-3">
-					<label for="email" class="form-label">Email</label>
-					<input type="email" class="form-control" name="email" value="{{ old('email') }}" !required>
-				</div>
-				<div class="mb-3">
-					<label for="phone" class="form-label">Phone</label>
-					<input type="text" class="form-control" name="phone" value="{{ old('phone') }}" !required>
-				</div>
-				<div class="mb-3">
-					<label for="address" class="form-label">Address</label>
-					<input type="text" class="form-control" name="address" value="{{ old('address') }}" !equired>
-				</div>
-				<div class="row">
-					<div class="col mb-3">
-						<label for="recipient_city" class="form-label">City</label>
-						<select class="form-control" id="recipient_city" name="recipient_city" !required onchange="fetchZones()">
-							<option value="">Select City</option>
-						</select>
-					</div>
-					<div class="col mb-3">
-						<label for="recipient_zone" class="form-label">Zone</label>
-						<select class="form-select" id="recipient_zone" name="recipient_zone" !required onchange="fetchAreas()">
-							<option value="">Select Zone</option>
-						</select>
-					</div>
-					<div class="col mb-3">
-						<label for="recipient_area" class="form-label">Area</label>
-						<select class="form-select" id="recipient_area" name="recipient_area" !required>
-							<option value="">Select Area</option>
-						</select>
-					</div>
-				</div>
-
-
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" name="terms" !required>
-                    <label class="form-check-label">Accept Terms & Conditions</label>
-                </div>
-            </div>
-
-			
-
-			
-
-            <!-- Cart Summary -->
-            <div class="col-md-6">
-				<!-- Payment Options -->
-				<h5>Select Payment Method</h5>
-				<div class="d-flex">
-					<div class="mb-3 mx-4">
-						<input type="radio" id="cod" name="payment_method" value="COD" required onclick="updatePayable()"
-							{{ old('payment_method') == 'COD' ? 'checked' : '' }}>
-						<label for="cod">Cash on Delivery</label>
-					</div>
-					<div class="mb-3">
-						<input type="radio" id="online" name="payment_method" value="Full Payment" required onclick="updatePayable()"
-							{{ old('payment_method') == 'Full Payment' ? 'checked' : '' }}>
-						<label for="online">Online Payment</label>
-					</div>
-				</div>
-
-				<div class="d-flex justify-content-between align-items-center mb-3">
-					<h5>Your Cart Items</h5>
-					<a href="{{ route('cart.show') }}" class="btn btn-outline-secondary btn-sm">Edit Cart</a>
-				</div>
-
-				<table class="table">
-					<thead>
-						<tr>
-							<th class="">Product</th>
-							<th class="text-end">Size</th>
-							<th class="text-end">Quantity</th>
-							<th class="col-2 text-end">Price</th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach($cartItems as $item)
-							<tr>
-								<td>{{ $item['title'] }}</td>
-								<td class="text-end">{{ $item['size_name'] }}</td>
-								<td class="text-end">{{ $item['quantity'] }}</td>
-								<td class="text-end">
-									@if($item['salePrice'] < $item['price'])
-										<span class="text-decoration-line-through text-muted">৳ {{ number_format($item['price'], 2) }}</span>
-										<br>
-										<span>৳ {{ number_format($item['salePrice'], 2) }}</span>
-									@else
-										৳ {{ number_format($item['price'], 2) }}
-									@endif
-								</td>
-								<!-- Hidden inputs to send data -->
-								<input type="hidden" name="products[{{ $loop->index }}][id]" value="{{ $item['product_id'] }}"> <!-- Adjust key if necessary -->
-								<input type="hidden" name="products[{{ $loop->index }}][size_id]" value="{{ $item['size_id'] }}">
-								<input type="hidden" name="products[{{ $loop->index }}][quantity]" value="{{ $item['quantity'] }}">
-							</tr>
+		</div>
+		<form action="{{ route('checkout.process') }}" method="POST">
+			@csrf
+			<!-- Customer Information -->
+			@if ($errors->any())
+				<div class="alert alert-danger">
+					<ul>
+						@foreach ($errors->all() as $error)
+							<li>{{ $error }}</li>
 						@endforeach
-							<tr>
-								<td colspan="3" class="text-end">
-									<strong>Subtotal</strong>
-								</td>
-								<td class="text-end">
-									<strong id="subtotal"></strong>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="3" class="text-end">
-									<strong>Shipping</strong>
-								</td>
-								<td class="text-end">
-									<strong id="shipping"></strong>
-									<!-- Shipping Charge Field -->
-									<input type="hidden" id="hidden_shipping_charge" name="shipping_charge" value="0">
-								</td>
-							</tr>
-							<tr>
-								<td colspan="3" class="text-end">
-									<strong>(-)Discount</strong>
-								</td>
-								<td class="text-end">
-									<strong id="discount"></strong>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="3" class="text-end">
-									<strong>(-)Voucher</strong>
-								</td>
-								<td class="text-end">
-									<strong id="voucher"></strong>
-									<input type="hidden" id="voucherInput" name="voucher">
-								</td>
+					</ul>
+				</div>
+			@endif
+			
+			@if(session('message'))
+				<div class="alert alert-info">
+					{{ session('message') }}
+				</div>
+			@endif
 
-							</tr>
-							<tr>
-								<td colspan="3" class="text-end">
-									<strong>Total</strong>
-								</td>
-								<td class="text-end">
-									<strong id="total"></strong>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="3" class="text-end">
-									<strong>Payable</strong>
-								</td>
-								<td class="text-end">
-									<strong id="payable"></strong>
-								</td>
-							</tr>
-					</tbody>
-				</table>
+			<input type="hidden" name="totalQuantity" value="{{ $totalQuantity }}">
+
+			<div class="row">
 				
-                <button type="submit" class="btn btn-primary w-100">Pay Now</button>
-            </div>
-        </div>
-    </form>
-</div>
+				<div class="col-md-8">
+					<div class="checkout-form">
+						<h2>Delivery Address</h2>
 
+
+
+						<div class="form-group">
+							<label for="full_name">Full name
+								<span class="text-danger">*</span></label>
+							<input type="text" class="form-control" id="name" name="name" placeholder="Enter your name"
+								value="{{ old('name') }}" !required />
+						</div>
+						<div class="form-group">
+							<label for="phone">Phone Number
+								<span class="text-danger">*</span></label>
+							<input type="text" class="form-control" name="phone" id="phone" placeholder="Enter phone number"
+								value="{{ old('phone') }}" !required />
+						</div>
+						<div class="form-group">
+							<label for="email">Email Address
+								<span class="text-danger">*</span></label>
+							<input type="email" class="form-control" id="email" name="email"
+								placeholder="Enter email address" value="{{ old('email') }}" !required />
+						</div>
+						<div class="form-group">
+							<label for="address">House/Road/Post
+								<span class="text-danger">*</span></label>
+							<input type="text" class="form-control" id="address" name="address"
+								placeholder="5/A, 27, Dhanmondi" />
+						</div>
+						<div class="dristic-wrap">
+							<div class="form-group">
+								<label for="city">City </label>
+								<select class="form-control" id="recipient_city" name="recipient_city" !required
+									onchange="fetchZones()">
+									<option value="">Select City</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="zone">Zone </label>
+								<select class="form-select" id="recipient_zone" name="recipient_zone" !required
+									onchange="fetchAreas()">
+									<option value="">Select Zone</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="area">Area </label>
+								<select class="form-select" id="recipient_area" name="recipient_area" !required>
+									<option value="">Select Area</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-check mt-2">
+							<input type="checkbox" class="form-check-input" name="terms" !required>
+							<label class="form-check-label" for="exampleCheck1">I have read and agree to the
+								<a href="{{ route('help.index') }}#terms-conditions">Terms and Conditions.</a></label>
+						</div>
+
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="review-your-cart-wrap">
+						<div class="review-your-cart-top">
+							<h3>Review your cart</h3>
+							<a href="{{ route('cart.show') }}">
+								<i class="bi bi-pencil-square"></i> Update
+							</a>
+						</div>
+
+
+						<div class="cart-products">
+						@foreach($cartItems as $item)
+							<a href="{{ route('products.details', [
+									'category' => $item['categorySlug'], 
+									'subcategory' => $item['subcategory'], 
+									'product' => $item['slug'] 
+								]) }}" class="cart-product">
+								<div class="product-image">
+									<img src="{{ $item['imagePath'] }}" alt="Product" draggable="false"
+										class="img-fluid w-25 h-auto" />
+									<div class="product-details">
+										<h4>{{ $item['title'] }}</h4>
+										<div class="d-flex">
+											<h5>
+												<span class="fw-bold text-muted">Size:</span> {{ $item['size_name'] }}
+											</h5>
+											<h5>
+												<span class="fw-bold text-muted ms-2">Qty:</span> {{ $item['quantity'] }}x
+											</h5>
+										</div>
+
+										<!-- Display Price and Sale Price conditionally -->
+										<p>
+											@if($item['offerPrice'] && $item['offerPrice'] > 0)
+												<span class="text-decoration-line-through text-muted">{{ $item['price'] }}</span>
+												<span class="text-success fw-bold">{{ $item['offerPrice'] }}</span>
+											@else
+												<span class="text-success fw-bold">{{ $item['price'] }}</span>
+											@endif
+										</p>
+
+									</div>
+								</div>
+							</a>
+							<input type="hidden" name="products[{{ $loop->index }}][id]" value="{{ $item['product_id'] }}"> <!-- Adjust key if necessary -->
+							<input type="hidden" name="products[{{ $loop->index }}][size_id]" value="{{ $item['size_id'] }}">
+							<input type="hidden" name="products[{{ $loop->index }}][quantity]" value="{{ $item['quantity'] }}">
+						@endforeach
+
+
+						</div>
+
+						<div class="payment-methods">
+							<label class="payment-option">
+								<input type="radio" id="cod" name="payment_method" value="COD" !required
+									onclick="updatePayable()" {{ old('payment_method') == 'COD' ? 'checked' : '' }}>
+								<span>Cash on Delivery</span>
+							</label>
+							<label class="payment-option">
+								<input type="radio" id="online" name="payment_method" value="Full Payment" !required
+									onclick="updatePayable()" {{ old('payment_method') == 'Full Payment' ? 'checked' : '' }}>
+								<span>Online Payment</span>
+							</label>
+						</div>
+
+						<div class="total-product-pricing">
+							<!-- Shipping Fee Display -->
+							<div class="item">
+								<h3>Shipping</h3>
+								<p id="shipping">
+									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+									Calculating...
+								</p>
+								
+								<input type="hidden" id="hidden_shipping_charge" name="shipping_charge" value="0.00">
+							</div>
+
+							<!-- Subtotal, Discount, Voucher, Total, and Payable Fields -->
+							<div class="item">
+								<h3>Subtotal</h3>
+								<p id="subtotal">৳ 0.00</p>
+							</div>
+
+							<div class="item" id="discountRow">
+								<h3>Order Discount</h3>
+								<p id="discount">N/A</p>
+							</div>
+
+							<div class="item" id="voucherRow">
+								<h3>Voucher</h3>
+								<p id="voucher">N/A</p>
+								<input type="hidden" id="voucherInput" name="voucher" value="">
+							</div>
+
+							<div class="item">
+								<h3>Total</h3>
+								<p id="total">৳ 0.00</p>
+							</div>
+
+							<div class="item">
+								<h3>Payable</h3>
+								<p id="payable">
+									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+									Calculating...
+								</p>
+							</div>
+						</div>
+
+
+						<div class="checkout-btn">
+							<button type="submit" class="btn btn-primary w-100">Pay Now</button>
+						</div>
+						<div class="payment-accept text-center">
+							<img src="{{ asset('images/payment.png') }}" draggable="false" class="img-fluid"
+								alt="Payment accept" />
+						</div>
+						<div class="message-info">
+							<div class="message-info-top">
+								<div>
+									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+										fill="none">
+										<path
+											d="M17 10V8C17 5.23858 14.7614 3 12 3C9.23858 3 7 5.23858 7 8V10M12 14.5V16.5M8.8 21H15.2C16.8802 21 17.7202 21 18.362 20.673C18.9265 20.3854 19.3854 19.9265 19.673 19.362C20 18.7202 20 17.8802 20 16.2V14.8C20 13.1198 20 12.2798 19.673 11.638C19.3854 11.0735 18.9265 10.6146 18.362 10.327C17.7202 10 16.8802 10 15.2 10H8.8C7.11984 10 6.27976 10 5.63803 10.327C5.07354 10.6146 4.6146 11.0735 4.32698 11.638C4 12.2798 4 13.1198 4 14.8V16.2C4 17.8802 4 18.7202 4.32698 19.362C4.6146 19.9265 5.07354 20.3854 5.63803 20.673C6.27976 21 7.11984 21 8.8 21Z"
+											stroke="#1E1E1E" stroke-width="1.5" stroke-linecap="round"
+											stroke-linejoin="round" />
+									</svg>
+								</div>
+								<h4>
+									Ensuring your financial and personal
+									details are secure during every
+									transaction.
+								</h4>
+							</div>
+							<p>
+								Ensuring your financial and personal details
+								are secure during every transaction.
+							</p>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</form>
+	</div>
+</section>
 @endsection
 @section('scripts')
 
-
-
-<script>
-    const oldCity = "{{ old('recipient_city') }}";
-    const oldZone = "{{ old('recipient_zone') }}";
-    const oldArea = "{{ old('recipient_area') }}";
-</script>
-
 <!-- Add this script to handle the payment selection -->
+<script src="{{ asset('frontEnd/js/pathaoApi.js') }}"></script>
+
 <script>
-    // Fetch and set cities with old selection, if available
-    async function fetchCities() {
-        const citySelect = document.getElementById("recipient_city");
-
-        try {
-            const response = await fetch('/cities');
-            const result = await response.json();
-
-            if (Array.isArray(result.data)) {
-                result.data.forEach(city => {
-                    const selected = city.city_id == oldCity ? 'selected' : '';
-                    citySelect.innerHTML += `<option value="${city.city_id}" ${selected}>${city.city_name}</option>`;
-                });
-
-                // Fetch zones if an old city is set
-                if (oldCity) fetchZones();
-            }
-        } catch (error) {
-            console.error('Error fetching cities:', error);
-        }
-    }
-
-    // Fetch and set zones with old selection, if available
-    async function fetchZones() {
-        const cityId = document.getElementById("recipient_city").value;
-        const zoneSelect = document.getElementById("recipient_zone");
-        const areaSelect = document.getElementById("recipient_area");
-
-        zoneSelect.innerHTML = '<option value="">Select Zone</option>';
-        areaSelect.innerHTML = '<option value="">Select Area</option>';
-
-        if (!cityId) return;
-
-        try {
-            const response = await fetch(`/zones/${cityId}`);
-            const data = await response.json();
-
-            if (data && data.data) {
-                data.data.forEach(zone => {
-                    const selected = zone.zone_id == oldZone ? 'selected' : '';
-                    zoneSelect.innerHTML += `<option value="${zone.zone_id}" ${selected}>${zone.zone_name}</option>`;
-                });
-
-                // Fetch areas if an old zone is set
-                if (oldZone) fetchAreas();
-            }
-        } catch (error) {
-            console.error('Error fetching zones:', error);
-        }
-    }
-
-    // Fetch and set areas with old selection, if available
-    async function fetchAreas() {
-        const zoneId = document.getElementById("recipient_zone").value;
-        const areaSelect = document.getElementById("recipient_area");
-
-        areaSelect.innerHTML = '<option value="">Select Area</option>';
-
-        if (!zoneId) return;
-
-        try {
-            const response = await fetch(`/areas/${zoneId}`);
-            const data = await response.json();
-
-            if (data && data.data) {
-                data.data.forEach(area => {
-                    const selected = area.area_id == oldArea ? 'selected' : '';
-                    areaSelect.innerHTML += `<option value="${area.area_id}" ${selected}>${area.area_name}</option>`;
-                });
-            }
-        } catch (error) {
-            console.error('Error fetching areas:', error);
-        }
-    }
-
-    // Call fetchCities when the page loads
-    window.onload = fetchCities;
+	// Pass Blade data to JavaScript
+	const cartItems = @json($cartItems);
+	const voucherDiscount = @json($voucherDiscount);
 </script>
 
 <script>
-    // Function to calculate shipping price
-    async function calculateShippingPrice() {
-        const recipientCity = document.getElementById('recipient_city').value;
-        const recipientZone = document.getElementById('recipient_zone').value;
+// Get totalQuantity from PHP into JavaScript
+const totalQuantity = @json($totalQuantity);
 
-        if (recipientCity && recipientZone) {
-            try {
-                const response = await fetch('/calculate-shipping', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ recipient_city: recipientCity, recipient_zone: recipientZone })
-                });
+async function calculateShippingPrice() {
+    const recipientCity = document.getElementById('recipient_city').value;
+    const recipientZone = document.getElementById('recipient_zone').value;
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
+    const shippingElement = document.getElementById('shipping');
+    const shippingChargeElement = document.getElementById('hidden_shipping_charge');
+    
+    // Show calculating effect (loading spinner or text)
+    shippingElement.textContent = "Calculating...";
+    shippingChargeElement.value = 0; // Optional: Set the shipping charge to 0 during calculation
 
-                const data = await response.json();
+    if (recipientCity && recipientZone) {
+        try {
+            const response = await fetch('/calculate-shipping', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    recipient_city: recipientCity,
+                    recipient_zone: recipientZone,
+                    quantity: totalQuantity // Add totalQuantity to the request payload
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
                 const shipping = data.data.final_price || 0;
-                document.getElementById('shipping').textContent = `৳ ${shipping.toFixed(2)}`;
-                document.getElementById('hidden_shipping_charge').value = shipping.toFixed(2);
 
-                // Calculate totals with the new shipping value
-                calculateCartSummary(shipping);
-
-            } catch (error) {
-                console.error("Error calculating shipping price:", error);
+                // Update UI with calculated shipping price
+                shippingElement.textContent = `৳ ${shipping.toFixed(2)}`;
+                shippingChargeElement.value = shipping.toFixed(2);
+                calculateCartSummary(shipping); // Calculate cart summary after shipping is updated
+            } else {
+                console.error('Shipping calculation error:', data.message);
+                shippingElement.textContent = "Error calculating shipping.";
             }
-        } else {
-            // If city/zone not selected, set default shipping and recalculate
-            const defaultShipping = 120;
-            document.getElementById('shipping').textContent = `৳ ${defaultShipping.toFixed(2)}`;
-            document.getElementById('hidden_shipping_charge').value = defaultShipping.toFixed(2);
-            calculateCartSummary(defaultShipping);
+        } catch (error) {
+            console.error("Error calculating shipping price:", error);
+            shippingElement.textContent = "Error calculating shipping.";
         }
+    } else {
+        const defaultShipping = 60;
+
+        // Display default shipping if cities/zones are not selected
+        shippingElement.textContent = `৳ ${defaultShipping.toFixed(2)}`;
+        shippingChargeElement.value = defaultShipping.toFixed(2);
+        calculateCartSummary(defaultShipping); // Calculate cart summary after shipping is updated
+    }
+}
+
+
+// Function to calculate cart summary including shipping
+function calculateCartSummary(shipping) {
+    let subtotal = 0;
+    let discount = 0;
+    const voucherDiscountPercentage = @json($voucherDiscount);
+    let voucherDiscountAmount = 0;
+
+    const cartItems = @json($cartItems); // Ensure cartItems is a valid array of cart items
+
+    cartItems.forEach(item => {
+        const quantity = item.quantity;
+        const price = item.price;
+        const offerPrice = item.offerPrice || price;
+
+        subtotal += price * quantity;
+        discount += (price - offerPrice) * quantity;
+    });
+
+    const totalBeforeVoucher = subtotal - discount;
+    voucherDiscountAmount = (totalBeforeVoucher * voucherDiscountPercentage) / 100;
+    voucherDiscountAmount = parseFloat(voucherDiscountAmount.toFixed(2));
+
+    const total = totalBeforeVoucher - voucherDiscountAmount + shipping;
+
+    // Update the DOM
+    document.getElementById('subtotal').textContent = `৳ ${subtotal.toFixed(2)}`;
+    document.getElementById('total').textContent = `৳ ${total.toFixed(2)}`;
+
+    // Update discount field visibility
+    const discountRow = document.getElementById('discountRow');
+    const discountElement = document.getElementById('discount');
+    if (discount > 0) {
+        discountElement.textContent = `৳ ${discount.toFixed(2)}`;
+        discountRow.style.display = ''; // Show discount row if there's a discount
+    } else {
+        discountElement.textContent = 'N/A';
+        discountRow.style.display = 'none'; // Hide discount row if no discount
     }
 
-	function calculateCartSummary(shipping) {
-		let subtotal = 0;
-		let discount = 0;
-		const cartItems = @json($cartItems);
-		const voucherDiscountPercentage = @json($voucherDiscount);
-		let voucherDiscountAmount = 0;
+    // Update voucher field visibility
+    const voucherRow = document.getElementById('voucherRow');
+    const voucherElement = document.getElementById('voucher');
+    if (voucherDiscountAmount > 0) {
+        voucherElement.textContent = `৳ ${voucherDiscountAmount.toFixed(2)}`;
+        document.getElementById('voucherInput').value = voucherDiscountAmount; // Update hidden input value
+        voucherRow.style.display = ''; // Show voucher row if there's a voucher discount
+    } else {
+        voucherElement.textContent = 'N/A';
+        document.getElementById('voucherInput').value = ''; // Clear hidden input value
+        voucherRow.style.display = 'none'; // Hide voucher row if no voucher
+    }
 
-		// Calculate subtotal and discount
-		cartItems.forEach(item => {
-			const quantity = item.quantity;
-			const salePrice = item.salePrice ? item.salePrice : item.price;
-			const price = item.price;
+    // Update payable
+    updatePayable(total, shipping);
+}
 
-			subtotal += price * quantity;
-			discount += (price - salePrice) * quantity;
-		});
+function updatePayable(total = 0, shipping = 0) {
+    // Get the payable element
+    const payableElement = document.getElementById('payable');
 
-		// Calculate the total before applying the voucher
-		const totalBeforeVoucher = subtotal - discount;
+    // Show calculating effect (loading spinner or text)
+    payableElement.textContent = "Calculating..."; // Show calculating text
+    payableElement.classList.add('loading'); // Optional: Add a loading class for styling (you can add CSS for animation/spinner)
 
-		// Calculate the voucher discount amount and format to two decimal places
-		voucherDiscountAmount = (totalBeforeVoucher * voucherDiscountPercentage) / 100;
-		voucherDiscountAmount = parseFloat(voucherDiscountAmount.toFixed(2));
+    // Ensure total and shipping are valid numbers before attempting to call toFixed
+    if (isNaN(total) || isNaN(shipping)) {
+        total = 0;
+        shipping = 0;
+    }
 
-		// Calculate the final total with the voucher discount applied
-		const total = totalBeforeVoucher - voucherDiscountAmount + shipping;
-
-		// Update the DOM elements with the calculated values
-		document.getElementById('subtotal').textContent = `৳ ${subtotal.toFixed(2)}`;
-
-		const discountElement = document.getElementById('discount');
-		const discountRow = discountElement.closest('tr');
-		if (discount > 0) {
-			discountElement.textContent = `৳ ${discount.toFixed(2)}`;
-			discountRow.style.display = ''; // Show the row if discount is present
-		} else {
-			discountElement.textContent = 'N/A';
-			discountRow.style.display = 'none'; // Hide the row if no discount
-		}
-
-		const voucherElement = document.getElementById('voucher');
-		const voucherInput = document.getElementById('voucherInput'); // Ensure your hidden input has an ID
-		const voucherRow = voucherElement.closest('tr');
-		if (voucherDiscountAmount > 0) {
-			voucherElement.textContent = `৳ ${voucherDiscountAmount.toFixed(2)}`; // Ensure two decimal places
-			voucherInput.value = voucherDiscountAmount; // Update hidden input value
-			voucherRow.style.display = ''; // Show the row if voucher discount is present
-		} else {
-			voucherElement.textContent = 'N/A';
-			voucherInput.value = ''; // Clear hidden input value
-			voucherRow.style.display = 'none'; // Hide the row if no voucher discount
-		}
-
-		document.getElementById('total').textContent = `৳ ${total.toFixed(2)}`;
-
-		// Update payable based on payment method
-		updatePayable(total, shipping);
-	}
-
-
-
-    // Function to update the payable amount based on payment method
-    function updatePayable(total, shipping) {
+    // Simulate a delay (e.g., if calculation is async, like fetching data)
+    setTimeout(() => {
         const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value;
         let payable;
 
         if (paymentMethod === 'COD') {
-            // Cash on Delivery: Only shipping charge is paid online
-            payable = shipping;
+            payable = shipping; // Only shipping for COD
         } else {
-            // Full Payment: Total amount is paid online
-            payable = total;
+            payable = total; // Total for other payment methods
         }
 
-        document.getElementById('payable').textContent = `৳ ${payable.toFixed(2)}`;
+        // Update payable amount
+        payableElement.textContent = `৳ ${payable.toFixed(2)}`;
+        payableElement.classList.remove('loading'); // Remove the loading class once done
+    }, 500); // Optional: Add a small delay for a smoother transition (500ms)
+}
 
-    }
 
-    // Event listeners
-    document.getElementById('recipient_zone').addEventListener('change', calculateShippingPrice);
-    document.querySelectorAll('input[name="payment_method"]').forEach(el => 
-        el.addEventListener('click', () => {
-            const total = parseFloat(document.getElementById('total').textContent.replace('৳ ', ''));
-            const shipping = parseFloat(document.getElementById('hidden_shipping_charge').value);
-            updatePayable(total, shipping);
-        })
-    );
+// Event listeners for dynamic updates
+document.getElementById('recipient_zone').addEventListener('change', calculateShippingPrice);
+document.querySelectorAll('input[name="payment_method"]').forEach(el =>
+    el.addEventListener('click', () => {
+        const total = parseFloat(document.getElementById('total').textContent.replace('৳ ', ''));
+        const shipping = parseFloat(document.getElementById('hidden_shipping_charge').value);
+        updatePayable(total, shipping);
+    })
+);
 
-    // Initial calculation on page load
-    document.addEventListener("DOMContentLoaded", () => calculateShippingPrice());
+// Initial calculation on page load
+document.addEventListener("DOMContentLoaded", () => calculateShippingPrice());
+
 </script>
-
 @endsection

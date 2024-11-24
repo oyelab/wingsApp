@@ -13,6 +13,7 @@
 						src="{{ $slider->sliderPath }}"
 						class="img-fluid"
 						alt=""
+						loading="lazy"
 					/>
 				</a>
 			</div>
@@ -735,14 +736,17 @@
 			<div class="col-md-4">
 				<div class="official-manufacture-content">
 					<h3>Official Manufacturer</h3>
-					<img
-						src="assets/images/manufacturer-logo.png"
-						class="img-fluid"
-						alt="Manufacture Logo"
-						draggable="false"
-					/>
+					@if($manufactureLogo && $manufactureLogo->filePath)
+						<img
+							src="{{ $manufactureLogo->filePath }}"
+							class="img-fluid w-50"
+							alt="Manufacture Logo"
+							draggable="{{ $manufactureLogo->title }}"
+						/>
+					@endif
 				</div>
 			</div>
+
 			<div class="col-md-8">
 				<div class="proud-kit-partner-content">
 					<h3>Proud Kit Partners</h3>
@@ -750,78 +754,17 @@
 						class="partner_logo_wrap swiper proudKitPartner"
 					>
 						<div class="swiper-wrapper">
+							@foreach ($partnerLogos as $partner)
 							<div class="logo_item swiper-slide">
 								<img
 									draggable="false"
-									src="images/partner/1722239687.png"
+									src="{{ $partner->filePath }}"
 									class="img-fluid"
-									alt=""
+									alt="{{ $partner->title }}"
 								/>
 							</div>
-							<div class="logo_item swiper-slide">
-								<img
-									draggable="false"
-									src="images/partner/1722239687.png"
-									class="img-fluid"
-									alt=""
-								/>
-							</div>
-							<div class="logo_item swiper-slide">
-								<img
-									draggable="false"
-									src="images/partner/1722239687.png"
-									class="img-fluid"
-									alt=""
-								/>
-							</div>
-							<div class="logo_item swiper-slide">
-								<img
-									draggable="false"
-									src="images/partner/1722239687.png"
-									class="img-fluid"
-									alt=""
-								/>
-							</div>
-							<div class="logo_item swiper-slide">
-								<img
-									draggable="false"
-									src="images/partner/1722239687.png"
-									class="img-fluid"
-									alt=""
-								/>
-							</div>
-							<div class="logo_item swiper-slide">
-								<img
-									draggable="false"
-									src="images/partner/1722239687.png"
-									class="img-fluid"
-									alt=""
-								/>
-							</div>
-							<div class="logo_item swiper-slide">
-								<img
-									draggable="false"
-									src="images/partner/1722239687.png"
-									class="img-fluid"
-									alt=""
-								/>
-							</div>
-							<div class="logo_item swiper-slide">
-								<img
-									draggable="false"
-									src="images/partner/1722239687.png"
-									class="img-fluid"
-									alt=""
-								/>
-							</div>
-							<div class="logo_item swiper-slide">
-								<img
-									draggable="false"
-									src="images/partner/1722239687.png"
-									class="img-fluid"
-									alt=""
-								/>
-							</div>
+							@endforeach
+							
 						</div>
 						<div class="swiper-button-next"></div>
 						<div class="swiper-button-prev"></div>
@@ -840,13 +783,15 @@
 					We Accept <br />
 					Payments
 				</h2>
+				@if($paymentBanner && $paymentBanner->filePath)
 				<div class="payment-banner">
 					<img
-						src="assets/images/payment-banner.png"
+						src="{{ $paymentBanner->filePath }}"
 						draggable="false"
 						class="img-fluid"
-						alt="We Accept Payments"
+						alt="{{ $paymentBanner }}"
 					/>
+				@endif
 				</div>
 			</div>
 		</div>

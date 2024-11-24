@@ -1,446 +1,194 @@
 @extends('backEnd.layouts.master')
 @section('title')
-    Products
-@endsection
-@section('css')
-    <link rel="stylesheet" href="{{ asset('build/libs/gridjs/theme/mermaid.min.css') }}">
-    <!-- datepicker css -->
-    <link rel="stylesheet" href="{{ asset('build/libs/flatpickr/flatpickr.min.css') }}">
+    Specifications
 @endsection
 @section('page-title')
-    Products
+    Specifications
 @endsection
 @section('body')
+<body>
+@endsection
 
-    <body>
-    @endsection
-    @section('content')
-		@if(session('success'))
-			<div id="successMessage" class="alert alert-success">
-				{{ session('success') }}
-			</div>
-		@endif
+@section('content')
+    <div class="container">
         <div class="row">
-            <div class="col-xl-3 col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-6">
-                                <p class="text-muted text-truncate mb-0 pb-1">Total Products</p>
-                                <h4 class="mb-0 mt-2">{{ $counts['total'] }}</h4>
-                            </div>
-                            <div class="col-6">
-                                <div class="overflow-hidden">
-                                    <div id="mini-1"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-6">
-                                <p class="text-muted text-truncate mb-0 pb-1">Published</p>
-                                <h4 class="mb-0 mt-2">{{ $counts['published'] }}</h4>
-                            </div>
-                            <div class="col-6">
-                                <div class="overflow-hidden">
-                                    <div id="mini-2"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-6">
-                                <p class="text-muted text-truncate mb-0 pb-1">Discounted</p>
-                                <h4 class="mb-0 mt-2">{{ $counts['discounted'] }}</h4>
-                            </div>
-                            <div class="col-6">
-                                <div class="overflow-hidden">
-                                    <div id="mini-3"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-6">
-                                <p class="text-muted text-truncate mb-0 pb-1">Quantities</p>
-                                <h4 class="mb-0 mt-2">{{ $counts['quantities'] }}</h4>
-                            </div>
-                            <div class="col-6">
-                                <div class="overflow-hidden">
-                                    <div id="mini-4"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="col-md-12">
+                <h4>Specifications</h4>
+                <table class="table" id="specificationsTable">
+                    <thead>
+                        <tr>
+                            <th>Specification</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="specificationsList">
+                        @foreach($specifications as $specification)
+                            <tr data-id="{{ $specification->id }}" class="specification-row">
+                                <td class="specification-item">
+                                    <span class="specification-label">{{ $specification->item }}</span>
+                                    <input type="text" class="form-control specification-input" value="{{ $specification->item }}" style="display:none;">
+                                </td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm edit-item">Edit</button>
+                                    <button class="btn btn-success btn-sm save-item" style="display:none;">Save</button>
+                                    <button class="btn btn-danger btn-sm delete-item">Delete</button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                <button class="btn btn-primary" id="addSpecificationBtn">Add Specification</button>
             </div>
         </div>
+    </div>
+@endsection
 
-		<div class="row">
-        <div class="col-12">
-            <div class="card-body mb-4">
-				<div class="row mb-2">
-					<div class="col-xl-3 col-md-12">
-						<div class="pb-3 pb-xl-0">
-							<form class="">
-								<div class="position-relative">
-									<input type="text" class="form-control bg-light" id="searchInput" placeholder="Search..." onkeyup="filterTable()">
-								</div>
-							</form>
-						</div>
-					</div>
-					<div class="col-xl-9 col-md-12">
-						<div class="text-sm-end">
-							<button type="button"
-								class="btn btn-success btn-rounded waves-effect waves-light mb-2 me-2"
-								onclick="window.location.href='{{ route('products.create') }}';">
-								<i class="mdi mdi-plus me-1"></i> Create New
-							</button>
-						</div>
-					</div>
-				</div>
-				
-					<!--end col-->
-                <div class="card-body">
-					
-                    <div class="table-responsive">
-                        <table class="table table-bordered" id="productTable">
-                            <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Images</th>
-                                    <th>Category</th>
-                                    <th>Availability</th>
-                                    <th>Prices</th>
-                                    <th>Status</th>
-                                    <th>Sale %</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-								@foreach($products as $product)
-                                <tr>
-									<td>
-										<!-- Assuming 'images' is stored as a JSON array in the database -->
-										<div class="avatar-group mx-auto d-flex align-items-center" style="flex-wrap: nowrap;">
-											@foreach (json_decode($product->images) as $image)
-												<div class="avatar-group-item">
-													<a href="javascript: void(0);" class="d-inline-block">
-														<img src="{{ asset('images/products/' . $image) }}" alt="{{ $product->name }}" class="rounded-circle avatar-sm">
-													</a>
-												</div>
-											@endforeach
-										</div>
-									</td>
+@section('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    // Add new specification row
+    $('#addSpecificationBtn').click(function () {
+        const newRow = `
+            <tr data-id="new">
+                <td class="specification-item">
+                    <input type="text" class="form-control specification-input" value="" placeholder="Enter specification">
+                </td>
+                <td>
+                    <button class="btn btn-success btn-sm save-item">Save</button>
+                    <button class="btn btn-danger btn-sm delete-item">Delete</button>
+                </td>
+            </tr>
+        `;
+        $('#specificationsList').append(newRow);
+    });
 
-                                    <td>
-                                        <p class="d-inline-block align-middle mb-0">
-                                            <a href="{{ route('products.show', $product->slug) }}" class="d-inline-block align-middle mb-0 product-name fw-semibold">{{ $product->title }}</a>
-                                            <br>
-                                            <!-- <span class="text-muted font-13 fw-semibold">Size-05 (Model 2021)</span> -->
-                                        </p>
-                                    </td>
-                                    <td class="col">
-										@if ($product->category_display)
-											<span class="badge bg-success-subtle text-success mb-0">{{ $product->category_display }}</span>
-										@else
-											<span class="badge bg-danger-subtle text-danger mb-0">Category not found</span>
-										@endif
-									</td>
+    // Edit specification
+    $(document).on('click', '.edit-item', function () {
+        const row = $(this).closest('tr');
+        row.find('.specification-label').hide();
+        row.find('.specification-input').show();
+        row.find('.save-item').show();
+        row.find('.edit-item').hide();
+    });
 
+    // Save updated specification
+    $(document).on('click', '.save-item', function () {
+        const row = $(this).closest('tr');
+        const id = row.data('id');
+        const item = row.find('.specification-input').val();
 
-                                    <td>{{ $product->total_quantity }}</td>
-                                    <td>
-										<div class="{{ $product->sale !== null ? 'text-decoration-line-through' : '' }}">
-											{{ $product->price }}
-										</div>
-										@if($product->sale !== null)
-											<div class="text-danger">
-												{{ $product->offerPrice }}
-											</div>
-										@endif
+        if (item) {
+            saveSpecification(id, item, row);
+        } else {
+            showNotification('Specification cannot be empty.', 'error');
+        }
+    });
 
-									</td>
-									<td>
-										<div class="form-check form-switch">
-											<input class="form-check-input" type="checkbox" id="switch-{{ $product->id }}" name="status" onchange="confirmStatusChange(event, {{ $product->id }})" {{ $product->status ? 'checked' : '' }} />
-											<label for="switch-{{ $product->id }}" data-on-label="Yes" data-off-label="No"></label>
-										</div>
-									</td>
-									<td class="text-center">
-										<!-- Button Section (as provided) -->
-										<div class="d-grid gap-1 col-12 mx-auto">
-											@if(!empty($product->sale))
-												<button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#offerModal-{{ $product->id }}">
-													<i class="bx bxs-offer"></i> {{ $product->sale }}%
-												</button>
-											@else
-												<button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#offerModal-{{ $product->id }}">
-													<i class="bx bxs-offer"></i> Add!
-												</button>
-											@endif
-										</div>
+    // Save or update specification in the database
+    function saveSpecification(id, item, row) {
+        $.ajax({
+            url: id === 'new' ? "{{ route('specifications.store') }}" : "{{ route('specifications.update') }}",
+            method: 'POST',
+            data: {
+                _token: "{{ csrf_token() }}",
+                id: id,
+                item: item
+            },
+            success: function (response) {
+                if (id === 'new') {
+                    row.data('id', response.id);  // Store the ID for the new specification
+                    // Add the newly saved item to the table dynamically
+                    row.find('.specification-input').hide();
+                    row.find('.specification-label').text(item).show();
+                    row.find('.save-item').hide();
+                    row.find('.edit-item').show();
 
-										<!-- Modal (specific for this product) -->
-										<div class="modal fade" id="offerModal-{{ $product->id }}" tabindex="-1" aria-labelledby="offerModalLabel-{{ $product->id }}" aria-hidden="true">
-											<div class="modal-dialog">
-												<div class="modal-content">
-													<!-- Modal Header -->
-													<div class="modal-header">
-														<h5 class="modal-title" id="offerModalLabel-{{ $product->id }}">Manage Offer for {{ $product->name }}</h5>
-														<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-													</div>
+                    // Reload the page after saving the new specification
+                    window.location.reload();  // Reload to reflect the new specification
+                    // Display success notification
+                    showNotification('Specification saved successfully!', 'success');
+                } else {
+                    // Update existing item
+                    row.find('.specification-input').hide();
+                    row.find('.specification-label').text(item).show();
+                    row.find('.save-item').hide();
+                    row.find('.edit-item').show();
 
-													<!-- Modal Body -->
-													<div class="modal-body">
-														<form action="{{ route('products.updateOffer', $product->id) }}" method="POST">
-															@csrf
-															@method('PUT')
+                    // Display success notification
+                    showNotification('Specification updated successfully!', 'success');
+                }
+            },
+            error: function () {
+                showNotification('Error saving specification.', 'error');
+            }
+        });
+    }
 
-															<!-- Offer Input -->
-															<div class="mb-3">
-																<label for="sale-{{ $product->id }}" class="form-label">Offer Percentage</label>
-																<input type="number" class="form-control" id="sale-{{ $product->id }}" name="sale" step="1" min="0" max="100" placeholder="Enter offer percentage" value="{{ old('sale', $product->sale) }}" required>
-															</div>
+    // Delete specification via AJAX
+    $(document).on('click', '.delete-item', function () {
+        const row = $(this).closest('tr');
+        const id = row.data('id');
 
-															<!-- Modal Footer -->
-															<div class="modal-footer">
-																@if(!empty($product->sale))
-																	<!-- Remove Offer Button -->
-																	<button type="submit" name="remove_offer" value="1" class="btn btn-danger">Remove Offer</button>
-																@endif
-																
-																<!-- Save Button -->
-																<button type="submit" class="btn btn-primary">Save Offer</button>
-															</div>
-														</form>
-													</div>
-												</div>
-											</div>
-										</div>
-									</td>
+        if (id === 'new') {
+            // Directly remove if it's a new specification without a database entry
+            row.fadeOut(500, function () {
+                $(this).remove();
+            });
+            showNotification('Specification deleted successfully!', 'success');
+        } else {
+            // Proceed with AJAX request for existing specification
+            $.ajax({
+                url: "{{ route('specifications.destroy') }}",
+                method: 'DELETE',
+                data: {
+                    _token: "{{ csrf_token() }}",
+                    id: id
+                },
+                success: function () {
+                    row.fadeOut(500, function () {
+                        $(this).remove();  // Remove row after animation
+                    });
+                    showNotification('Specification deleted successfully!', 'success');
+                },
+                error: function () {
+                    showNotification('Error deleting specification.', 'error');
+                }
+            });
+        }
+    });
 
-                                    <td>
-                                        <a href="{{ route('products.edit', $product->id) }}" class="mr-3"><i class="las la-pen text-secondary font-30"></i></a>
-										<form action="{{ route('products.destroy', $product->id) }}" 		method="POST" style="display: inline;">
-											@csrf
-											@method('DELETE')
-											<a href="javascript:void(0);" class="mr-3" onclick="confirmDelete(this)">
-												<i class="las la-trash-alt text-secondary font-30"></i>
-											</a>
-										</form>
-                                    </td>
-                                </tr>
-								@endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-							<button class="btn btn-outline-light btn-sm px-4" onclick="window.location='{{ route('products.create') }}'">+ Add New</button>
-                        </div>
-                        <!--end col-->
-                        <div class="col-auto">
-							<nav aria-label="...">
-								<ul class="pagination pagination-sm mb-0">
-									{{-- Previous Page Link --}}
-									<li class="page-item {{ $products->onFirstPage() ? 'disabled' : '' }}">
-										<a class="page-link" href="{{ $products->previousPageUrl() }}" tabindex="-1">Previous</a>
-									</li>
+    // Show notification with effect
+    function showNotification(message, type) {
+        const notification = $('<div class="notification ' + type + '">' + message + '</div>');
+        $('body').append(notification);
+        notification.fadeIn(300).delay(2000).fadeOut(300, function () {
+            $(this).remove();
+        });
+    }
+});
+</script>
 
-									{{-- Pagination Elements --}}
-									@for ($i = 1; $i <= $products->lastPage(); $i++)
-										<li class="page-item {{ $products->currentPage() == $i ? 'active' : '' }}">
-											<a class="page-link" href="{{ $products->url($i) }}">{{ $i }}</a>
-										</li>
-									@endfor
+<style>
+    .notification {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #333;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 14px;
+        display: none;
+    }
 
-									{{-- Next Page Link --}}
-									<li class="page-item {{ $products->hasMorePages() ? '' : 'disabled' }}">
-										<a class="page-link" href="{{ $products->nextPageUrl() }}">Next</a>
-									</li>
-								</ul>
-							</nav>
+    .notification.success {
+        background-color: green;
+    }
 
-						</div>
-
-                        <!--end col-->
-                    </div>
-                    <!--end row-->
-                </div>
-                <!--end card-body-->
-            </div>
-            <!--end card-->
-        </div> <!-- end col -->
-    </div> <!-- end row -->
-
-
-    @endsection
-    @section('scripts')
-		<script>
-			function filterTable() {
-				const searchInput = document.getElementById('searchInput').value.toLowerCase();
-				const table = document.getElementById('productTable');
-				const rows = table.getElementsByTagName('tr');
-
-				// Loop through all table rows and hide those that don't match the search query
-				for (let i = 0; i < rows.length; i++) {
-					const cells = rows[i].getElementsByTagName('td');
-					let match = false;
-
-					// Check each cell in the row
-					for (let j = 0; j < cells.length; j++) {
-						if (cells[j]) {
-							const cellText = cells[j].textContent || cells[j].innerText;
-							if (cellText.toLowerCase().indexOf(searchInput) > -1) {
-								match = true;
-								break;
-							}
-						}
-					}
-
-					// Show or hide the row based on the match
-					if (match) {
-						rows[i].style.display = "";
-					} else {
-						rows[i].style.display = "none";
-					}
-				}
-			}
-		</script>
-		<script>
-			// Set Sale Function
-			function setSale() {
-				const saleInput = document.getElementById('sale');
-				const saleValue = saleInput.value;
-
-				// Check if the sale input is empty or not a number
-				if (saleValue === '' || isNaN(saleValue)) {
-					alert('Please enter a valid offer percentage.'); // Alert user about invalid input
-					saleInput.focus(); // Set focus back to the input
-					return; // Prevent closing the modal
-				}
-
-				document.getElementById('hiddenSale').value = saleValue; // Set the value to the hidden input
-				// Close the modal after saving
-				const modal = bootstrap.Modal.getInstance(document.getElementById('offerModal'));
-				modal.hide();
-			}
-
-			// Validate Form Function
-			function validateForm(event) {
-				let isValid = true;
-				const inputs = document.querySelectorAll('input[required]');
-
-				inputs.forEach(input => {
-					validateInput(input); // Validate each input
-					const errorMessage = document.querySelector(`.error-message[data-for="${input.name}"]`);
-					if (errorMessage.style.display === 'block') {
-						isValid = false; // Set validity to false if any error message is shown
-					}
-				});
-
-				if (!isValid) {
-					event.preventDefault(); // Prevent form submission if validation fails
-				}
-
-				return isValid; // Return the validity state
-			}
-		</script>
-		<script>
-			document.addEventListener('DOMContentLoaded', function() {
-				// Check if the success message exists
-				const successMessage = document.getElementById('successMessage');
-				if (successMessage) {
-					// Set a timer to hide the message after 5 seconds (5000 milliseconds)
-					setTimeout(function() {
-						successMessage.style.display = 'none'; // Hide the message
-					}, 2500);
-				}
-			});
-		</script>
-
-		<script>
-			function confirmDelete(element) {
-				const confirmation = confirm('Are you sure you want to delete this product?');
-				if (confirmation) {
-					// If confirmed, submit the closest form
-					element.closest('form').submit();
-				}
-			}
-		</script>
-
-		<script>
-			function confirmStatusChange(event, productId) {
-				event.preventDefault();
-
-				const switchInput = document.getElementById(`switch-${productId}`);
-				const newStatus = switchInput.checked ? 1 : 0;
-
-				const confirmation = confirm("Are you sure you want to change the status?");
-				
-				if (confirmation) {
-					updateStatus(productId, newStatus);
-				} else {
-					switchInput.checked = !switchInput.checked;
-				}
-			}
-
-			function updateStatus(productId, status) {
-				// Use Laravel route() helper to generate the correct URL
-				const url = `{{ route('products.updateStatus', ':id') }}`.replace(':id', productId);
-
-				fetch(url, {
-					method: 'PUT',
-					headers: {
-						'Content-Type': 'application/json',
-						'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-					},
-					body: JSON.stringify({ status: status })
-				})
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('Network response was not ok');
-					}
-					return response.json();
-				})
-				.catch(error => {
-					console.error('There was a problem with the fetch operation:', error);
-				});
-			}
-
-		</script>
-
-
-
-        <!-- apexcharts -->
-        <script src="{{ asset('build/libs/apexcharts/apexcharts.min.js') }}"></script>
-
-        <!-- gridjs js -->
-        <script src="{{ asset('build/libs/gridjs/gridjs.umd.js') }}"></script>
-
-        <!-- datepicker js -->
-        <script src="{{ asset('build/libs/flatpickr/flatpickr.min.js') }}"></script>
-
-
-        <!-- App js -->
-        <script src="{{ asset('build/js/app.js') }}"></script>
-    @endsection
+    .notification.error {
+        background-color: red;
+    }
+</style>
+@endsection

@@ -113,6 +113,17 @@
 						<li><a href="{{ route('vouchers.create') }}" data-key="t-add-voucher">Add Voucher</a></li>
 					</ul>
 				</li>
+				<li>
+					<a href="javascript: void(0);" class="has-arrow">
+						<i class="bx bx-image icon nav-icon"></i>
+						<span class="menu-item" data-key="t-manage-assets">Assets</span>
+					</a>
+					<ul class="sub-menu" aria-expanded="true">
+						<li><a href="{{ route('assets.index') }}" data-key="t-all-assets">All Assets</a></li>
+						<li><a href="{{ route('assets.create') }}" data-key="t-add-asset">Add Asset</a></li>
+					</ul>
+				</li>
+
 				@endif
 				@if(Auth::check() && (Auth::user()->role === 1 || Auth::user()->role === 0))
 				<li class="menu-title" data-key="t-user-profile">User Profile</li>

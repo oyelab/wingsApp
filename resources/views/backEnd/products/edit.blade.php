@@ -155,15 +155,15 @@
 															id="spec-{{ $specification->id }}" 
 															value="{{ $specification->id }}" 
 															{{ (is_array(old('specifications')) && in_array($specification->id, old('specifications'))) 
-																|| in_array($specification->id, $selectedSpecifications) ? 'checked' : '' }}> 
-														<label class="form-check-label" for="spec-{{ $specification->id }}">
+																|| (isset($selectedSpecifications) && in_array($specification->id, $selectedSpecifications)) ? 'checked' : '' }}> 
+														<label class="form-check-label text-truncate d-block" for="spec-{{ $specification->id }}" style="max-width: 150px;">
 															{{ $specification->item }} <!-- Assuming 'item' is the field you want to display -->
 														</label> 
 													</div>
 												@endforeach
 											</div>
-
 										</div>
+
 									</div>
 
 

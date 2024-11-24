@@ -147,19 +147,23 @@
 											</div>
 										</div>
 										<!-- Specifications Section -->
-										<div class="mt-3 row">
-											<label class="form-label">Specifications</label>
-											<div class="d-flex small justify-content-center">
-												@foreach($specifications as $specification)
-													<div class="form-check ms-2">
-														<input class="form-check-input" type="checkbox" name="specifications[]" id="spec-{{ $specification->id }}" value="{{ $specification->id }}" {{ (is_array(old('specifications')) && in_array($specification->id, old('specifications'))) ? 'checked' : '' }}> 
-														<label class="form-check-label" for="spec-{{ $specification->id }}">
-															{{ $specification->item }} <!-- Assuming 'item' is the field you want to display -->
-														</label> 
-													</div>
-												@endforeach
+										<div class="mt-3">
+								<label class="form-label">Specifications</label>
+								<div class="row">
+									@foreach($specifications as $specification)
+										<div class="col-12 col-md-6 col-lg-4 mb-2"> <!-- Responsive columns -->
+											<div class="form-check">
+												<input class="form-check-input" type="checkbox" name="specifications[]" id="spec-{{ $specification->id }}" value="{{ $specification->id }}" 
+													{{ (is_array(old('specifications')) && in_array($specification->id, old('specifications'))) ? 'checked' : '' }}>
+												<label class="form-check-label text-truncate d-block" for="spec-{{ $specification->id }}" style="max-width: 300px;">
+													{{ $specification->item }}
+												</label>
 											</div>
 										</div>
+									@endforeach
+								</div>
+							</div>
+
 									</div>
 
 

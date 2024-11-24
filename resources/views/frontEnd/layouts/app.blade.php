@@ -449,8 +449,15 @@
 				});
 			});
 			
-			//custom dropdown
 			document.addEventListener('DOMContentLoaded', () => {
+				// Check if the user is signed in (you can modify this logic based on your app's user state)
+				const isUserSignedIn = {{ auth()->check() ? 'true' : 'false' }};
+				
+				if (!isUserSignedIn) {
+					// If the user is not signed in, do not activate the dropdown functionality
+					return; // Exit early
+				}
+
 				const dropdown = document.querySelector('.custom-dropdown');
 				const userLink = dropdown.querySelector('.nav-link');
 				const menu = dropdown.querySelector('.dropdown-menu-custom');
@@ -466,6 +473,7 @@
 					}
 				});
 			});
+
 
 		</script>
 	</body>

@@ -24,31 +24,40 @@ class PaymentController extends Controller
 	{
 		// Get cart items from session
 		$cartItems = collect(Session::get('cart', []));
-		// return $cartItems;
 		
-		// Load additional product and size details for each item
 		$cartItems = $cartItems->map(function($item) {
 			$product = Product::with('categories')->find($item['product_id']);
 			$size = Size::find($item['size_id']);
-
+		
 			// Ensure product and size exist
 			if ($product && $size) {
-				// Use salePrice if available, otherwise use regular price
-				$price = $product->salePrice ?: $product->price;
+				// Ensure offer_price is valid (non-null, non-zero, and not empty)
+				$offerPrice = ($product->offer_price && $product->offer_price > 0) ? $product->offer_price : null;
+		
+				// Use regular price if offer_price is not available or invalid
+				$price = $offerPrice ?: $product->price;
+	
+				// Get the category, subcategory using the getSubcategoryAttribute() method
 
+		
 				return array_merge($item, [
+					'id' => $product->id,
 					'title' => $product->title,
+					'imagePath' => $product->imagePaths[0],
 					'price' => $product->price,
-					'sale' => $product->sale,
-					'salePrice' => $product->offer_price,
+					'offerPrice' => $offerPrice, // Only assign if valid
 					'categories' => $product->categories->pluck('title')->implode(', '),
+					'categorySlug' => $product->categories->first()->slug, // Add category slug
+					'subcategory' => $product->subcategory->slug, // Add subcategory slug
 					'size_name' => $size->name,
-					'total_price' => $price * $item['quantity'], // Calculate total price based on salePrice or price
+					'quantity' => $item['quantity'], // Ensure quantity is included for subtotal calculation
+					'total_price' => $product->price * $item['quantity'], // Calculate total price based on offer_price or price
+					'slug' => $product->slug, // Add product slug
 				]);
 			}
 			return $item;
 		});
-
+	
 		// Check if the cart is empty
 		if ($cartItems->isEmpty()) {
 			return redirect('/')->with('alert', [
@@ -56,24 +65,19 @@ class PaymentController extends Controller
 				'message' => 'Your cart is empty. Please add some products to continue shopping.'
 			]);
 		}
-
+	
 		$orderTotal = $cartItems->sum('total_price');
-
-
+		$totalQuantity = $cartItems->sum('quantity'); // Calculate total quantity
 		$voucherDiscount = session('voucher', 0); // Default to 0 if no voucher is applied
-		// return $voucherDiscount;
 
-		// Step 1: Calculate the discount amount
-		// $voucherDiscount = round(($orderTotal * $voucher) / 100, 2);
-
-		// // Step 2: Format the value for display (optional, for presentation)
-		// $voucherDiscountAmount = number_format($voucherDiscount, 2, '.', '');
-
-		// return $voucherDiscountAmount;
-
-
-		return view('frontEnd.orders.checkout', compact('cartItems', 'voucherDiscount'));
+		// return $cartItems;
+	
+		return view('frontEnd.orders.checkout', compact('cartItems', 'voucherDiscount', 'orderTotal', 'totalQuantity'));
 	}
+	
+	
+
+	
 
 
 	public function processCheckout(Request $request)
@@ -96,12 +100,15 @@ class PaymentController extends Controller
 
 		// Calculate delivery charge based on location
     	$shipping_charge = $request->input('shipping_charge');
+		// return $shipping_charge;
 	
 		// Calculate the base fair (total amount before discount)
 		$subTotal = collect($request->products)->sum(function ($product) {
 			$productDetails = Product::find($product['id']);
 			return (float)$productDetails->price * (int)$product['quantity'];
 		});
+
+		// return $subTotal;
 
 		$subTotal = number_format($subTotal, 2, '.', ''); // Ensures 2 decimal places
 
@@ -119,9 +126,12 @@ class PaymentController extends Controller
 			return $product ? $product->calculateDiscount($productData['quantity']) : 0;
 		});
 
+		// return $discount_amount;
+
 		// Format the discount amount, but only if it's greater than 0
 		$discount_amount = $discount_amount > 0 ? number_format($discount_amount, 2, '.', '') : null;
 
+		// return $discount_amount;
 
 		// Calculate the subtotal after discount
 		$order_total = $subTotal - $discount_amount - $voucher; // Calculate subtotal
@@ -131,7 +141,9 @@ class PaymentController extends Controller
 		$order_total = number_format($order_total, 2, '.', '');
 
 		// Define the payment method (you will set this based on customer selection)
-		$payment_method = $validated['payment_method']; // 'COD' or 'Full Payment'
+		$payment_method = $request->payment_method; 
+		// return $payment_method;// 'COD' or 'Full Payment'
+		// $payment_method = $validated['payment_method']; // 'COD' or 'Full Payment'
 
 		// Set total based on the payment method
 		$total = ($payment_method === 'COD') ? $shipping_charge : ($order_total + $shipping_charge);

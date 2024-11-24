@@ -12,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Intervention\Image\Facades\Image;
+
 
 
 
@@ -19,27 +21,39 @@ class ProductController extends Controller
 {
 	public function show(Category $category, $subcategorySlug, Product $product)
 	{
+		// Ensure the product belongs to the specified category
+		if (!$product->categories->contains($category)) {
+			abort(404); // If the product is not associated with this category, return 404
+		}
+	
+		// Ensure the product's subcategory matches the provided slug
+		$subcategory = $product->subcategory;
+		if ($subcategory && $subcategory->slug !== $subcategorySlug) {
+			abort(404); // If the subcategory slug does not match, return 404
+		}
+	
 		// Increment product views
 		$product->increment('views');
-
+	
 		// Get related products based on the current product
 		$relatedProducts = Product::relatedProducts($product)->get();
-
+	
 		// Breadcrumb section
 		$breadcrumbSection = Section::find($product->section_id); // Adjust as needed
 		$mainCategory = $product->mainCategory; // Assuming there's a method or relation
-
+	
 		// Eager load the sizes relation (only available sizes) and categories
 		$product->load('availableSizes', 'categories');
-
+	
 		// Determine the view based on the category slug
 		$view = $category->slug === 'wings-edited' 
 			? 'frontEnd.products.wings-edited' 
 			: 'frontEnd.products.index';
-
+	
 		// Return the view with the necessary data
 		return view($view, compact('category', 'product', 'relatedProducts', 'breadcrumbSection', 'mainCategory'));
 	}
+	
 
 
 	// public function show(Category $category, Product $product)
@@ -160,7 +174,7 @@ class ProductController extends Controller
 	{
 		// Generate a slug from the title
 		$slug = Str::slug($request->title);
-
+	
 		// Attach the category and subcategory to the product via the pivot table
 		$categoryId = $request->category; // Main category ID
 		$subcategoryId = $request->subcategory; // Subcategory ID
@@ -188,19 +202,25 @@ class ProductController extends Controller
 			'specifications' => 'nullable|array',
 			'specifications.*' => 'exists:specifications,id',
 			'images' => 'required|array',
-			'images.*' => 'bail|required|image|mimes:jpeg,png,jpg,gif|max:2048',
+			'images.*' => 'bail|required|image|mimes:jpeg,png,jpg,gif|max:20480',
 			'meta_title' => 'nullable|string|max:255',
 			'keywords' => 'nullable|array',
 			'meta_desc' => 'nullable|string',
-			'og_image' => 'nullable|image|mimes:jpeg,png,jpg,gif',
+			'og_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
 		]);
 	
-		// Handle uploaded images
+		// Handle uploaded images with Intervention Image
 		$images = [];
 		if ($request->hasFile('images')) {
 			foreach ($request->file('images') as $index => $image) {
-				$imageName = $slug . '-' . ($index + 1) . '.' . $image->getClientOriginalExtension();
-				$image->move(public_path('images/products'), $imageName);
+				$imageName = $slug . '-' . ($index + 1) . '.webp'; // Save as WebP format
+				$path = public_path('images/products/' . $imageName);
+	
+				// Compress and convert to WebP
+				$processedImage = Image::make($image)
+					->encode('webp', 85); // Reduce quality to 85%
+				$processedImage->save($path);
+	
 				$images[] = $imageName;
 			}
 		}
@@ -208,8 +228,16 @@ class ProductController extends Controller
 		// Handle OG image
 		$ogImageName = null;
 		if ($request->hasFile('og_image')) {
-			$ogImageName = $slug . '-og.' . $request->file('og_image')->getClientOriginalExtension();
-			$request->file('og_image')->move(public_path('images/products'), $ogImageName);
+			$ogImageName = $slug . '-og.webp'; // Save OG image as WebP
+			$ogPath = public_path('images/products/' . $ogImageName);
+	
+			// Compress and convert to WebP
+			$ogImage = Image::make($request->file('og_image'))
+				->fit(1200, 630, function ($constraint) {
+					$constraint->upsize(); // Prevent stretching smaller images
+				})
+				->encode('webp', 85); // Reduce quality to 85%
+			$ogImage->save($ogPath);
 		}
 	
 		// Process keywords and specifications
@@ -231,8 +259,6 @@ class ProductController extends Controller
 			'og_image' => $ogImageName,
 		]);
 	
-
-	
 		// Attach both category and subcategory to the product
 		$product->categories()->attach($categoryId, ['subcategory_id' => $subcategoryId]);
 	
@@ -247,6 +273,7 @@ class ProductController extends Controller
 	
 		return redirect()->route('products.index')->with('success', 'Product created successfully.');
 	}
+	
 	
 
 
@@ -289,9 +316,8 @@ class ProductController extends Controller
      */
 	public function update(Request $request, Product $product)
 	{
-		// return $request;
 		$slug = Str::slug($request->title);
-	
+
 		// Validate the input
 		$request->validate([
 			'title' => [
@@ -301,14 +327,14 @@ class ProductController extends Controller
 				function ($attribute, $value, $fail) use ($slug, $product) {
 					// Check if the title already exists for another product
 					$existingTitle = Product::where('title', $value)->where('id', '!=', $product->id)->first();
-	
+
 					// Check if the slug generated from title already exists for another product
 					$existingSlug = Product::where('slug', $slug)->where('id', '!=', $product->id)->first();
-	
+
 					if ($existingTitle) {
 						$fail('The title is already taken.');
 					}
-	
+
 					if ($existingSlug) {
 						$fail('A product with a similar title already exists (slug conflict).');
 					}
@@ -322,31 +348,37 @@ class ProductController extends Controller
 			'quantities.*' => 'nullable|numeric|min:0',
 			'specifications' => 'nullable|array',
 			'specifications.*' => 'exists:specifications,id',
-			'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+			'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20480',
 			'meta_title' => 'nullable|string|max:255',
 			'keywords' => 'nullable|array',
 			'meta_desc' => 'nullable|string',
 			'og_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
 		]);
-	
+
 		// Process the title to create a unique slug for images
 		$images = [];
-	
-		// Handle the newly uploaded images
+
+		// Handle the newly uploaded images with Intervention Image
 		if ($request->hasFile('images')) {
 			foreach ($request->file('images') as $index => $image) {
-				$imageName = $slug . '-' . ($index + 1) . '.' . $image->getClientOriginalExtension();
-				$image->move(public_path('images/products'), $imageName);
+				$imageName = $slug . '-' . ($index + 1) . '.webp'; // Save as WebP format
+				$path = public_path('images/products/' . $imageName);
+
+				// Compress and convert to WebP
+				$processedImage = Image::make($image)
+					->encode('webp', 85); // Reduce quality to 85%
+				$processedImage->save($path);
+
 				$images[] = $imageName;
 			}
 		}
-	
+
 		// Handle existing images
 		$existingImages = $request->input('existing_images', []); // Get existing images from hidden input fields
-	
+
 		// Merge existing images with newly uploaded ones
 		$allImages = array_merge($existingImages, $images);
-	
+
 		// Handle OG image (delete the old one if a new one is uploaded)
 		$ogImageName = $product->og_image; // Keep the current OG image by default
 		if ($request->hasFile('og_image')) {
@@ -354,21 +386,29 @@ class ProductController extends Controller
 			if ($product->og_image && file_exists(public_path('images/products/' . $product->og_image))) {
 				unlink(public_path('images/products/' . $product->og_image));
 			}
-	
-			// Save the new OG image
-			$ogImageName = $slug . '-og.' . $request->file('og_image')->getClientOriginalExtension();
-			$request->file('og_image')->move(public_path('images/products'), $ogImageName);
+
+			// Save the new OG image as WebP
+			$ogImageName = $slug . '-og.webp';
+			$ogPath = public_path('images/products/' . $ogImageName);
+
+			// Compress and convert to WebP
+			$ogImage = Image::make($request->file('og_image'))
+				->fit(1200, 630, function ($constraint) {
+					$constraint->upsize(); // Prevent stretching smaller images
+				})
+				->encode('webp', 85); // Reduce quality to 85%
+			$ogImage->save($ogPath);
 		}
-	
+
 		// Process keywords and specifications
 		$keywords = (!empty($request->keywords) && is_array($request->keywords) && array_filter($request->keywords)) 
-		? json_encode(array_filter($request->keywords)) 
-		: null;
-		
+			? json_encode(array_filter($request->keywords)) 
+			: null;
+
 		$specifications = (!empty($request->specifications) && is_array($request->specifications) && array_filter($request->specifications)) 
-		? json_encode(array_filter($request->specifications)) 
-		: null; // Set to null if empty
-	
+			? json_encode(array_filter($request->specifications)) 
+			: null; // Set to null if empty
+
 		// Update the product in the database
 		$product->update([
 			'title' => $request->title,
@@ -382,12 +422,12 @@ class ProductController extends Controller
 			'meta_desc' => $request->meta_desc,
 			'og_image' => $ogImageName, // Save the OG image file name
 		]);
-	
+
 		// Sync categories and subcategories in the pivot table
 		$product->categories()->sync([
 			$request->category => ['subcategory_id' => $request->subcategory] // Sync with the selected category and subcategory
 		]);
-	
+
 		// Update the quantities in the quantities table
 		foreach ($request->quantities as $sizeId => $quantity) {
 			Quantity::updateOrCreate(
@@ -395,9 +435,10 @@ class ProductController extends Controller
 				['quantity' => $quantity]
 			);
 		}
-	
+
 		return redirect()->route('products.index')->with('success', 'Product updated successfully.');
 	}
+
 	
 
 

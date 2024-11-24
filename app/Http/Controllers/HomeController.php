@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Slider;
 use App\Models\Showcase;
 use App\Models\Size;
+use App\Models\Asset;
 use Illuminate\Support\Facades\Storage;
 
 use App\Services\HomePageService;
@@ -36,6 +37,9 @@ class HomeController extends Controller
 
 		$showcases = Showcase::with('details')->orderBy('order')->limit(5)->get();
 		
+		$manufactureLogo = Asset::where('type', 'manufacturer')->first();
+		$paymentBanner = Asset::where('type', 'payment')->first();
+		$partnerLogos = Asset::where('type', 'partner')->get();
 
 		// return $wingsEdited;
 
@@ -51,7 +55,7 @@ class HomeController extends Controller
 		$titles = $titlesData->pluck('title', 'type')->toArray();
         
 
-        return view('frontEnd.index', compact('data', 'titles', 'sliders', 'wingsEdited', 'showcases', ));
+        return view('frontEnd.index', compact('data', 'titles', 'sliders', 'wingsEdited', 'showcases', 'manufactureLogo', 'partnerLogos', 'paymentBanner', ));
     }
 
 	// public function show(Category $category, $subcategorySlug, Product $product)

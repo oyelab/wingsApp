@@ -50,8 +50,7 @@ class OrderController extends Controller
 		// If product with selected size is not in cart, add it as a new item and destroy voucher session
 		if (!$found) {
 			// Destroy the voucher session when a new product is added
-			Session::forget('voucher_success');
-			Session::forget('applied_voucher');
+			Session::forget(['voucher_success', 'applied_voucher', 'voucher']);
 
 			$cart[] = [
 				'product_id' => $productId,
@@ -88,6 +87,7 @@ class OrderController extends Controller
 					'salePrice' => $product->offer_price,
 					'categories' => $product->categories->pluck('title')->implode(', '),
 					'size_name' => $size->name,
+					'imagePath' => $product->imagePaths[0],
 				]);
 			}
 			return $item;
@@ -110,47 +110,39 @@ class OrderController extends Controller
 	public function updateQuantity($index, Request $request)
 	{
 		$cart = Session::get('cart', []);
-	
-		// Check if the item exists in the cart
+
 		if (isset($cart[$index])) {
-			// Get the product ID and size ID from the cart item
 			$productId = $cart[$index]['product_id'];
 			$sizeId = $cart[$index]['size_id'];
-	
-			// Get the product along with its quantities
+
 			$product = Product::with('quantities')->find($productId);
-	
-			// Find the available quantity for the specific size
 			$availableQuantity = $product->quantities->where('size_id', $sizeId)->first()->quantity ?? 0;
-	
-			// Calculate the new quantity
+
 			$newQuantity = $cart[$index]['quantity'] + $request->amount;
-	
-			// Check if the new quantity exceeds available quantity or is less than 1
+
 			if ($newQuantity < 1) {
-				$newQuantity = 1; // Prevents quantity from going below 1
+				$newQuantity = 1;
 			} elseif ($newQuantity > $availableQuantity) {
 				return response()->json(['message' => 'Requested quantity exceeds available quantity.'], 400);
 			}
-	
-			// Check if the quantity is decreased
+
 			if ($newQuantity < $cart[$index]['quantity']) {
-				// Destroy voucher session if quantity is decreased
-				Session::forget('voucher_success');
-				Session::forget('applied_voucher');
+				Session::forget(['voucher_success', 'applied_voucher', 'voucher']);
 			}
-	
-			// Update the quantity
+
 			$cart[$index]['quantity'] = $newQuantity;
-	
-			// Update the cart in the session
 			Session::put('cart', $cart);
-	
-			return response()->json(['success' => true, 'newQuantity' => $newQuantity]);
+
+			return response()->json([
+				'success' => true,
+				'newQuantity' => $newQuantity,
+				'availableQuantity' => $availableQuantity // Include available quantity
+			]);
 		}
-	
+
 		return response()->json(['message' => 'Item not found in cart.'], 400);
 	}
+
 	
 
 

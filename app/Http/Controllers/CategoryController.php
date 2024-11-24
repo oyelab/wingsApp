@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Section;
+use Intervention\Image\Facades\Image;
+
 
 class CategoryController extends Controller
 {
@@ -393,13 +395,18 @@ class CategoryController extends Controller
 		// Generate a slug from the title
 		$slug = Str::slug($request->input('title'));
 
+		// Get the uploaded file
 		$file = $request->file('image');
 
 		// Generate unique filename using the slug
 		$filename = $slug . '.' . $file->getClientOriginalExtension();
 
-		// Save the file to the storage/app/public/categories directory
-		$path = $file->storeAs('public/images/categories', $filename);
+		// Use Intervention Image to process the image and reduce quality to 85%
+		$image = Image::make($file)
+			->encode('webp', 85); // Reduce quality to 85% for WebP format
+
+		// Save the processed image to the storage/app/public/categories directory
+		$path = $image->storeAs('public/images/categories', $filename);
 
 		// Create a new category
 		$category = Category::create([
@@ -418,6 +425,7 @@ class CategoryController extends Controller
 		// Redirect back with a success message
 		return redirect()->route('categories.index')->with('success', 'Category created successfully.');
 	}
+
 
 
     /**
@@ -470,8 +478,13 @@ class CategoryController extends Controller
 		// Check if an image is uploaded
 		if ($request->hasFile('image')) {
 			$file = $request->file('image');
-			$filename = $slug . '.' . $file->getClientOriginalExtension();
-			$path = $file->storeAs('public/images/categories', $filename);
+			$filename = $slug . '.webp'; // Save the file as WebP
+			$path = storage_path('app/public/images/categories/' . $filename);
+
+			// Use Intervention Image to compress and save the image
+			$image = Image::make($file)
+				->encode('webp', 85) // Reduce quality to 85%
+				->save($path);
 
 			// Update the category's image field
 			$category->image = basename($path);
