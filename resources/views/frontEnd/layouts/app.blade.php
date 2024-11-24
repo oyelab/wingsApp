@@ -22,7 +22,8 @@
 		{{-- Open Graph Tags --}}
 		<meta property="og:type" content="website" />
 		<!-- Open Graph Title -->
-		<meta property="og:title" content="@yield('pageOgTitle'){{ isset($pageTitle) ? ' | ' . $pageTitle : '' }}{{ $siteSettings->title ?? 'Wings Sportswear' }}" />
+		 
+		<meta property="og:title" content="@yield('pageTitle'){{ isset($pageTitle) ? ' | ' . $pageTitle : '' }}{{ $siteSettings->title ?? 'Wings Sportswear' }}" />
 
 
 		<meta property="og:description" content="@yield('pageDescription', isset($pageDescription) ? $pageDescription : $siteSettings->description)" />
