@@ -1,4 +1,11 @@
 @extends('frontEnd.layouts.app')
+
+@section('pageTitle', $product->title . ' | ')
+@section('pageDescription', $product->meta_desc)
+@section('pageKeywords', $product->keywordsString)
+@section('pageOgImage', $product->ogImagePath)  <!-- Image specific to this page -->
+
+@section('page')
 @section('content')
 <!-- breadcrumb section -->
 <div class="breadcrumb-section">
@@ -6,21 +13,7 @@
 		<div class="row">
 			<div class="col-12">
 				<div class="breadcrumb-content">
-					<ul class="d-flex align-items-center">
-						<li class="home-menu">
-							<a href="/">Home</a>
-						</li>
-						<li>
-							<a href="/">New Arrivals</a>
-						</li>
-						<li>
-							<a href="/">Concept Jersey</a>
-						</li>
-						<li>
-							HALA MADRID!! Real Madrid Concept Fan Jersey
-							2024
-						</li>
-					</ul>
+					<x-breadcrub :title="$product->categories->first()->title" :pagetitle="$product->title" />
 				</div>
 			</div>
 		</div>

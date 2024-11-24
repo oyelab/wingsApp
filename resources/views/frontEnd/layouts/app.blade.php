@@ -8,21 +8,29 @@
 		<!-- <title>{{ isset($pageTitle) ? $pageTitle . ' | ' : '' }}{{ $siteSettings->title ?? 'Wings Sportswear' }}</title> -->
 		<title>@yield('pageTitle'){{ $siteSettings->title ?? 'Wings Sportswear' }}</title>
 
-
 		{{-- Page-specific Description --}}
-		<meta name="description" content="{{ isset($pageDescription) ? $pageDescription : ($siteSettings->description ?? 'Innovative sportswear that blends cutting-edge technology with sleek design. For athletes and active individuals who demand more. Discover high-performance apparel that supports your journey to greatness.') }}">
+		<meta name="description" content="@yield('pageDescription', $siteSettings->description ?? 'Innovative sportswear that blends cutting-edge technology with sleek design. For athletes and active individuals who demand more. Discover high-performance apparel that supports your journey to greatness.')">
+
 
 		{{-- Page-specific Keywords --}}
-		<meta name="keywords" content="{{ isset($pageKeywords) ? $pageKeywords : ($siteSettings->keywords ?? 'Wings, Sportswear, Jersey, Shop, Sports Shop, Sports Market, Buy Jersey, Sell Jersey') }}" />
+		<meta name="keywords" content="@yield('pageKeywords', isset($pageKeywords) ? $pageKeywords : ($siteSettings->keywords ?? 'Wings, Sportswear, Jersey, Shop, Sports Shop, Sports Market, Buy Jersey, Sell Jersey'))" />
+
 
 		{{-- Site-wide Brand Name --}}
 		<meta name="brand_name" content="{{ $siteSettings->title ?? 'Wings Sportswear' }}">
 
 		{{-- Open Graph Tags --}}
 		<meta property="og:type" content="website" />
-		<meta property="og:title" content="{{ isset($pageTitle) ? $pageTitle . ' | ' : '' }}{{ $siteSettings->title ?? 'Wings Sportswear' }}" />
-		<meta property="og:description" content="{{ isset($pageDescription) ? $pageDescription : $siteSettings->description }}" />
-		<meta property="og:image" content="{{ isset($pageOgImage) ? $siteSettings->getImagePath('og_image') : $siteSettings->getImagePath('og_image') }}">
+		<!-- Open Graph Title -->
+		<meta property="og:title" content="@yield('pageOgTitle'){{ isset($pageTitle) ? ' | ' . $pageTitle : '' }}{{ $siteSettings->title ?? 'Wings Sportswear' }}" />
+
+
+		<meta property="og:description" content="@yield('pageDescription', isset($pageDescription) ? $pageDescription : $siteSettings->description)" />
+
+		
+		<meta property="og:image" content="@yield('pageOgImage', $siteSettings->getImagePath('og_image'))" />
+
+
 		<meta property="og:image:width" content="1200">
 		<meta property="og:url" content="{{ request()->url() }}">
 		<meta property="og:site_name" content="{{ $siteSettings->title ?? 'Wings Sportswear' }}">

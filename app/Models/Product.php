@@ -181,6 +181,28 @@ class Product extends Model
 	
 		return array_map(fn($image) => $baseURL . '/images/products/' . $image, $images) ?: [$baseURL . '/images/products/default.jpg'];
 	}
+
+	public function getOgImagePathAttribute(): string
+	{
+		$ogImage = $this->og_image; // Assuming the 'og_image' field contains the filename or path
+		$baseURL = url('/'); // Get the base URL of the application
+		
+		// If the og_image field has a value, return its full URL, otherwise return the default image
+		return $ogImage ? $baseURL . '/images/products/' . $ogImage : $baseURL . '/images/products/default-og-image.jpg';
+	}
+
+	// In Product model
+
+	public function getKeywordsStringAttribute()
+	{
+		// Decode the JSON string and implode it into a comma-separated string
+		$keywords = json_decode($this->keywords, true);
+
+		// Return the keywords as a comma-separated string, or an empty string if no keywords
+		return $keywords ? implode(', ', $keywords) : '';
+	}
+
+
 	
 	public function scopePrice($query, $direction = 'asc')
 	{
