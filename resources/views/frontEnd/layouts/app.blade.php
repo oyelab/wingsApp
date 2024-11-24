@@ -22,7 +22,7 @@
 		{{-- Open Graph Tags --}}
 		<meta property="og:type" content="website" />
 		<!-- Open Graph Title -->
-		 
+
 		<meta property="og:title" content="@yield('pageTitle'){{ isset($pageTitle) ? ' | ' . $pageTitle : '' }}{{ $siteSettings->title ?? 'Wings Sportswear' }}" />
 
 
@@ -37,8 +37,8 @@
 		<meta property="og:site_name" content="{{ $siteSettings->title ?? 'Wings Sportswear' }}">
 
 		{{-- Other Static Meta Tags --}}
-		<meta property="fb:app_id" content="">
-		<meta property="fb:pages" content="">
+		<meta property="fb:app_id" content="1081491186574205">
+		<meta property="fb:pages" content="https://www.facebook.com/wingssportswear.shop">
 		<meta name="theme-color" content="#000000">
 		
 		<link rel="icon" href="{{ $siteSettings->favicon ?? asset('favicon.ico') }}" type="image/x-icon">
