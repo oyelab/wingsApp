@@ -38,6 +38,7 @@
 
 		{{-- Other Static Meta Tags --}}
 		<meta property="fb:app_id" content="1081491186574205">
+		<meta name="facebook-domain-verification" content="hz0x3j2q8n5208bfcxd5i6ruryhbcn" />
 		<meta name="theme-color" content="#000000">
 		
 		<link rel="icon" href="{{ $siteSettings->favicon ?? asset('favicon.ico') }}" type="image/x-icon">
