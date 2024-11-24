@@ -1,52 +1,20 @@
 @extends('frontEnd.layouts.app')
 @section('css')
 <link href="{{ asset('frontEnd/css/test.css')}}" rel="stylesheet" type="text/css" />
+<style>
+	.modal-middle-details {
+	padding: 100px 0px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100%;
+}
+.modal-title {
+	color: var(--wings-secondary);
+}
+</style>
 @endsection
 @section('content')
-
-@if ($showModal)
-<!-- Modal HTML -->
-<div class="modal fade" id="welcomeModal" tabindex="-1" role="dialog" aria-labelledby="welcomeModalLabel"
-	aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="welcomeModalLabel">Hi {{ $order_details->name }}</h5>
-				<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" id="closeModalButton"></button>
-			</div>
-			<div class="modal-body">
-				<p>Your order was placed successfully.</p>
-				<p>Would you like to manage an account with us for managing orders, reviews, refunds, and faster checkout?</p>
-			</div>
-			<div class="modal-body">
-				<p>You're just 1 click away; enter a new password & submit.</p>
-				<form method="POST" action="{{ route('register') }}" class="auth-input">
-				@csrf
-				<label for="inputEmail">Account for: <strong>{{ $order_details->email }}</strong></label>
-					<div class="input-group mb-3">
-						<input type="hidden" name="name" value="{{ $order_details->name }}">
-						<input type="hidden" name="email" value="{{ $order_details->email }}">
-						<input type="password" name="password" class="form-control" id="inputPassword" placeholder="Enter a New Password" autocomplete="new-password">
-  						<button class="btn btn-outline-secondary" type="submit" id="button-addon2">Submit</button>
-					</div>
-					@if ($errors->any())
-						<div class="alert alert-danger">
-							<ul>
-								@foreach ($errors->all() as $error)
-									<li>{{ $error }}</li>
-								@endforeach
-							</ul>
-						</div>
-					@endif
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-link" id="closeModalButton">Not Interested</button>
-			</div>
-		</div>
-	</div>
-</div>
-@endif
 
 <section class="order-confirmation">
 	<h1 class="confirmation-title">Thank You!</h1>
@@ -144,14 +112,127 @@
 		</aside>
 	</div>
 
-	<button class="print-button">
+	<button 
+		class="print-button" 
+		data-bs-toggle="modal"
+		data-bs-target="#staticBackdrop"
+	>
 		<span class="print-content">
 			<span>Print Invoice</span>
 		</span>
 	</button>
 </section>
+@if ($showModal)
+<div
+    class="modal fade"
+    id="staticBackdrop"
+    data-bs-backdrop="static"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered print-invoice-modal">
+        <div class="modal-content">
+            <div class="modal-content-wrap d-flex justify-content-between align-items-center">
+                <!-- Left section with features list -->
+                <div class="h-100">
+                    <div class="modal-left-details">
+                        <div class="logo-wrap d-flex justify-content-center mb-4">
+                            <img class="w-50" src="{{ asset('build/images/logo-light.svg') }}" alt="Wings Sportswear Logo" />
+                        </div>
+                    
+                        <h3>Make shopping with Wings Sportswear easier and more convenient with these features:</h3>
+                        <hr class="my-2">
+
+                        <div class="row">
+                            <div class="col-6">
+                                <ul>
+                                    <li><a href="#"><i class="bi bi-grid"></i> Manage Orders</a></li>
+                                    <li><a href="#"><i class="bi bi-fast-forward"></i> Faster Checkout</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-6">
+                                <ul>
+                                    <li><a href="#"><i class="bi bi-star"></i> Add Review</a></li>
+                                    <li><a href="#"><i class="bi bi-arrow-repeat"></i> Refund Request</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Middle section with logo, login, and cancel link -->
+                <div class="modal-middle-details w-75">
+                    <h3 class="modal-title" id="staticBackdropLabel">Hi, {{ $order_details->name }}</h3>
+
+                    <div class="login-wrap">
+                        <h3 class="mt-5">You're Creating New Account for: {{ $order_details->email }}</h3>
+						@if ($errors->any())
+							<div class="alert" style="color: var(--wings-secondary); margin-bottom: 15px; padding: 0; border: none;">
+								<ul style="list-style-type: none; margin: 0; padding: 0;">
+									@foreach ($errors->all() as $error)
+										<li style="background-color: transparent;">
+											{{ $error }}
+										</li>
+									@endforeach
+								</ul>
+							</div>
+							@endif
+                        <form method="POST" action="{{ route('register') }}" class="input-wraps" id="registerForm">
+                            @csrf
+                            <input type="hidden" name="name" value="{{ $order_details->name }}">
+                            <input type="hidden" name="email" value="{{ $order_details->email }}">
+							<input type="hidden" name="redirect_to" value="{{ url()->previous() }}">
+
+
+                            <div class="input-wrap">
+                                <input type="password" name="password" id="inputPassword" placeholder="Enter new password" />
+                                <button type="submit">
+                                    <i class="bi bi-arrow-right text-light fs-3"></i>
+                                </button>
+                            </div>
+                            <label for="iAgree" class="d-flex align-items-center gap-1" style="font-size: 1rem; color: #fff; white-space: nowrap;">
+                                <input type="checkbox" id="iAgree" name="terms" class="me-2"/>
+                                I agree to Wings 
+                                <a href="{{ route('help.index') }}#terms-conditions" style="text-decoration: none; color: inherit;">Terms & Policy.</a>
+                            </label>
+
+                        </form>
+						
+
+                    </div>
+                    
+                    <a class="mt-5" href="#">
+                        Cancel & go to order page
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Close icon -->
+                <div class="h-100">
+                    <div class="modal-close-icon" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="bi bi-x text-light fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+@endsection
 
 @section('scripts')
+
+@if ($errors->any() || $showModal)
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var modal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+            modal.show();
+        });
+    </script>
+@endif
+
 <script>
 	$(document).ready(function () {
 		// Check localStorage for modal display status
@@ -169,7 +250,4 @@
 		});
 	});
 </script>
-
-@endsection
-
 @endsection

@@ -15,16 +15,21 @@ class RedirectIfAuthenticated
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string ...$guards): Response
-    {
-        $guards = empty($guards) ? [null] : $guards;
-
-        foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::DASHBOARD);
-            }
-        }
-
-        return $next($request);
-    }
+	public function handle(Request $request, Closure $next, string ...$guards)
+	{
+		$guards = empty($guards) ? [null] : $guards;
+	
+		foreach ($guards as $guard) {
+			if (Auth::guard($guard)->check()) {
+				// If user is already logged in, redirect them to intended or dashboard
+				return redirect()->intended(RouteServiceProvider::DASHBOARD);
+			}
+		}
+	
+		// Capture the previous URL to redirect after login or registration
+		session(['url.intended' => url()->previous()]);
+	
+		return $next($request);
+	}
+	
 }

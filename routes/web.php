@@ -41,7 +41,20 @@ use App\Http\Controllers\AssetController;
 
 
 
+
+
+Route::get('login', function () {
+    session(['url.intended' => url()->previous()]); // Save the previous URL
+    return view('auth.login');
+})->name('login');
+
+Route::get('register', function () {
+    session(['url.intended' => url()->previous()]); // Save the previous URL
+    return view('auth.register');
+})->name('register');
+
 Auth::routes();
+
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
 
