@@ -62,7 +62,7 @@
 			}
 
 			/* User Icon (Avatar or Placeholder) */
-			.nav-link {
+			.usernav-link {
 				padding: 0;
 				border: none;
 				background: none;
@@ -76,7 +76,7 @@
 				transition: transform 0.2s ease;
 			}
 
-			.nav-link:hover {
+			.usernav-link:hover {
 				transform: scale(1.1);
 			}
 
@@ -227,7 +227,7 @@
 								<li class="nav-item custom-dropdown">
 									@if (Auth::check())
 										<!-- User Avatar or First Letter -->
-										<a class="nav-link" href="#" id="userDropdown" role="button">
+										<a class="usernav-link" href="#" id="userDropdown" role="button">
 											@if (Auth::user()->avatar)
 												<!-- User's Avatar -->
 												<img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" alt="User Avatar" class="user-avatar">
@@ -468,7 +468,7 @@
 				}
 
 				const dropdown = document.querySelector('.custom-dropdown');
-				const userLink = dropdown.querySelector('.nav-link');
+				const userLink = dropdown.querySelector('.usernav-link');
 				const menu = dropdown.querySelector('.dropdown-menu-custom');
 
 				userLink.addEventListener('click', (e) => {
