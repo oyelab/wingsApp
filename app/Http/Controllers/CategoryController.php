@@ -118,6 +118,8 @@ class CategoryController extends Controller
 			->where('id', $CategoryId) // Only fetch category ID = 1
 			->get();
 
+		$section = null;
+		$collection = null;
 
 		return view('frontEnd.categories.index', compact(
 			'categories',
@@ -128,6 +130,8 @@ class CategoryController extends Controller
 			'mainCategoryId',
 			'subCategoryId',
 			'pageTitle',
+			'section',
+			'collection',
 		));
 	}
 
@@ -200,6 +204,8 @@ class CategoryController extends Controller
 		// Fetch all categories excluding a specific category ID if needed (e.g., 1)
 		$categories = Category::with(['parents', 'children'])->get();
 
+		$section = null;
+		$collection = null;
 
 		return view('frontEnd.categories.index', compact(
 			'categories',
@@ -210,6 +216,8 @@ class CategoryController extends Controller
 			'mainCategoryId',
 			'subCategoryId',
 			'pageTitle',
+			'section',
+			'collection',
 		));
 	}
 	
@@ -284,6 +292,9 @@ class CategoryController extends Controller
 		$selectedSubcategoryId = $request->query('subCategory') ?? null;
 
 
+		$section = null;
+		$collection = null;
+
 		return view('frontEnd.categories.index', compact(
 			'categories',
 			'products',
@@ -292,6 +303,8 @@ class CategoryController extends Controller
 			'productCount',
 			'mainCategoryId',
 			'subCategoryId',
+			'section',
+			'collection',
 		));
 	}
 
