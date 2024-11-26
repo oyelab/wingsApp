@@ -13,7 +13,6 @@
 			<div class="col-12">
 				<div class="breadcrumb-content">
 					<x-breadcrub
-						:section="$section"
 						:collection="$collection"
 						:pagetitle="$product->slug"
 					/>

@@ -118,7 +118,6 @@ class CategoryController extends Controller
 			->where('id', $CategoryId) // Only fetch category ID = 1
 			->get();
 
-		$section = null; // Pass section if it exists
 
 		return view('frontEnd.categories.index', compact(
 			'categories',
@@ -129,7 +128,6 @@ class CategoryController extends Controller
 			'mainCategoryId',
 			'subCategoryId',
 			'pageTitle',
-			'section',
 		));
 	}
 
