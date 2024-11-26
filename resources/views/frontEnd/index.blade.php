@@ -433,7 +433,7 @@
 										<img
 											src="{{ $showcases->where('order', 1)->first()?->thumbnailImagePath }}"
 											draggable="false"
-											class="img-fluid"
+											class="img-fluid left-top-border-radius"
 											alt="Wings Showcase"
 										/>
 									</a>
@@ -460,7 +460,7 @@
 									<img
 										src="{{ $showcases->where('order', 3)->first()?->thumbnailImagePath }}"
 										draggable="false"
-										class="img-fluid"
+										class="img-fluid left-bottom-border-radius"
 										alt="Wings Showcase"
 									/>
 								</a>
@@ -476,7 +476,7 @@
 									<img
 										src="{{ $showcases->where('order', 4)->first()?->thumbnailImagePath }}"
 										draggable="false"
-										class="img-fluid"
+										class="img-fluid right-top-border-radius"
 										alt="Wings Showcase"
 									/>
 								</a>
@@ -489,7 +489,7 @@
 									<img
 										src="{{ $showcases->where('order', 5)->first()?->thumbnailImagePath }}"
 										draggable="false"
-										class="img-fluid"
+										class="img-fluid right-bottom-border-radius"
 										alt="Wings Showcase"
 									/>
 								</a>
@@ -725,8 +725,130 @@
 		</div>
 	</div>
 </section>
+
+<!-- Behind Wings -->
+<section class="behind-wings-area bg-black section-padding">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="wings-edited-heading wings-showcase-heading behind-wings-heading">
+					<h2>Behind Wings</h2>
+					<p>
+						Every brand has a story, but Wings Sportswear is
+						a journey of passion, precision, and purpose.
+						It’s more than just apparel; it’s about
+						elevating athletes and teams around the world.
+						Dive into the story behind Wings and discover
+						what fuels our drive to ‘Keep Flying’.
+					</p>
+				</div>
+			</div>
+			<div class="col-12">
+				<div class="behind-wings-tabs">
+					<ul class="nav nav-tabs" id="myTab" role="tablist">
+						<!-- Loop through the tabs -->
+						@foreach ($behindWings as $index => $item)
+							<li class="nav-item" role="presentation">
+								<button
+									class="nav-link {{ $index == 0 ? 'active' : '' }}"
+									id="{{ $item['slug'] }}-tab"
+									data-bs-toggle="tab"
+									data-bs-target="#{{ $item['slug'] }}-tab-pane"
+									type="button"
+									role="tab"
+									aria-controls="{{ $item['slug'] }}-tab-pane"
+									aria-selected="{{ $index == 0 ? 'true' : 'false' }}"
+								>
+									{{ $item['title'] }}
+								</button>
+							</li>
+						@endforeach
+					</ul>
+
+					<div class="tab-content" id="myTabContent">
+						<!-- Loop through the content panes -->
+						@foreach ($behindWings as $index => $item)
+							<div
+								class="tab-pane fade {{ $index == 0 ? 'show active' : '' }}"
+								id="{{ $item['slug'] }}-tab-pane"
+								role="tabpanel"
+								aria-labelledby="{{ $item['slug'] }}-tab"
+								tabindex="0"
+							>
+								<div class="wings-behind-tab-content-wrap">
+									<div class="wings-behind-tab-content">
+										<h2>{{ $item['title'] }}</h2>
+										<p>{!! $item['content'] !!}</p>
+									</div>
+									<div class="wings-behind-tab-image">
+										<img
+											src="{{ asset($item['imagePath']) }}"
+											draggable="false"
+											class="img-fluid"
+											alt="{{ $item['title'] }}"
+										/>
+									</div>
+								</div>
+							</div>
+						@endforeach
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- Customer Stories -->
+<section class="customer-stories-area section-padding bg-black">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div
+					class="wings-edited-heading wings-showcase-heading behind-wings-heading"
+				>
+					<h2>Customer Stories</h2>
+					<p>
+						Real stories, real satisfaction. Hear why our
+						customers choose Wings and what makes them keep
+						coming back!
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="swiper customer-stories">
+			<div class="swiper-wrapper">
+				@foreach ($siteReviews as $review)
+				<div class="swiper-slide">
+					<div class="customer-stories-content">
+						<h3>Excellent Product</h3>
+						<p>
+							“Absolutely love the quality and design of
+							Wings products! The attention to detail is
+							impressive. Can’t wait to shop more!”
+						</p>
+						<div class="author-part">
+							<h4>{{ '@' . str_replace(' ', '', strtolower($review->user->name)) }}</h4>
+							<div>
+								@for ($i = 0; $i < $review->ratingStars['filled']; $i++)
+									<i class="bi bi-star-fill text-light"></i>
+								@endfor
+								
+								@for ($i = 0; $i < $review->ratingStars['empty']; $i++)
+									<i class="bi bi-star text-light"></i>
+								@endfor
+							</div>
+						</div>
+					</div>
+				</div>				
+				@endforeach
+			</div>
+			<!-- custom pagination -->
+			<div class="swiper-pagination"></div>
+		</div>
+	</div>
+</section>
+
 <!-- Official Manufacturer / Proud Kit Partners -->
-<div class="official-manufacture">
+<div class="official-manufacture section-padding">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-4">

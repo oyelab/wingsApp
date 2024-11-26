@@ -79,16 +79,22 @@
 						<tr data-id="{{ $page->id }}">
 							<td>{{ $index + 1 }}</td>
 							<td>{{ $page->title }}</td>
-							<td>{{ $page->slug }}</td>
+							<td>
+								<div class="avatar-group-item">
+									<a href="javascript: void(0);" class="d-inline-block">
+										<img class="rounded-circle avatar-sm" src="{{ $page->imagePath }}" alt="{{ $page->title }}">
+									</a>
+								</div>
+							</td>
 							<td>{{ $page->updated_at->format('d M Y, h:i A') }}</td>
 							<td>
 								<form action="{{ route('pages.update-type', $page->id) }}" method="POST" style="display: inline-block;">
 									@csrf
 									@method('PUT')
 									<select name="type" class="form-select form-select-sm" onchange="this.form.submit()">
-										<option value="0" {{ $page->type == 0 ? 'selected' : '' }}>None</option>
-										<option value="1" {{ $page->type == 1 ? 'selected' : '' }}>Footer Menu 1</option>
-										<option value="2" {{ $page->type == 2 ? 'selected' : '' }}>Footer Menu 2</option>
+										@foreach($menuTypes as $value => $label)
+											<option value="{{ $value }}" {{ $page->type == $value ? 'selected' : '' }}>{{ $label }}</option>
+										@endforeach
 									</select>
 								</form>
 							</td>

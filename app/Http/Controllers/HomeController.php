@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Review;
 use App\Models\Section;
 use App\Models\Order;
 use App\Models\Slider;
 use App\Models\Showcase;
 use App\Models\Size;
 use App\Models\Asset;
+use App\Models\Page;
 use Illuminate\Support\Facades\Storage;
 
 use App\Services\HomePageService;
@@ -37,6 +39,12 @@ class HomeController extends Controller
 		->where('slug', 'wings-edited')
 		->first();
 
+		$behindWings = Page::where('type', 3)->get();
+		// return $behindWings;
+
+		$siteReviews = Review::with('user', 'products')->where('status', true)->limit(9)->get();
+		// return $siteReviews;
+
 		$showcases = Showcase::with('details')->orderBy('order')->limit(5)->get();
 		
 		$manufactureLogo = Asset::where('type', 'manufacturer')->first();
@@ -58,7 +66,7 @@ class HomeController extends Controller
 		$titles = $titlesData->pluck('title', 'type')->toArray();
         
 
-        return view('frontEnd.index', compact('data', 'titles', 'sliders', 'wingsEdited', 'showcases', 'manufactureLogo', 'partnerLogos', 'paymentBanner', ));
+        return view('frontEnd.index', compact('data', 'titles', 'sliders', 'wingsEdited', 'showcases', 'manufactureLogo', 'partnerLogos', 'paymentBanner', 'siteReviews', 'behindWings', ));
     }
 
 	// public function show(Category $category, $subcategorySlug, Product $product)

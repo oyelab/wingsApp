@@ -11,30 +11,28 @@
 <div class="container">
     <h1>Edit Page</h1>
 
-    <form action="{{ route('pages.update', $page->id) }}" method="POST">
-        @csrf
-        @method('PUT')
-        
-        <div class="mb-3">
-            <label for="title" class="form-label">Title</label>
-            <input type="text" class="form-control" id="title" name="title" value="{{ old('title', $page->title) }}" required>
-        </div>
-
-        <div class="mb-3">
-            <label for="content" class="form-label">Content</label>
-            <textarea id="summernote" name="content">{!! old('content', $page->content) !!}</textarea>
-        </div>
+    <form action="{{ route('pages.update', $page->id) }}" method="POST" enctype="multipart/form-data">
+		@csrf
+		@method('PUT')
+		
 		<div class="mb-3">
-			<label for="type" class="form-label">Menu Type</label>
-			<select name="type" id="type" class="form-select">
-				<option value="0" {{ $page->type == 0 ? 'selected' : '' }}>None</option>
-				<option value="1" {{ $page->type == 1 ? 'selected' : '' }}>Footer Menu 1</option>
-				<option value="2" {{ $page->type == 2 ? 'selected' : '' }}>Footer Menu 2</option>
-			</select>
+			<label for="title" class="form-label">Title</label>
+			<input type="text" class="form-control" id="title" name="title" value="{{ old('title', $page->title) }}" required>
 		</div>
 
-        <button type="submit" class="btn btn-primary">Save</button>
-    </form>
+		<div class="mb-3">
+			<label for="image" class="form-label">Image</label>
+            <input type="file" class="form-control" id="image" name="image" value="{{ old('image') }}" required>
+		</div>
+
+		<div class="mb-3">
+			<label for="content" class="form-label">Content</label>
+			<textarea id="summernote" name="content">{!! old('content', $page->content) !!}</textarea>
+		</div>
+
+		<button type="submit" class="btn btn-primary">Save</button>
+	</form>
+
 </div>
 @endsection
 

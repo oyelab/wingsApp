@@ -196,6 +196,31 @@
 		},
 	});
 
+	// Customer stories
+	var swiper = new Swiper('.customer-stories', {
+		slidesPerView: 3,
+		spaceBetween: 36,
+		keyboard: {
+			enabled: true,
+		},
+		navigation: false,
+		pagination: {
+			el: '.swiper-pagination',
+			clickable: true,
+		},
+		breakpoints: {
+			0: {
+				slidesPerView: 1,
+			},
+			768: {
+				slidesPerView: 2,
+			},
+			992: {
+				slidesPerView: 3,
+			},
+		},
+	});
+
 	// venue-slider
 	var swiper = new Swiper('.venue-slider-active', {
 		slidesPerView: 4,
