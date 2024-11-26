@@ -56,7 +56,6 @@ class SectionController extends Controller
 			'pagetitle' => $pageTitle,
 			'section' => $section ?? null, // Pass section if it exists
 			'collection' => $collection ?? null, // Pass collection if it exists
-			'category' => 'Category' ?? null, // Pass collection if it exists
 		]);
 	}
 
