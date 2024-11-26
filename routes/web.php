@@ -59,7 +59,7 @@ Route::get('/collections/{category:slug}/{subcategory:slug}/{product:slug}', [Pr
 Route::get('/sections/{section:slug}/{slug}', [SectionController::class, 'show'])->name('sections.products.details');
 
 Route::get('/collections/{category:slug}', [CategoryController::class, 'mainCategory'])->name('category');
-Route::get('/collections/{category:slug}/{subcategory:slug}', [CategoryController::class, 'subCategory'])->name('category');
+Route::get('/collections/{category:slug}/{subcategory:slug}', [CategoryController::class, 'subCategory'])->name('subcategory');
 Route::get('/get-subcategories/{mainCategoryId}', [CategoryController::class, 'getSubcategories']);
 
 Route::get('/delivery/create', [DeliveryController::class, 'show'])->name('showissueToken');
