@@ -21,20 +21,7 @@
                                 </a>
                             </li>
                         @endif
-                        @if($category)
-                            <li>
-                                <a href="{{ route('category', ['category' => $category->slug]) }}">
-                                    {{ $category->title }}
-                                </a>
-                            </li>
-                        @endif
-                        @if($subcategory)
-                            <li>
-                                <a href="{{ route('subcategory', ['subcategory' => $subcategory->slug]) }}">
-                                    {{ $subcategory->title }}
-                                </a>
-                            </li>
-                        @endif
+                        
                         <li>
                             {{ $pagetitle }}
                         </li>
