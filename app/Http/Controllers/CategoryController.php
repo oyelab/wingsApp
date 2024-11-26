@@ -485,22 +485,28 @@ class CategoryController extends Controller
 			'parent_ids.*' => 'exists:categories,id', // Ensure each parent ID exists in the categories table
 		]);
 
-		// Generate a slug from the title
-		$slug = Str::slug($request->input('title'));
+		// Generate a slug from the title if the title has changed
+		$slug = $category->title !== $request->input('title') 
+			? Str::slug($request->input('title')) 
+			: $category->slug;
 
-		// Check if an image is uploaded
+		// Handle image upload
 		if ($request->hasFile('image')) {
+			// Remove old image if it exists
+			if ($category->image && file_exists(storage_path('app/public/images/categories/' . $category->image))) {
+				unlink(storage_path('app/public/images/categories/' . $category->image));
+			}
+
 			$file = $request->file('image');
 			$filename = $slug . '.webp'; // Save the file as WebP
 			$path = storage_path('app/public/images/categories/' . $filename);
 
-			// Use Intervention Image to compress and save the image
-			$image = Image::make($file)
+			// Save the new image using Intervention Image
+			Image::make($file)
 				->encode('webp', 85) // Reduce quality to 85%
 				->save($path);
 
-			// Update the category's image field
-			$category->image = basename($path);
+			$category->image = $filename;
 		}
 
 		// Update the category's other fields
@@ -510,11 +516,14 @@ class CategoryController extends Controller
 		$category->status = $request->input('status');
 		$category->save();
 
-		// Sync the parent categories in the pivot table
+		// Sync the parent categories
 		if ($request->has('parent_ids')) {
+			if (in_array($category->id, $request->input('parent_ids'))) {
+				return redirect()->back()->withErrors(['parent_ids' => 'A category cannot be its own parent.']);
+			}
 			$category->parents()->sync($request->input('parent_ids'));
 		} else {
-			// If no parents are selected, detach any existing relationships
+			// If no parents are selected, detach existing relationships
 			$category->parents()->detach();
 		}
 

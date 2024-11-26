@@ -17,7 +17,7 @@ Create Category
 @endsection
 	@section('content')
 
-	<form action="{{ route('categories.update', $category->id) }}" method="POST" enctype="multipart/form-data" class="container">
+	<form action="{{ route('categories.update', $category->slug) }}" method="POST" enctype="multipart/form-data" class="container">
     @csrf
     @method('PUT') <!-- Use PUT method for update -->
     @if ($errors->any())
