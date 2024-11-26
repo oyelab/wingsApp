@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Repositories\ProductRepository;
 use App\Models\Section;
 use App\Models\Product;
+use App\Models\Category;
 class SectionController extends Controller
 {
     protected $productRepo;
@@ -22,7 +23,7 @@ class SectionController extends Controller
 		return $sections;
 	}
 
-	public function shopPage($section)
+	public function shopPage($section, Category $category)
 	{
 		// return $section->slug;
 		// Fetch the section record from the database
@@ -55,6 +56,7 @@ class SectionController extends Controller
 			'pagetitle' => $pageTitle,
 			'section' => $section ?? null, // Pass section if it exists
 			'collection' => $collection ?? null, // Pass collection if it exists
+			'category' => 'Category' ?? null, // Pass collection if it exists
 		]);
 	}
 
