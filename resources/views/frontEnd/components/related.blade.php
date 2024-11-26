@@ -19,6 +19,7 @@
 								class="img-fluid"
 								alt="{{ $product->title }}"
 								draggable="false"
+								oncontextmenu="return false;"
 							/>
 							<a href="#" class="wishlist-icon">
 								<i class="bi bi-heart-fill"></i>
