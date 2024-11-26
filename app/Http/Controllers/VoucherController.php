@@ -4,59 +4,78 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Voucher;
+use Illuminate\Support\Facades\Validator;
+
 
 class VoucherController extends Controller
 {
-	// Method to apply voucher
+
 	public function applyVoucher(Request $request)
 	{
+		// Validate the input
+		$validator = Validator::make($request->all(), [
+			'voucher' => [
+				'required',
+				'exists:vouchers,code',
+				function ($attribute, $value, $fail) {
+					$voucher = Voucher::where('code', $value)->first();
+					if ($voucher && !$voucher->status) {
+						$fail('The voucher has expired.');
+					}
+				},
+			],
+		], [
+			'voucher.required' => 'Please enter a voucher code.',
+			'voucher.exists' => 'The voucher code entered is invalid.',
+		]);
+
+		if ($validator->fails()) {
+			return redirect()->route('cart.show')
+				->withErrors($validator)
+				->withInput();
+		}
+
+		// Retrieve the validated voucher
 		$voucherCode = $request->input('voucher');
 		$voucher = Voucher::where('code', $voucherCode)->first();
 
-		if ($voucher) {
-			// Get cart items from session
-			$cartItems = session('cart', []); // Assuming cart items are stored in session
+		// Get cart items from session
+		$cartItems = session('cart', []); // Assuming cart items are stored in session
 
-			// Calculate the total quantity of all items in the cart
-			$totalQuantity = collect($cartItems)->sum('quantity');
-			
-			// Calculate the number of unique products in the cart
-			$uniqueProducts = collect($cartItems)->unique('product_id')->count();
+		// Calculate the total quantity of all items in the cart
+		$totalQuantity = collect($cartItems)->sum('quantity');
+		
+		// Calculate the number of unique products in the cart
+		$uniqueProducts = collect($cartItems)->unique('product_id')->count();
 
-			// Check if the total quantity meets the min_quantity requirement and unique products don't exceed the max_product
-			if ($totalQuantity >= $voucher->min_quantity && $uniqueProducts <= $voucher->max_product) {
-				// Store voucher code and discount in session
-				session([
-					'voucher_success' => true,
-					'applied_voucher' => $voucher->code,
-					'voucher' => $voucher->discount,
-				]);
-
-				return redirect()->route('cart.show');
-			} else {
-				// Either quantity or product requirement not met
-				$errorMessages = [];
-
-				if ($totalQuantity < $voucher->min_quantity) {
-					$errorMessages[] = "Order minimum of {$voucher->min_quantity} products to avail this voucher!";
-				}
-
-				if ($uniqueProducts > $voucher->max_product) {
-					$errorMessages[] = "Select maximum of {$voucher->max_product} products to avail this voucher!";
-				}
-
-				// Combine the error messages
-				return redirect()->route('cart.show')->with([
-					'error' => implode(' ', $errorMessages)
-				]);
-			}
-		} else {
-			// Voucher not valid
-			return redirect()->route('cart.show')->with([
-				'error' => 'Invalid voucher code.'
+		// Check if the total quantity meets the min_quantity requirement and unique products don't exceed the max_product
+		if ($totalQuantity >= $voucher->min_quantity && $uniqueProducts <= $voucher->max_product) {
+			// Store voucher code and discount in session
+			session([
+				'voucher_success' => true,
+				'applied_voucher' => $voucher->code,
+				'voucher' => $voucher->discount,
 			]);
+
+			return redirect()->route('cart.show')->with('success', 'Voucher applied successfully.');
+		} else {
+			// Either quantity or product requirement not met
+			$errorMessages = [];
+
+			if ($totalQuantity < $voucher->min_quantity) {
+				$errorMessages[] = "Order minimum of {$voucher->min_quantity} products to avail this voucher!";
+			}
+
+			if ($uniqueProducts > $voucher->max_product) {
+				$errorMessages[] = "Select maximum of {$voucher->max_product} products to avail this voucher!";
+			}
+
+			// Store the error messages as an array in the session
+			return redirect()->route('cart.show')->withErrors($errorMessages);
 		}
 	}
+
+	
 
 
 
@@ -87,12 +106,13 @@ class VoucherController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $vouchers = Voucher::get();
-
-		return $vouchers;
-    }
+	public function index()
+	{
+		$vouchers = Voucher::all(); // Retrieve all voucher data from the database
+	
+		return view('backEnd.vouchers.index', compact('vouchers')); // Pass vouchers to the view
+	}
+	
 
     /**
      * Show the form for creating a new resource.
@@ -105,28 +125,26 @@ class VoucherController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-		$validatedData = $request->validate([
-			'code' => 'required|unique:vouchers,code',
-			'discount' => 'required|integer|min:1|max:100',
-			'criteria' => 'required|json',  // Ensure criteria is valid JSON
+	public function store(Request $request)
+	{
+		$request->validate([
+			'code' => 'required|string|max:255|unique:vouchers,code',
+			'discount' => 'required|integer|min:0|max:100',
+			'max_product' => 'required|integer|min:1',
+			'min_quantity' => 'required|integer|min:1',
+			'status' => 'required|boolean',
 		]);
-	
-		// Decode the criteria JSON to an array
-		$criteria = json_decode($request->input('criteria'), true);
 	
 		$voucher = Voucher::create([
-			'code' => $request->input('code'),
-			'discount' => $request->input('discount'),
-			'criteria' => $criteria,  // Store the criteria as a JSON array
-			'status' => $request->input('status'),  // Example field for status
+			'code' => $request->code,
+			'discount' => $request->discount,
+			'max_product' => $request->max_product,
+			'min_quantity' => $request->min_quantity,
+			'status' => $request->status,
 		]);
-
-		// return $voucher;
 	
-		return redirect()->route('vouchers.index')->with('success', 'Voucher created successfully!');
-    }
+		return redirect()->route('vouchers.index')->with('success', 'Voucher created successfully');
+	}
 
     /**
      * Display the specified resource.
@@ -141,22 +159,39 @@ class VoucherController extends Controller
      */
     public function edit(string $id)
     {
-        //
+		$voucher = Voucher::findOrFail($id);
+        return view('backEnd.vouchers.edit', compact('voucher'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+	// Update the voucher in the database
+	public function update(Request $request, $id)
+	{
+		$request->validate([
+			'code' => 'required|string|max:255|unique:vouchers,code,' . $id,
+			'discount' => 'required|integer|min:0',
+			'max_product' => 'required|integer|min:1',
+			'min_quantity' => 'required|integer|min:1',
+			'status' => 'required|boolean',
+		]);
+
+		$voucher = Voucher::findOrFail($id);
+		$voucher->update($request->all()); // Update the voucher record
+
+		return redirect()->route('vouchers.index')->with('success', 'Voucher updated successfully');
+	}
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
-    }
+	// Delete the voucher from the database
+	public function destroy($id)
+	{
+		$voucher = Voucher::findOrFail($id);
+		$voucher->delete(); // Delete the voucher
+
+		return redirect()->route('vouchers.index')->with('success', 'Voucher deleted successfully');
+	}
 }

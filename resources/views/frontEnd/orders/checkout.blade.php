@@ -53,8 +53,6 @@
 					<div class="checkout-form">
 						<h2>Delivery Address</h2>
 
-
-
 						<div class="form-group">
 							<label for="full_name">Full name
 								<span class="text-danger">*</span></label>
@@ -77,7 +75,7 @@
 							<label for="address">House/Road/Post
 								<span class="text-danger">*</span></label>
 							<input type="text" class="form-control" id="address" name="address"
-								placeholder="5/A, 27, Dhanmondi" />
+								placeholder="Enter detail address" />
 						</div>
 						<div class="dristic-wrap">
 							<div class="form-group">

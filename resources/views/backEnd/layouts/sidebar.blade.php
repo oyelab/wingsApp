@@ -145,11 +145,23 @@
 				@if(Auth::check() && Auth::user()->role === 1)
                 <li class="menu-title" data-key="t-pages">Utility</li>
 				<li>
+					<a href="javascript: void(0);" class="has-arrow">
+						<i class="bx bx-file icon nav-icon"></i>
+						<span class="menu-item" data-key="t-manage-pages">Pages</span>
+					</a>
+					<ul class="sub-menu" aria-expanded="false">
+						<li><a href="{{ route('pages.index') }}" data-key="t-all-pages">All Pages</a></li>
+						<li><a href="{{ route('pages.create') }}" data-key="t-create-page">Create New</a></li>
+					</ul>
+				</li>
+
+				<li>
 					<a href="{{ route('settings.index') }}">
 						<i class="bx bx-cog icon nav-icon"></i>
 						<span class="menu-item" data-key="t-site-settings">Site Settings</span>
 					</a>
 				</li>
+				
 				@endif
             </ul>
         </div>

@@ -52,10 +52,13 @@ class OrderController extends Controller
 			// Destroy the voucher session when a new product is added
 			Session::forget(['voucher_success', 'applied_voucher', 'voucher']);
 
+			// Add price and salePrice to the cart
 			$cart[] = [
 				'product_id' => $productId,
 				'size_id' => $sizeId,
 				'quantity' => $quantityToAdd,
+				'price' => $product->price, // Regular price
+				'salePrice' => $product->offer_price ?? null, // Sale price (if applicable)
 			];
 		}
 
@@ -65,6 +68,7 @@ class OrderController extends Controller
 		return response()->json(['message' => 'Product added to cart successfully']);
 	}
 
+
 	
 
 
@@ -72,6 +76,7 @@ class OrderController extends Controller
 	{
 		// Get cart items from session or initialize an empty array
 		$cartItems = collect(Session::get('cart', []));
+		// return $cartItems;
 
 		// Load additional product and size details for each item
 		$cartItems = $cartItems->map(function($item) {
@@ -93,6 +98,9 @@ class OrderController extends Controller
 			return $item;
 		});
 
+				// return $cartItems;
+
+
 		// Check if the cart is empty
 		if ($cartItems->isEmpty()) { // Change this line
 			return redirect('/')->with('alert', [
@@ -110,38 +118,89 @@ class OrderController extends Controller
 	public function updateQuantity($index, Request $request)
 	{
 		$cart = Session::get('cart', []);
-
+	
 		if (isset($cart[$index])) {
 			$productId = $cart[$index]['product_id'];
 			$sizeId = $cart[$index]['size_id'];
-
+	
 			$product = Product::with('quantities')->find($productId);
 			$availableQuantity = $product->quantities->where('size_id', $sizeId)->first()->quantity ?? 0;
-
+	
 			$newQuantity = $cart[$index]['quantity'] + $request->amount;
-
+	
 			if ($newQuantity < 1) {
 				$newQuantity = 1;
 			} elseif ($newQuantity > $availableQuantity) {
 				return response()->json(['message' => 'Requested quantity exceeds available quantity.'], 400);
 			}
-
+	
 			if ($newQuantity < $cart[$index]['quantity']) {
 				Session::forget(['voucher_success', 'applied_voucher', 'voucher']);
 			}
-
+	
 			$cart[$index]['quantity'] = $newQuantity;
 			Session::put('cart', $cart);
-
+	
+			// Re-fetch prices from the database to ensure accurate calculations
+			$subtotal = 0;
+			$totalDiscount = 0;
+	
+			foreach ($cart as $item) {
+				$product = Product::find($item['product_id']);
+				$regularPrice = $product->price; // Get regular price from the database
+				$salePrice = $product->offer_price ?? $regularPrice; // Get sale price if applicable, otherwise use regular price
+	
+				$regularPriceTotal = $regularPrice * $item['quantity'];
+				$discountedPriceTotal = $salePrice * $item['quantity'];
+	
+				$subtotal += $regularPriceTotal;
+				$totalDiscount += ($regularPriceTotal - $discountedPriceTotal);
+			}
+	
+			$total = $subtotal - $totalDiscount;
+	
 			return response()->json([
 				'success' => true,
 				'newQuantity' => $newQuantity,
-				'availableQuantity' => $availableQuantity // Include available quantity
+				'availableQuantity' => $availableQuantity,
+				'subtotal' => number_format($subtotal, 2),
+				'totalDiscount' => number_format($totalDiscount, 2),
+				'total' => number_format($total, 2)
 			]);
 		}
-
+	
 		return response()->json(['message' => 'Item not found in cart.'], 400);
 	}
+	
+
+
+	private function calculateCartSummary($cart)
+	{
+		$subtotal = 0;
+		$totalDiscount = 0;
+		$itemCount = 0;
+
+		foreach ($cart as $item) {
+			$regularPrice = $item['price'] ?? 0;
+			$salePrice = $item['salePrice'] ?? $regularPrice;
+			$quantity = $item['quantity'];
+
+			$regularPriceTotal = $regularPrice * $quantity;
+			$discountedPriceTotal = $salePrice * $quantity;
+
+			$subtotal += $regularPriceTotal;
+			$totalDiscount += ($regularPriceTotal - $discountedPriceTotal);
+			$itemCount += $quantity;
+		}
+
+		return [
+			'subtotal' => $subtotal,
+			'totalDiscount' => $totalDiscount,
+			'totalAmount' => $subtotal - $totalDiscount,
+			'itemCount' => $itemCount
+		];
+	}
+
 
 	
 

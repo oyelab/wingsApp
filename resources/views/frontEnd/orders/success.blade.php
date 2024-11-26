@@ -169,7 +169,7 @@
                     <div class="login-wrap">
                         <h3 class="mt-5">You're Creating New Account for: {{ $order_details->email }}</h3>
 						@if ($errors->any())
-							<div class="alert" style="color: var(--wings-secondary); margin-bottom: 15px; padding: 0; border: none;">
+							<div class="alert" style="color: var(--wings-alternative); margin-bottom: 10px; padding: 0; border: none;">
 								<ul style="list-style-type: none; margin: 0; padding: 0;">
 									@foreach ($errors->all() as $error)
 										<li style="background-color: transparent;">

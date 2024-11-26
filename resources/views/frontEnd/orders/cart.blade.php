@@ -98,7 +98,7 @@
     animation: fadeOut 3s ease-in forwards;
 }
 
-@keyframes fadeOut {
+/* @keyframes fadeOut {
     0% {
         opacity: 1;
     }
@@ -106,7 +106,13 @@
         opacity: 0;
         display: none;
     }
+} */
+
+#error-message-container {
+    opacity: 1;
+    transition: opacity 0.5s ease;
 }
+
 
 </style>
 @endsection
@@ -119,38 +125,32 @@
 				<div class="bag-products">
 					<h2>BAG</h2>
 					<div class="bag-product-wrap d-flex flex-column">
+					@php
+						$subtotal = 0; // Sum of regular prices (without sale)
+						$totalDiscount = 0; // Total discount amount
+					@endphp
+					
+					@foreach($cartItems as $index => $item)
 						@php
-							$subtotal = 0; // Sum of regular prices (without sale)
-							$totalDiscount = 0; // Total discount amount
+							// Initialize default values for price and salePrice if not set
+							$regularPrice = $item['price'] ?? 0;
+							$salePrice = $item['salePrice'] ?? $regularPrice;
+							$regularPriceTotal = $regularPrice * $item['quantity']; // Regular price without discount
+							$discountedPriceTotal = $salePrice * $item['quantity']; // Discounted price, if any
+							
+							// Update subtotal and total discount
+							$subtotal += $regularPriceTotal;
+							$totalDiscount += ($regularPriceTotal - $discountedPriceTotal);
 						@endphp
-						@foreach($cartItems as $index => $item)
-							@php
-								// Calculate line totals
-								$regularPriceTotal = $item['price'] * $item['quantity'];
-								$discountedPriceTotal = $item['salePrice'] * $item['quantity'];
-
-								// Update subtotal and total discount
-								$subtotal += $regularPriceTotal;
-								$totalDiscount += $regularPriceTotal - $discountedPriceTotal;
-							@endphp
 						<div class="bag-product-item d-flex">
 							<div class="image-part">
-								<img
-									src="{{ $item['imagePath'] }}"
-									draggable="false"
-									class="img-fluid"
-									alt=""
-								/>
+								<img src="{{ $item['imagePath'] }}" draggable="false" class="img-fluid" alt="" />
 							</div>
 							<div class="bag-product-right d-flex">
 								<div class="product-info">
-									<h2>
-										{{ $item['title'] }}
-									</h2>
-									<!-- <h5>Category: {{ $item['categories'] }}</h5> -->
+									<h2>{{ $item['title'] }}</h2>
 									<h4>Size: {{ $item['size_name'] }}</h4>
 									<div class="qty-container d-flex align-items-center">
-										<!-- Decrease Quantity Button -->
 										<button
 											id="decrease-{{ $index }}"
 											onclick="updateQuantity({{ $index }}, -1)"
@@ -160,7 +160,6 @@
 											<i class="bi bi-dash size-6"></i>
 										</button>
 
-										<!-- Quantity Input Field -->
 										<input
 											type="text"
 											name="qty"
@@ -170,7 +169,6 @@
 											id="quantity-{{ $index }}"
 										/>
 
-										<!-- Increase Quantity Button -->
 										<button
 											id="increase-{{ $index }}"
 											onclick="updateQuantity({{ $index }}, 1)"
@@ -180,50 +178,46 @@
 											<i class="bi bi-plus size-6"></i>
 										</button>
 									</div>
-
 								</div>
 								<div class="pricing-wrap position-relative">
-									@if(isset($item['sale']))
-										<p class="text-decoration-line-through text-muted">৳ {{ $item['price'] }}</p>
-										<h2>৳ {{ $item['salePrice'] }}</h2>
+									@if($salePrice < $regularPrice)
+										<p class="text-decoration-line-through text-muted">৳ {{ number_format($regularPrice, 2) }}</p>
+										<h2>৳ {{ number_format($salePrice, 2) }}</h2>
 									@else
-										<h2>৳ {{ $item['price'] }}</h2>
+										<h2>৳ {{ number_format($regularPrice, 2) }}</h2>
 									@endif
 
 									<div class="product-action d-flex position-absolute bottom-0 end-0">
 										<div class="delete-wrap">
-											
 											<button onclick="removeFromCart({{ $index }})" class="border-0"><i class="bi bi-trash fs-4"></i></button>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-						@endforeach
+					@endforeach
 					</div>
 				</div>
 			</div>
 			<div class="col-md-4">
 				<div class="bag-summary-wrap">
 					<h2>Summary</h2>
-					<div class="total-product-pricing">
+					<div class="row mb-3">
 						<div class="item total-pricing">
 							<h3>Subtotal <span>(2 items)</span></h3>
-							<p>৳ {{ number_format($subtotal, 2) }}</p>
-						</div>
-						<div class="item total-pricing">
-							<h3>Estimate Shipping</h3>
-							<p>৳ 60.00 - 120.00</p>
+							<p id="subtotal">৳ {{ number_format($subtotal, 2) }}</p>
 						</div>
 						<div class="item total-pricing">
 							<h3>Discount</h3>
-							<p>{{ $totalDiscount ? '৳ ' . number_format($totalDiscount, 2) : 'N/A' }}</p>
+							<p id="totalDiscount">{{ $totalDiscount ? '৳ ' . number_format($totalDiscount, 2) : 'N/A' }}</p>
 						</div>
 						<div class="item total-pricing">
 							<h3>Total (without shipping)</h3>
-							<p>৳ {{ number_format($subtotal - $totalDiscount, 2) }}</p>
+							<p id="total">৳ {{ number_format($subtotal - $totalDiscount, 2) }}</p>
 						</div>
 					</div>
+
+
 					@if (session('voucher_success'))
 						<!-- Display the applied voucher with the updated style -->
 						<div class="voucher-applied-container d-flex align-items-center justify-content-between w-100">
@@ -257,7 +251,7 @@
 					@endif
 
 					@if (session('voucher_success') && !session()->has('voucher_message_displayed'))
-						<div class="alert alert-success mt-2" id="voucher-success-message">
+						<div class="d-flex align-items-center text-success mt-2 ms-2">
 							Voucher applied successfully! Voucher Discount: {{ session('voucher') }}%
 						</div>
 						@php
@@ -265,11 +259,19 @@
 						@endphp
 					@endif
 
-					@if (session('error'))
-						<div class="alert alert-danger mt-2">
-							{{ session('error') }}
+					@if ($errors->any())
+						<div id="error-message-container" class="d-flex align-items-center text-danger mt-2 ms-2" role="alert">
+							<i class="bi bi-exclamation-triangle-fill me-2"></i>
+							<ul class="mb-0">
+								@foreach ($errors->all() as $error)
+									<li>{{ $error }}</li>
+								@endforeach
+							</ul>
 						</div>
 					@endif
+
+
+
 					<!-- button -->
 					<div class="button-wrap mt-3">
 						<a href="{{ route('checkout.show') }}" class="guest-checkout"
@@ -277,35 +279,7 @@
 						>
 						<a href="{{ route('collections') }}" class="continue-shopping"
 							>MORE SHOPPING
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="24"
-								height="24"
-								viewBox="0 0 24 24"
-								fill="none"
-							>
-								<mask
-									id="mask0_721_341"
-									style="mask-type: alpha"
-									maskUnits="userSpaceOnUse"
-									x="0"
-									y="0"
-									width="24"
-									height="24"
-								>
-									<rect
-										width="24"
-										height="24"
-										fill="#D9D9D9"
-									/>
-								</mask>
-								<g mask="url(#mask0_721_341)">
-									<path
-										d="M15.3256 13H4V11H15.3256L10.1163 5.4L11.4419 4L18.8837 12L11.4419 20L10.1163 18.6L15.3256 13Z"
-										fill="#1E1E1E"
-									/>
-								</g>
-							</svg>
+							<i class="bi bi-arrow-right"></i>
 						</a>
 					</div>
 				</div>
@@ -325,8 +299,8 @@
             }, 3000);
         }
     });
-    // Update Quantity AJAX
-    function updateQuantity(index, amount) {
+    
+	function updateQuantity(index, amount) {
 		$.ajax({
 			url: `/cart/update/${index}`,
 			method: 'POST',
@@ -354,12 +328,30 @@
 				} else {
 					decreaseButton.prop('disabled', false); // Enable otherwise
 				}
+
+				// Update the summary section (Subtotal, Discount, Total)
+				$('#subtotal').text('৳ ' + response.subtotal); // Assuming you're returning the updated subtotal
+				$('#totalDiscount').text('৳ ' + response.totalDiscount); // Assuming you're returning the updated discount
+				$('#total').text('৳ ' + response.total); // Assuming you're returning the updated total after discount
+
 			},
 			error: function(xhr) {
 				alert(xhr.responseJSON.message); // Show an error message
 			}
 		});
 	}
+
+
+// Function to update the cart summary in the DOM
+function updateCartSummary(cartSummary) {
+    // Update subtotal, total discount, and total amount
+    $('#subtotal').text('৳ ' + cartSummary.subtotal.toFixed(2));
+    $('#totalDiscount').text(cartSummary.totalDiscount ? '৳ ' + cartSummary.totalDiscount.toFixed(2) : 'N/A');
+    $('#totalAmount').text('৳ ' + (cartSummary.subtotal - cartSummary.totalDiscount).toFixed(2));
+
+    // Optionally, update item count in the summary (if needed)
+    $('#itemCount').text(cartSummary.itemCount);
+}
 
 
     // Remove Item AJAX
@@ -376,5 +368,23 @@
             }
         });
     }
+</script>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+    const errorMessage = document.getElementById('error-message-container');
+
+    if (errorMessage) {
+        setTimeout(function() {
+            errorMessage.style.opacity = '0'; // Fade out the error message
+        }, 2500); // After 2.5 seconds, start fading the message
+
+        // After the fade out is complete, hide the element from the DOM
+        setTimeout(function() {
+            errorMessage.style.display = 'none'; // Remove from DOM after fade-out
+        }, 2500); // Wait a little longer (500ms after fade)
+    }
+});
+
 </script>
 @endsection

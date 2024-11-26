@@ -36,12 +36,13 @@ class AppServiceProvider extends ServiceProvider
 
 	public function boot()
 	{
+		
 		// Share site settings, social links, and cart count with all views
 		View::composer('frontEnd.layouts.app', function ($view) {
 			$settings = SiteSetting::first(); // Fetch the first site setting
 			// return $siteSettings;
-			$footerLinks = Page::where('type', 1)->get();
-			$quickLinks = Page::where('type', 2)->orderBy('created_at', 'asc')->get();
+			$footerLinks = Page::where('type', 1)->orderBy('order', 'asc')->get();
+			$quickLinks = Page::where('type', 2)->orderBy('order', 'asc')->get();
 
 			// Initialize socialLinks array
 			$socialLinks = [];

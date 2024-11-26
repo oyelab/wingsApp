@@ -28,6 +28,8 @@ class HomeController extends Controller
 
 	public function index()
     {
+
+
 		$wingsEdited = Category::with(['products' => function ($query) {
 			$query->where('status', 1) // Only include active products
 				  ->take(4); // Limit to 4 products
@@ -47,6 +49,7 @@ class HomeController extends Controller
 		$sliders = Slider::where('status', 1)->orderBy('order', 'asc')->get();
        
 		$data = $this->homePageService->getHomePageData();
+		// return $data;
 
 		// Fetch titles dynamically from the database
 		$titlesData = Section::all(); // Assuming you have a `Title` model

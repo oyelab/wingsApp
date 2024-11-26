@@ -9,7 +9,7 @@ class Voucher extends Model
 {
     use HasFactory;
 
-	protected $fillable = ['code', 'discount', 'status', 'criteria']; // Include criteria
+	protected $fillable = ['code', 'discount', 'max_product', 'min_quantity', 'status']; // Include criteria
 
     protected $casts = [
         'criteria' => 'array', // Cast criteria to an array

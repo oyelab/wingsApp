@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
+
 
 class RegisterController extends Controller
 {
@@ -29,7 +31,13 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::DASHBOARD;
+    // protected $redirectTo = RouteServiceProvider::DASHBOARD;
+
+	protected function authenticated(Request $request, $user)
+	{
+		// Redirect to the previous URL (the one stored in the session)
+		return redirect()->intended(); // This will use the URL stored in the session by default
+	}
 
     /**
      * Create a new controller instance.

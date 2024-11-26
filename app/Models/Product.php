@@ -257,6 +257,9 @@ class Product extends Model
 					->orderByRaw('(views * 0.6) + (orders_count * 1.5) DESC');
 	}
 
+
+
+
 	public function scopeBulks($query)
 	{
 		return $query->where('status', 1) // Ensure status is true (active)

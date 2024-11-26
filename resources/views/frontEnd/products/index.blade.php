@@ -12,7 +12,11 @@
 		<div class="row">
 			<div class="col-12">
 				<div class="breadcrumb-content">
-					<x-breadcrub :title="$product->categories->first()->title" :pagetitle="$product->title" />
+					<x-breadcrub
+						:section="$section"
+						:collection="$collection"
+						:pagetitle="$product->slug"
+					/>
 				</div>
 			</div>
 		</div>

@@ -43,27 +43,20 @@ use App\Http\Controllers\AssetController;
 
 
 
-Route::get('login', function () {
-    session(['url.intended' => url()->previous()]); // Save the previous URL
-    return view('auth.login');
-})->name('login');
 
-Route::get('register', function () {
-    session(['url.intended' => url()->previous()]); // Save the previous URL
-    return view('auth.register');
-})->name('register');
 
 Auth::routes();
 
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
 
+
 Route::get('/search', [CategoryController::class, 'search'])->name('search');
 Route::get('/collections', [CategoryController::class, 'frontShow'])->name('collections');
 Route::get('/wings-edited', [CategoryController::class, 'wingsEdited'])->name('wings.edited');
 
 Route::get('/collections/{category:slug}/{subcategory:slug}/{product:slug}', [ProductController::class, 'show'])->name('products.details');
-Route::get('/sections/{section}/{product:slug}', [ProductController::class, 'show'])->name('sections.products.details');
+Route::get('/sections/{section:slug}/{slug}', [SectionController::class, 'show'])->name('sections.products.details');
 
 Route::get('/collections/{category:slug}', [CategoryController::class, 'mainCategory'])->name('category');
 Route::get('/collections/{category:slug}/{subcategory:slug}', [CategoryController::class, 'subCategory'])->name('category');
@@ -106,8 +99,8 @@ Route::post('/payment/ipn', [PaymentController::class, 'paymentIpn'])->name('pay
 Route::get('/order/{order:ref}/success', [OrderController::class, 'orderPlaced'])->name('order.placed');
 Route::get('/order/{order:ref}/failed', [OrderController::class, 'orderFailed'])->name('order.failed');
 
-
-Route::resource('help', PageController::class);
+Route::get('help', [PageController::class, 'help'])->name('help.index');
+// Route::get('help', [PageController::class, 'index'])->name('help.index');
 Route::get('/getInTouch', [PageController::class, 'getInTouch'])->name('getInTouch');
 
 Route::get('/sections', [SectionController::class, 'sections'])->name('sections');
@@ -128,23 +121,25 @@ Route::resource('backEnd/orders', AdminOrderController::class);
 
 Route::resource('backEnd/vouchers', VoucherController::class);
 
+Route::resource('backEnd/pages', PageController::class)->except(['help']);
+Route::put('pages/{page}/update-type', [PageController::class, 'updateType'])->name('pages.update-type');
+Route::put('pages/update-order', [PageController::class, 'updateOrder'])->name('pages.update-order');
+
+
+
 Route::prefix('backEnd')->middleware(['auth'])->group(function() {
     Route::resource('assets', AssetController::class);
 });
 
-Route::get('/specifications', [SpecificationController::class, 'index'])->name('specifications.index');
-Route::post('/specifications', [SpecificationController::class, 'store'])->name('specifications.store');
-Route::post('/specifications/update', [SpecificationController::class, 'update'])->name('specifications.update');
-Route::delete('/specifications/destroy', [SpecificationController::class, 'destroy'])->name('specifications.destroy');
-Route::post('/specifications/updateOrder', [SpecificationController::class, 'updateOrder'])->name('specifications.updateOrder');
+Route::get('/backEnd/specifications', [SpecificationController::class, 'index'])->name('specifications.index');
+Route::post('/backEnd/specifications', [SpecificationController::class, 'store'])->name('specifications.store');
+Route::post('/backEnd/specifications/update', [SpecificationController::class, 'update'])->name('specifications.update');
+Route::delete('/backEnd/specifications/destroy', [SpecificationController::class, 'destroy'])->name('specifications.destroy');
 
 Route::resource('backEnd/showcases', ShowcaseController::class)->except(['show']);
 
 Route::get('/showcases', [ShowcaseController::class, 'showcases'])->name('showcases');
 Route::get('/showcases/{showcase}', [ShowcaseController::class, 'show'])->name('showcase.show');
-
-
-
 
 
 

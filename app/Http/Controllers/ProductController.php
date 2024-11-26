@@ -21,6 +21,7 @@ class ProductController extends Controller
 {
 	public function show(Category $category, $subcategorySlug, Product $product)
 	{
+		
 		// Ensure the product belongs to the specified category
 		if (!$product->categories->contains($category)) {
 			abort(404); // If the product is not associated with this category, return 404
@@ -51,7 +52,15 @@ class ProductController extends Controller
 			: 'frontEnd.products.index';
 	
 		// Return the view with the necessary data
-		return view($view, compact('category', 'product', 'relatedProducts', 'breadcrumbSection', 'mainCategory'));
+		return view($view, [
+			'category' => $category, 
+			'product' => $product, 
+			'relatedProducts' => $relatedProducts, 
+			'breadcrumbSection' => $breadcrumbSection, 
+			'mainCategory' => $mainCategory,
+			'section' => null,
+			'collection' => $category,
+		]);
 	}
 	
 
@@ -174,11 +183,11 @@ class ProductController extends Controller
 	{
 		// Generate a slug from the title
 		$slug = Str::slug($request->title);
-	
+
 		// Attach the category and subcategory to the product via the pivot table
 		$categoryId = $request->category; // Main category ID
 		$subcategoryId = $request->subcategory; // Subcategory ID
-	
+
 		// Validate the input
 		$request->validate([
 			'title' => [
@@ -208,29 +217,29 @@ class ProductController extends Controller
 			'meta_desc' => 'nullable|string',
 			'og_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
 		]);
-	
+
 		// Handle uploaded images with Intervention Image
 		$images = [];
 		if ($request->hasFile('images')) {
 			foreach ($request->file('images') as $index => $image) {
 				$imageName = $slug . '-' . ($index + 1) . '.webp'; // Save as WebP format
 				$path = public_path('images/products/' . $imageName);
-	
+
 				// Compress and convert to WebP
 				$processedImage = Image::make($image)
 					->encode('webp', 85); // Reduce quality to 85%
 				$processedImage->save($path);
-	
+
 				$images[] = $imageName;
 			}
 		}
-	
+
 		// Handle OG image
 		$ogImageName = null;
 		if ($request->hasFile('og_image')) {
 			$ogImageName = $slug . '-og.webp'; // Save OG image as WebP
 			$ogPath = public_path('images/products/' . $ogImageName);
-	
+
 			// Compress and convert to WebP
 			$ogImage = Image::make($request->file('og_image'))
 				->fit(1200, 630, function ($constraint) {
@@ -239,11 +248,11 @@ class ProductController extends Controller
 				->encode('webp', 85); // Reduce quality to 85%
 			$ogImage->save($ogPath);
 		}
-	
+
 		// Process keywords and specifications
 		$keywords = !empty($request->keywords) ? json_encode(array_filter($request->keywords)) : null;
 		$specifications = !empty($request->specifications) ? json_encode(array_filter($request->specifications)) : null;
-	
+
 		// Store the product in the database
 		$product = Product::create([
 			'title' => $request->title,
@@ -258,21 +267,29 @@ class ProductController extends Controller
 			'meta_desc' => $request->meta_desc,
 			'og_image' => $ogImageName,
 		]);
-	
+
 		// Attach both category and subcategory to the product
 		$product->categories()->attach($categoryId, ['subcategory_id' => $subcategoryId]);
-	
+
 		// Store quantities in the quantities table
 		foreach ($request->quantities as $sizeId => $quantity) {
-			Quantity::create([
-				'product_id' => $product->id,
-				'size_id' => $sizeId,
-				'quantity' => $quantity,
-			]);
+			if ($quantity > 0) {
+				Quantity::create([
+					'product_id' => $product->id,
+					'size_id' => $sizeId,
+					'quantity' => $quantity,
+				]);
+			}
 		}
-	
-		return redirect()->route('products.index')->with('success', 'Product created successfully.');
+
+		return response()->json([
+			'status' => 'success',
+			'message' => 'Product created successfully.',
+			'redirect_url' => route('products.index') // If you want to redirect
+		]);
+		
 	}
+
 	
 	
 

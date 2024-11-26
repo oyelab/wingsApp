@@ -6,6 +6,7 @@ use App\Models\Product;
 
 class ProductRepository
 {
+
     public function calculateBaseFair($products)
     {
         return collect($products)->sum(fn($product) => 
@@ -22,52 +23,53 @@ class ProductRepository
 
 	public function getLatestProducts($limit = 8)
 	{
-		return Product::whereHas('categories', function ($query) {
-			$query->where('slug', '!=', 'wings-edited');
-		})
-		->latest()
-		->paginate($limit); // Use only paginate, it will automatically limit and handle pagination
+		return Product::with('categories') // Eager load categories
+			->whereHas('categories', function ($query) {
+				$query->where('slug', '!=', 'wings-edited');
+			})
+			->latest()
+			->paginate($limit);
 	}
-	
-	
 
+	
 	public function getTopOrders($limit = 8)
 	{
-		return Product::whereHas('categories', function ($query) {
-			$query->where('slug', '!=', 'wings-edited'); // Exclude products from the 'wings-edited' category
-		})
-		->topOrders()
-		->paginate($limit);
+		return Product::with('categories') // Eager load categories
+			->whereHas('categories', function ($query) {
+				$query->where('slug', '!=', 'wings-edited'); // Exclude products from the 'wings-edited' category
+			})
+			->topOrders()
+			->paginate($limit);
 	}
-	
 
 	public function getMostViewed($limit = 8)
 	{
-		return Product::whereHas('categories', function ($query) {
-			$query->where('slug', '!=', 'wings-edited'); // Exclude products from the 'wings-edited' category
-		})
-		->mostViewed()
-		->paginate($limit);
+		return Product::with('categories') // Eager load categories
+			->whereHas('categories', function ($query) {
+				$query->where('slug', '!=', 'wings-edited');
+			})
+			->mostViewed()
+			->paginate($limit);
 	}
-	
-   
+
 	public function getOfferProducts($limit = 8)
 	{
-		return Product::whereHas('categories', function ($query) {
-			$query->where('slug', '!=', 'wings-edited'); // Exclude products from the 'wings-edited' category
-		})
-		->offerProducts()
-		->paginate($limit);
+		return Product::with('categories') // Eager load categories
+			->whereHas('categories', function ($query) {
+				$query->where('slug', '!=', 'wings-edited');
+			})
+			->offerProducts()
+			->paginate($limit);
 	}
-	
 
 	public function getTrending($limit = 8)
 	{
-		return Product::whereHas('categories', function ($query) {
-			$query->where('slug', '!=', 'wings-edited'); // Exclude products from the 'wings-edited' category
-		})
-		->trending()
-		->paginate($limit);
+		return Product::with('categories') // Eager load categories
+			->whereHas('categories', function ($query) {
+				$query->where('slug', '!=', 'wings-edited');
+			})
+			->trending()
+			->paginate($limit);
 	}
 	
 

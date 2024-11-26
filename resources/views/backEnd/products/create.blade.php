@@ -27,11 +27,12 @@
 				</ul>
 			</div>
 		@endif
+		
 
 		<div class="row">
 			<div class="col-lg-12">
 				<div id="addproduct-accordion" class="custom-accordion">
-					<form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" id="product-form">
+					<form id="productUploadForm" action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" id="product-form">
 						@csrf
 						<div class="card">
 							<a href="#addproduct-productinfo-collapse" class="text-body" data-bs-toggle="collapse" aria-expanded="true" aria-controls="addproduct-productinfo-collapse">
@@ -56,25 +57,7 @@
 							</a>
 							<div id="addproduct-productinfo-collapse" class="collapse show" data-bs-parent="#addproduct-accordion">
 								<div class="p-4 border-top">
-									<div class="mb-3">
-										<label class="form-label" for="productname">Product Title <span class="text-danger">*</span></label>
-										<input id="productname" name="title" placeholder="Enter Product Name" type="text" class="form-control" value="{{ old('title') }}">
-									</div>
 									<div class="row">
-										<div class="col-lg-4">
-											<div class="mb-3">
-												<label class="form-label" for="price">Price</label>
-												<input 
-													id="price" 
-													name="price" 
-													placeholder="Enter Price" 
-													type="text" 
-													class="form-control" 
-													value="{{ old('price') }}" 			
-												>
-												<span class="text-danger error-message" style="display: none;" data-for="price">Please enter a valid price.</span>
-											</div>
-										</div>
 
 										<div class="col-lg-8 d-flex gap-3">
 											<!-- Main Category -->
@@ -101,17 +84,27 @@
 												@error('subcategory') <div class="text-danger">{{ $message }}</div> @enderror
 											</div>
 										</div>
+										<div class="col-lg-4">
+											<div class="mb-3">
+												<label class="form-label" for="price">Price</label>
+												<input 
+													id="price" 
+													name="price" 
+													placeholder="Enter Price" 
+													type="text" 
+													class="form-control" 
+													value="{{ old('price') }}" 			
+												>
+												<span class="text-danger error-message" style="display: none;" data-for="price">Please enter a valid price.</span>
+											</div>
+										</div>
+									</div>
 
-
-
-
-
-
+									<div class="mb-3">
+										<label class="form-label" for="productname">Product Title <span class="text-danger">*</span></label>
+										<input id="productname" name="title" placeholder="Enter Product Name" type="text" class="form-control" value="{{ old('title') }}">
 									</div>
 										
-									<div class="col-lg-4 col-md-6">
-										
-									</div>
 
 									<div class="mb-0">
 										<div class="card">
@@ -148,21 +141,21 @@
 										</div>
 										<!-- Specifications Section -->
 										<div class="mt-3">
-								<label class="form-label">Specifications</label>
-								<div class="row">
-									@foreach($specifications as $specification)
-										<div class="col-12 col-md-6 col-lg-4 mb-2"> <!-- Responsive columns -->
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" name="specifications[]" id="spec-{{ $specification->id }}" value="{{ $specification->id }}" 
-													{{ (is_array(old('specifications')) && in_array($specification->id, old('specifications'))) ? 'checked' : '' }}>
-												<label class="form-check-label text-truncate d-block" for="spec-{{ $specification->id }}" style="max-width: 300px;">
-													{{ $specification->item }}
-												</label>
+											<label class="form-label">Specifications</label>
+											<div class="row">
+												@foreach($specifications as $specification)
+													<div class="col-12 col-md-6 col-lg-4 mb-2"> <!-- Responsive columns -->
+														<div class="form-check">
+															<input class="form-check-input" type="checkbox" name="specifications[]" id="spec-{{ $specification->id }}" value="{{ $specification->id }}" 
+																{{ (is_array(old('specifications')) && in_array($specification->id, old('specifications'))) ? 'checked' : '' }}>
+															<label class="form-check-label text-truncate d-block" for="spec-{{ $specification->id }}" style="max-width: 300px;">
+																{{ $specification->item }}
+															</label>
+														</div>
+													</div>
+												@endforeach
 											</div>
 										</div>
-									@endforeach
-								</div>
-							</div>
 
 									</div>
 
@@ -246,9 +239,16 @@
 								</div>
 							</div>
 						</div>
+						<!-- Progress Bar Container -->
+						<!-- <div id="progressBarContainer" style="display:none;">
+							<div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+								0%
+							</div>
+						</div> -->
+
 						<div class="text-center mx-auto col-lg-12 sticky-container mb-4">
 							<div class="d-grid gap-2">
-								<button type="submit" class="btn btn-primary btn-lg">
+								<button id="uploadButton" type="submit" class="btn btn-primary btn-lg">
 									<i class="bx bx-file me-1"></i> Save Product
 								</button>
 
@@ -256,6 +256,7 @@
 									<i class="bx bx-x me-1"></i> Cancel
 								</a>
 							</div>
+							
 						</div>
 					</form>
 				</div>
@@ -265,6 +266,7 @@
 	
 
     @section('scripts')
+
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
 			const mainCategorySelect = document.getElementById('mainCategory');

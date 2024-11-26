@@ -52,10 +52,9 @@
                 <div class="swiper-slide">
                     <div class="product-item">
                         <div class="product-img">
-							<a href="{{ route('products.details', [
-									'category' => $product->categories->first()->slug,
-									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-									'product' => $product->slug
+							<a href="{{ route('sections.products.details', [
+									'section' => 'latest',
+									'slug' => $product->slug, // Using the model method to get subcategory slug
 								]) }}">
                                 <img src="{{ $product->imagePaths[0] }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
                             </a>
@@ -64,10 +63,9 @@
                             </a>
                         </div>
                         <div class="product-content d-flex justify-content-between">
-							<a href="{{ route('products.details', [
-									'category' => $product->categories->first()->slug,
-									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-									'product' => $product->slug
+							<a href="{{ route('sections.products.details', [
+									'section' => 'latest',
+									'slug' => $product->slug, // Using the model method to get subcategory slug
 								]) }}">
                                 <h3>{{ $product->title }}</h3>
                             </a>
@@ -680,9 +678,7 @@
 					</a>
 					<div
 						class="custom-order-wrap"
-						style="
-							background-image: url('{{ asset('frontEnd/images/custom-order.png') }}');
-						"
+						style="background-image: url('{{ asset('frontEnd/images/custom-order.png') }}');"
 					>
 						<div class="custom-order-content">
 							<h3>Make it truly yours</h3>
@@ -705,7 +701,7 @@
 									</a>
 								</div>
 								<div class="get-idea">
-									<a href="{{ route('help.index') }}#getIdea"
+									<a href="{{ route('help.index') }}#get-idea"
 										>Get Idea
 										<svg
 											xmlns="http://www.w3.org/2000/svg"

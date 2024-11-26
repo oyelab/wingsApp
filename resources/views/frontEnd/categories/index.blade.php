@@ -37,47 +37,9 @@
         <div class="row">
             <div class="col-12">
                 <div class="breadcrumb-content">
-					<ul class="d-flex align-items-center">
-						<!-- Home -->
-						<li class="home-menu">
-							<a href="{{ route('index') }}">Home</a>
-						</li>
-
-						<!-- Categories Link -->
-						<li>
-							@if (request()->has('query'))
-								<!-- Display the search query -->
-								<a href=""
-								class="disabled">
-									{{ request()->query('query') }}
-								</a>
-							@else
-								<!-- Default Collections link -->
-								<a href="{{ route('collections') }}"
-								class="{{ !request()->has('category') && !request()->has('subCategory') ? 'disabled' : '' }}">
-									{{ $pageTitle ?? 'Collections' }}
-								</a>
-							@endif
-						</li>
-
-						<!-- Main Category Link -->
-						@if ($categoryTitle)
-							<li>
-								<a href="{{ route('collections', ['category' => $mainCategoryId]) }}"
-								class="{{ request()->query('category') == $mainCategoryId && !request()->has('subCategory') ? 'disabled' : '' }}">
-									{{ $categoryTitle }}
-								</a>
-							</li>
-						@endif
-
-						<!-- Subcategory Link -->
-						@if ($subCategoryTitle)
-							<li class="disabled">
-								{{ $subCategoryTitle }}
-							</li>
-						@endif
-					</ul>
-
+					<x-breadcrub
+						:pagetitle="$pageTitle"
+					/>
                 </div>
             </div>
         </div>
@@ -151,7 +113,9 @@
 			<div class="col-lg-9 col-md-8">
 				<div class="top-bar d-flex align-items-center justify-content-between">
 					<h3>
-						@if($subCategoryTitle)
+						@if(request('query'))
+							Searching for "{{ request('query') }}" ({{ $productCount }} Results)
+						@elseif($subCategoryTitle)
 							{{ $subCategoryTitle }} ({{ $productCount }})
 						@elseif($categoryTitle)
 							{{ $categoryTitle }} ({{ $productCount }})
@@ -188,57 +152,41 @@
 				
 				<div class="row">
 				@foreach ($products as $product)
-					<div class="col-md-4">
-						<div class="cat-product-img mb-3">
-						<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, 'subcategory' => $product->subcategory->slug, 'product' => $product->slug]) }}">
-								<img src="{{ $product->imagePaths[0] }}" class="img-fluid" alt="product" />
+				<div class="col-md-4">
+					<div class="product-item">
+						<div class="product-img">
+							<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, 'subcategory' => $product->subcategory->slug, 'product' => $product->slug]) }}">
+								<img
+									src="{{ $product->imagePaths[0] }}"
+									class="img-fluid"
+									alt="{{ $product->title }}"
+									draggable="false"
+								/>
+							</a>
+							<a href="#" class="wishlist-icon">
+								<i class="bi bi-heart-fill"></i>
 							</a>
 						</div>
-						<div class="cat-p-content flex-grow-1 d-flex flex-column">
-							<!-- Title with truncation for 2 lines max -->
+						<div
+							class="product-content d-flex justify-content-between"
+						>
 							<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, 'subcategory' => $product->subcategory->slug, 'product' => $product->slug]) }}">
-								<h4 class="product-title">
+								<h3>
 									{{ $product->title }}
-								</h4>
+								</h3>
 							</a>
-							<div class="rating-area d-flex align-items-center mb-2">
-								<ul class="d-flex align-items-center">
-									<li><i class="bi bi-star-fill" style="color: #ffc107;"></i></li>
-									<li><i class="bi bi-star-fill" style="color: #ffc107;"></i></li>
-									<li><i class="bi bi-star-fill" style="color: #ffc107;"></i></li>
-									<li><i class="bi bi-star-fill" style="color: #ffc107;"></i></li>
-									<li><i class="bi bi-star-fill" style="color: #ffc107;"></i></li>
-								</ul>
-								<h5>5/5</h5>
+							<div class="product-price">
+								@if($product->sale)
+                                    <h4 >{{ $product->offerPrice }}</h4>
+                                    <h5>{{ $product->price }}</h5>
+                                @else
+                                    <h4>{{ $product->price }}</h4>
+                                @endif
 							</div>
-							@if ($product->price)
-							<div class="pricing-area d-flex align-items-center">
-								@if ($product->sale)
-									<!-- Offer Price First -->
-									<div class="discount-price text-success me-2 align-self-center">
-										৳{{ $product->offerPrice }}
-									</div>
-									
-									<!-- Regular Price with Strikethrough -->
-									<div class="current-price text-muted text-decoration-line-through me-2 align-self-center">
-										৳{{ $product->price }}
-									</div>
-									
-									<!-- Offer Percentage -->
-									<div class="discount-percent text-success align-self-center">
-										-{{ $product->sale }}%
-									</div>
-								@else
-									<!-- Regular Price Only -->
-									<div class="current-price align-self-center">
-										৳{{ $product->price }}
-									</div>
-								@endif
-							</div>
-						@endif
-
 						</div>
 					</div>
+				</div>
+					
 				@endforeach
 
 				</div>

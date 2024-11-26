@@ -196,8 +196,6 @@ class CategoryController extends Controller
 
 		// return $products;
 
-
-
 		// Fetch all categories excluding a specific category ID if needed (e.g., 1)
 		$categories = Category::with(['parents', 'children'])->get();
 
