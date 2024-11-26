@@ -453,6 +453,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
 	{
+		return $category;
 		// Fetch all categories to display as parent options
 		$categories = Category::whereDoesntHave('parents')->get(); // Only fetch categories without parents (main categories)
 

@@ -4,7 +4,7 @@
 @endsection
 @section('css')
     <!-- datepicker css -->
-    <link rel="stylesheet" href="{{ URL::asset('build/libs/flatpickr/flatpickr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/libs/flatpickr/flatpickr.min.css') }}">
 @endsection
 @section('page-title')
     Categories
@@ -90,8 +90,8 @@
 												alt="{{ $parent->title }}" style="max-width: 100px; max-height: 100px;">
 										</td>
 										<td>
-											<a href="{{ route('categories.edit', $parent->id) }}" class="mr-3"><i class="las la-pen text-secondary font-30"></i></a>
-											<form action="{{ route('categories.destroy', $parent->id) }}" method="POST" style="display: inline;">
+											<a href="{{ route('categories.edit', $parent->slug) }}" class="mr-3"><i class="las la-pen text-secondary font-30"></i></a>
+											<form action="{{ route('categories.destroy', $parent->slug) }}" method="POST" style="display: inline;">
 												@csrf
 												@method('DELETE')
 												<a href="javascript:void(0);" class="mr-3" onclick="confirmDelete(this)">
@@ -118,8 +118,8 @@
 													alt="{{ $child->title }}" style="max-width: 100px; max-height: 100px;">
 											</td>
 											<td>
-												<a href="{{ route('categories.edit', $child->id) }}" class="mr-3"><i class="las la-pen text-secondary font-30"></i></a>
-												<form action="{{ route('categories.destroy', $child->id) }}" method="POST" style="display: inline;">
+												<a href="{{ route('categories.edit', $child->slug) }}" class="mr-3"><i class="las la-pen text-secondary font-30"></i></a>
+												<form action="{{ route('categories.destroy', $child->slug) }}" method="POST" style="display: inline;">
 													@csrf
 													@method('DELETE')
 													<a href="javascript:void(0);" class="mr-3" onclick="confirmDelete(this)">
