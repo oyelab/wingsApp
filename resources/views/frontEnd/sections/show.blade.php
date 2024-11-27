@@ -24,7 +24,7 @@
 		<div class="row mb-30">
 			<div class="col-12">
 				<div class="bulk-banner">
-					<a href="{{ route('showcases') }}">
+					<a href="">
 						<img
 							src="{{ asset('frontEnd/images/showcase-banner.png') }}"
 							draggable="false"
@@ -46,6 +46,8 @@
 								class="img-fluid"
 								alt="{{ $product->title }}"
 								draggable="false"
+								oncontextmenu="return false;"
+
 							/>
 							<a href="#" class="wishlist-icon">
 								<i class="bi bi-heart-fill"></i>

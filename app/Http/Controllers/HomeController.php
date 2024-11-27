@@ -45,7 +45,7 @@ class HomeController extends Controller
 		$siteReviews = Review::with('user', 'products')->where('status', true)->limit(9)->get();
 		// return $siteReviews;
 
-		$showcases = Showcase::with('details')->orderBy('order')->limit(5)->get();
+		$showcases = Showcase::with('details')->where('status', 1)->orderBy('order', 'asc')->limit(5)->get();
 		
 		$manufactureLogo = Asset::where('type', 'manufacturer')->first();
 		$paymentBanner = Asset::where('type', 'payment')->first();
@@ -64,6 +64,8 @@ class HomeController extends Controller
 
 		// Convert titles to an associative array
 		$titles = $titlesData->pluck('title', 'type')->toArray();
+
+		// return $showcases;
         
 
         return view('frontEnd.index', compact('data', 'titles', 'sliders', 'wingsEdited', 'showcases', 'manufactureLogo', 'partnerLogos', 'paymentBanner', 'siteReviews', 'behindWings', ));
