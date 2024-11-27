@@ -285,34 +285,37 @@ class ShowcaseController extends Controller
      */
 	public function destroy(Showcase $showcase)
 	{
-		try {
-			// Helper function to delete an image file dynamically
-			$deleteImage = function ($path) {
-				if ($path && Storage::exists("public/$path")) {
-					Storage::delete("public/$path");
-				}
-			};
+		// Check if the showcase has a thumbnail and delete the image
+		if ($showcase->thumbnail) {
+			$this->deleteImage($showcase->slug, $showcase->thumbnail);
+		}
 	
-			// Delete the showcase banner and thumbnail using their paths
-			$deleteImage("showcases/{$showcase->id}/banner/{$showcase->banner}");
-			$deleteImage("showcases/{$showcase->id}/thumbnail/{$showcase->thumbnail}");
-	
-			// Delete associated showcase details and their images
-			foreach ($showcase->details as $detail) {
-				$imagePaths = json_decode($detail->images, true) ?? [];
-				foreach ($imagePaths as $image) {
-					$deleteImage("showcases/{$showcase->id}/details/{$image}");
-				}
-				$detail->delete(); // Delete the detail record
+		// Check if the showcase has banners and delete each image
+		if ($showcase->banners) {
+			$banners = json_decode($showcase->banners, true);
+			foreach ($banners as $banner) {
+				$this->deleteImage($showcase->slug, $banner);
 			}
+		}
 	
-			// Delete the showcase record itself
-			$showcase->delete();
+		// Delete the showcase record from the database
+		$showcase->delete();
 	
-			return redirect()->route('showcases.index')->with('success', 'Showcase deleted successfully.');
-		} catch (\Exception $e) {
-			return redirect()->route('showcases.index')->with('error', 'Failed to delete showcase: ' . $e->getMessage());
+		// Redirect to the showcase index page with a success message
+		return redirect()->route('showcases.index')->with('success', 'Showcase deleted successfully.');
+	}
+
+	// Helper method to delete images from the storage
+	private function deleteImage($slug, $fileName)
+	{
+		$filePath = storage_path("app/public/showcases/{$slug}/{$fileName}");
+
+		// Check if the file exists and delete it
+		if (file_exists($filePath)) {
+			unlink($filePath);
 		}
 	}
+
+	
 	
 }
