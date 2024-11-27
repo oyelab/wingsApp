@@ -43,6 +43,7 @@ class ShowcaseController extends Controller
 	{
 		// Fetch the showcase with its details (images loaded via the accessor)
 		$showcase = Showcase::where('slug', $slug)
+							->where('status', true)
 							->firstOrFail(); // Returns 404 if not found
 
 		// return $showcase;

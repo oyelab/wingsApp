@@ -30,7 +30,7 @@
                                 <div class="card-body p-4">
                                     <div class="text-center mt-2">
                                         <h5>Reset Password</h5>
-                                        <p class="text-muted">Reset Password with webadmin.</p>
+                                        <p class="text-muted">Reset Password with Wings Sportswear.</p>
                                     </div>
                                     <div class="p-2 mt-4">
 

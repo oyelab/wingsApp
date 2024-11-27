@@ -30,7 +30,7 @@
                                 <div class="card-body p-4">
                                     <div class="text-center mt-2">
                                         <h5>Create New Password</h5>
-                                        <p class="text-muted">secure your account with webadmin.</p>
+                                        <p class="text-muted">Secure your account with Wings Sportswear.</p>
                                     </div>
                                     <div class="p-2 mt-4">
                                         <form method="POST" action="{{ route('password.update') }}" class="auth-input">
