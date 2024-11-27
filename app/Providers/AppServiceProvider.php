@@ -10,6 +10,8 @@ use App\Models\Page;
 use App\Helpers\FilePathHelper;
 use App\Services\OrderService;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Pagination\Paginator;
+
 
 
 
@@ -36,6 +38,8 @@ class AppServiceProvider extends ServiceProvider
 
 	public function boot()
 	{
+		Paginator::useBootstrapFive();
+
 		
 		// Share site settings, social links, and cart count with all views
 		View::composer('frontEnd.layouts.app', function ($view) {

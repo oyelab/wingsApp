@@ -362,7 +362,7 @@
 									@foreach ($loyalCustomers as $user)
 									<div class="border-bottom loyal-customers-box pt-2">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset('build/images/users/avatar-4.jpg') }}"
+                                            <img src="{{ $user->avatarPath }}"
                                                 class="rounded-circle avatar img-thumbnail" alt="">
                                             <div class="flex-grow-1 ms-3 overflow-hidden">
                                                 <h5 class="font-size-15 mb-1 text-truncate">{{ $user->name }}</h5>
@@ -371,7 +371,8 @@
                                             <div class="flex-shrink-0">
                                                 <h5
                                                     class="font-size-14 mb-0 text-truncate w-xs bg-light p-2 rounded text-center">
-                                                    {{ $user->reviews_avg_rating }} <i class="bx bxs-star font-size-14 text-primary ms-1"></i></h5>
+                                                    {{ $user->reviews_avg_rating }} <i class="bx bxs-star font-size-14 text-primary ms-1"></i>
+												</h5>
                                             </div>
                                         </div>
                                     </div>

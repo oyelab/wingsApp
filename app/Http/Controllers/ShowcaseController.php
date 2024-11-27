@@ -26,7 +26,7 @@ class ShowcaseController extends Controller
     {
         $showcases = Showcase::with('details')->get();
 
-		return $showcases;
+		dd($showcases);
 
 		return view('backEnd.showcases.index', compact('showcases'));
     }

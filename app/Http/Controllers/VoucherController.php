@@ -160,7 +160,7 @@ class VoucherController extends Controller
     public function edit(string $id)
     {
 		$voucher = Voucher::findOrFail($id);
-        return view('backEnd.vouchers.edit', compact('voucher'));
+        return view('backEnd.vouchers.partials.voucherEdit', compact('voucher'));
     }
 
     /**
@@ -169,6 +169,7 @@ class VoucherController extends Controller
 	// Update the voucher in the database
 	public function update(Request $request, $id)
 	{
+		// return $request;
 		$request->validate([
 			'code' => 'required|string|max:255|unique:vouchers,code,' . $id,
 			'discount' => 'required|integer|min:0',

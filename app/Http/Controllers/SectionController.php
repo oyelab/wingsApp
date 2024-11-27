@@ -6,6 +6,12 @@ use App\Repositories\ProductRepository;
 use App\Models\Section;
 use App\Models\Product;
 use App\Models\Category;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Storage;
+
+
 class SectionController extends Controller
 {
     protected $productRepo;
@@ -14,6 +20,60 @@ class SectionController extends Controller
     {
         $this->productRepo = $productRepo;
     }
+    public function create(Section $section)
+    {
+		return view('backEnd.sections.create'); // Ensure this points to the correct Blade view file
+
+    }
+
+	public function store(Request $request)
+	{
+		// return $request;
+		// Validate the form data
+		$request->validate([
+			'title' => 'required|string|max:255|unique:sections,title',
+			'image' => 'nullable|mimes:jpeg,png,jpg,gif,webp|max:2048',
+			'description' => 'nullable|string',
+		]);
+	
+		// Generate the slug
+		$slug = Str::slug($request->title);
+		// return $slug;
+	
+		// Handle the image upload if present
+		$imagePath = null;
+		$imageName = null;
+
+		if ($request->hasFile('image')) {
+			// Get the image from the request
+			$image = $request->file('image');
+			
+			// Create an image instance using Intervention Image
+			$imageInstance = Image::make($image);
+			
+			// Generate a unique filename based on the slug and ensure it’s .webp
+			$imageName = $slug . '.webp';
+			
+			// Resize and convert the image to webP format without reducing quality
+			$imageInstance->encode('webp', 75); // Adjust quality if needed (90 is a good balance)
+			
+			// Save the image to the storage folder (not public)
+			$imagePath = 'public/sections/images/' . $imageName;
+			Storage::put($imagePath, $imageInstance->stream());
+		}
+	
+		// Create a new page entry in the database
+		Section::create([
+			'title' => $request->title,
+			'image' => $imageName,  // Store the path to the image
+			'description' => $request->description,
+			'slug' => $slug,
+			'status' => $request->status,
+		]);
+	
+		// Redirect with success message
+		return redirect()->route('sections.index')->with('success', 'Section created successfully.');
+	}
 
 	public function sections(Section $section)
 	{
@@ -113,5 +173,93 @@ class SectionController extends Controller
 		return false;
 	}
 	
+	// Show the form for editing a specific section
+	public function edit($id)
+	{
+		$section = Section::findOrFail($id);
+		return view('backEnd.sections.edit', compact('section'));
+	}
+
+	public function index()
+    {
+        $sections = Section::all(); // You can also use paginate if you have a lot of sections
+        return view('backEnd.sections.index', compact('sections'));
+    }
+
+
+
+	public function update(Request $request, $id)
+	{
+
+		$request->validate([
+			'title' => 'required|string|max:255|unique:pages,title,' . $id, // Exclude the current page from unique check
+			'description' => 'nullable|string', // Exclude the current page from unique check
+			'image' => 'nullable|mimes:jpeg,png,jpg,gif,webp|max:2048',
+		]);
+
+		// dd($request->all());
+
+
+		// Find the page by ID
+		$section = Section::findOrFail($id);
+
+		// Generate the slug
+		$slug = Str::slug($request->title);
+
+		// Handle the image upload if present
+		$imagePath = $section->imagePath;  // Keep the current image path if no new image is uploaded
+		$imageName = null;
+
+		if ($request->hasFile('image')) {
+			// Get the image from the request
+			$image = $request->file('image');
+			
+			// Create an image instance using Intervention Image
+			$imageInstance = Image::make($image);
+			
+			// Generate a unique filename based on the slug and ensure it’s .webp
+			$imageName = $slug . '.webp';
+			
+			// Resize and convert the image to webP format without reducing quality
+			$imageInstance->encode('webp', 75); // Adjust quality if needed (75 is a good balance)
+			
+			// Delete the old image if it exists in storage
+			if ($section->imagePath && Storage::exists($section->imagePath)) {
+				Storage::delete($section->imagePath);
+			}
+			
+			// Save the new image to the storage folder (not public)
+			$imagePath = 'public/section/images/' . $imageName;
+			Storage::put($imagePath, $imageInstance->stream());
+		}
+
+		// Update the page entry in the database
+		$section->update([
+			'title' => $request->title,
+			'image' => $imageName,  // Store the path to the new image or keep the old one
+			'description' => $request->description,
+			'slug' => $slug,
+			'status' => $request->status,
+		]);
+
+		// return $section;
+
+		// Redirect with success message
+		return redirect()->route('sections.index')->with('success', 'Section updated successfully.');
+	}
+
+	public function destroy(Section $section)
+	{
+		// Check if the section has an image and delete it from storage if exists
+		if ($section->image && Storage::exists('public/sections/images/' . $section->image)) {
+			Storage::delete('public/sections/images/' . $section->image);
+		}
+
+		// Delete the section record from the database
+		$section->delete();
+
+		// Redirect to sections index page with success message
+		return redirect()->route('sections.index')->with('success', 'Section deleted successfully.');
+	}
 	
 }

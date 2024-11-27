@@ -81,15 +81,11 @@
                         <li><a href="#" data-key="t-invoice-lists">Invoice Lists</a></li>
                     </ul>
                 </li>
-                <li>
-					<a href="javascript: void(0);" class="has-arrow">
+				<li>
+					<a href="{{ route('reviews.index') }}">
 						<i class="bx bx-star icon nav-icon"></i>
 						<span class="menu-item" data-key="t-reviews">Reviews</span>
 					</a>
-					<ul class="sub-menu" aria-expanded="true">
-						<li><a href="{{ route('reviews.index') }}" data-key="t-all-reviews">All Reviews</a></li>
-						<li><a href="{{ route('reviews.create') }}" data-key="t-add-review">Add Review</a></li>
-					</ul>
 				</li>
 
 				<li>
@@ -100,6 +96,17 @@
 					<ul class="sub-menu" aria-expanded="true">
 						<li><a href="{{ route('sliders.index') }}" data-key="t-all-sliders">All Sliders</a></li>
 						<li><a href="{{ route('sliders.create') }}" data-key="t-add-slider">Add Slider</a></li>
+					</ul>
+				</li>
+
+				<li>
+					<a href="javascript: void(0);" class="has-arrow">
+						<i class="bx bx-image icon nav-icon"></i>
+						<span class="menu-item" data-key="t-sections">Sections</span>
+					</a>
+					<ul class="sub-menu" aria-expanded="true">
+						<li><a href="{{ route('sections.index') }}" data-key="t-all-sections">All Sections</a></li>
+						<li><a href="{{ route('sections.create') }}" data-key="t-add-section">Add Section</a></li>
 					</ul>
 				</li>
 

@@ -108,10 +108,21 @@ Route::get('/sections/{section}', [SectionController::class, 'shopPage'])->name(
 
 Route::resource('backEnd/products', ProductController::class);
 
+Route::get('/backEnd/sections', [SectionController::class, 'index'])->name('sections.index');
+Route::get('/backEnd/sections/create', [SectionController::class, 'create'])->name('sections.create');
+Route::post('/backEnd/sections', [SectionController::class, 'store'])->name('sections.store');
+Route::get('/backEnd/sections/{section}/edit', [SectionController::class, 'edit'])->name('sections.edit');
+Route::put('/backEnd/sections/{section}/update', [SectionController::class, 'update'])->name('sections.update');
+Route::delete('/backEnd/sections/{section}', [SectionController::class, 'destroy'])->name('sections.destroy'); // New delete route
+
+
 Route::put('/backEnd/products/{product}/status', [ProductController::class, 'updateStatus'])->name('products.updateStatus');
 Route::put('/backEnd/products/{product}/sale', [ProductController::class, 'updateOffer'])->name('products.updateOffer');
 
 Route::resource('backEnd/reviews', ReviewController::class);
+Route::post('backEnd/reviews/{id}/update-status', [ReviewController::class, 'updateStatus'])->name('reviews.updateStatus');
+
+
 
 Route::resource('backEnd/categories', CategoryController::class);
 
@@ -136,11 +147,11 @@ Route::post('/backEnd/specifications', [SpecificationController::class, 'store']
 Route::post('/backEnd/specifications/update', [SpecificationController::class, 'update'])->name('specifications.update');
 Route::delete('/backEnd/specifications/destroy', [SpecificationController::class, 'destroy'])->name('specifications.destroy');
 
-Route::resource('backEnd/showcases', ShowcaseController::class)->except(['show']);
 
-Route::get('/showcases', [ShowcaseController::class, 'showcases'])->name('showcases');
-Route::get('/showcases/{showcase}', [ShowcaseController::class, 'show'])->name('showcase.show');
+// Route::get('/showcases', [ShowcaseController::class, 'showcases'])->name('showcases');
+// Route::get('/showcases/{showcase}', [ShowcaseController::class, 'show'])->name('showcase.show');
 
+Route::resource('backEnd/showcases', ShowcaseController::class);
 
 
 Route::post('backEnd/orders/{productId}/{sizeId}/update', [AdminOrderController::class, 'updateOrderProduct'])->name('admin.order.update');

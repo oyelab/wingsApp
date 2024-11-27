@@ -35,3 +35,6 @@
     </form>
 </div>
 @endsection
+@section('scripts')
+<script src="{{ asset('build/js/app.js') }}"></script>
+@endsection

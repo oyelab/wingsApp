@@ -80,10 +80,12 @@
 							<td>{{ $index + 1 }}</td>
 							<td>{{ $page->title }}</td>
 							<td>
-								<div class="avatar-group-item">
-									<a href="javascript: void(0);" class="d-inline-block">
-										<img class="rounded-circle avatar-sm" src="{{ $page->imagePath }}" alt="{{ $page->title }}">
-									</a>
+								<div class="rounded-circle avatar-sm d-flex justify-content-center align-items-center text-uppercase bg-secondary text-white" style="width: 25; height: 25; object-fit: cover; overflow: hidden;">
+									@if($page->imagePath)
+										<img class="img-fluid rounded-circle" src="{{ $page->imagePath }}" alt="{{ $page->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+									@else
+										{{ substr($page->title, 0, 1) }}
+									@endif
 								</div>
 							</td>
 							<td>{{ $page->updated_at->format('d M Y, h:i A') }}</td>

@@ -39,6 +39,7 @@ Create Category
         </div>
 
         <div class="col-7 d-flex justify-content-end">
+			<button type="button" class="btn btn-outline-secondary me-2 w-25" onclick="window.location.href='{{ route('categories.index') }}'">Discard</button>
             <button type="submit" class="btn btn-outline-secondary me-2 w-25" onclick="setStatus(0)">Draft</button>
             <button type="submit" class="btn btn-primary w-25" onclick="setStatus(1)">Publish</button>
         </div>

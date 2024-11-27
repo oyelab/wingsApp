@@ -11,9 +11,8 @@
 
 @section('content')
 <div class="container">
-    <form action="{{ route('showcases.store', $showcase) }}" method="POST" enctype="multipart/form-data">
+	<form action="{{ route('showcases.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        @method('PUT')
 
         @if ($errors->any())
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -40,7 +39,7 @@
         </div>
 
         <!-- Hidden Status Field -->
-        <input type="hidden" name="status" id="status" value="{{ $showcase->status }}">
+        <input type="hidden" name="status" id="status">
 
         <!-- Title and Order -->
         <div class="row mb-3">
@@ -128,7 +127,7 @@
                 </div>
             </div>
         </div>
-    </form>
+    </for>
 </div>
 @endsection
 

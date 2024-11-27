@@ -25,14 +25,15 @@ class Review extends Model
 
 	public function getRatingStarsAttribute()
 	{
-		// Round the rating to the nearest integer
+		// If rating is a decimal, it should still calculate correctly.
 		$fullStars = floor($this->rating); // Full stars
 		$emptyStars = 5 - $fullStars; // Remaining empty stars
-
+	
 		return [
 			'filled' => $fullStars,  // Number of filled stars
 			'empty' => $emptyStars,  // Number of empty stars
 		];
 	}
+	
 
 }

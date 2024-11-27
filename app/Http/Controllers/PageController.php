@@ -82,6 +82,8 @@ class PageController extends Controller
 	
 		// Handle the image upload if present
 		$imagePath = null;
+		$imageName = null;
+
 		if ($request->hasFile('image')) {
 			// Get the image from the request
 			$image = $request->file('image');
@@ -153,6 +155,7 @@ class PageController extends Controller
 
 		// Handle the image upload if present
 		$imagePath = $page->imagePath;  // Keep the current image path if no new image is uploaded
+		$imageName = null;
 
 		if ($request->hasFile('image')) {
 			// Get the image from the request

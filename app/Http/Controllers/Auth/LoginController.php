@@ -28,11 +28,14 @@ class LoginController extends Controller
      * @var string
      */
     // protected $redirectTo = RouteServiceProvider::DASHBOARD;
-	protected function authenticated(Request $request, $user)
-	{
-		// Redirect to the previous URL (the one stored in the session)
-		return redirect()->intended(); // This will use the URL stored in the session by default
-	}
+	// protected function authenticated(Request $request, $user)
+	// {
+	// 	// Redirect to the previous URL (the one stored in the session)
+	// 	return redirect()->intended(); // This will use the URL stored in the session by default
+	// }
+
+	protected $redirectTo = RouteServiceProvider::DASHBOARD;
+
     /**
      * Create a new controller instance.
      *

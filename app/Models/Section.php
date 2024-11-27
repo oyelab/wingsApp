@@ -9,6 +9,23 @@ class Section extends Model
 {
     use HasFactory;
 
+	protected $fillable = [
+		'title',
+		'slug',
+		'description',
+		'image',
+		'status',
+	];
+
+	public function getImagePathAttribute()
+	{
+		// Check if the image path exists and if the file is in storage
+		if ($this->attributes['image']) {
+			// Return the full URL to the image in storage
+			return asset('storage/sections/images/' . $this->attributes['image']);
+		}
+		
+	}
 	// public function loadProducts()
     // {
     //     // Get the scope method name from the section model

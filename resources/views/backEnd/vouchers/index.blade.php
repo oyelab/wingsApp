@@ -49,7 +49,9 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="{{ route('vouchers.edit', $voucher->id) }}" class="btn btn-primary btn-sm">Edit</a>
+									<a href="javascript:void(0);" class="btn btn-primary btn-sm" onclick="loadEditModal('{{ route('vouchers.edit', $voucher->id) }}')">Edit</a>
+
+
                                     <form action="{{ route('vouchers.destroy', $voucher->id) }}" method="POST" style="display: inline-block;">
                                         @csrf
                                         @method('DELETE')
@@ -65,5 +67,63 @@
             @endif
         </div>
     </div>
+
+	<!-- Edit Voucher Modal -->
+	<div class="modal fade" id="editVoucherModal" tabindex="-1" aria-labelledby="editVoucherModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editVoucherModalLabel">Edit Voucher</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div id="editVoucherFormContainer">
+						<!-- Content will be dynamically loaded here -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 </div>
+@endsection
+@section('scripts')
+<script src="{{ asset('build/js/app.js') }}"></script>
+<script>
+    function loadEditModal(url) {
+        const modalBody = document.getElementById('editVoucherFormContainer');
+        
+        if (!modalBody) {
+            console.error('Modal container not found');
+            return;
+        }
+
+        // Show a loading spinner while fetching the content
+        modalBody.innerHTML = '<div class="text-center my-4"><div class="spinner-border text-primary" role="status"></div></div>';
+
+        // Fetch the form via AJAX
+        fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                modalBody.innerHTML = html; // Populate the modal with the fetched form
+                const modal = new bootstrap.Modal(document.getElementById('editVoucherModal'));
+                modal.show(); // Display the modal
+            })
+            .catch(error => {
+                console.error('Error fetching form:', error);
+                modalBody.innerHTML = '<div class="alert alert-danger">Failed to load form. Please try again.</div>';
+            });
+    }
+</script>
+<script>
+    /**
+     * Function to set the status value.
+     * @param {number} value - Status value to set (0 for Save, 1 for Publish).
+     */
+    function setStatus(value) {
+        document.getElementById('status').value = value;
+    }
+</script>
+
+
 @endsection

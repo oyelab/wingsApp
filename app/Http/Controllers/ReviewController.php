@@ -6,16 +6,38 @@ use App\Models\Review;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
+
 
 class ReviewController extends Controller
 {
+
+	public function updateStatus(Request $request, $id)
+	{
+		$review = Review::findOrFail($id);
+		$review->status = $request->status;
+		$review->save();
+
+		return response()->json(['success' => true]);
+	}
+
+	
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
+	public function index()
+	{
+		// Fetch all reviews with related user and product information
+		$reviews = Review::with(['user', 'products'])->paginate(10); // Paginate to show 10 reviews per page
+	
+		$review = Review::with(['user', 'products'])->findOrFail(11);
+
+		// return $review->ratingStars;
+		// Return the reviews index view with the reviews data
+		return view('backEnd.reviews.index', compact('reviews'));
+	}
+	
 
     /**
      * Show the form for creating a new resource.
@@ -75,18 +97,35 @@ class ReviewController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Review $review)
+    public function edit($id)
     {
-        //
+        $review = Review::findOrFail($id);
+    	return view('backEnd.reviews.editReviewModal', compact('review'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Review $review)
-    {
-        //
-    }
+	public function update(Request $request, Review $review)
+	{
+		// Validate the incoming data
+		$validated = $request->validate([
+			'content' => 'required|string|max:1000',
+			'rating' => 'required|numeric|between:1,5', // Validate decimal rating between 1.0 and 5.0
+		]);
+
+		// Update the review with the validated data
+		$review->content = $validated['content'];
+		$review->rating = number_format($validated['rating'], 1); // Ensure the rating has 1 decimal precision
+		$review->save();
+
+		// Redirect back with a success message
+		return redirect()
+			->route('reviews.index') // Redirect to the reviews index page
+			->with('success', 'Review updated successfully.');
+	}
+
+	
 
     /**
      * Remove the specified resource from storage.
