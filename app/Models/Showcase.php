@@ -10,8 +10,12 @@ class Showcase extends Model
 
     use HasFactory;
 
-	protected $fillable = ['title', 'slug', 'banner', 'thumbnail', 'short_description', 'status', 'order'];
+	protected $fillable = ['title', 'slug', 'banners', 'thumbnail', 'short_description', 'status', 'order'];
 
+	// protected $casts = [
+	// 	'status' => 'boolean',  // Cast 'status' to a boolean value
+	// ];
+	
     public function details()
     {
         return $this->hasMany(ShowcaseDetail::class);
@@ -19,14 +23,14 @@ class Showcase extends Model
 
 	// Showcase Model (Showcase.php)
 
-	public function getBannerImagePathAttribute()
+	public function getBannersImagePathAttribute()
 	{
-		return asset("storage/showcases/{$this->id}/banner/{$this->banner}");
+		return asset("storage/showcases/{$this->slug}/{$this->banners}");
 	}
 	
 	public function getThumbnailImagePathAttribute()
 	{
-		return asset("storage/showcases/{$this->id}/thumbnail/{$this->thumbnail}");
+		return asset("storage/showcases/{$this->slug}/{$this->thumbnail}");
 	}
 	
 }

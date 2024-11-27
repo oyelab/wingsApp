@@ -7,6 +7,8 @@ use App\Models\Showcase;
 use App\Models\ShowcaseDetail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image; // Make sure to include this at the top of your file
+
 
 class ShowcaseController extends Controller
 {
@@ -15,7 +17,7 @@ class ShowcaseController extends Controller
      */
     public function index()
     {
-        $showcases = Showcase::with('details')->get();
+        $showcases = Showcase::orderBy('order', 'asc')->get();
 
 		// return $showcases;
 
@@ -58,109 +60,119 @@ class ShowcaseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
+
 	public function store(Request $request)
 	{
 		// return $request;
-		// Validate the incoming request data
+		// Validate the incoming request data for the showcase
 		$validated = $request->validate([
 			'title' => 'required|string|max:255',
-			'short_description' => 'required|string|max:500',
-			'banner' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048',
-			'thumbnail' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048',
+			'short_description' => 'nullable|string|max:500',
+			'banners' => 'required|array|min:1', // Ensure 'banners' is an array and has at least one file
+			'banners.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048', // Validate each file in the 'banners' array
+			'thumbnail' => [
+				'required',
+				'image',
+				'mimes:jpg,jpeg,png,gif',
+				'max:2048',
+				function ($attribute, $value, $fail) use ($request) {
+					// Same ratio validation logic for the thumbnail
+					$order = $request->input('order');
+					$allowedRatios = [
+						1 => [3.76, 5],
+						2 => [3.76, 5],
+						3 => [7.82, 4.7],
+						4 => [5, 6.2],
+						5 => [5, 3.5],
+					];
+	
+					if (isset($allowedRatios[$order])) {
+						[$width, $height] = $allowedRatios[$order];
+						$image = Image::make($value);
+						$actualRatio = $image->width() / $image->height();
+						$expectedRatio = $width / $height;
+	
+						if (abs($actualRatio - $expectedRatio) > 0.01) {
+							$fail("The {$attribute} must have a ratio of {$width}x{$height} for order {$order}.");
+						}
+					}
+				},
+			],
 			'status' => 'required|boolean',
-			'order' => 'required|integer|between:1,5',
-			'details.*.heading' => 'required|string|max:255',
-			'details.*.description' => 'required|string',
-			'details.*.images.*' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+			'order' => 'nullable|integer|between:1,5',
 		]);
-
+	
+		// Check if a showcase with the same order already exists
+		$existingShowcase = Showcase::where('order', $validated['order'])->first();
+		if ($existingShowcase) {
+			// Detach the order by setting it to null
+			$existingShowcase->update(['order' => null]);
+		}
+	
 		// Generate the slug for the showcase title
 		$slug = Str::slug($validated['title']);
-		
+	
 		// Ensure the slug is unique by checking if it exists in the database
 		$originalSlug = $slug;
 		$count = 1;
 		while (Showcase::where('slug', $slug)->exists()) {
-			// If the slug already exists, append a number to make it unique
 			$slug = "{$originalSlug}-{$count}";
 			$count++;
 		}
-		
-		// Create the main showcase entry with the unique slug
+	
+		// Initialize an array to store banner file names
+		$banners = [];
+	
+		// Save multiple banner images
+		if ($request->hasFile('banners')) {
+			foreach ($request->file('banners') as $index => $banner) {
+				$bannerName = $this->storeImage($banner, $slug, "banner-{$index}");
+				$banners[] = $bannerName; // Add file name to the array
+			}
+		}
+	
+		// Create the main showcase entry with the unique slug and save banners as JSON
 		$showcase = Showcase::create([
 			'title' => $validated['title'],
-			'slug' => $slug,  // Store the generated unique slug
+			'slug' => $slug,
 			'short_description' => $validated['short_description'],
 			'status' => $validated['status'],
 			'order' => $validated['order'],
+			'thumbnail' => $this->storeImage($request->file('thumbnail'), $slug, 'thumbnail'),
+			'banners' => json_encode($banners), // Save banners as JSON
 		]);
+	
+		// After saving the showcase, redirect to a page where you can add the details
+		return redirect()->route('showcases.index')->with('success', 'Showcase created successfully. You can now add details.');
+	}
+	 
 
-		// Save the main banner and thumbnail images
-		$showcase->banner = $this->storeImage($request->file('banner'), $showcase->id, $slug, 'banner');
-		$showcase->thumbnail = $this->storeImage($request->file('thumbnail'), $showcase->id, $slug, 'thumbnail');
-		$showcase->save();
-
-		// Save details and process images
-		foreach ($validated['details'] as $detail) {
-			$headingSlug = Str::slug($detail['heading']);
-
-			// Create the detail record
-			$detailModel = ShowcaseDetail::create([
-				'showcase_id' => $showcase->id,
-				'heading' => $detail['heading'],
-				'description' => $detail['description'],
-			]);
-
-			// Process and save images for the detail
-			if (isset($detail['images'])) {
-				$imageNames = [];
-				foreach ($detail['images'] as $index => $image) {
-					$extension = $image->getClientOriginalExtension();
-
-					// Generate unique name for each image
-					$imageName = "{$showcase->id}-{$detailModel->id}-{$headingSlug}-" . ($index + 1) . ".{$extension}";
-
-					// Store the image
-					$this->storeImage($image, $showcase->id, $slug, 'details', $imageName);
-
-					// Collect the image name (without path)
-					$imageNames[] = $imageName;
-				}
-
-				// Save the image names as JSON in the `images` column
-				$detailModel->images = json_encode($imageNames);
-				$detailModel->save();
-			}
+	// Helper function to store images (banner and thumbnail)
+	private function storeImage($image, $slug, $folder)
+	{
+		// Generate a simple file name using the slug and folder type
+		$fileName = "{$slug}-{$folder}.webp"; // Save as .webp extension
+	
+		// Define the directory path
+		$directory = storage_path("app/public/showcases/{$slug}"); // Save directly in the 'showcases' directory
+	
+		// Make sure the directory exists before storing
+		if (!file_exists($directory)) {
+			mkdir($directory, 0777, true); // Set permissions to 0777, recursively
 		}
-
-		return redirect()->route('showcases.index')->with('success', 'Showcase created successfully.');
-	}
-
-		
 	
+		// Open the image using Intervention Image
+		$img = Image::make($image);
 	
-	// Helper function to store images
-	private function storeImage($image, $showcaseId, $slug, $folder, $customName = null)
-	{
-		// Determine the file name
-		$fileName = $customName ?: "{$showcaseId}-{$slug}-{$folder}.{$image->extension()}";
+		// Convert the image to WebP and save with 75% quality, no cropping
+		$img->encode('webp', 75) // Convert to WebP format with 75% quality
+			->save("{$directory}/{$fileName}"); // Save the image to the specified path
 	
-		// Store the image in the specified directory
-		$image->storeAs("public/showcases/{$showcaseId}/{$folder}", $fileName);
-	
-		return $fileName; // Return only the file name
+		return $fileName; // Return only the image name
 	}
 	
-	
-	private function storeDetailImage($image, $showcaseId, $detailId, $slug)
-	{
-		// Generate a unique name for the image
-		$imageName = $showcaseId . $detailId . '-' . time() . '.' . $image->extension();
-		$image->storeAs('public/showcases', $imageName); // Store in public/showcases directory
-		return $imageName; // Return the image name
-	}
 
-	
 
     /**
      * Display the specified resource.
@@ -173,6 +185,7 @@ class ShowcaseController extends Controller
      */
     public function edit(Showcase $showcase)
 	{
+		// return $showcase;
 		// Pass the showcase model data to the view for editing
 		return view('backEnd.showcases.edit', compact('showcase'));
 	}
@@ -182,78 +195,89 @@ class ShowcaseController extends Controller
      * Update the specified resource in storage.
      */
 	
-	public function update(Request $request, Showcase $showcase)
-	{
-		// return $showcase;
-		// Validate request
-		$validated = $request->validate([
-			'title' => 'required|string|max:255',
-			'order' => 'required|integer|min:1|max:5',
-			'short_description' => 'nullable|string',
-			'banner' => 'nullable|image|max:2048',
-			'thumbnail' => 'nullable|image|max:2048',
-			'status' => 'required|boolean',
-			'details.*.heading' => 'nullable|string|max:255',
-			'details.*.description' => 'nullable|string',
-			'details.*.images.*' => 'nullable|image|max:2048',
-		]);
-	
-		// Update main showcase data
-		$showcase->title = $validated['title'];
-		$showcase->order = $validated['order'];
-		$showcase->short_description = $validated['short_description'];
-		$showcase->status = $validated['status'];
-	
-		// Handle banner image
-		if ($request->hasFile('banner')) {
-			if ($showcase->banner) {
-				Storage::disk('public')->delete($showcase->banner);
-			}
-			$showcase->banner = $request->file('banner')->store('showcase_banners', 'public');
-		} elseif ($request->input('banner_old')) {
-			$showcase->banner = $request->input('banner_old');
-		}
-	
-		// Handle thumbnail image
-		if ($request->hasFile('thumbnail')) {
-			if ($showcase->thumbnail) {
-				Storage::disk('public')->delete($showcase->thumbnail);
-			}
-			$showcase->thumbnail = $request->file('thumbnail')->store('showcase_thumbnails', 'public');
-		} elseif ($request->input('thumbnail_old')) {
-			$showcase->thumbnail = $request->input('thumbnail_old');
-		}
-	
-		$showcase->save();
-	
-		// Handle details
-		$details = $request->input('details', []);
-		foreach ($details as $index => $detail) {
-			// Find or create the showcase detail
-			$showcaseDetail = ShowcaseDetail::find($detail['id'] ?? null) ?? new ShowcaseDetail();
-			$showcaseDetail->showcase_id = $showcase->id;
-			$showcaseDetail->heading = $detail['heading'] ?? null;
-			$showcaseDetail->description = $detail['description'] ?? null;
-	
-			// Handle detail images
-			$images = $detail['images_old'] ?? []; // Keep existing images
-			if (isset($detail['images'])) {
-				foreach ($detail['images'] as $imageFile) {
-					$images[] = $imageFile->store('showcase_details', 'public');
-				}
-			}
-	
-			$showcaseDetail->images = json_encode($images); // Store as JSON
-			$showcaseDetail->save();
-		}
-	
-		// Handle removed details
-		$existingDetailIds = collect($details)->pluck('id')->filter()->toArray();
-		$showcase->details()->whereNotIn('id', $existingDetailIds)->delete();
-	
-		return redirect()->route('showcases.index')->with('success', 'Showcase updated successfully!');
-	}
-	
+	 public function update(Request $request, Showcase $showcase)
+	 {
+		// return $request;
+		 // Validate the incoming request data for the showcase
+		 $validated = $request->validate([
+			 'title' => 'required|string|max:255',
+			 'short_description' => 'nullable|string|max:500',
+			 'banners' => 'nullable|array|min:1', // Banners are optional
+			 'banners.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048', // Validate each file in the banners array
+			 'thumbnail' => [
+				 'nullable', // Thumbnail is optional
+				 'image',
+				 'mimes:jpg,jpeg,png,gif',
+				 'max:2048',
+				 function ($attribute, $value, $fail) use ($request) {
+					 $order = $request->input('order');
+					 $allowedRatios = [
+						 1 => [3.76, 5],
+						 2 => [3.76, 5],
+						 3 => [7.82, 4.7],
+						 4 => [3.76, 5],
+						 5 => [5, 3.5],
+					 ];
+	 
+					 if (isset($allowedRatios[$order])) {
+						 [$width, $height] = $allowedRatios[$order];
+						 $image = Image::make($value);
+						 $actualRatio = $image->width() / $image->height();
+						 $expectedRatio = $width / $height;
+	 
+						 if (abs($actualRatio - $expectedRatio) > 0.01) {
+							 $fail("The {$attribute} must have a ratio of {$width}x{$height} for order {$order}.");
+						 }
+					 }
+				 },
+			 ],
+			 'status' => 'required|boolean',
+			 'order' => 'nullable|integer|between:1,5',
+		 ]);
+	 
+		 // Check if the order needs to be detached from another showcase
+		 if ($validated['order'] && $validated['order'] != $showcase->order) {
+			 $existingShowcase = Showcase::where('order', $validated['order'])->first();
+			 if ($existingShowcase) {
+				 $existingShowcase->update(['order' => null]);
+			 }
+		 }
+	 
+		 // Update slug if the title has changed
+		 if ($showcase->title !== $validated['title']) {
+			 $slug = Str::slug($validated['title']);
+			 $originalSlug = $slug;
+			 $count = 1;
+			 while (Showcase::where('slug', $slug)->where('id', '!=', $showcase->id)->exists()) {
+				 $slug = "{$originalSlug}-{$count}";
+				 $count++;
+			 }
+			 $validated['slug'] = $slug;
+		 }
+	 
+		 // Initialize an array for new banners
+		 $banners = json_decode($showcase->banners, true) ?? [];
+	 
+		 // Handle new banner uploads
+		 if ($request->hasFile('banners')) {
+			 foreach ($request->file('banners') as $index => $banner) {
+				 $bannerName = $this->storeImage($banner, $showcase->slug ?? $validated['slug'], "banner-" . (count($banners) + $index));
+				 $banners[] = $bannerName;
+			 }
+		 }
+	 
+		 // Handle thumbnail upload
+		 if ($request->hasFile('thumbnail')) {
+			 $thumbnailName = $this->storeImage($request->file('thumbnail'), $showcase->slug ?? $validated['slug'], 'thumbnail');
+			 $validated['thumbnail'] = $thumbnailName;
+		 }
+	 
+		 // Update the showcase
+		 $showcase->update(array_merge($validated, ['banners' => json_encode($banners)]));
+	 
+		 return redirect()->route('showcases.index')->with('success', 'Showcase updated successfully.');
+	 }
+	 
 
 
     /**

@@ -175,7 +175,6 @@
 	</div>
 </section>
 
-
 <!-- Bulk Order -->
 <section class="bulk-order-area section-buttom-padding">
 	<div class="container">

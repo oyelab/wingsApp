@@ -11,7 +11,7 @@ class ShowcaseDetail extends Model
 
     use HasFactory;
 
-	protected $fillable = ['showcase_id', 'heading', 'description', 'images'];
+	protected $fillable = ['showcase_id', 'heading', 'description', 'image'];
 
     public function showcase()
     {
