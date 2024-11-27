@@ -40,7 +40,7 @@
 					id="page-header-user-dropdown-v" data-bs-toggle="dropdown" aria-haspopup="true"
 					aria-expanded="false">
 					<img class="rounded-circle header-profile-user"
-						src="{{ $user->avatarPath }}"
+						src="{{ auth()->user()->avatarPath }}"
 						alt="Header Avatar">
 					<span class="d-none d-xl-inline-block ms-2 fw-medium font-size-15">{{ $user->name }}</span>
 				</button>

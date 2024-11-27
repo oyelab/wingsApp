@@ -25,8 +25,15 @@ class Showcase extends Model
 
 	public function getBannersImagePathAttribute()
 	{
-		return asset("storage/showcases/{$this->slug}/{$this->banners}");
+		// Decode the banners JSON field into an array
+		$banners = json_decode($this->banners);
+	
+		// Map each banner to its correct path and return the array of paths
+		return collect($banners)->map(function ($banner) {
+			return asset("storage/showcases/{$this->slug}/{$banner}");
+		});
 	}
+	
 	
 	public function getThumbnailImagePathAttribute()
 	{

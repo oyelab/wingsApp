@@ -12,6 +12,12 @@ use Intervention\Image\Facades\Image; // Make sure to include this at the top of
 
 class ShowcaseController extends Controller
 {
+	public function __construct()
+    {
+        $this->middleware('auth')->except('show' );;
+		$this->middleware('role')->except('show' );; // Only allow role 1 users
+
+    }
     /**
      * Display a listing of the resource.
      */
@@ -24,20 +30,19 @@ class ShowcaseController extends Controller
 		return view('backEnd.showcases.index', compact('showcases'));
     }
 
-    public function showcases()
-    {
-        $showcases = Showcase::with('details')->get();
+    // public function showcases()
+    // {
+    //     $showcases = Showcase::all();
 
-		dd($showcases);
+	// 	return $showcases;
 
-		return view('backEnd.showcases.index', compact('showcases'));
-    }
+	// 	return view('backEnd.showcases.index', compact('showcases'));
+    // }
 
 	public function show($slug)
 	{
 		// Fetch the showcase with its details (images loaded via the accessor)
 		$showcase = Showcase::where('slug', $slug)
-							->with('details') // Eager load the details
 							->firstOrFail(); // Returns 404 if not found
 
 		// return $showcase;

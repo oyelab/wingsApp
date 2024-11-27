@@ -109,6 +109,7 @@
 		// Set the status value to 1 (true) or 0 (false)
 		document.getElementById('status').value = (value === 1) ? 1 : 0;
 	}
+
 </script>
 <!-- App js -->
 <script src="{{ asset('build/js/app.js') }}"></script>
