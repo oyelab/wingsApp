@@ -67,9 +67,8 @@ class PageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+	public function store(Request $request)
 	{
-		// return $request;
 		// Validate the form data
 		$request->validate([
 			'title' => 'required|string|max:255|unique:pages,title',
@@ -83,29 +82,37 @@ class PageController extends Controller
 		// Handle the image upload if present
 		$imagePath = null;
 		$imageName = null;
-
+	
 		if ($request->hasFile('image')) {
 			// Get the image from the request
 			$image = $request->file('image');
-			
+	
 			// Create an image instance using Intervention Image
 			$imageInstance = Image::make($image);
-			
-			// Generate a unique filename based on the slug and ensure it’s .webp
-			$imageName = $slug . '.webp';
-			
+	
+			// Generate a base filename (slug)
+			$baseName = $slug;
+			$extension = 'webp';
+	
+			// Ensure the filename is unique by incrementing a counter
+			$counter = 0;
+			do {
+				$imageName = $baseName . ($counter > 0 ? '-' . $counter : '') . '.' . $extension;
+				$imagePath = 'public/pages/images/' . $imageName;
+				$counter++;
+			} while (Storage::exists($imagePath));
+	
 			// Resize and convert the image to webP format without reducing quality
-			$imageInstance->encode('webp', 75); // Adjust quality if needed (90 is a good balance)
-			
+			$imageInstance->encode('webp', 75); // Adjust quality if needed (75 is a good balance)
+	
 			// Save the image to the storage folder (not public)
-			$imagePath = 'public/pages/images/' . $imageName;
 			Storage::put($imagePath, $imageInstance->stream());
 		}
 	
 		// Create a new page entry in the database
 		Page::create([
 			'title' => $request->title,
-			'image' => $imageName,  // Store the path to the image
+			'image' => $imageName,  // Store the unique path to the image
 			'content' => $request->content,
 			'slug' => $slug,
 		]);
@@ -113,6 +120,7 @@ class PageController extends Controller
 		// Redirect with success message
 		return redirect()->route('pages.index')->with('success', 'Page created successfully.');
 	}
+	
 
     /**
      * Display the specified resource.
@@ -135,8 +143,6 @@ class PageController extends Controller
      */
     public function update(Request $request, $id)
 	{
-
-		// dd($request->all());
 		// Validate the form data
 		$request->validate([
 			'title' => 'required|string|max:255|unique:pages,title,' . $id, // Exclude the current page from unique check
@@ -144,40 +150,60 @@ class PageController extends Controller
 			'content' => 'nullable|string',
 		]);
 
-		// dd($request->all());
-
-
 		// Find the page by ID
 		$page = Page::findOrFail($id);
 
 		// Generate the slug
 		$slug = Str::slug($request->title);
 
-		// Handle the image upload if present
-		$imagePath = $page->imagePath;  // Keep the current image path if no new image is uploaded
-		$imageName = null;
+		// Handle the image logic
+		$imagePath = $page->imagePath; // Keep the current image path if no new image is uploaded
+		$imageName = $page->image;     // Keep the current image name
 
 		if ($request->hasFile('image')) {
 			// Get the image from the request
 			$image = $request->file('image');
-			
+
 			// Create an image instance using Intervention Image
 			$imageInstance = Image::make($image);
-			
-			// Generate a unique filename based on the slug and ensure it’s .webp
-			$imageName = $slug . '.webp';
-			
+
+			// Generate a base filename (slug)
+			$baseName = $slug;
+			$extension = 'webp';
+
+			// Ensure the filename is unique by incrementing a counter
+			$counter = 0;
+			do {
+				$imageName = $baseName . ($counter > 0 ? '-' . $counter : '') . '.' . $extension;
+				$imagePath = 'public/pages/images/' . $imageName;
+				$counter++;
+			} while (Storage::exists($imagePath));
+
 			// Resize and convert the image to webP format without reducing quality
 			$imageInstance->encode('webp', 75); // Adjust quality if needed (75 is a good balance)
-			
+
 			// Delete the old image if it exists in storage
 			if ($page->imagePath && Storage::exists($page->imagePath)) {
 				Storage::delete($page->imagePath);
 			}
-			
-			// Save the new image to the storage folder (not public)
-			$imagePath = 'public/pages/images/' . $imageName;
+
+			// Save the new image to the storage folder
 			Storage::put($imagePath, $imageInstance->stream());
+		} else if ($page->imagePath) {
+			// Rename the old image if it exists
+			$baseName = $slug;
+			$counter = 0;
+			do {
+				$newImageName = $baseName . ($counter > 0 ? '-' . $counter : '') . '.webp';
+				$newImagePath = 'public/pages/images/' . $newImageName;
+				$counter++;
+			} while (Storage::exists($newImagePath));
+
+			if (Storage::exists($page->imagePath)) {
+				Storage::move($page->imagePath, $newImagePath);
+				$imagePath = $newImagePath;
+				$imageName = $newImageName;
+			}
 		}
 
 		// Update the page entry in the database
@@ -191,6 +217,7 @@ class PageController extends Controller
 		// Redirect with success message
 		return redirect()->route('pages.index')->with('success', 'Page updated successfully.');
 	}
+
 
 
 	public function updateType(Request $request, Page $page)
