@@ -148,8 +148,8 @@ Route::post('/backEnd/specifications/update', [SpecificationController::class, '
 Route::delete('/backEnd/specifications/destroy', [SpecificationController::class, 'destroy'])->name('specifications.destroy');
 
 
-// Route::get('/showcases', [ShowcaseController::class, 'showcases'])->name('showcases');
-// Route::get('/showcases/{showcase}', [ShowcaseController::class, 'show'])->name('showcase.show');
+Route::get('/showcases', [ShowcaseController::class, 'showcases'])->name('showcases');
+Route::get('/showcases/{showcase}', [ShowcaseController::class, 'show'])->name('showcase.show');
 
 Route::resource('backEnd/showcases', ShowcaseController::class);
 
