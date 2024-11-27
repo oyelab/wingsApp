@@ -70,12 +70,12 @@ class ShowcaseController extends Controller
 			'title' => 'required|string|max:255',
 			'short_description' => 'nullable|string|max:500',
 			'banners' => 'required|array|min:1', // Ensure 'banners' is an array and has at least one file
-			'banners.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048', // Validate each file in the 'banners' array
+			'banners.*' => 'image|mimes:jpg,jpeg,png,gif|max:102400', // Validate each file in the 'banners' array
 			'thumbnail' => [
 				'required',
 				'image',
 				'mimes:jpg,jpeg,png,gif',
-				'max:2048',
+				'max:20480',
 				function ($attribute, $value, $fail) use ($request) {
 					// Same ratio validation logic for the thumbnail
 					$order = $request->input('order');
@@ -159,18 +159,47 @@ class ShowcaseController extends Controller
 	
 		// Make sure the directory exists before storing
 		if (!file_exists($directory)) {
-			mkdir($directory, 0777, true); // Set permissions to 0777, recursively
+			// Create the directory with proper permissions
+			mkdir($directory, 0777, true); // Ensure the directory is created recursively
 		}
 	
 		// Open the image using Intervention Image
 		$img = Image::make($image);
 	
-		// Convert the image to WebP and save with 75% quality, no cropping
-		$img->encode('webp', 75) // Convert to WebP format with 75% quality
-			->save("{$directory}/{$fileName}"); // Save the image to the specified path
+		// Initial quality to start with
+		$quality = 75; // Initial quality for WebP conversion
+		$maxSize = 300 * 1024; // 300 KB in bytes
+		$minSize = 200 * 1024; // 200 KB in bytes
 	
-		return $fileName; // Return only the image name
+		// Start with the initial compression
+		do {
+			// Convert the image to WebP with the current quality setting
+			$img->encode('webp', $quality);
+	
+			// Save the image to the specified path
+			$path = "{$directory}/{$fileName}";
+			$img->save($path);
+	
+			// Get the file size
+			$fileSize = filesize($path);
+	
+			// Reduce the quality if file size exceeds the max size
+			if ($fileSize > $maxSize) {
+				$quality -= 5; // Decrease quality by 5 each time
+			}
+	
+		} while ($fileSize > $maxSize && $quality > 10); // Continue until the file size is within the limit
+	
+		// Ensure the file size is within the desired minimum size (optional)
+		if ($fileSize < $minSize) {
+			// Optionally, you can increase quality here if needed to make the file size closer to the minimum
+			// $quality += 5; // This is optional, depending on your specific use case
+		}
+	
+		// Return the image file name
+		return $fileName;
 	}
+	
 	
 
 
@@ -203,12 +232,12 @@ class ShowcaseController extends Controller
 			 'title' => 'required|string|max:255',
 			 'short_description' => 'nullable|string|max:500',
 			 'banners' => 'nullable|array|min:1', // Banners are optional
-			 'banners.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048', // Validate each file in the banners array
+			 'banners.*' => 'image|mimes:jpg,jpeg,png,gif|max:102400', // Validate each file in the banners array
 			 'thumbnail' => [
 				 'nullable', // Thumbnail is optional
 				 'image',
 				 'mimes:jpg,jpeg,png,gif',
-				 'max:2048',
+				 'max:20480',
 				 function ($attribute, $value, $fail) use ($request) {
 					 $order = $request->input('order');
 					 $allowedRatios = [
