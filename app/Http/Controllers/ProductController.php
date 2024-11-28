@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Size;
+use App\Models\Asset;
 use App\Models\Category;
 use App\Models\Quantity;
 use App\Models\Section;
@@ -45,6 +46,9 @@ class ProductController extends Controller
 	
 		// Eager load the sizes relation (only available sizes) and categories
 		$product->load('availableSizes', 'categories');
+
+		$assets = Asset::all();
+
 	
 		// Determine the view based on the category slug
 		$view = $category->slug === 'wings-edited' 
@@ -60,6 +64,7 @@ class ProductController extends Controller
 			'mainCategory' => $mainCategory,
 			'section' => null,
 			'collection' => $category,
+			'assets' => $assets,
 		]);
 	}
 	

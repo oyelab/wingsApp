@@ -55,29 +55,36 @@ class Asset extends Model
     }
 
 	protected function processImage($file, $title)
-    {
-        $path = public_path('uploads/assets');
-        if (!file_exists($path)) {
-            mkdir($path, 0755, true);
-        }
+	{
+		$path = public_path('uploads/assets');
 
-        $slug = Str::slug($title);
-        $extension = 'webp'; // Save all images in WebP format
-        $filename = "{$slug}.{$extension}";
-        $counter = 1;
+		if (!file_exists($path)) {
+			mkdir($path, 0755, true);
+		}
 
-        // Check for existing files and increment the counter for unique filenames
-        while (file_exists($path . '/' . $filename)) {
-            $filename = "{$slug}-{$counter}.{$extension}";
-            $counter++;
-        }
+		$slug = Str::slug($title);
+		$extension = $file->getClientOriginalExtension(); // Get the original file extension
+		$filename = "{$slug}.{$extension}";
+		$counter = 1;
 
-        // Process the image
-        $image = Image::make($file)
-            ->encode($extension, 85); // Reduce quality to 85%
-        $image->save($path . '/' . $filename);
+		// Check for existing files and increment the counter for unique filenames
+		while (file_exists($path . '/' . $filename)) {
+			$filename = "{$slug}-{$counter}.{$extension}";
+			$counter++;
+		}
 
-        return $filename;
-    }
+		// Skip processing if the file is an SVG
+		if ($extension === 'svg') {
+			$file->move($path, $filename); // Directly move the SVG file
+		} else {
+			// Process other image formats
+			$image = Image::make($file)
+				->encode('webp', 85); // Convert to WebP format with 85% quality
+			$image->save($path . '/' . $filename);
+		}
+
+		return $filename;
+	}
+
 
 }
