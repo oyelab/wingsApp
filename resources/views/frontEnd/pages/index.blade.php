@@ -5,8 +5,8 @@
     <div class="container">
         <div class="row">
             <div class="useful-pages-tabs">
-                <div class="d-flex justify-content-start">
-					<div class="nav flex-column me-5 useful-pages-nav border-end border-3 pe-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <div class="d-flex justify-content-start useful-pages-tabs-wrap">
+					<div class="nav flex-column useful-pages-nav mobile-none" id="v-pills-tab" role="tablist" aria-orientation="vertical">
 						@foreach ($pages as $key => $page)
 							<button
 								class="nav-link {{ $key == 0 ? 'active' : '' }}"
@@ -21,6 +21,37 @@
 								{{ $page->title }}
 							</button>
 						@endforeach
+					</div>
+					<div class="mobile-support-pages">
+						<div class="dropdown">
+							<button
+								class="btn btn-secondary dropdown-toggle"
+								type="button"
+								id="dropdownMenuButton1"
+								data-bs-toggle="dropdown"
+								aria-expanded="false"
+							>
+								See All support pages
+							</button>
+							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+								<div class="nav flex-column useful-pages-nav" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+									@foreach ($pages as $key => $page)
+										<button
+											class="nav-link {{ $key == 0 ? 'active' : '' }}"
+											id="{{ $page->slug }}-tab"
+											data-bs-toggle="pill"
+											data-bs-target="#{{ $page->slug }}"
+											type="button"
+											role="tab"
+											aria-controls="{{ $page->slug }}"
+											aria-selected="{{ $key == 0 ? 'true' : 'false' }}"
+										>
+											{{ $page->title }}
+										</button>
+									@endforeach
+								</div>
+							</div>
+						</div>
 					</div>
 
                     <div class="tab-content" id="v-pills-tabContent">
