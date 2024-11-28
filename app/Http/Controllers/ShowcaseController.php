@@ -81,7 +81,7 @@ class ShowcaseController extends Controller
 			'banners.required' => 'Please upload at least one banner.',
 			'banners.*.image' => 'Each file must be an image.',
 			'banners.*.mimes' => 'Each file must be a jpg, jpeg, png, or gif.',
-			'banners.*.max' => 'Each image must not exceed 2 MB.',
+			'banners.*.max' => 'Each image must not exceed 2 MB for Banner.',
 			'thumbnail' => [
 				'required',
 				'image',
@@ -119,7 +119,7 @@ class ShowcaseController extends Controller
 		}, 0);
 		
 		if ($totalSize > 20 * 1024 * 1024) { // Check if total size exceeds 20 MB
-			return redirect()->back()->withErrors(['banners' => 'Total upload size must not exceed 20 MB.']);
+			return redirect()->back()->withErrors(['banners' => 'Total upload size must not exceed 20 MB for Banners.']);
 		}
 	
 		// Check if a showcase with the same order already exists
