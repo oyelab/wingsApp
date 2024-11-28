@@ -1818,14 +1818,16 @@ a {
     margin-right: 32px;
     border-right: 3px solid #dee2e6;
 }
-.useful-pages-nav .nav-link {
+.useful-pages-nav .nav-link,
+.mobile-useful-pages-nav .nav-link {
     text-align: left;
     padding: 0px;
     font-size: 18px;
     font-weight: 600;
     color: var(--wings-primary);
 }
-.useful-pages-nav .nav-link.active {
+.useful-pages-nav .nav-link.active,
+.mobile-useful-pages-nav .nav-link.active {
     text-decoration: underline;
 }
 .useful-pages-content {
@@ -2410,6 +2412,23 @@ a {
     }
     .mobile-support-pages {
         display: block;
+    }
+    /* Useful Pages */
+    .mobile-support-pages .dropdown-toggle::after {
+        display: none;
+    }
+    .mobile-support-pages .dropdown-toggle {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: var(--wings-primary);
+        border: none;
+        font-size: 16px;
+    }
+    .mobile-support-pages .dropdown-menu.show {
+        width: 100%;
+        padding: 20px;
     }
     /* Contact us */
     .contact-left {
