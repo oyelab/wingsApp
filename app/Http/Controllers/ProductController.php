@@ -287,11 +287,13 @@ class ProductController extends Controller
 			}
 		}
 
-		return response()->json([
-			'status' => 'success',
-			'message' => 'Product created successfully.',
-			'redirect_url' => route('products.index') // If you want to redirect
-		]);
+		return redirect()->route('products.index')->with('success', 'Product updated successfully.');
+
+		// return response()->json([
+		// 	'status' => 'success',
+		// 	'message' => 'Product created successfully.',
+		// 	'redirect_url' => route('products.index') // If you want to redirect
+		// ]);
 		
 	}
 
