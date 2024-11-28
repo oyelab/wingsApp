@@ -178,7 +178,7 @@
 									@endforeach
 								</ul>
 							</div>
-							@endif
+						@endif
                         <form method="POST" action="{{ route('register') }}" class="input-wraps" id="registerForm">
                             @csrf
                             <input type="hidden" name="name" value="{{ $order_details->name }}">
@@ -192,12 +192,11 @@
                                     <i class="bi bi-arrow-right text-light fs-3"></i>
                                 </button>
                             </div>
-                            <label for="iAgree" class="d-flex align-items-center gap-1" style="font-size: 1rem; color: #fff; white-space: nowrap;">
+                            <label class="d-flex align-items-center gap-1" style="cursor: pointer; font-size: 1rem; color: #fff; white-space: nowrap;">
                                 <input type="checkbox" id="iAgree" name="terms" class="me-2"/>
                                 I agree to Wings 
-                                <a href="{{ route('help.index') }}#terms-conditions" style="text-decoration: none; color: inherit;">Terms & Policy.</a>
+                                <a href="{{ route('help.index') }}#terms-conditions" target="_blank" style="text-decoration: none; color: inherit;">Terms & Policy.</a>
                             </label>
-
                         </form>
 						
 

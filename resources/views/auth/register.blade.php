@@ -44,7 +44,7 @@
                                                 <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
                                                 <input id="name" type="text"
                                                     class="form-control @error('name') is-invalid @enderror" name="name"
-                                                    value="{{ old('name') }}" required autocomplete="name" autofocus
+                                                    value="{{ old('name') }}" !!required autocomplete="name" autofocus
                                                     placeholder="Enter name">
                                                 @error('name')
                                                     <span class="invalid-feedback" role="alert">
@@ -57,7 +57,7 @@
                                                 <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                                                 <input id="email" type="email"
                                                     class="form-control @error('email') is-invalid @enderror" name="email"
-                                                    value="{{ old('email') }}" required autocomplete="email"
+                                                    value="{{ old('email') }}" !!required autocomplete="email"
                                                     placeholder="Enter email">
                                                 @error('email')
                                                     <span class="invalid-feedback" role="alert">
@@ -71,7 +71,7 @@
                                                 <label class="form-label" for="password-input">Password <span class="text-danger">*</span></label>
                                                 <input type="password"
                                                     class="form-control @error('password') is-invalid @enderror"
-                                                    name="password" required id="password-input"
+                                                    name="password" !!required id="password-input"
                                                     placeholder="Enter password">
                                                 @error('password')
                                                     <span class="invalid-feedback" role="alert">
@@ -85,14 +85,29 @@
                                                     Password <span class="text-danger">*</span></label>
                                                 <input type="password"
                                                     class="form-control @error('password') is-invalid @enderror"
-                                                    name="password_confirmation" required id="password-confirm"
+                                                    name="password_confirmation" !!required id="password-confirm"
                                                     placeholder="Enter confirm password">
                                             </div>
 
-                                            <div>
-                                                <p class="mb-0">By registering you agree to the Reactly <a href="#"
-                                                        class="text-primary">Terms of Use</a></p>
-                                            </div>
+											<div class="mb-3">
+												<div class="d-flex align-items-center gap-1">
+													<input type="checkbox" id="terms" name="terms" class="ms-2 @error('terms') is-invalid @enderror">
+													<label for="terms" class="form-check-label">
+														I agree to Wings 
+														<a href="{{ route('help.index') }}#terms-conditions" target="_blank">Terms & Policy.</a>
+													</label>
+												</div>
+												@error('terms')
+													<div class="invalid-feedback d-block mt-1">
+														<strong>{{ $message }}</strong>
+													</div>
+												@enderror
+											</div>
+
+
+
+
+											
 
                                             <div class="mt-4">
                                                 <button class="btn btn-primary w-100" type="submit">Register</button>

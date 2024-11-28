@@ -39,9 +39,17 @@
 				<button type="button" class="btn header-item user text-start d-flex align-items-center"
 					id="page-header-user-dropdown-v" data-bs-toggle="dropdown" aria-haspopup="true"
 					aria-expanded="false">
-					<img class="rounded-circle header-profile-user"
-						src="{{ auth()->user()->avatarPath }}"
-						alt="Header Avatar">
+
+
+						@if (Auth::user()->avatar)
+							<!-- User's Avatar -->
+							<img src="{{ Auth::user()->avatarPath }}" alt="User Avatar" class="rounded-circle header-profile-user">
+						@else
+							<!-- First Letter of Name -->
+							<div class="d-flex justify-content-center align-items-center rounded-circle bg-primary text-white fw-bold" style="width: 35px; height: 35px; cursor:pointer; font-size: 16px;">
+								{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+							</div>
+						@endif
 					<span class="d-none d-xl-inline-block ms-2 fw-medium font-size-15">{{ $user->name }}</span>
 				</button>
 				<div class="dropdown-menu dropdown-menu-end pt-0">

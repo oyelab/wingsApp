@@ -230,7 +230,7 @@
 										<a class="usernav-link" href="#" id="userDropdown" role="button">
 											@if (Auth::user()->avatar)
 												<!-- User's Avatar -->
-												<img src="{{ asset('storage/avatars/' . Auth::user()->avatar) }}" alt="User Avatar" class="user-avatar">
+												<img src="{{ Auth::user()->avatarPath }}" alt="User Avatar" class="user-avatar">
 											@else
 												<!-- First Letter of Name -->
 												<div class="user-placeholder">

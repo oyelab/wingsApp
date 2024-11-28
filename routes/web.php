@@ -99,7 +99,7 @@ Route::post('/payment/ipn', [PaymentController::class, 'paymentIpn'])->name('pay
 Route::get('/order/{order:ref}/success', [OrderController::class, 'orderPlaced'])->name('order.placed');
 Route::get('/order/{order:ref}/failed', [OrderController::class, 'orderFailed'])->name('order.failed');
 
-Route::get('help', [PageController::class, 'help'])->name('help.index');
+Route::get('/help', [PageController::class, 'help'])->name('help.index');
 // Route::get('help', [PageController::class, 'index'])->name('help.index');
 Route::get('/getInTouch', [PageController::class, 'getInTouch'])->name('getInTouch');
 
