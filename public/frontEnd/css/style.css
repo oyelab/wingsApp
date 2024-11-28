@@ -2415,7 +2415,8 @@ a {
     .contact-left {
         margin-bottom: 30px;
     }
-    .contact-left h1 {
+    .contact-left h1,
+    .confirmation-title {
         font-size: 30px;
         line-height: 30px;
         margin-bottom: 20px;
