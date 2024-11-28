@@ -2390,6 +2390,9 @@ a {
 	 Responsive css start
   ---------------------------------*/
 @media screen and (max-width: 576px) {
+    .section-padding {
+        padding: 60px 0px;
+    }
     .step-one h2 {
         font-size: 25px;
         line-height: 1.2;
@@ -2404,5 +2407,18 @@ a {
     }
     .mobile-support-pages {
         display: block;
+    }
+    /* Contact us */
+    .contact-left {
+        margin-bottom: 30px;
+    }
+    .contact-left h1 {
+        font-size: 30px;
+        line-height: 30px;
+        margin-bottom: 20px;
+    }
+    .contact-left h4 {
+        font-size: 20px;
+        margin-bottom: 20px;
     }
 }
