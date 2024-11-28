@@ -24,7 +24,7 @@
                 @forelse($assets as $asset)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ ucfirst($asset->type) }}</td>
+                        <td>{{ $asset->type }}</td>
                         <td>{{ $asset->title }}</td>
                         <td>
                             @if($asset->filePath)

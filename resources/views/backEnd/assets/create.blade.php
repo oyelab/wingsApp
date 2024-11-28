@@ -1,6 +1,8 @@
 <!-- resources/views/admin/assets/create.blade.php -->
 @extends('backEnd.layouts.master')
-
+@section('title')
+Create Asset
+@endsection
 @section('content')
 <div class="container">
     <h2>Create Asset</h2>
@@ -10,6 +12,7 @@
             <label for="type">Asset Type</label>
             <input type="text" name="type" class="form-control" value="{{ old('type') }}" required>
         </div>
+
 
         <div class="form-group">
             <label for="title">Asset Title</label>

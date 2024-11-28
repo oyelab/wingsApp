@@ -49,10 +49,10 @@
                 <li>
                     <a href="javascript: void(0);" class="has-arrow">
                         <i class="bx bx-store icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-manage-product">Products</span>
+                        <span class="menu-item" data-key="t-manage-collections">Collections</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
-						<li><a href="{{ route('products.create') }}" data-key="t-add-product">Add Product</a></li>
+						<li><a href="{{ route('products.create') }}" data-key="t-add-product-new-product-item">Add New Product/Item</a></li>
                         <li><a href="{{ route('products.index') }}" data-key="t-products">Products</a></li>
                         <li><a href="{{ route('categories.index') }}" data-key="t-categories">Categories</a></li>
                         <li><a href="{{ route('specifications.index') }}" data-key="t-specifications">Specifications</a></li>
