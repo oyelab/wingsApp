@@ -53,7 +53,7 @@
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
 						<li><a href="{{ route('products.create') }}" data-key="t-add-product-new-product-item">Add New Product/Item</a></li>
-                        <li><a href="{{ route('products.index') }}" data-key="t-products">Products</a></li>
+                        <li><a href="{{ route('products.index') }}" data-key="t-products">Products/Items</a></li>
                         <li><a href="{{ route('categories.index') }}" data-key="t-categories">Categories</a></li>
                         <li><a href="{{ route('specifications.index') }}" data-key="t-specifications">Specifications</a></li>
                     </ul>
