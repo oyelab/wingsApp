@@ -2393,7 +2393,8 @@ a {
     .section-padding {
         padding: 60px 0px;
     }
-    .step-one h2 {
+    .step-one h2,
+    .bag-summary-wrap h2 {
         font-size: 25px;
         line-height: 1.2;
     }
@@ -2401,7 +2402,8 @@ a {
         display: none;
     }
     .useful-pages-tabs-wrap,
-    .call-to-action-content {
+    .call-to-action-content,
+    .bag-product-item {
         flex-direction: column;
         gap: 20px;
     }
@@ -2420,5 +2422,33 @@ a {
     .contact-left h4 {
         font-size: 20px;
         margin-bottom: 20px;
+    }
+    /* BAg page */
+    .bag-product-wrap {
+        margin-bottom: 30px;
+    }
+    .image-part {
+        width: 100%;
+    }
+    .bag-product-right,
+    .call-to-action-content {
+        gap: 10px;
+    }
+    .pricing-wrap p,
+    .pricing-wrap h2,
+    .product-info h2,
+    .product-info h4 {
+        font-size: 16px;
+        margin-bottom: 10px;
+    }
+    .item p,
+    .total-pricing h3,
+    .button-wrap a,
+    .call-to-action-content a,
+    .call-to-action-content p {
+        font-size: 16px;
+    }
+    .product-info {
+        gap: 0px;
     }
 }
