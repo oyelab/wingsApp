@@ -100,7 +100,7 @@
 							</div>
 						</div>
 						<div class="form-check mt-2">
-							<input type="checkbox" class="form-check-input" name="terms" !required>
+							<input type="checkbox" id="exampleCheck1" class="form-check-input" name="terms" !required>
 							<label class="form-check-label" for="exampleCheck1">I have read and agree to the
 								<a href="{{ route('help.index') }}#terms-conditions">Terms and Conditions.</a></label>
 						</div>
