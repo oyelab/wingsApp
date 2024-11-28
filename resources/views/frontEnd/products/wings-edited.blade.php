@@ -62,7 +62,6 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		object-fit: cover; /* Ensures images fit squarely */
 	}
 
 </style>
@@ -91,7 +90,7 @@
 			<!-- Row 1: Collage of 4 Photos -->
 			<div class="row g-1 collage">
 				@foreach($product->imagePaths as $key => $imagePath)
-					<div class="col-6 image-container {{ $key >= 4 ? 'd-none' : '' }}">
+					<div class="col-6 {{ $key >= 4 ? 'd-none' : '' }}">
 						<img src="{{ $imagePath }}" alt="{{ $product->title }} Gallery Image {{ $key }} ">
 					</div>
 				@endforeach
