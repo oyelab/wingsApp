@@ -186,7 +186,7 @@
 				<h5>Specifications</h5>
 				<ul>
 					@foreach($product->specifications() as $specification)
-					<li>{{ $specification->item }}</li>
+					<li>✔ {{ $specification->item }}</li>
 					@endforeach
 				</ul>
 			</div>
