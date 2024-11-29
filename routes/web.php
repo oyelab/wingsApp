@@ -23,6 +23,7 @@ use App\Http\Controllers\SpecificationController;
 use App\Http\Controllers\ShowcaseController;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\TestController;
 
 
 
@@ -49,6 +50,9 @@ Auth::routes();
 
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
+Route::get('/new-file-upload', [TestController::class, 'create'])->name('create');
+Route::post('/new-file-upload', [TestController::class, 'store'])->name('store');
+Route::get('/invoice', [TestController::class, 'invoice'])->name('invoice');
 
 
 Route::get('/search', [CategoryController::class, 'search'])->name('search');
