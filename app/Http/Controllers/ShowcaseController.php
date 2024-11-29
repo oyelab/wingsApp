@@ -263,7 +263,7 @@ class ShowcaseController extends Controller
 						 1 => [3.76, 5],
 						 2 => [3.76, 5],
 						 3 => [7.82, 4.7],
-						 4 => [3.76, 5],
+						 4 => [5, 6.2],
 						 5 => [5, 3.5],
 					 ];
 	 

@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('wings_users', function (Blueprint $table) {
+        Schema::create('tests', function (Blueprint $table) {
             $table->id();
+			$table->string('file_path');
+			$table->unsignedBigInteger('original_size'); // Original file size in bytes
+			$table->unsignedBigInteger('compressed_size'); // Compressed file size in bytes
             $table->timestamps();
         });
     }
@@ -22,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('wings_users');
+        Schema::dropIfExists('tests');
     }
 };
