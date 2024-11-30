@@ -75,8 +75,8 @@
             <div class="mt-3">
                 <p>Existing Banners:</p>
                 <div class="d-flex gap-2">
-                    @foreach (json_decode($showcase->banners, true) as $banner)
-                        <img src="{{ asset('storage/showcases/' . $showcase->slug . '/' . $banner) }}" alt="Banner" class="img-thumbnail" style="width: 100px; height: auto;">
+                    @foreach ($showcase->bannersImagePath as $banner)
+                        <img src="{{ $banner }}" alt="Banner" class="img-thumbnail" style="width: 100px; height: auto;">
                     @endforeach
                 </div>
             </div>
@@ -105,7 +105,7 @@
 			</div>
 			@if ($showcase->thumbnail)
             <div class="mt-3">
-				<img src="{{ asset('storage/showcases/' . $showcase->slug . '/' . $showcase->thumbnail) }}" alt="Thumbnail" class="img-thumbnail" style="width: 150px; height: auto;">
+				<img src="{{ $showcase->thumbnailImagePath }}" alt="Thumbnail" class="img-thumbnail" style="width: 150px; height: auto;">
             </div>
         @endif
     </div>

@@ -50,8 +50,8 @@ Auth::routes();
 
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
-Route::get('/new-file-upload', [TestController::class, 'create'])->name('create');
-Route::post('/new-file-upload', [TestController::class, 'store'])->name('store');
+Route::get('/new-file-upload', [TestController::class, 'create'])->name('test.create');
+Route::post('/new-file-store', [TestController::class, 'store'])->name('test.store');
 Route::get('/invoice', [TestController::class, 'invoice'])->name('invoice');
 
 
@@ -102,6 +102,9 @@ Route::post('/payment/ipn', [PaymentController::class, 'paymentIpn'])->name('pay
 
 Route::get('/order/{order:ref}/success', [OrderController::class, 'orderPlaced'])->name('order.placed');
 Route::get('/order/{order:ref}/failed', [OrderController::class, 'orderFailed'])->name('order.failed');
+
+Route::get('/orders/{order}/download-invoice', [OrderController::class, 'downloadInvoice'])->name('orders.downloadInvoice');
+Route::post('/order/invoice', [OrderController::class, 'invoice'])->name('invoice');
 
 Route::get('/help', [PageController::class, 'help'])->name('help.index');
 // Route::get('help', [PageController::class, 'index'])->name('help.index');

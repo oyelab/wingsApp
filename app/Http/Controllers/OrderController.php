@@ -6,13 +6,65 @@ use App\Models\Size;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Order;
+use App\Models\SiteSetting;
 use App\Models\Quantity;
 use Illuminate\Http\Request;
 use Session;
+// use PDF; // Assuming you're using a PDF library like dompdf or barryvdh/laravel-dompdf
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Log;
+
 
 
 class OrderController extends Controller
 {
+
+	public function downloadInvoice(Order $order)
+    {
+		
+        // You can load any necessary relationships like transactions or items here
+        $order->load('transactions', 'user');  // Example relationships
+
+		$order->getOrderDetails()->calculateTotals();
+		$items = $order->getOrderDetails()->getOrderItems();
+		$siteSetting = SiteSetting::first();
+		// return $siteSetting;
+
+        // Pass the order data to the Blade template
+        $pdf = PDF::loadView('test.invoice-template', compact('order', 'items'));
+
+        // Download the invoice as a PDF file
+        return $pdf->download('invoice-' . $order->ref . '.pdf');
+    }
+
+	public function invoice(Request $request)
+	{
+		// Validate request data
+		$request->validate([
+			'order_id' => 'required|exists:orders,id',
+		]);
+	
+		// Retrieve the order with transactions
+		$order = Order::with('transactions')->findOrFail($request->order_id);
+	
+		// Prepare data for the invoice
+		$invoiceData = [
+			'order' => $order,  // This contains the order details
+			'transactions' => $order->transactions,
+		];
+	
+		// Dump the order and invoiceData to check before returning
+		dd($order, $invoiceData);
+	
+		// Return the PDF and the order data as a JSON response
+		return response()->json([
+			'order' => $order,  // Sending the order data to JavaScript
+			'invoiceData' => $invoiceData,
+		]);
+	}
+	
+
+	
 	public function addToCart(Request $request)
 	{
 		$productId = $request->input('product_id');

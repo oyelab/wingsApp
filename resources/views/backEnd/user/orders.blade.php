@@ -204,8 +204,9 @@
 										</>
 
 										<!-- Add a review-related icon (star icon) next to it -->
-										<a href="javascript:void(0);" onclick="openOrderReviewModal({{ $order->id }})">
-											<i class="bi bi-star-fill"></i>
+										<!-- <a href="javascript:void(0);" onclick="openOrderReviewModal({{ $order->id }})"> -->
+										<a href="{{ route('orders.downloadInvoice', $order->id) }}">
+											<i class="bi bi-download"></i>
 										</a>
 									</td>
 								</tr>

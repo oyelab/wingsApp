@@ -1,46 +1,24 @@
-@extends('frontEnd.layouts.app')
-@section('content')
-<div class="container">
-  <div class="content section-padding">
-    <form id="uploadForm" action="/new-file-upload" method="post" enctype="multipart/form-data">
-      @csrf
-      <div class="form-group">
-		<input type="file" accept="image/*" name="file" onchange="handleImageUpload(event);">
-      </div>
-      <button class="form-control btn btn-success" type="submit">Submit</button>
-    </form>
-  </div>
-</div>
-@endsection
-
-@section('scripts')
-<!-- Load compress.js (non-module version) -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/@xkeshi/compress.js/dist/compress.min.js"></script> -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.1/dist/browser-image-compression.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload and Select Thumbnail</title>
+	<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+	<link
+	rel="stylesheet"
+	href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css"
+	type="text/css"
+	/>
+</head>
+<body>
 
 
-<script>
- async function handleImageUpload(event) {
+	<div class="my-dropzone"></div>
 
-const imageFile = event.target.files[0];
-console.log('originalFile instanceof Blob', imageFile instanceof Blob); // true
-console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
-
-const options = {
-  maxSizeMB: 1,
-  maxWidthOrHeight: 1920,
-  useWebWorker: true,
-}
-try {
-  const compressedFile = await imageCompression(imageFile, options);
-  console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
-  console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
-
-  await uploadToServer(compressedFile); // write your own logic
-} catch (error) {
-  console.log(error);
-}
- }
-
-</script>
-@endsection
+	<script>
+	// Dropzone has been added as a global variable.
+	const dropzone = new Dropzone("div.my-dropzone", { url: "/file/post" });
+	</script>
+</body>
+</html>

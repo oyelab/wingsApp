@@ -427,79 +427,133 @@
 						<div>
 							<div class="wings-showcase-gap">
 								<!-- Showcase 1 -->
-								<div class="wings-showcase-item">
-									<a href="{{ route('showcase.show', $showcases->where('order', 1)->first()?->slug) }}">
+								@if ($showcase1 = $showcases->where('order', 1)->first())
+									<div class="wings-showcase-item">
+										<a href="{{ route('showcase.show', $showcase1->slug) }}">
+											<img
+												src="{{ $showcase1->thumbnailImagePath }}"
+												draggable="false"
+												class="img-fluid left-top-border-radius"
+												alt="Wings Showcase"
+											/>
+										</a>
+									</div>
+								@else
+									<div class="wings-showcase-item">
 										<img
-											src="{{ $showcases->where('order', 1)->first()?->thumbnailImagePath }}"
+											src="{{ asset('frontEnd/images/wing-showcase-1.png') }}"
 											draggable="false"
-											class="img-fluid left-top-border-radius"
+											class="img-fluid left-bottom-border-radius"
 											alt="Wings Showcase"
 										/>
-									</a>
-								</div>
+									</div>
+								@endif
 								<!-- Showcase 1 End -->
 
 								<!-- Showcase 2 -->
-								<div class="wings-showcase-item">
-									<a href="{{ route('showcase.show', $showcases->where('order', 2)->first()?->slug) }}">
+								@if ($showcase2 = $showcases->where('order', 2)->first())
+									<div class="wings-showcase-item">
+										<a href="{{ route('showcase.show', $showcase2->slug) }}">
+											<img
+												src="{{ $showcase2->thumbnailImagePath }}"
+												draggable="false"
+												class="img-fluid"
+												alt="Wings Showcase"
+											/>
+										</a>
+									</div>
+								@else
+									<div class="wings-showcase-item">
 										<img
-											src="{{ $showcases->where('order', 2)->first()?->thumbnailImagePath }}"
+											src="{{ asset('frontEnd/images/wing-showcase-2.png') }}"
 											draggable="false"
-											class="img-fluid"
+											class="img-fluid left-bottom-border-radius"
 											alt="Wings Showcase"
 										/>
-									</a>
-								</div>
+									</div>
+								@endif
 								<!-- Showcase 2 End -->
 							</div>
 
 							<!-- Showcase 3 -->
-							<div class="wings-showcase-item">
-								<a href="{{ route('showcase.show', $showcases->where('order', 3)->first()?->slug) }}">
+							@if ($showcase3 = $showcases->where('order', 3)->first())
+								<div class="wings-showcase-item">
+									<a href="{{ route('showcase.show', $showcase3->slug) }}">
+										<img
+											src="{{ $showcase3->thumbnailImagePath }}"
+											draggable="false"
+											class="img-fluid left-bottom-border-radius"
+											alt="Wings Showcase"
+										/>
+									</a>
+								</div>
+							@else
+								<div class="wings-showcase-item">
 									<img
-										src="{{ $showcases->where('order', 3)->first()?->thumbnailImagePath }}"
+										src="{{ asset('frontEnd/images/wing-showcase-3.png') }}"
 										draggable="false"
 										class="img-fluid left-bottom-border-radius"
 										alt="Wings Showcase"
 									/>
-								</a>
-							</div>
+								</div>
+							@endif
 							<!-- Showcase 3 End -->
-
 						</div>
 
 						<div class="flex-column wings-showcase-gap">
 							<!-- Showcase 4 -->
-							<div class="wings-showcase-item">
-								<a href="{{ route('showcase.show', $showcases->where('order', 4)->first()?->slug) }}">
+							@if ($showcase4 = $showcases->where('order', 4)->first())
+								<div class="wings-showcase-item">
+									<a href="{{ route('showcase.show', $showcase4->slug) }}">
+										<img
+											src="{{ $showcase4->thumbnailImagePath }}"
+											draggable="false"
+											class="img-fluid right-top-border-radius"
+											alt="Wings Showcase"
+										/>
+									</a>
+								</div>
+							@else
+								<div class="wings-showcase-item">
 									<img
-										src="{{ $showcases->where('order', 4)->first()?->thumbnailImagePath }}"
+										src="{{ asset('frontEnd/images/wing-showcase-4.png') }}"
 										draggable="false"
-										class="img-fluid right-top-border-radius"
+										class="img-fluid left-bottom-border-radius"
 										alt="Wings Showcase"
 									/>
-								</a>
-							</div>
+								</div>
+							@endif
 							<!-- Showcase 4 End -->
 
 							<!-- Showcase 5 -->
-							<div class="wings-showcase-item">
-								<a href="{{ route('showcase.show', $showcases->where('order', 5)->first()?->slug) }}">
+							@if ($showcase5 = $showcases->where('order', 5)->first())
+								<div class="wings-showcase-item">
+									<a href="{{ route('showcase.show', $showcase5->slug) }}">
+										<img
+											src="{{ $showcase5->thumbnailImagePath }}"
+											draggable="false"
+											class="img-fluid right-bottom-border-radius"
+											alt="Wings Showcase"
+										/>
+									</a>
+								</div>
+							@else
+								<div class="wings-showcase-item">
 									<img
-										src="{{ $showcases->where('order', 5)->first()?->thumbnailImagePath }}"
+										src="{{ asset('frontEnd/images/wing-showcase-5.png') }}"
 										draggable="false"
-										class="img-fluid right-bottom-border-radius"
+										class="img-fluid left-bottom-border-radius"
 										alt="Wings Showcase"
 									/>
-								</a>
-							</div>
+								</div>
+							@endif
 							<!-- Showcase 5 End -->
 						</div>
-
 					</div>
 				</div>
 			</div>
 		</div>
+
 	</div>
 </section>
 

@@ -40,41 +40,34 @@ class AppServiceProvider extends ServiceProvider
 	{
 		Paginator::useBootstrapFive();
 
-		
-		// Share site settings, social links, and cart count with all views
-		View::composer('frontEnd.layouts.app', function ($view) {
-			$settings = SiteSetting::first(); // Fetch the first site setting
-			// return $siteSettings;
-			$footerLinks = Page::where('type', 1)->orderBy('order', 'asc')->get();
-			$quickLinks = Page::where('type', 2)->orderBy('order', 'asc')->get();
+		// Share global data with all views
+		$settings = SiteSetting::first(); 
+		$footerLinks = Page::where('type', 1)->orderBy('order', 'asc')->get();
+		$quickLinks = Page::where('type', 2)->orderBy('order', 'asc')->get();
 
-			// Initialize socialLinks array
-			$socialLinks = [];
+		$socialLinks = [];
+		if ($settings && is_string($settings->social_links)) {
+			$socialLinks = json_decode($settings->social_links, true) ?: [];
+		} elseif ($settings && is_array($settings->social_links)) {
+			$socialLinks = $settings->social_links;
+		}
 
-			// Check if settings exist and if social_links is a string before decoding
-			if ($settings && is_string($settings->social_links)) {
-				$socialLinks = json_decode($settings->social_links, true) ?: []; // Decode safely
-			} elseif ($settings && is_array($settings->social_links)) {
-				// If social_links is already an array, use it directly
-				$socialLinks = $settings->social_links;
-			}
+		$iconMapping = $settings->getSocialIconMapping();
+		$cartCount = count(Session::get('cart', []));
+		$baseUrl = request()->getSchemeAndHttpHost();
 
-			// Get the icon mapping
-			$iconMapping = $settings->getSocialIconMapping();
 
-			// Fetch the cart session count
-			$cartCount = count(Session::get('cart', []));
-
-			// Pass settings, social links, icon mapping, and cart count to the view
-			$view->with([
-				'siteSettings' => $settings,
-				'socialLinks' => $socialLinks,
-				'iconMapping' => $iconMapping,
-				'cartCount' => $cartCount, // Pass cart count for the badge
-				'footerLinks' => $footerLinks, // Pass cart count for the badge
-				'quickLinks' => $quickLinks, // Pass cart count for the badge
-			]);
-		});
+		// Share data globally with all views
+		View::share([
+			'siteSettings' => $settings,
+			'socialLinks' => $socialLinks,
+			'iconMapping' => $iconMapping,
+			'cartCount' => $cartCount,
+			'footerLinks' => $footerLinks,
+			'quickLinks' => $quickLinks,
+			'siteUrl' => $baseUrl,
+		]);
 	}
+
 
 }
