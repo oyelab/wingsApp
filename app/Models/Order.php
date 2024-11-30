@@ -91,21 +91,32 @@ class Order extends Model
 		return $this;
 	}
 
+	
+
 	public function getOrderItems()
 	{
 		return $this->products->map(function ($product) {
 			$imagePath = $product->image_paths[0];
 			$sizeName = $product->sizes->firstWhere('id', $product->pivot->size_id)->name ?? 'N/A';
 
+			// Calculate sale price (if applicable)
+			$salePrice = $product->sale 
+			? $product->price * (1 - $product->sale / 100) 
+			: $product->price;
+		
+			// Calculate full price (price x quantity)
+			$fullPrice = $product->price * $product->pivot->quantity;
+			
 			return [
 				'id' => $product->id,
 				'title' => $product->title,
 				'price' => $product->price,
-				'sale' => $product->sale ? $product->price * (1 - $product->sale / 100) : $product->price,
+				'sale' => $salePrice,
 				'categories' => $product->categories->pluck('title')->unique()->implode(', '),
 				'size' => $sizeName,
 				'quantity' => $product->pivot->quantity,
 				'imagePath' => $imagePath,
+				'fullPrice' => number_format($fullPrice, 2, '.', ''), // Format for readability
 			];
 		});
 	}

@@ -30,14 +30,14 @@ class Showcase extends Model
 	
 		// Map each banner to its correct path and return the array of paths
 		return collect($banners)->map(function ($banner) {
-			return asset("storage/showcases/{$this->slug}/{$banner}");
+			return asset("storage/showcases/{$this->id}/{$banner}");
 		});
 	}
 	
 	
 	public function getThumbnailImagePathAttribute()
 	{
-		return asset("storage/showcases/{$this->slug}/{$this->thumbnail}");
+		return asset("storage/showcases/{$this->id}/{$this->thumbnail}");
 	}
 	
 }

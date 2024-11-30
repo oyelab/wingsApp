@@ -68,156 +68,101 @@ class ShowcaseController extends Controller
      */
 
 
-	public function store(Request $request)
-	{
-		// return $request;
-		// Validate the incoming request data for the showcase
-		$validated = $request->validate([
-			'title' => 'required|string|max:255',
-			'short_description' => 'nullable|string|max:500',
-			'banners' => 'required|array|min:1', // Ensure 'banners' is an array and has at least one file
-			'banners.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048', // Validate each file to not exceed 2 MB
-		], [
-			'banners.required' => 'Please upload at least one banner.',
-			'banners.*.image' => 'Each file must be an image.',
-			'banners.*.mimes' => 'Each file must be a jpg, jpeg, png, or gif.',
-			'banners.*.max' => 'Each image must not exceed 2 MB for Banner.',
-			'thumbnail' => [
-				'required',
-				'image',
-				'mimes:jpg,jpeg,png,gif',
-				'max:20480',
-				function ($attribute, $value, $fail) use ($request) {
-					// Same ratio validation logic for the thumbnail
-					$order = $request->input('order');
-					$allowedRatios = [
-						1 => [3.76, 5],
-						2 => [3.76, 5],
-						3 => [7.82, 4.7],
-						4 => [5, 6.2],
-						5 => [5, 3.5],
-					];
-	
-					if (isset($allowedRatios[$order])) {
-						[$width, $height] = $allowedRatios[$order];
-						$image = Image::make($value);
-						$actualRatio = $image->width() / $image->height();
-						$expectedRatio = $width / $height;
-	
-						if (abs($actualRatio - $expectedRatio) > 0.01) {
-							$fail("The {$attribute} must have a ratio of {$width}x{$height} for order {$order}.");
-						}
-					}
-				},
-			],
-			'status' => 'required|boolean',
-			'order' => 'nullable|integer|between:1,5',
-		]);
-
-		$totalSize = array_reduce($request->file('banners'), function ($carry, $file) {
-			return $carry + $file->getSize();
-		}, 0);
-		
-		if ($totalSize > 20 * 1024 * 1024) { // Check if total size exceeds 20 MB
-			return redirect()->back()->withErrors(['banners' => 'Total upload size must not exceed 20 MB for Banners.']);
-		}
-	
-		// Check if a showcase with the same order already exists
-		$existingShowcase = Showcase::where('order', $validated['order'])->first();
-		if ($existingShowcase) {
-			// Detach the order by setting it to null
-			$existingShowcase->update(['order' => null]);
-		}
-	
-		// Generate the slug for the showcase title
-		$slug = Str::slug($validated['title']);
-	
-		// Ensure the slug is unique by checking if it exists in the database
-		$originalSlug = $slug;
-		$count = 1;
-		while (Showcase::where('slug', $slug)->exists()) {
-			$slug = "{$originalSlug}-{$count}";
-			$count++;
-		}
-	
-		// Initialize an array to store banner file names
-		$banners = [];
-	
-		// Save multiple banner images
-		if ($request->hasFile('banners')) {
-			foreach ($request->file('banners') as $index => $banner) {
-				$bannerName = $this->storeImage($banner, $slug, "banner-{$index}");
-				$banners[] = $bannerName; // Add file name to the array
-			}
-		}
-	
-		// Create the main showcase entry with the unique slug and save banners as JSON
-		$showcase = Showcase::create([
-			'title' => $validated['title'],
-			'slug' => $slug,
-			'short_description' => $validated['short_description'],
-			'status' => $validated['status'],
-			'order' => $validated['order'],
-			'thumbnail' => $this->storeImage($request->file('thumbnail'), $slug, 'thumbnail'),
-			'banners' => json_encode($banners), // Save banners as JSON
-		]);
-	
-		// After saving the showcase, redirect to a page where you can add the details
-		return redirect()->route('showcases.index')->with('success', 'Showcase created successfully. You can now add details.');
-	}
+	 public function store(Request $request)
+	 {
+		 // Validate the incoming request data for the showcase
+		 $validated = $request->validate([
+			 'title' => 'required|string|max:255',
+			 'short_description' => 'nullable|string|max:500',
+			 'banners' => 'required|array|min:1',
+			 'banners.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
+			 'thumbnail' => 'required|image|mimes:jpg,jpeg,png,gif|max:20480',
+			 'status' => 'required|boolean',
+			 'order' => 'nullable|integer|between:1,5',
+		 ]);
 	 
-
-	// Helper function to store images (banner and thumbnail)
-	private function storeImage($image, $slug, $folder)
+		 // Check if a showcase with the same order already exists
+		 $existingShowcase = Showcase::where('order', $validated['order'])->first();
+		 if ($existingShowcase) {
+			 $existingShowcase->update(['order' => null]);
+		 }
+	 
+		 // Generate the slug for the showcase title
+		 $slug = Str::slug($validated['title']);
+		 $originalSlug = $slug;
+		 $count = 1;
+		 while (Showcase::where('slug', $slug)->exists()) {
+			 $slug = "{$originalSlug}-{$count}";
+			 $count++;
+		 }
+	 
+		 // Create the main showcase entry (without banners and thumbnail)
+		 $showcase = Showcase::create([
+			 'title' => $validated['title'],
+			 'slug' => $slug,
+			 'short_description' => $validated['short_description'],
+			 'status' => $validated['status'],
+			 'order' => $validated['order'],
+		 ]);
+	 
+		 $id = $showcase->id; // Get the ID of the created showcase
+	 
+		 // Initialize an array to store banner file names
+		 $banners = [];
+	 
+		 // Save multiple banner images
+		 if ($request->hasFile('banners')) {
+			 foreach ($request->file('banners') as $index => $banner) {
+				 $bannerName = $this->storeImage($banner, $id, "banner-{$index}");
+				 $banners[] = $bannerName; // Add file name to the array
+			 }
+		 }
+	 
+		 // Save the thumbnail
+		 $thumbnailName = $this->storeImage($request->file('thumbnail'), $id, 'thumbnail');
+	 
+		 // Update the showcase with the banners and thumbnail
+		 $showcase->update([
+			 'thumbnail' => $thumbnailName,
+			 'banners' => json_encode($banners), // Save banners as JSON
+		 ]);
+	 
+		 return redirect()->route('showcases.index')->with('success', 'Showcase created successfully. You can now add details.');
+	 }
+	 
+	 // Updated helper function to store images
+	private function storeImage($image, $id, $folder)
 	{
-		// Generate a simple file name using the slug and folder type
-		$fileName = "{$slug}-{$folder}.webp"; // Save as .webp extension
-	
-		// Define the directory path
-		$directory = storage_path("app/public/showcases/{$slug}"); // Save directly in the 'showcases' directory
-	
-		// Make sure the directory exists before storing
+		// Generate a simple file name using the ID and folder type
+		$fileName = "{$id}-{$folder}.webp"; // Save as .webp extension
+
+		// Define the directory path using ID
+		$directory = storage_path("app/public/showcases/{$id}");
+
+		// Ensure the directory exists
 		if (!file_exists($directory)) {
-			// Create the directory with proper permissions
-			mkdir($directory, 0777, true); // Ensure the directory is created recursively
+			mkdir($directory, 0777, true);
 		}
-	
+
 		// Open the image using Intervention Image
 		$img = Image::make($image);
-	
-		// Initial quality to start with
-		$quality = 75; // Initial quality for WebP conversion
-		$maxSize = 300 * 1024; // 300 KB in bytes
-		$minSize = 200 * 1024; // 200 KB in bytes
-	
-		// Start with the initial compression
+
+		// Compress and save as WebP
+		$quality = 75;
+		$maxSize = 300 * 1024;
 		do {
-			// Convert the image to WebP with the current quality setting
 			$img->encode('webp', $quality);
-	
-			// Save the image to the specified path
 			$path = "{$directory}/{$fileName}";
 			$img->save($path);
-	
-			// Get the file size
 			$fileSize = filesize($path);
-	
-			// Reduce the quality if file size exceeds the max size
 			if ($fileSize > $maxSize) {
-				$quality -= 5; // Decrease quality by 5 each time
+				$quality -= 5;
 			}
-	
-		} while ($fileSize > $maxSize && $quality > 10); // Continue until the file size is within the limit
-	
-		// Ensure the file size is within the desired minimum size (optional)
-		if ($fileSize < $minSize) {
-			// Optionally, you can increase quality here if needed to make the file size closer to the minimum
-			// $quality += 5; // This is optional, depending on your specific use case
-		}
-	
-		// Return the image file name
+		} while ($fileSize > $maxSize && $quality > 10);
+
 		return $fileName;
 	}
+	 
 	
 	
 
@@ -245,18 +190,16 @@ class ShowcaseController extends Controller
 	
 	 public function update(Request $request, Showcase $showcase)
 	 {
-		// return $request;
 		 // Validate the incoming request data for the showcase
 		 $validated = $request->validate([
 			 'title' => 'required|string|max:255',
 			 'short_description' => 'nullable|string|max:500',
 			 'banners' => 'nullable|array|min:1', // Banners are optional
-			 'banners.*' => 'image|mimes:jpg,jpeg,png,gif|max:102400', // Validate each file in the banners array
+			 'banners.*' => 'image|mimes:jpg,jpeg,png,gif', // Validate each file in the banners array
 			 'thumbnail' => [
 				 'nullable', // Thumbnail is optional
 				 'image',
 				 'mimes:jpg,jpeg,png,gif',
-				 'max:20480',
 				 function ($attribute, $value, $fail) use ($request) {
 					 $order = $request->input('order');
 					 $allowedRatios = [
@@ -306,17 +249,33 @@ class ShowcaseController extends Controller
 		 // Initialize an array for new banners
 		 $banners = json_decode($showcase->banners, true) ?? [];
 	 
-		 // Handle new banner uploads
+		 // Delete old banner files if new banners are uploaded
 		 if ($request->hasFile('banners')) {
+			 foreach ($banners as $oldBanner) {
+				 $oldPath = storage_path("app/public/showcases/{$showcase->id}/{$oldBanner}");
+				 if (file_exists($oldPath)) {
+					 unlink($oldPath);
+				 }
+			 }
+			 $banners = []; // Reset the banners array
+	 
+			 // Save new banner images
 			 foreach ($request->file('banners') as $index => $banner) {
-				 $bannerName = $this->storeImage($banner, $showcase->slug ?? $validated['slug'], "banner-" . (count($banners) + $index));
+				 $bannerName = $this->storeImage($banner, $showcase->id, "banner-" . $index);
 				 $banners[] = $bannerName;
 			 }
 		 }
 	 
-		 // Handle thumbnail upload
+		 // Handle thumbnail upload and delete the old one if necessary
 		 if ($request->hasFile('thumbnail')) {
-			 $thumbnailName = $this->storeImage($request->file('thumbnail'), $showcase->slug ?? $validated['slug'], 'thumbnail');
+			 $oldThumbnail = $showcase->thumbnail;
+			 if ($oldThumbnail) {
+				 $oldPath = storage_path("app/public/showcases/{$showcase->id}/{$oldThumbnail}");
+				 if (file_exists($oldPath)) {
+					 unlink($oldPath);
+				 }
+			 }
+			 $thumbnailName = $this->storeImage($request->file('thumbnail'), $showcase->id, 'thumbnail');
 			 $validated['thumbnail'] = $thumbnailName;
 		 }
 	 
@@ -325,6 +284,7 @@ class ShowcaseController extends Controller
 	 
 		 return redirect()->route('showcases.index')->with('success', 'Showcase updated successfully.');
 	 }
+	 
 	 
 
 
@@ -335,14 +295,14 @@ class ShowcaseController extends Controller
 	{
 		// Check if the showcase has a thumbnail and delete the image
 		if ($showcase->thumbnail) {
-			$this->deleteImage($showcase->slug, $showcase->thumbnail);
+			$this->deleteImage($showcase->id, $showcase->thumbnail);
 		}
 	
 		// Check if the showcase has banners and delete each image
 		if ($showcase->banners) {
 			$banners = json_decode($showcase->banners, true);
 			foreach ($banners as $banner) {
-				$this->deleteImage($showcase->slug, $banner);
+				$this->deleteImage($showcase->id, $banner);
 			}
 		}
 	
@@ -354,15 +314,22 @@ class ShowcaseController extends Controller
 	}
 
 	// Helper method to delete images from the storage
-	private function deleteImage($slug, $fileName)
+	private function deleteImage($id, $fileName)
 	{
-		$filePath = storage_path("app/public/showcases/{$slug}/{$fileName}");
-
+		$filePath = storage_path("app/public/showcases/{$id}/{$fileName}");
+		$directoryPath = storage_path("app/public/showcases/{$id}");
+	
 		// Check if the file exists and delete it
 		if (file_exists($filePath)) {
 			unlink($filePath);
 		}
+	
+		// Check if the directory is empty and delete it
+		if (is_dir($directoryPath) && count(scandir($directoryPath)) == 2) { // Only '.' and '..' remain
+			rmdir($directoryPath);
+		}
 	}
+	
 
 	
 	
