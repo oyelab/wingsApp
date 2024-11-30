@@ -443,7 +443,7 @@
 										<img
 											src="{{ asset('frontEnd/images/wing-showcase-1.png') }}"
 											draggable="false"
-											class="img-fluid left-bottom-border-radius"
+											class="img-fluid left-top-border-radius"
 											alt="Wings Showcase"
 										/>
 									</div>
@@ -467,7 +467,7 @@
 										<img
 											src="{{ asset('frontEnd/images/wing-showcase-2.png') }}"
 											draggable="false"
-											class="img-fluid left-bottom-border-radius"
+											class="img-fluid"
 											alt="Wings Showcase"
 										/>
 									</div>
@@ -518,7 +518,7 @@
 									<img
 										src="{{ asset('frontEnd/images/wing-showcase-4.png') }}"
 										draggable="false"
-										class="img-fluid left-bottom-border-radius"
+										class="img-fluid right-top-border-radius"
 										alt="Wings Showcase"
 									/>
 								</div>
@@ -542,7 +542,7 @@
 									<img
 										src="{{ asset('frontEnd/images/wing-showcase-5.png') }}"
 										draggable="false"
-										class="img-fluid left-bottom-border-radius"
+										class="img-fluid right-bottom-border-radius"
 										alt="Wings Showcase"
 									/>
 								</div>
