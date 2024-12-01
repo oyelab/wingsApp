@@ -19,7 +19,7 @@ class TestController extends Controller
 		// Manually validate the request
 		$validator = Validator::make($request->all(), [
 			'images' => 'required|array',
-			'images.*' => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:1024',
+			'images.*' => 'required|image|mimes:jpg,jpeg,png,gif,webp',
 		]);
 
 		// Check for validation errors
