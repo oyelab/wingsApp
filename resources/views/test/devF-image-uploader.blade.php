@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Advanced File Upload</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <!-- FontAwesome CDN for icons -->
@@ -48,7 +48,7 @@
         /* Styled drop area for images */
         #file-input-container {
             width: 100px;
-			height: 100px;
+            height: 100px;
             padding: 20px;
             border: 2px dashed #ddd;
             border-radius: 10px;
@@ -75,11 +75,11 @@
 <body>
 <div class="container mt-5">
     <h2>Advanced File Upload</h2>
-	<div id="error-container"></div> <!-- Errors will be displayed here -->
+    <div id="error-container"></div> <!-- Errors will be displayed here -->
 
-	<form action="{{ route('test.store') }}" method="POST" enctype="multipart/form-data" id="upload-form">
-	@csrf
-		<div class="d-flex justify-content-center align-items-center gap-2">
+    <form action="{{ route('test.store') }}" method="POST" enctype="multipart/form-data" id="upload-form">
+        @csrf
+        <div class="d-flex justify-content-center align-items-center gap-2">
             <!-- Preview Container for images -->
             <div class="preview-container align-items-center" id="preview-container"></div>
 
@@ -88,7 +88,6 @@
                 <i class="fas fa-upload"></i>
                 <input type="file" name="images[]" class="form-control mb-3" multiple hidden id="file-input">
             </div>
-
         </div>
 
         <!-- Submit Button -->
@@ -96,6 +95,7 @@
     </form>
 </div>
 
-<script src="{{ asset('build/js/imageUploader.js') }}"></script>
+<!-- Corrected script tag source -->
+<script src="{{ asset('build/js/devF.js') }}"></script>
 </body>
 </html>

@@ -7,22 +7,62 @@ use App\Models\Test;
 use App\Models\Order;
 use App\Models\SiteSetting;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+
 
 
 class TestController extends Controller
 {
+
 	public function store(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+	{
+		// Manually validate the request
+		$validator = Validator::make($request->all(), [
+			'images' => 'required|array',
+			'images.*' => 'required|image|mimes:jpg,jpeg,png,gif,webp|max:1024',
+		]);
 
-        $file = $request->file('file');
-        $filename = time() . '-' . $file->getClientOriginalName();
-        $file->storeAs('uploads', $filename, 'public');
+		// Check for validation errors
+		if ($validator->fails()) {
+			return response()->json([
+				'success' => false,
+				'message' => 'Validation errors occurred.',
+				'errors' => $validator->errors()->toArray(),
+			], 422);
+		}
 
-        return response()->json(['filename' => $filename], 200);
-    }
+		// Proceed with storing images if validation passes
+		$collection = Test::create();
+		$collectionId = $collection->id;
+		$storagePath = "public/collections/{$collectionId}";
+
+		$directory = storage_path("app/{$storagePath}");
+		if (!file_exists($directory)) {
+			mkdir($directory, 0775, true);
+		}
+
+		$imageFilenames = [];
+		foreach ($request->file('images') as $image) {
+			$originalFilename = $image->getClientOriginalName();
+			$image->storeAs($storagePath, $originalFilename);
+			$imageFilenames[] = $originalFilename;
+		}
+
+		$collection->images = $imageFilenames;
+		$collection->save();
+
+		// Return success response
+		return response()->json([
+			'success' => true,
+			'message' => 'Images uploaded successfully!',
+			'collection_id' => $collectionId,
+			'images' => $imageFilenames,
+		]);
+	}
+
+
+
+		
 
     public function remove($filename)
     {
@@ -49,6 +89,11 @@ class TestController extends Controller
     public function create()
 	{
 		return view('test.new-file-upload');
+	}
+
+    public function devF()
+	{
+		return view('test.devF-image-uploader');
 	}
 
 	

@@ -10,7 +10,6 @@ use App\Models\SiteSetting;
 use App\Models\Quantity;
 use Illuminate\Http\Request;
 use Session;
-// use PDF; // Assuming you're using a PDF library like dompdf or barryvdh/laravel-dompdf
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 
@@ -27,8 +26,6 @@ class OrderController extends Controller
 
 		$order->getOrderDetails()->calculateTotals();
 		$items = $order->getOrderDetails()->getOrderItems();
-		$siteSetting = SiteSetting::first();
-		// return $siteSetting;
 
         // Pass the order data to the Blade template
         $pdf = PDF::loadView('test.invoice-template', compact('order', 'items'));

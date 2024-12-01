@@ -50,8 +50,9 @@ Auth::routes();
 
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
-Route::get('/new-file-upload', [TestController::class, 'create'])->name('test.create');
-Route::post('/new-file-store', [TestController::class, 'store'])->name('test.store');
+Route::get('/test/new-file-upload', [TestController::class, 'create'])->name('test.create');
+Route::get('/devFImg', [TestController::class, 'devF'])->name('test.devF');
+Route::post('/test/store', [TestController::class, 'store'])->name('test.store');
 Route::get('/invoice', [TestController::class, 'invoice'])->name('invoice');
 
 

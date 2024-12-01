@@ -34,7 +34,7 @@
 			width: 210mm;
             height: 297mm;
 			position: relative;
-            background: url('{{ public_path("images/invoice-template.png") }}') no-repeat center center;
+            background: url('{{ asset("images/invoice-template.png") }}') no-repeat center center;
             background-size: cover;
 			margin: 0 auto !important;
 			padding: 0 !important;
