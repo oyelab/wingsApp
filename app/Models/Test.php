@@ -9,5 +9,16 @@ class Test extends Model
 {
     use HasFactory;
 
-	protected $fillable = ['file_path', 'original_size', 'compressed_size'];
+	protected $fillable = ['images'];
+
+	protected $casts = [
+		'images' => 'array',
+	];
+
+	public function getThumbnailAttribute()
+{
+    return $this->images[0] ?? null;
+}
+
+	
 }
