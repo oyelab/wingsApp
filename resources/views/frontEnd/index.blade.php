@@ -428,7 +428,7 @@
 							<div class="wings-showcase-gap">
 								<!-- Showcase 1 -->
 								@if ($showcase1 = $showcases->where('order', 1)->first())
-									<div class="wings-showcase-item">
+									<div class="wings-showcase-item showcase-1">
 										<a href="{{ route('showcase.show', $showcase1->slug) }}">
 											<img
 												src="{{ $showcase1->thumbnailImagePath }}"
@@ -452,7 +452,7 @@
 
 								<!-- Showcase 2 -->
 								@if ($showcase2 = $showcases->where('order', 2)->first())
-									<div class="wings-showcase-item">
+									<div class="wings-showcase-item showcase-2">
 										<a href="{{ route('showcase.show', $showcase2->slug) }}">
 											<img
 												src="{{ $showcase2->thumbnailImagePath }}"
@@ -477,7 +477,7 @@
 
 							<!-- Showcase 3 -->
 							@if ($showcase3 = $showcases->where('order', 3)->first())
-								<div class="wings-showcase-item">
+								<div class="wings-showcase-item showcase-3">
 									<a href="{{ route('showcase.show', $showcase3->slug) }}">
 										<img
 											src="{{ $showcase3->thumbnailImagePath }}"
@@ -500,7 +500,7 @@
 							<!-- Showcase 3 End -->
 						</div>
 
-						<div class="flex-column wings-showcase-gap">
+						<div class="flex-column wings-showcase-gap showcase-4">
 							<!-- Showcase 4 -->
 							@if ($showcase4 = $showcases->where('order', 4)->first())
 								<div class="wings-showcase-item">
@@ -527,7 +527,7 @@
 
 							<!-- Showcase 5 -->
 							@if ($showcase5 = $showcases->where('order', 5)->first())
-								<div class="wings-showcase-item">
+								<div class="wings-showcase-item showcase-5">
 									<a href="{{ route('showcase.show', $showcase5->slug) }}">
 										<img
 											src="{{ $showcase5->thumbnailImagePath }}"
