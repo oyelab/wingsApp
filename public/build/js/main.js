@@ -184,24 +184,24 @@ var textRemove = new Choices(
     }
 );
 
-const ogImageInput = document.getElementById('ogImage');
-const imagePreview = document.getElementById('imagePreview');
+// const ogImageInput = document.getElementById('ogImage');
+// const imagePreview = document.getElementById('imagePreview');
 
-ogImageInput.addEventListener('change', function () {
-	const file = this.files[0];
+// ogImageInput.addEventListener('change', function () {
+// 	const file = this.files[0];
 
-	if (file) {
-		const reader = new FileReader();
-		reader.onload = function (e) {
-			imagePreview.src = e.target.result; // Set the src of the preview
-			imagePreview.classList.remove('d-none'); // Show the image
-		}
-		reader.readAsDataURL(file); // Read the file as a data URL
-	} else {
-		imagePreview.src = '';
-		imagePreview.classList.add('d-none'); // Hide the image if no file is selected
-	}
-});
+// 	if (file) {
+// 		const reader = new FileReader();
+// 		reader.onload = function (e) {
+// 			imagePreview.src = e.target.result; // Set the src of the preview
+// 			imagePreview.classList.remove('d-none'); // Show the image
+// 		}
+// 		reader.readAsDataURL(file); // Read the file as a data URL
+// 	} else {
+// 		imagePreview.src = '';
+// 		imagePreview.classList.add('d-none'); // Hide the image if no file is selected
+// 	}
+// });
 
 // Form Validation on Submission
 $(document).ready(function () {
@@ -224,7 +224,7 @@ $(document).ready(function () {
 
     // Initialize Summernote
     $('#summernote').summernote({
-        // height: 200,  // Set editor height
+        height: 200,  // Set editor height
         placeholder: 'Enter Product Description',
         callbacks: {
             onChange: function (contents, $editable) {

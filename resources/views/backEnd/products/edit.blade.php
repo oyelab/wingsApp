@@ -6,10 +6,83 @@
 	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.js"></script>
+	<style>
+        .preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .preview-item {
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px;
+            display: inline-block;
+            width: 150px;
+        }
+        .preview-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+		.preview-item.dragging {
+			opacity: 0.5;
+			border: 2px dashed #007bff; /* Visual cue while dragging */
+		}
+
+		.preview-item.over {
+			border-color: #007bff;
+			background-color: #f0f8ff;
+		}
+
+        .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .thumbnail-selected {
+            border: 3px solid #1e1e1e; /* Matches your theme's primary color */
+            border-radius: 5px;
+            padding: 2px;
+        }
+        /* Styled drop area for images */
+        #file-input-container {
+            width: 100px;
+			height: 100px;
+            padding: 20px;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+        #file-input-container:hover {
+            border-color: #007bff;
+        }
+        #file-input-container i {
+            font-size: 40px;
+            color: #007bff;
+        }
+        #file-input-container p {
+            color: #007bff;
+        }
+        #file-input-container.dragover {
+            background-color: #e9ecef;
+            border-color: #007bff;
+        }
+    </style>
 @endsection
 @section('page-title')
 
-		Editing for <span class="text-white bg-dark">{{ $product->title }}</>
+		Editing #{{ $product->title }}
 
 @endsection
 @section('body')
@@ -18,22 +91,12 @@
     @endsection
     @section('content')
 
-		@if ($errors->any())
-			<div class="alert alert-danger" role="alert">
-				<ul>
-					@foreach ($errors->all() as $error)
-						<li>
-							{{ $error }} <!-- This will display each error message -->
-						</li>
-					@endforeach
-				</ul>
-			</div>
-		@endif
+		<div id="error-container"></div>
 
 		<div class="row">
 			<div class="col-lg-12">
 				<div id="addproduct-accordion" class="custom-accordion">
-					<form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data" id="product-form">
+					<form action="{{ route('products.update', $product) }}" method="POST" enctype="multipart/form-data" id="product-form">
 						@csrf
 						@method('PUT')
 						<div class="card">
@@ -146,17 +209,17 @@
 											</div>
 										</div>
 										<!-- Specifications Section -->
-										<div class="mt-3 row">
+										<div class="form-group mt-3">
 											<label class="form-label">Specifications</label>
-											<div class="d-flex small justify-content-center">
+											<div class="d-flex flex-wrap gap-3">
 												@foreach($specifications as $specification)
-													<div class="form-check ms-2">
+													<div class="form-check">
 														<input class="form-check-input" type="checkbox" name="specifications[]" 
 															id="spec-{{ $specification->id }}" 
 															value="{{ $specification->id }}" 
 															{{ (is_array(old('specifications')) && in_array($specification->id, old('specifications'))) 
 																|| (isset($selectedSpecifications) && in_array($specification->id, $selectedSpecifications)) ? 'checked' : '' }}> 
-														<label class="form-check-label text-truncate d-block" for="spec-{{ $specification->id }}" style="max-width: 150px;">
+														<label class="form-check-label text-truncate" for="spec-{{ $specification->id }}">
 															{{ $specification->item }} <!-- Assuming 'item' is the field you want to display -->
 														</label> 
 													</div>
@@ -177,34 +240,18 @@
 									
 									<div class="form-group mt-4">
 										<label for="images">Upload Product Photos <span class="text-danger">*</span></label>
-										<input type="file" name="images[]" id="images" multiple class="form-control">
-									</div>
-									<div class="form-group">
-										<div class="form-group">
-											<div id="image_preview">
-												@if(isset($product->images) && $product->images)
-													@php
-														// Decode the JSON string into an array
-														$images = json_decode($product->images);
-													@endphp
+										<div class="d-flex align-items-center gap-2">
+											<!-- Preview Container for images -->
+											<div class="preview-container" id="preview-container"></div>
 
-													@if(is_array($images) && count($images) > 0)
-														@foreach($images as $image)
-															<div class="img-div" id="prev-img-div-{{ $loop->index }}">
-																<img src="{{ asset('images/products/' . $image) }}" class="img-responsive image img-thumbnail" title="{{ $image }}">
-																<input type="hidden" name="existing_images[]" value="{{ $image }}"> <!-- Hidden input to keep track of existing images -->
-																<div class="middle">
-																	<button id="remove-prev-image" value="prev-img-div-{{ $loop->index }}" class="btn btn-danger" role="{{ $image }}">
-																		<i class="fa fa-trash"></i>
-																	</button>
-																</div>
-															</div>
-														@endforeach
-													@endif
-												@endif
+											<!-- File input container with drop zone and icon -->
+											<div id="file-input-container">
+												<i class="fas fa-upload"></i>
+												<input type="file" name="images[]" class="form-control mb-3" accept="image/*" multiple hidden id="file-input">
 											</div>
 										</div>
 									</div>
+
 								</div>
 							</div>
 						</div>
@@ -256,18 +303,6 @@
 										<label class="form-label" for="metadescription">Meta Description</label>
 										<textarea class="form-control" id="metadescription" name="meta_desc" placeholder="Enter Description" rows="4">{{ old('meta_desc') }}</textarea>
 									</div>
-									
-									<div class="mt-3">
-										<label class="form-label" for="ogImage">Upload Open Graph Image</label>
-										<input id="ogImage" name="og_image" type="file" class="form-control" accept="image/*">
-
-										<!-- Check if there's an existing OG image and set its source -->
-										<img id="imagePreview" 
-											src="{{ $product->og_image ? asset('images/products/' . $product->og_image) : '' }}" 
-											alt="Image Preview" 
-											class="{{ $product->og_image ? '' : 'd-none' }}">
-									</div>
-
 								</div>
 							</div>
 						</div>
@@ -344,4 +379,14 @@
 		
         <!-- App js -->
         <script src="{{ asset('build/js/app.js') }}"></script>
+
+		<script>
+			// Assuming window.existingImagesPath holds the paths of existing images
+			// and window.existingImagesName holds the names of the images
+			window.existingImagesData = @json($product->allImagePaths);
+			window.existingImagesName = @json($product->images);
+		</script>
+
+		<script src="{{ asset('build/js/imageUploader.js') }}"></script>
+
     @endsection

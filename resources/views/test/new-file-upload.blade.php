@@ -77,7 +77,7 @@
     <h2>Advanced File Upload</h2>
 	<div id="error-container"></div> <!-- Errors will be displayed here -->
 
-	<form action="{{ route('test.store') }}" method="POST" enctype="multipart/form-data" id="upload-form">
+	<form action="{{ route('test.store') }}" method="POST" enctype="multipart/form-data" id="product-form">
 	@csrf
 		<div class="d-flex justify-content-center align-items-center gap-2">
             <!-- Preview Container for images -->
@@ -86,7 +86,7 @@
             <!-- File input container with drop zone and icon -->
             <div id="file-input-container" class="align-items-center">
                 <i class="fas fa-upload"></i>
-                <input type="file" name="images[]" class="form-control mb-3" multiple hidden id="file-input">
+                <input type="file" name="images[]" class="form-control mb-3" accept="image/*" multiple hidden id="file-input">
             </div>
 
         </div>

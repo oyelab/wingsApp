@@ -1,6 +1,6 @@
 @extends('backEnd.layouts.master')
 @section('title')
-    Products
+    Collections
 @endsection
 @section('css')
     <link rel="stylesheet" href="{{ asset('build/libs/gridjs/theme/mermaid.min.css') }}">
@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ asset('build/libs/flatpickr/flatpickr.min.css') }}">
 @endsection
 @section('page-title')
-    Products
+    Collections
 @endsection
 @section('body')
 
@@ -26,7 +26,7 @@
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-6">
-                                <p class="text-muted text-truncate mb-0 pb-1">Total Products</p>
+                                <p class="text-muted text-truncate mb-0 pb-1">Total Collections</p>
                                 <h4 class="mb-0 mt-2">{{ $counts['total'] }}</h4>
                             </div>
                             <div class="col-6">
@@ -100,11 +100,12 @@
 				<div class="row mb-2">
 					<div class="col-xl-3 col-md-12">
 						<div class="pb-3 pb-xl-0">
-							<form class="">
-								<div class="position-relative">
-									<input type="text" class="form-control bg-light" id="searchInput" placeholder="Search..." onkeyup="filterTable()">
-								</div>
-							</form>
+						<form method="GET" action="{{ route('products.index') }}" id="searchForm">
+							<div class="form-group">
+								<input type="text" class="form-control" name="search" id="searchInput" value="{{ request()->search }}" placeholder="Search products...">
+							</div>
+						</form>
+
 						</div>
 					</div>
 					<div class="col-xl-9 col-md-12">
@@ -124,9 +125,9 @@
                     <div class="table-responsive">
                         <table class="table table-bordered" id="productTable">
                             <thead>
-                                <tr>
+                                <tr class="text-center">
+                                    <th>Thumb</th>
                                     <th>Title</th>
-                                    <th>Images</th>
                                     <th>Category</th>
                                     <th>Availability</th>
                                     <th>Prices</th>
@@ -138,22 +139,25 @@
                             <tbody>
 								@foreach($products as $product)
                                 <tr>
-									<td>
-										<!-- Assuming 'images' is stored as a JSON array in the database -->
-										<div class="avatar-group mx-auto d-flex align-items-center" style="flex-wrap: nowrap;">
-											@foreach (json_decode($product->images) as $image)
-												<div class="avatar-group-item">
-													<a href="javascript: void(0);" class="d-inline-block">
-														<img src="{{ asset('images/products/' . $image) }}" alt="{{ $product->name }}" class="rounded-circle avatar-sm">
-													</a>
-												</div>
-											@endforeach
+									<td class="text-center">
+										<div class="avatar-group d-flex justify-content-center align-items-center">
+											<div class="avatar-group-item">
+												<a href="javascript: void(0);" class="d-inline-block">
+													<img src="{{ $product->thumbnail }}" alt="{{ $product->name }}" class="rounded-circle avatar-sm">
+												</a>
+											</div>
 										</div>
 									</td>
 
+
                                     <td>
-                                        <p class="d-inline-block align-middle mb-0">
-                                            <a href="{{ route('products.show', $product->slug) }}" class="d-inline-block align-middle mb-0 product-name fw-semibold">{{ $product->title }}</a>
+                                        <p class="d-inline-block align-middle mb-0">                
+											<a href="{{ route('products.details', [
+												'category' => $product->categories->first()->slug,
+												'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
+												'product' => $product->slug
+											]) }}" class="d-inline-block align-middle mb-0 product-name fw-semibold">{{ $product->title }}</a>
+											
                                             <br>
                                             <!-- <span class="text-muted font-13 fw-semibold">Size-05 (Model 2021)</span> -->
                                         </p>
@@ -240,10 +244,10 @@
 
                                     <td>
                                         <a href="{{ route('products.edit', $product->id) }}" class="mr-3"><i class="las la-pen text-secondary font-30"></i></a>
-										<form action="{{ route('products.destroy', $product->id) }}" 		method="POST" style="display: inline;">
+										<form action="{{ route('products.destroy', $product->id) }}" method="POST" style="display: inline;" id="delete-form-{{ $product->id }}">
 											@csrf
 											@method('DELETE')
-											<a href="javascript:void(0);" class="mr-3" onclick="confirmDelete(this)">
+											<a href="javascript:void(0);" class="mr-3" onclick="confirmDelete({{ $product->id }})">
 												<i class="las la-trash-alt text-secondary font-30"></i>
 											</a>
 										</form>
@@ -279,8 +283,8 @@
 									</li>
 								</ul>
 							</nav>
-
 						</div>
+
 
                         <!--end col-->
                     </div>
@@ -296,6 +300,7 @@
     @endsection
     @section('scripts')
 		<script>
+			// Function to filter the table as the user types
 			function filterTable() {
 				const searchInput = document.getElementById('searchInput').value.toLowerCase();
 				const table = document.getElementById('productTable');
@@ -306,7 +311,7 @@
 					const cells = rows[i].getElementsByTagName('td');
 					let match = false;
 
-					// Check each cell in the row
+					// Check each cell in the row for a match
 					for (let j = 0; j < cells.length; j++) {
 						if (cells[j]) {
 							const cellText = cells[j].textContent || cells[j].innerText;
@@ -325,7 +330,13 @@
 					}
 				}
 			}
+
+			// Automatically submit the form when the user types in the search input
+			document.getElementById('searchInput').addEventListener('keyup', function() {
+				filterTable(); // Call the filterTable function on each keystroke
+			});
 		</script>
+
 		<script>
 			// Set Sale Function
 			function setSale() {
@@ -378,15 +389,49 @@
 			});
 		</script>
 
-		<script>
-			function confirmDelete(element) {
-				const confirmation = confirm('Are you sure you want to delete this product?');
-				if (confirmation) {
-					// If confirmed, submit the closest form
-					element.closest('form').submit();
-				}
+<script>
+    function confirmDelete(productId) {
+        const confirmation = confirm('Are you sure you want to delete this item?');
+        if (confirmation) {
+            deleteProduct(productId);
+        }
+    }
+
+    function deleteProduct(productId) {
+        const form = document.getElementById(`delete-form-${productId}`);
+
+        // Send the AJAX request to delete the product
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                _method: 'DELETE'  // Explicitly state the DELETE method
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+			// Check for success in the response
+			if (data.success) {
+				// Reload the page after successful deletion
+				window.location.reload();
+			} else {
+				throw new Error('Failed to delete the product');
 			}
-		</script>
+		})
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting the product');
+        });
+    }
+</script>
 
 		<script>
 			function confirmStatusChange(event, productId) {
@@ -422,11 +467,14 @@
 					}
 					return response.json();
 				})
+				.then(data => {
+					// If status update is successful, reload the page
+					window.location.reload();
+				})
 				.catch(error => {
 					console.error('There was a problem with the fetch operation:', error);
 				});
 			}
-
 		</script>
 
 
