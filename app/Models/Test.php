@@ -11,14 +11,14 @@ class Test extends Model
 
 	protected $fillable = ['images'];
 
-	protected $casts = [
-		'images' => 'array',
-	];
+	// protected $casts = [
+	// 	'images' => 'array',
+	// ];
 
 	public function getThumbnailAttribute()
-{
-    return $this->images[0] ?? null;
-}
+	{
+		return $this->images[0] ?? null;
+	}
 
 	
 }

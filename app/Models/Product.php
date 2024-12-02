@@ -8,6 +8,9 @@ use App\Models\Scopes\SortProducts;
 use App\Models\Scopes\SearchProducts;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Storage;
+use Intervention\Image\Facades\Image; // Make sure Intervention is installed and configured
+
 
 class Product extends Model
 {
@@ -33,12 +36,14 @@ class Product extends Model
         'description',
 		'specifications',
 		'categories',
-        'images', // Assuming this will store JSON data for images
         'meta_title',
         'keywords',
 		'meta_desc',
 		'og_image',
+		'images',
     ];
+
+
 
 
 	public function sizes()
@@ -174,22 +179,103 @@ class Product extends Model
 	
 
 	// Product model
-	public function getImagePathsAttribute(): array
-	{
-		$images = json_decode($this->images) ?? [];
-		$baseURL = url('/'); // Get the base URL of the application
+	// public function getImagePathsAttribute(): array
+	// {
+	// 	$images = json_decode($this->images) ?? [];
+	// 	$baseURL = url('/'); // Get the base URL of the application
 	
-		return array_map(fn($image) => $baseURL . '/images/products/' . $image, $images) ?: [$baseURL . '/images/products/default.jpg'];
+	// 	return array_map(fn($image) => $baseURL . '/public/storage/collections/' . $image, $images) ?: [$baseURL . '/images/products/default.jpg'];
+	// }
+
+	protected $casts = [
+		'images' => 'array',
+	];
+
+	public function getImagePathsAttribute()
+	{
+		$collectionId = $this->id; // Get the product ID
+		$storagePath = "public/collections/{$collectionId}";
+	
+		// Get the OG image path
+		// $ogImagePath = $this->og_image_path;
+	
+		// Filter out the OG image from the images
+		$filteredImages = array_filter($this->images ?? [], function ($filename) use ($storagePath) {
+			$fullPath = Storage::url("{$storagePath}/{$filename}");
+			return $fullPath !== $this->ogImagePath; // Exclude the OG image
+		});
+	
+		// Map the remaining image filenames to their full paths
+		return array_map(function ($filename) use ($storagePath) {
+			return Storage::url("{$storagePath}/{$filename}");
+		}, $filteredImages);
 	}
 
-	public function getOgImagePathAttribute(): string
+	public function getAllImagePathsAttribute()
 	{
-		$ogImage = $this->og_image; // Assuming the 'og_image' field contains the filename or path
-		$baseURL = url('/'); // Get the base URL of the application
-		
-		// If the og_image field has a value, return its full URL, otherwise return the default image
-		return $ogImage ? $baseURL . '/images/products/' . $ogImage : $baseURL . '/images/products/default-og-image.jpg';
+		$collectionId = $this->id; // Get the product ID
+		$storagePath = "collections/{$collectionId}"; // Path without 'public/'
+
+		// Get all image filenames from the 'images' attribute
+		$allImages = $this->images ?? [];
+
+		// Map the image filenames to their full paths
+		return array_map(function ($filename) use ($storagePath) {
+			return Storage::url("{$storagePath}/{$filename}");
+		}, $allImages);
 	}
+
+	
+
+
+	public function getThumbnailAttribute()
+	{
+		// Get the array of image paths
+		$imagePaths = $this->image_paths;
+	
+		// Return the first image path or null if the array is empty
+		return $imagePaths[0] ?? null;
+	}
+	
+
+	public function getOgImagePathAttribute()
+	{
+		$collectionId = $this->id; // Get the product ID
+		$storagePath = "public/collections/{$collectionId}";
+		
+		// Target aspect ratio
+		$targetRatio = 1.91; 
+
+		foreach ($this->images ?? [] as $filename) {
+			$filePath = storage_path("app/{$storagePath}/{$filename}"); // Local file path
+			
+			if (file_exists($filePath)) {
+				// Use Intervention Image to get the dimensions
+				$image = Image::make($filePath);
+				$width = $image->width();
+				$height = $image->height();
+				
+				// Calculate the aspect ratio
+				$aspectRatio = $width / $height;
+
+				// Check if the aspect ratio is approximately 1.91:1
+				if (abs($aspectRatio - $targetRatio) < 0.01) { // Allow a small margin of error
+					return Storage::url("{$storagePath}/{$filename}"); // Return the full URL
+				}
+			}
+		}
+
+		return null; // Return null if no image matches the criteria
+	}
+
+	// public function getOgImagePathAttribute(): string
+	// {
+	// 	$ogImage = $this->og_image; // Assuming the 'og_image' field contains the filename or path
+	// 	$baseURL = url('/'); // Get the base URL of the application
+		
+	// 	// If the og_image field has a value, return its full URL, otherwise return the default image
+	// 	return $ogImage ? $baseURL . '/images/products/' . $ogImage : $baseURL . '/images/products/default-og-image.jpg';
+	// }
 
 	// In Product model
 

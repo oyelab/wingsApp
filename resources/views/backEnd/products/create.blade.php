@@ -6,6 +6,69 @@
 	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.js"></script>
+	<style>
+        .preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .preview-item {
+            position: relative;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px;
+            display: inline-block;
+            width: 150px;
+        }
+        .preview-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+        }
+        .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .thumbnail-selected {
+            border: 3px solid #1e1e1e; /* Matches your theme's primary color */
+            border-radius: 5px;
+            padding: 2px;
+        }
+        /* Styled drop area for images */
+        #file-input-container {
+            width: 100px;
+			height: 100px;
+            padding: 20px;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+        #file-input-container:hover {
+            border-color: #007bff;
+        }
+        #file-input-container i {
+            font-size: 40px;
+            color: #007bff;
+        }
+        #file-input-container p {
+            color: #007bff;
+        }
+        #file-input-container.dragover {
+            background-color: #e9ecef;
+            border-color: #007bff;
+        }
+    </style>
 @endsection
 @section('page-title')
     Add Product
@@ -16,23 +79,14 @@
     @endsection
     @section('content')
 
-		@if ($errors->any())
-			<div class="alert alert-danger" role="alert">
-				<ul>
-					@foreach ($errors->all() as $error)
-						<li>
-							{{ $error }} <!-- This will display each error message -->
-						</li>
-					@endforeach
-				</ul>
-			</div>
-		@endif
-		
+		<div id="error-container"></div>
+
 
 		<div class="row">
 			<div class="col-lg-12">
 				<div id="addproduct-accordion" class="custom-accordion">
-					<form id="productUploadForm" action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" id="product-form">
+					<form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" id="product-form">
+						
 						@csrf
 						<div class="card">
 							<a href="#addproduct-productinfo-collapse" class="text-body" data-bs-toggle="collapse" aria-expanded="true" aria-controls="addproduct-productinfo-collapse">
@@ -140,22 +194,21 @@
 											</div>
 										</div>
 										<!-- Specifications Section -->
-										<div class="mt-3">
+										<div class="form-group mt-3">
 											<label class="form-label">Specifications</label>
-											<div class="row">
+											<div class="d-flex flex-wrap gap-3">
 												@foreach($specifications as $specification)
-													<div class="col-12 col-md-6 col-lg-4 mb-2"> <!-- Responsive columns -->
-														<div class="form-check">
-															<input class="form-check-input" type="checkbox" name="specifications[]" id="spec-{{ $specification->id }}" value="{{ $specification->id }}" 
-																{{ (is_array(old('specifications')) && in_array($specification->id, old('specifications'))) ? 'checked' : '' }}>
-															<label class="form-check-label text-truncate d-block" for="spec-{{ $specification->id }}" style="max-width: 300px;">
-																{{ $specification->item }}
-															</label>
-														</div>
+													<div class="form-check">
+														<input class="form-check-input" type="checkbox" name="specifications[]" id="spec-{{ $specification->id }}" value="{{ $specification->id }}" 
+															{{ (is_array(old('specifications')) && in_array($specification->id, old('specifications'))) ? 'checked' : '' }}>
+														<label class="form-check-label text-truncate" for="spec-{{ $specification->id }}">
+															{{ $specification->item }}
+														</label>
 													</div>
 												@endforeach
 											</div>
 										</div>
+
 
 									</div>
 
@@ -170,12 +223,17 @@
 									</div>
 									
 									<div class="form-group mt-4">
-										<label for="images">Upload Product Photos <span class="text-danger">*</span></label>
-										<input type="file" name="images[]" id="images" multiple class="form-control">
-									</div>
-									<div class="form-group">
-										<div id="previewProductImage">
-											<!-- Existing images will be displayed here if any -->
+										<label for="images">Upload Photos <span class="text-danger">*</span></label>
+										<div class="d-flex align-items-center gap-2">
+											<!-- Preview Container for images -->
+											<div class="preview-container" id="preview-container"></div>
+
+											<!-- File input container with drop zone and icon -->
+											<div id="file-input-container">
+												<i class="fas fa-upload"></i>
+												<input type="file" name="images[]" class="form-control mb-3" accept="image/*" multiple hidden id="file-input">
+											</div>
+
 										</div>
 									</div>
 
@@ -230,27 +288,14 @@
 										<label class="form-label" for="metadescription">Meta Description</label>
 										<textarea class="form-control" id="metadescription" name="meta_desc" placeholder="Enter Description" rows="4">{{ old('meta_desc') }}</textarea>
 									</div>
-									
-									<div class="mt-3">
-										<label class="form-label" for="ogImage">Upload Open Graph Image</label>
-										<input id="ogImage" name="og_image" type="file" class="form-control" accept="image/*">
-										<img id="imagePreview" src="" alt="Image Preview" class="d-none"> <!-- Image preview -->
-									</div>
 								</div>
 							</div>
 						</div>
-						<!-- Progress Bar Container -->
-						<!-- <div id="progressBarContainer" style="display:none;">
-							<div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-								0%
-							</div>
-						</div> -->
+
 
 						<div class="text-center mx-auto col-lg-12 sticky-container mb-4">
 							<div class="d-grid gap-2">
-								<button id="uploadButton" type="submit" class="btn btn-primary btn-lg">
-									<i class="bx bx-file me-1"></i> Save Product
-								</button>
+								<button type="submit" class="btn btn-success mt-3">Submit</button>
 
 								<a href="{{ route('products.index') }}" class="btn btn-secondary btn-lg">
 									<i class="bx bx-x me-1"></i> Cancel
@@ -309,48 +354,6 @@
 		});
 	</script>
 
-
-	<script>
-		// Function to preview images
-		function previewImages(event) {
-			const imagePreviewContainer = document.getElementById('previewProductImage');
-			imagePreviewContainer.innerHTML = ''; // Clear previous images
-
-			const files = event.target.files;
-
-			// Loop through each selected file
-			for (let i = 0; i < files.length; i++) {
-				const file = files[i];
-				const reader = new FileReader();
-
-				reader.onload = function (e) {
-					// Create a div for each image
-					const imgDiv = document.createElement('div');
-					imgDiv.className = 'img-div';
-					imgDiv.id = 'prev-img-div-' + i; // Assign an ID to the div
-					imgDiv.innerHTML = `
-						<img src="${e.target.result}" class="img-responsive image img-thumbnail" title="${file.name}">
-						<input type="hidden" name="existing_images[]" value="${file.name}"> <!-- Hidden input for existing images -->
-						<div class="middle">
-							<button id="remove-prev-image" class="btn btn-danger" onclick="removeImage(this)">
-								<i class="fa fa-trash"></i>
-							</button>
-						</div>
-					`;
-					imagePreviewContainer.appendChild(imgDiv);
-				};
-
-				reader.readAsDataURL(file); // Read the file as a data URL
-			}
-		}
-
-		// Function to remove an image preview
-		function removeImage(button) {
-			const imgDiv = button.parentElement.parentElement; // Get the parent div
-			imgDiv.remove(); // Remove the image div
-		}
-		
-	</script>
 	<!-- Add JavaScript to handle the click event -->
 	<script src="{{ asset('build/js/main.js') }}"></script>
 			
@@ -365,4 +368,7 @@
 	
 	<!-- App js -->
 	<script src="{{ asset('build/js/app.js') }}"></script>
+
+	<script src="{{ asset('build/js/imageUploader.js') }}"></script>
+
     @endsection
