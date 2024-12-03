@@ -139,7 +139,6 @@ class CategoryController extends Controller
 
 	public function frontShow(Request $request)
 	{
-		$collections = Product::all();
 		
 		// Fetch the query parameters
 		$mainCategoryId = $request->query('category');

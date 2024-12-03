@@ -51,14 +51,15 @@ class SectionController extends Controller
 			// Create an image instance using Intervention Image
 			$imageInstance = Image::make($image);
 			
-			// Generate a unique filename based on the slug and ensure it’s .webp
-			$imageName = $slug . '.webp';
+			// Generate a unique filename with a timestamp and original extension
+			$timestamp = now()->format('YmdHisu'); // Format: YYYYMMDD_HHMMSS_microseconds
+			$imageName = $timestamp . '.webp';
 			
 			// Resize and convert the image to webP format without reducing quality
 			$imageInstance->encode('webp', 75); // Adjust quality if needed (90 is a good balance)
 			
 			// Save the image to the storage folder (not public)
-			$imagePath = 'public/sections/images/' . $imageName;
+			$imagePath = 'public/sections/' . $imageName;
 			Storage::put($imagePath, $imageInstance->stream());
 		}
 	
@@ -217,8 +218,9 @@ class SectionController extends Controller
 			// Create an image instance using Intervention Image
 			$imageInstance = Image::make($image);
 			
-			// Generate a unique filename based on the slug and ensure it’s .webp
-			$imageName = $slug . '.webp';
+			// Generate a unique filename with a timestamp and original extension
+			$timestamp = now()->format('YmdHisu'); // Format: YYYYMMDD_HHMMSS_microseconds
+			$imageName = $timestamp . '.webp';
 			
 			// Resize and convert the image to webP format without reducing quality
 			$imageInstance->encode('webp', 75); // Adjust quality if needed (75 is a good balance)
@@ -229,7 +231,7 @@ class SectionController extends Controller
 			}
 			
 			// Save the new image to the storage folder (not public)
-			$imagePath = 'public/section/images/' . $imageName;
+			$imagePath = 'public/sections/' . $imageName;
 			Storage::put($imagePath, $imageInstance->stream());
 		}
 
@@ -251,8 +253,8 @@ class SectionController extends Controller
 	public function destroy(Section $section)
 	{
 		// Check if the section has an image and delete it from storage if exists
-		if ($section->image && Storage::exists('public/sections/images/' . $section->image)) {
-			Storage::delete('public/sections/images/' . $section->image);
+		if ($section->image && Storage::exists('public/sections/' . $section->image)) {
+			Storage::delete('public/sections/' . $section->image);
 		}
 
 		// Delete the section record from the database

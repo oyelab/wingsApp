@@ -22,7 +22,7 @@ class Section extends Model
 		// Check if the image path exists and if the file is in storage
 		if ($this->attributes['image']) {
 			// Return the full URL to the image in storage
-			return asset('storage/sections/images/' . $this->attributes['image']);
+			return asset('storage/sections/' . $this->attributes['image']);
 		}
 		
 	}

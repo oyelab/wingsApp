@@ -383,8 +383,13 @@ class Product extends Model
 	{
 		return $query->where('status', 1) // Ensure status is true (active)
 					 ->withCount('orders') // Count related orders if needed
+					 ->whereDoesntHave('categories', function($q) {
+						 $q->where('categories.id', 1); // Explicitly specify the table for id
+					 })
 					 ->orderBy('id', 'DESC'); // Order by 'id' in descending order
 	}
+	
+	
 
 	// Related Products: Products in the same category or similar attributes
 	public function scopeRelatedProducts($query, $product)

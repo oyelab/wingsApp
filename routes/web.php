@@ -56,7 +56,7 @@ Route::post('/test/store', [TestController::class, 'store'])->name('test.store')
 Route::get('/invoice', [TestController::class, 'invoice'])->name('invoice');
 
 
-Route::get('/search', [CategoryController::class, 'search'])->name('search');
+// Route::get('/search', [CategoryController::class, 'search'])->name('search');
 Route::get('/collections', [CategoryController::class, 'frontShow'])->name('collections');
 Route::get('/wings-edited', [CategoryController::class, 'wingsEdited'])->name('wings.edited');
 
