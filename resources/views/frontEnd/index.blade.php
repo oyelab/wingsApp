@@ -181,44 +181,16 @@
 		<div class="row">
 			<div class="col-12">
 				<div class="bulk-banner">
-					<a href="{{ route('collections') }}">
+					<a href="{{ route('collections', ['sort' => 'bulks']) }}">
 						Explore More
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
-							viewBox="0 0 24 24"
-							fill="none"
-						>
-							<mask
-								id="mask0_397_3859"
-								style="mask-type: alpha"
-								maskUnits="userSpaceOnUse"
-								x="0"
-								y="0"
-								width="24"
-								height="24"
-							>
-								<rect
-									width="24"
-									height="24"
-									fill="#D9D9D9"
-								/>
-							</mask>
-							<g mask="url(#mask0_397_3859)">
-								<path
-									d="M15.3256 13H4V11H15.3256L10.1163 5.4L11.4419 4L18.8837 12L11.4419 20L10.1163 18.6L15.3256 13Z"
-									fill="currentColor"
-								/>
-							</g>
-						</svg>
+						<i class="bi bi-arrow-right"></i>
 					</a>
-					<a href="{{ route('collections') }}">
+					<a href="{{ route('collections', ['sort' => 'bulks']) }}">
 						<img
-							src="{{ asset('frontEnd/images/bulk-order.png') }}"
+							src="{{ $bulksData->imagePath }}"
 							draggable="false"
 							class="img-fluid"
-							alt="Bulk Order"
+							alt="{{ $bulksData->title }}"
 						/>
 					</a>
 				</div>
@@ -239,7 +211,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="wings-edited-item-wrap">
+		<div cs="wings-edited-item-wrap">
 			<div class="row">
 				<div class="col-12">
 					<div class="explore-btn">

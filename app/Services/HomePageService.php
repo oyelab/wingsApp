@@ -21,6 +21,7 @@ class HomePageService
             'mostViewed' => $this->productRepo->getMostViewed(),
             'hotDeals' => $this->productRepo->getOfferProducts(),
             'trending' => $this->productRepo->getTrending(),
+            'bulks' => $this->productRepo->getBulks(),
         ];
     }
 }

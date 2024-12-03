@@ -20,6 +20,10 @@ class SortProducts implements Scope
                 // Assuming 'views' is a column that represents popularity
                 $builder->topOrders();
                 break;
+            case 'bulks':
+                // Assuming 'views' is a column that represents popularity
+                $builder->bulks();
+                break;
             case 'oldest':
                 $builder->oldestProducts();
                 break;

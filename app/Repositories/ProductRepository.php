@@ -75,11 +75,7 @@ class ProductRepository
 
 	public function getBulks()
 	{
-		return Product::whereHas('categories', function ($query) {
-			$query->where('slug', '!=', 'wings-edited'); // Exclude products from the 'wings-edited' category
-		})
-		->bulks()
-		->get();
+		return Product::bulks()->get();
 	}
 	
 }

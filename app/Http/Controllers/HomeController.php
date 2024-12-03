@@ -68,14 +68,15 @@ class HomeController extends Controller
 
 		// Fetch titles dynamically from the database
 		$titlesData = Section::all(); // Assuming you have a `Title` model
+		$bulksData = $titlesData->firstWhere('type', 'bulks');
 
 		// Convert titles to an associative array
 		$titles = $titlesData->pluck('title', 'type')->toArray();
 
-		// return $showcases;
+		// return $titles;
         
 
-        return view('frontEnd.index', compact('data', 'titles', 'sliders', 'wingsEdited', 'showcases', 'manufactureLogo', 'partnerLogos', 'paymentBanner', 'siteReviews', 'behindWings', ));
+        return view('frontEnd.index', compact('data', 'titles', 'bulksData', 'sliders', 'wingsEdited', 'showcases', 'manufactureLogo', 'partnerLogos', 'paymentBanner', 'siteReviews', 'behindWings', ));
     }
 
 	// public function show(Category $category, $subcategorySlug, Product $product)
