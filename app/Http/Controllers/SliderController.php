@@ -61,7 +61,7 @@ class SliderController extends Controller
 		$rules = [
 			'title' => 'required|string|max:255|unique:sliders,title',
 			'status' => 'required|boolean',
-			'image' => 'required|mimes:jpeg,png,jpg,gif|max:4096',
+			'image' => 'required|mimes:jpeg,png,jpg,gif,webp|max:4096',
 		];
 	
 		// Conditionally add the 'order' validation rule
@@ -156,7 +156,7 @@ class SliderController extends Controller
 		$rules = [
 			'title' => 'required|string|max:255|unique:sliders,title,' . $slider->id,
 			'status' => 'required|boolean',
-			'image' => 'nullable|mimes:jpeg,png,jpg,gif|max:4096',
+			'image' => 'nullable|mimes:jpeg,png,jpg,gif,webp|max:4096',
 		];
 	
 		// Conditionally add the 'order' validation rule
