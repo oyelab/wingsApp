@@ -109,7 +109,7 @@
 					<div class="availabel-size">
 						<h2>Select Size</h2>
 						<div class="form-group available_sizes">
-							@foreach($product->availableSizes as $size)
+							@foreach($product->sizes as $size)
 							<div class="size_item">
 								<input
 									type="radio"
@@ -117,12 +117,18 @@
 									id="size{{ $size->id }}"
 									autocomplete="off"
 									value="{{ $size->id }}"
+									class="form-check-input"
+									{{ $size->pivot->quantity <= 0 ? 'disabled' : '' }}
 								/>
-								<label for="size{{ $size->id }}">{{ $size->name }}</label>
+								<label for="size{{ $size->id }}"
+									class="form-check-label {{ $size->pivot->quantity <= 0 ? 'text-muted' : '' }}">
+									{{ $size->name }}
+								</label>
 							</div>
 							@endforeach
 						</div>
 					</div>
+
 					<div class="action-button-wrap">
 						<button id="addToCartBtn" class="add-to-cart" data-product-id="{{ $product->id }}">
 							Add to Cart
@@ -136,47 +142,7 @@
 					</div>
 					<div class="size-guid-area">
 						<div class="top-part d-flex align-items-center justify-content-between">
-							<h2>Size Guide</h2>
-							<ul
-								class="nav nav-tabs"
-								id="myTab"
-								role="tablist"
-							>
-								<li
-									class="nav-item"
-									role="presentation"
-								>
-									<button
-										class="nav-link active"
-										id="in"
-										data-bs-toggle="tab"
-										data-bs-target="#in-pane"
-										type="button"
-										role="tab"
-										aria-controls="in-pane"
-										aria-selected="true"
-									>
-										in
-									</button>
-								</li>
-								<li
-									class="nav-item"
-									role="presentation"
-								>
-									<button
-										class="nav-link"
-										id="cm"
-										data-bs-toggle="tab"
-										data-bs-target="#cm-pane"
-										type="button"
-										role="tab"
-										aria-controls="cm-pane"
-										aria-selected="false"
-									>
-										cm
-									</button>
-								</li>
-							</ul>
+							<h2>Size Guide(Inchies)</h2>
 						</div>
 						<div class="size-chart-wrap">
 							<div class="tab-content" id="myTabContent">
@@ -213,40 +179,10 @@
 											<td>44</td>
 											<td>31</td>
 										</tr>
-									</table>
-								</div>
-								<div
-									class="tab-pane fade"
-									id="cm-pane"
-									role="tabpanel"
-									aria-labelledby="cm"
-									tabindex="0"
-								>
-									<table class="size-table">
 										<tr>
-											<th>SIZE</th>
-											<th>CHEST</th>
-											<th>LENGTH</th>
-										</tr>
-										<tr>
-											<td>M</td>
-											<td>38</td>
-											<td>28</td>
-										</tr>
-										<tr>
-											<td>L</td>
-											<td>40</td>
-											<td>29</td>
-										</tr>
-										<tr>
-											<td>XL</td>
-											<td>42</td>
-											<td>30</td>
-										</tr>
-										<tr>
-											<td>XXL</td>
-											<td>44</td>
-											<td>31</td>
+											<td>XXXL</td>
+											<td>46</td>
+											<td>32</td>
 										</tr>
 									</table>
 								</div>

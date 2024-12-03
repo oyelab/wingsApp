@@ -58,7 +58,7 @@ class Order extends Model
 				return [
 					'product' => $product,
 					'total_quantity' => $products->sum(fn($product) => $product->pivot->quantity),
-					'imagePath' => $product->imagePaths[0] ?? url('/images/products/default.jpg'), // Get the first image path
+					'imagePath' => $product->thumbnail ?? url('/images/products/default.jpg'), // Get the first image path
 					'offerPrice' => $product->offerPrice, // Access offer price here
 				];
 			})

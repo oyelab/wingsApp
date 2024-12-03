@@ -15,7 +15,7 @@
 					<div class="product-item">
 						<div class="product-img">
 							<img
-								src="{{ $product->imagePaths[0] }}"
+								src="{{ $product->thumbnail }}"
 								class="img-fluid"
 								alt="{{ $product->title }}"
 								draggable="false"

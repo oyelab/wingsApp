@@ -56,7 +56,7 @@
 									'section' => 'latest',
 									'slug' => $product->slug, // Using the model method to get subcategory slug
 								]) }}">
-                                <img src="{{ $product->imagePaths[0] }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
+                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
                             </a>
                             <a href="#" class="wishlist-icon">
                                 <i class="bi bi-heart-fill"></i>
@@ -144,7 +144,7 @@
 									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
 									'product' => $product->slug
 								]) }}">
-                                <img src="{{ $product->imagePaths[0] }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
+                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
                             </a>
                             <a href="#" class="wishlist-icon">
                                 <i class="bi bi-heart-fill"></i>
@@ -285,7 +285,7 @@
 								'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
 								'product' => $product->slug
 							]) }}">
-							<img src="{{ $product->imagePaths[0] }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
+							<img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
 						</a>
 						<a href="#" class="wishlist-icon">
 							<i class="bi bi-heart-fill"></i>
@@ -370,7 +370,7 @@
 									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
 									'product' => $product->slug
 								]) }}">
-                                <img src="{{ $product->imagePaths[0] }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
+                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
                             </a>
                             <a href="#" class="wishlist-icon">
                                 <i class="bi bi-heart-fill"></i>
@@ -439,7 +439,7 @@
 										</a>
 									</div>
 								@else
-									<div class="wings-showcase-item">
+									<div class="wings-showcase-item showcase-1">
 										<img
 											src="{{ asset('frontEnd/images/wing-showcase-1.png') }}"
 											draggable="false"
@@ -463,7 +463,7 @@
 										</a>
 									</div>
 								@else
-									<div class="wings-showcase-item">
+									<div class="wings-showcase-item showcase-2">
 										<img
 											src="{{ asset('frontEnd/images/wing-showcase-2.png') }}"
 											draggable="false"
@@ -488,7 +488,7 @@
 									</a>
 								</div>
 							@else
-								<div class="wings-showcase-item">
+								<div class="wings-showcase-item showcase-3">
 									<img
 										src="{{ asset('frontEnd/images/wing-showcase-3.png') }}"
 										draggable="false"
@@ -500,10 +500,10 @@
 							<!-- Showcase 3 End -->
 						</div>
 
-						<div class="flex-column wings-showcase-gap showcase-4">
+						<div class="flex-column wings-showcase-gap">
 							<!-- Showcase 4 -->
 							@if ($showcase4 = $showcases->where('order', 4)->first())
-								<div class="wings-showcase-item">
+								<div class="wings-showcase-item showcase-4">
 									<a href="{{ route('showcase.show', $showcase4->slug) }}">
 										<img
 											src="{{ $showcase4->thumbnailImagePath }}"
@@ -514,7 +514,7 @@
 									</a>
 								</div>
 							@else
-								<div class="wings-showcase-item">
+								<div class="wings-showcase-item showcase-4">
 									<img
 										src="{{ asset('frontEnd/images/wing-showcase-4.png') }}"
 										draggable="false"
@@ -538,7 +538,7 @@
 									</a>
 								</div>
 							@else
-								<div class="wings-showcase-item">
+								<div class="wings-showcase-item showcase-5">
 									<img
 										src="{{ asset('frontEnd/images/wing-showcase-5.png') }}"
 										draggable="false"
@@ -615,7 +615,7 @@
 									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
 									'product' => $product->slug
 								]) }}">
-                                <img src="{{ $product->imagePaths[0] }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
+                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
                             </a>
                             <a href="#" class="wishlist-icon">
                                 <i class="bi bi-heart-fill"></i>

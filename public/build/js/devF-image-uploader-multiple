@@ -1,0 +1,72 @@
+public function update(Request $request, Product $product)
+{
+    // Validate the request
+    $validator = Validator::make($request->all(), [
+        'images_order' => 'array', // Order of images (only needed for updates)
+        'images_order.*' => 'string', // Ensure each image order entry is a string or null
+        'images' => 'array', // Images required only if images_order is not present
+        'images.*' => 'image|mimes:jpg,jpeg,png,gif,webp',
+    ]);
+
+    // Handle validation errors
+    if ($validator->fails()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation errors occurred.',
+            'errors' => $validator->errors()->toArray(),
+        ], 422);
+    }
+
+    // Define storage path
+    $storagePath = "public/collections/{$product->id}";
+    $directory = storage_path("app/{$storagePath}");
+
+    // Ensure the directory exists
+    if (!file_exists($directory)) {
+        mkdir($directory, 0775, true);
+    }
+
+    // If images_order is provided (for reordering existing images)
+    if ($request->has('images_order')) {
+        $imagesOrder = $request->input('images_order', []);
+        $existingImages = $product->images ?? [];
+
+        // Identify any images to delete (those not in the new order)
+        $imagesToDelete = array_diff($existingImages, $imagesOrder);
+        foreach ($imagesToDelete as $image) {
+            $imagePath = storage_path("app/{$storagePath}/{$image}");
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+
+        // Ensure the images_order maintains uniqueness and proper order
+        $product->images = array_unique($imagesOrder); // Ensure unique entries and preserve order
+    }
+
+    // Check if new images are uploaded
+    if ($request->hasFile('images')) {
+        $newImages = $request->file('images');
+        $uploadedImages = [];
+
+        // Ensure the new images are uploaded correctly in order
+        foreach ($newImages as $image) {
+            $uniqueName = $image->getClientOriginalName();
+            $image->storeAs($storagePath, $uniqueName);
+            $uploadedImages[] = $uniqueName;
+        }
+
+        // Merge uploaded images with existing ones while keeping the order intact
+        $product->images = array_merge($product->images ?? [], $uploadedImages);
+    }
+
+    // Save the product with updated images
+    $product->save();
+
+    // Return success response
+    return response()->json([
+        'success' => true,
+        'message' => 'Product updated successfully',
+        'redirect_url' => route('products.index'),
+    ]);
+}
