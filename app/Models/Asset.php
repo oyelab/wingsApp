@@ -22,25 +22,29 @@ class Asset extends Model
     }
 
 	public static function handleFileUpload($file, $title)
-    {
-        $titleSlug = Str::slug($title);
-        $extension = $file->getClientOriginalExtension();
-        $baseFilename = $titleSlug;
-
-        // Generate a unique filename
-        $counter = 0;
-        do {
-            $filename = $counter > 0
-                ? "{$baseFilename}-{$counter}.{$extension}"
-                : "{$baseFilename}.{$extension}";
-            $exists = Storage::disk('public')->exists("assets/{$filename}");
-            $counter++;
-        } while ($exists);
-
-        // Store the file and return the filename
-        $file->storeAs('assets', $filename, 'public');
-        return $filename;
-    }
+	{
+		// Slugify the title for a clean filename
+		$titleSlug = Str::slug($title);
+		$extension = $file->getClientOriginalExtension();
+		$baseFilename = $titleSlug;
+	
+		// Generate a unique filename to avoid collisions
+		$counter = 0;
+		do {
+			// Append counter to the filename if a file already exists with the same name
+			$filename = $counter > 0
+				? "{$baseFilename}-{$counter}.{$extension}"
+				: "{$baseFilename}.{$extension}";
+			// Check if the file already exists
+			$exists = Storage::disk('public')->exists("assets/{$filename}");
+			$counter++;
+		} while ($exists);
+	
+		// Store the file in the 'public/assets' folder
+		$file->storeAs('assets', $filename, 'public');
+	
+		return $filename;
+	}
 
 	public function setFileAttribute($file)
     {

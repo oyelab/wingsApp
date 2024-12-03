@@ -1126,7 +1126,7 @@ a {
 }
 .available_sizes {
     display: flex;
-    gap: 36px;
+    gap: 15px;
     margin-bottom: 15px;
 }
 .size_item {

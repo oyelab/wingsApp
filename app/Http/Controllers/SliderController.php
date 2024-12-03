@@ -20,7 +20,7 @@ class SliderController extends Controller
 	 // Private function to get the slider path
 	 private function getSliderPath()
 	 {
-		return Storage::url('public/images/sliders/');
+		return Storage::url('public/sliders/');
 	 }
 
     /**
@@ -105,7 +105,7 @@ class SliderController extends Controller
 			->encode('webp', 85); // Reduce quality to 85% for WebP format
 	
 		// Save the file to the desired location in the storage path
-		$path = storage_path('app/public/images/sliders/' . $filename);
+		$path = storage_path('app/public/sliders/' . $filename);
 		$image->save($path);
 	
 		// Save the slider details in the database (only the image filename)
@@ -193,7 +193,7 @@ class SliderController extends Controller
 		// Check if a new image is uploaded
 		if ($request->hasFile('image')) {
 			// Delete the old image if it exists
-			$oldImagePath = storage_path('app/public/images/sliders/' . $slider->image);
+			$oldImagePath = storage_path('app/public/sliders/' . $slider->image);
 			if (file_exists($oldImagePath)) {
 				unlink($oldImagePath); // Delete the old image
 			}
@@ -209,18 +209,18 @@ class SliderController extends Controller
 				->encode('webp', 85); // Reduce quality to 85% for WebP format
 	
 			// Save the processed image to the desired location
-			$path = storage_path('app/public/images/sliders/' . $filename);
+			$path = storage_path('app/public/sliders/' . $filename);
 			$image->save($path);
 	
 			// Update the slider with the new image filename
 			$slider->image = $filename;
 		} elseif ($slider->title !== $request->input('title')) {
 			// Rename the existing image if the title has changed
-			$oldImagePath = storage_path('app/public/images/sliders/' . $slider->image);
+			$oldImagePath = storage_path('app/public/sliders/' . $slider->image);
 	
 			// Generate the new image name based on the new slug
 			$newFilename = $slug . '.webp'; // Keep consistent with WebP format
-			$newImagePath = storage_path('app/public/images/sliders/' . $newFilename);
+			$newImagePath = storage_path('app/public/sliders/' . $newFilename);
 	
 			// Rename the old image file
 			if (file_exists($oldImagePath)) {

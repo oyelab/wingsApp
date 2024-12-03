@@ -20,6 +20,6 @@ class Slider extends Model
 
 	public function getSliderPathAttribute()
     {
-        return Storage::url('public/images/sliders/' . $this->image);
+        return Storage::url('public/sliders/' . $this->image);
     }
 }
