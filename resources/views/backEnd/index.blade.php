@@ -266,10 +266,11 @@
                                 </div>
 
                                 <div class="row align-items-center">
+									@if($popularProducts->isNotEmpty())
 									<div class="col-md-5">
 										<div class="popular-product-img p-2">
 											<img src="{{ $popularProducts->first()->image_paths[0] }}" alt="{{ $popularProducts->first()->title }}" class="img-fluid rounded">
-										</div>
+										</div>										
 									</div>
 									<div class="col-md-7">
 										<span class="badge bg-primary-subtle text-primary font-size-10 text-uppercase ls-05"> Popular Item </span>
@@ -300,7 +301,9 @@
 											</div>
 										</div>
 									</div>
-
+									@else
+										"N/A"
+									@endif
                                 </div>
                                 <div class="mx-n4" data-simplebar style="max-height: 205px;">
 									@foreach ($popularProducts->skip(1) as $product)
@@ -310,7 +313,7 @@
                                                 <div class="avatar-md">
                                                     <div
                                                         class="popular-product-img p-2">
-                                                        <img src="{{ $product->imagePaths[0] }}" class="img-fluid rounded"
+                                                        <img src="{{ $product->thumbnail }}" class="img-fluid rounded"
                                                             alt="{{ $product->title }}">
                                                     </div>
                                                 </div>
@@ -328,7 +331,6 @@
                                         </div>
                                     </div>		
 									@endforeach
-
                                 </div>
                             </div>
                         </div>

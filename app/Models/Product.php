@@ -53,7 +53,7 @@ class Product extends Model
 
 	public function availableSizes()
 	{
-		return $this->sizes()->wherePivot('quantity', '>', 0);
+		return $this->sizes()->withPivot('quantity'); // Include the quantity in the pivot table
 	}
 
 	public function quantities()
@@ -178,26 +178,53 @@ class Product extends Model
 	}
 	
 
-	// Product model
-	// public function getImagePathsAttribute(): array
-	// {
-	// 	$images = json_decode($this->images) ?? [];
-	// 	$baseURL = url('/'); // Get the base URL of the application
-	
-	// 	return array_map(fn($image) => $baseURL . '/public/storage/collections/' . $image, $images) ?: [$baseURL . '/images/products/default.jpg'];
-	// }
 
 	protected $casts = [
 		'images' => 'array',
 	];
 
+	// public function getImagePathsAttribute()
+	// {
+	// 	$collectionId = $this->id; // Get the product ID
+	// 	$storagePath = "public/collections/{$collectionId}";
+		
+	// 	// Filter out the OG image from the images
+	// 	$filteredImages = array_filter($this->images ?? [], function ($filename) use ($storagePath) {
+	// 		$fullPath = Storage::path("{$storagePath}/{$filename}");
+	// 		return $fullPath !== $this->ogImagePath; // Exclude the OG image
+	// 	});
+
+	// 	// Create AVIF thumbnails with a max width of 500px and return URLs
+	// 	return array_map(function ($filename) use ($storagePath) {
+	// 		$originalPath = Storage::path("{$storagePath}/{$filename}");
+	// 		$thumbnailPath = "{$storagePath}/thumbnails/" . pathinfo($filename, PATHINFO_FILENAME) . '.avif';
+
+	// 		// Ensure the thumbnail directory exists
+	// 		Storage::makeDirectory("{$storagePath}/thumbnails");
+
+	// 		if (!Storage::exists($thumbnailPath)) {
+	// 			if (file_exists($originalPath)) {
+	// 				// Generate and save the thumbnail as AVIF
+	// 				$image = Image::make($originalPath)
+	// 					->resize(null, 500, function ($constraint) {
+	// 						$constraint->aspectRatio(); // Maintain aspect ratio
+	// 						$constraint->upsize(); // Prevent upsizing the image
+	// 					})
+	// 					->encode('avif', 80); // Compress the image to AVIF format
+
+	// 				Storage::put($thumbnailPath, $image);
+	// 			}
+	// 		}
+
+	// 		return Storage::url($thumbnailPath);
+	// 	}, $filteredImages);
+	// }
+
+
 	public function getImagePathsAttribute()
 	{
 		$collectionId = $this->id; // Get the product ID
 		$storagePath = "public/collections/{$collectionId}";
-	
-		// Get the OG image path
-		// $ogImagePath = $this->og_image_path;
 	
 		// Filter out the OG image from the images
 		$filteredImages = array_filter($this->images ?? [], function ($filename) use ($storagePath) {
@@ -205,11 +232,14 @@ class Product extends Model
 			return $fullPath !== $this->ogImagePath; // Exclude the OG image
 		});
 	
-		// Map the remaining image filenames to their full paths
+		// Always return an array, even if empty
 		return array_map(function ($filename) use ($storagePath) {
 			return Storage::url("{$storagePath}/{$filename}");
 		}, $filteredImages);
 	}
+	
+	
+	
 
 	public function getAllImagePathsAttribute()
 	{
@@ -236,46 +266,49 @@ class Product extends Model
 		// Return the first image path or null if the array is empty
 		return $imagePaths[0] ?? null;
 	}
-	
 
 	public function getOgImagePathAttribute()
 	{
 		$collectionId = $this->id; // Get the product ID
-		$storagePath = "public/collections/{$collectionId}";
-		
-		// Target aspect ratio
-		$targetRatio = 1.91; 
+		$storagePath = "collections/{$collectionId}"; // Path without 'public/'
 
-		foreach ($this->images ?? [] as $filename) {
-			$filePath = storage_path("app/{$storagePath}/{$filename}"); // Local file path
-			
-			if (file_exists($filePath)) {
-				// Use Intervention Image to get the dimensions
-				$image = Image::make($filePath);
-				$width = $image->width();
-				$height = $image->height();
-				
-				// Calculate the aspect ratio
-				$aspectRatio = $width / $height;
+		$ogImage = $this->og_image; // Assuming the 'og_image' field contains the filename or path
 
-				// Check if the aspect ratio is approximately 1.91:1
-				if (abs($aspectRatio - $targetRatio) < 0.01) { // Allow a small margin of error
-					return Storage::url("{$storagePath}/{$filename}"); // Return the full URL
-				}
-			}
-		}
-
-		return null; // Return null if no image matches the criteria
+		return Storage::url("{$storagePath}/{$ogImage}");
 	}
+	
 
-	// public function getOgImagePathAttribute(): string
+	// public function getOgImagePathAttribute()
 	// {
-	// 	$ogImage = $this->og_image; // Assuming the 'og_image' field contains the filename or path
-	// 	$baseURL = url('/'); // Get the base URL of the application
+	// 	$collectionId = $this->id; // Get the product ID
+	// 	$storagePath = "public/collections/{$collectionId}";
 		
-	// 	// If the og_image field has a value, return its full URL, otherwise return the default image
-	// 	return $ogImage ? $baseURL . '/images/products/' . $ogImage : $baseURL . '/images/products/default-og-image.jpg';
+	// 	// Target aspect ratio
+	// 	$targetRatio = 1.91; 
+
+	// 	foreach ($this->images ?? [] as $filename) {
+	// 		$filePath = storage_path("app/{$storagePath}/{$filename}"); // Local file path
+			
+	// 		if (file_exists($filePath)) {
+	// 			// Use Intervention Image to get the dimensions
+	// 			$image = Image::make($filePath);
+	// 			$width = $image->width();
+	// 			$height = $image->height();
+				
+	// 			// Calculate the aspect ratio
+	// 			$aspectRatio = $width / $height;
+
+	// 			// Check if the aspect ratio is approximately 1.91:1
+	// 			if (abs($aspectRatio - $targetRatio) < 0.01) { // Allow a small margin of error
+	// 				return Storage::url("{$storagePath}/{$filename}"); // Return the full URL
+	// 			}
+	// 		}
+	// 	}
+
+	// 	return null; // Return null if no image matches the criteria
 	// }
+
+
 
 	// In Product model
 

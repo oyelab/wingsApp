@@ -159,7 +159,7 @@
 						<div class="product-img">
 							<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, 'subcategory' => $product->subcategory->slug, 'product' => $product->slug]) }}">
 								<img
-									src="{{ $product->imagePaths[0] }}"
+									src="{{ $product->thumbnail }}"
 									class="img-fluid"
 									alt="{{ $product->title }}"
 									draggable="false"

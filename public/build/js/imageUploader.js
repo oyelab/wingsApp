@@ -4,8 +4,7 @@ const fileInputContainer = document.getElementById('file-input-container');
 const form = document.getElementById('product-form');
 const errorContainer = document.getElementById('error-container');
 
-let updatedImages = []; // This will hold the newly uploaded images
-let existingImages = []; // Images from the server that already exist
+let images = []; // Combined array of both updated and existing images
 let modified = false; // Track if there are any changes
 
 // Trigger file input when "file-input-container" is clicked
@@ -19,15 +18,24 @@ fileInput.addEventListener('change', (event) => {
     selectedFiles.forEach((file) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-            const id = Date.now() + Math.random().toString(36).substr(2, 9);
-            updatedImages.push({ id, file });  // Push to updatedImages array
-            createPreviewItem(id, e.target.result, true);
+            // Get the filename with extension
+            const filenameWithExtension = file.name;
+            const extension = filenameWithExtension.split('.').pop(); // Get file extension
+            const id = Date.now() + Math.floor(Math.random() * 1000) + '.' + extension; // Add extension to ID
+
+            // Create a new image object with the unique ID
+            images.push({ id, file, filename: filenameWithExtension, isNew: true });
+            createPreviewItem(id, e.target.result, true, filenameWithExtension); // Pass the filename to preview
             modified = true; // Mark as modified
+
+            // Log the images array to the console
+            console.log('Images Array:', images);
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(file); // Read file as data URL for preview
     });
     event.target.value = ''; // Reset input for new selections
 });
+
 
 // Add drag-and-drop functionality
 function makeDraggable(previewItem) {
@@ -64,24 +72,22 @@ function updateOrder() {
     const items = Array.from(previewContainer.querySelectorAll('.preview-item'));
     const newOrder = items.map((item) => item.dataset.id);
 
-    const allImages = [...existingImages, ...updatedImages];
-    existingImages = [];
-    updatedImages = [];
-
-    newOrder.forEach((id) => {
-        const image = allImages.find((img) => img.id === id);
+    // Create a new ordered array based on the DOM order
+    const orderedImages = newOrder.map((id) => {
+        const image = images.find((img) => img.id === id);
         if (image) {
-            if (image.file) {
-                updatedImages.push(image); // Newly uploaded images
-            } else {
-                existingImages.push(image); // Existing images
-            }
+            return image; // Keep the image object intact (whether new or existing)
         }
-    });
+    }).filter(Boolean); // Remove any undefined values
+
+    // Set the new order of images
+    images = orderedImages;
+
+    console.log('Ordered Images:', images); // Log ordered images to the console
 }
 
-// Create preview item dynamically
-function createPreviewItem(id, src, isNew) {
+// Update the createPreviewItem function to display the filename instead of the full path
+function createPreviewItem(id, src, isNew, filename) {
     const previewItem = document.createElement('div');
     previewItem.classList.add('preview-item');
     previewItem.dataset.id = id;
@@ -98,6 +104,7 @@ function createPreviewItem(id, src, isNew) {
         removeImage(id, isNew);
     });
 
+
     previewItem.appendChild(img);
     previewItem.appendChild(removeButton);
     previewContainer.appendChild(previewItem);
@@ -107,11 +114,7 @@ function createPreviewItem(id, src, isNew) {
 
 // Remove image from preview and array
 function removeImage(id, isNew) {
-    if (isNew) {
-        updatedImages = updatedImages.filter((image) => image.id !== id);
-    } else {
-        existingImages = existingImages.filter((image) => image.id !== id);
-    }
+    images = images.filter((image) => image.id !== id); // Remove from the single array
 
     const itemToRemove = document.querySelector(`.preview-item[data-id="${id}"]`);
     previewContainer.removeChild(itemToRemove);
@@ -148,7 +151,6 @@ function displayErrors(errors) {
     }
 }
 
-// Handle form submission
 form.addEventListener('submit', (e) => {
     e.preventDefault();
     errorContainer.innerHTML = ''; // Clear previous errors
@@ -156,36 +158,36 @@ form.addEventListener('submit', (e) => {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const formData = new FormData(form);
 
-    // Combine both updated and existing images into a single array
-    let combinedImages = [];
+    // Arrays for separating file images and ordered image IDs
+    const fileImages = [];
+    const orderedImageData = [];
 
-    // Append new images to the array (updatedImages)
-    updatedImages.forEach((image, index) => {
-        const extension = image.file.name.split('.').pop();
-        const filename = `${existingImages.length + index + 1}.${extension}`;
-        combinedImages.push(image.file); // Add newly uploaded image
+    // Check if it's an update or create
+    const isUpdate = images.some(image => !image.isNew); // Check if there are existing images
+
+    // First, handle the ordered image data (existing and new images in the correct order)
+    images.forEach((image) => {
+        if (image.isNew) {
+            // Directly push the new image ID and file into the order
+            orderedImageData.push(image.id); // Place the new image at its ordered position
+            fileImages.push({ file: image.file, id: image.id });
+        } else {
+            // Add existing image IDs to the ordered list
+            orderedImageData.push(image.id);
+        }
     });
 
-    // Append existing images (those already stored in the database)
-    existingImages.forEach((image) => {
-        combinedImages.push(image.url); // Add the URL or path of existing image
+    // Add the new images to FormData (file uploads)
+    fileImages.forEach((image) => {
+        formData.append('images[]', image.file, image.id); // Use the existing unique id as filename
     });
 
-    // If no images have been modified, don't send anything
-    if (combinedImages.length === 0) {
-        formData.delete('images[]'); // Remove images field if nothing to upload
-    } else {
-        // Append the combined array of images to FormData
-        combinedImages.forEach((image) => {
-            formData.append('images[]', image); // All images in one field
-        });
-    }
+    // Append ordered image data (for both new and existing images) to FormData
+    orderedImageData.forEach((imageId) => {
+        formData.append('images_order[]', imageId); // Append as array element for ordered images
+    });
 
-    // If no changes (i.e., no new or removed images), we don't need to send anything
-    if (!modified) {
-        formData.delete('images[]'); // Remove images array if no modification
-    }
-
+    // Submit form data
     fetch(form.action, {
         method: 'POST',
         headers: {
@@ -193,33 +195,47 @@ form.addEventListener('submit', (e) => {
         },
         body: formData,
     })
-    .then((response) => response.json())
-    .then((data) => {
-        if (data.success) {
-            alert(data.message);
-            window.location.href = data.redirect_url;
-        } else {
-            displayErrors(data.errors);
-        }
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-        alert('An unexpected error occurred.');
-    });
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.success) {
+                alert(data.message);
+                window.location.href = data.redirect_url;
+            } else {
+                displayErrors(data.errors);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('An unexpected error occurred.');
+        });
 });
+
 
 // Prepopulate existing images when editing a product
 function prepopulateExistingImages(existingImagesData) {
-    existingImages = existingImagesData.map((url, index) => ({
-        id: 'existing-' + index,
-        url: url,
-    }));
+    existingImages = existingImagesData.map((url, index) => {
+
+		const filename = url.substring(url.lastIndexOf('/') + 1);
+
+        return {
+            id: filename, // Use the filename without the extension as the ID
+            filename: filename, // Store the full filename with the extension
+            url: url,
+            isNew: false // Mark as existing image
+        };
+    });
 
     existingImages.forEach((image) => {
-        createPreviewItem(image.id, image.url, false);
+        // Display the filename with extension in the preview
+        createPreviewItem(image.id, image.url, false, image.filename);
     });
+
+    // Merge existing images into the main images array
+    images = [...existingImages];
 }
+
 
 if (window.existingImagesData) {
     prepopulateExistingImages(window.existingImagesData);
 }
+

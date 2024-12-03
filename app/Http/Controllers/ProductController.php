@@ -33,7 +33,6 @@ class ProductController extends Controller
     }
 	
 
-
     /**
      * Store a newly created resource in storage.
      */
@@ -72,6 +71,7 @@ class ProductController extends Controller
 			'meta_title' => 'nullable|string|max:255',
 			'keywords' => 'nullable|array',
 			'meta_desc' => 'nullable|string',
+			'og_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
 		]);
 
 		// Check for validation errors
@@ -86,6 +86,7 @@ class ProductController extends Controller
 		// Process keywords and specifications
 		$keywords = !empty($request->keywords) ? json_encode(array_filter($request->keywords)) : null;
 		$specifications = !empty($request->specifications) ? json_encode(array_filter($request->specifications)) : null;
+
 
 		// Proceed with creating the Product
 		$collection = Product::create([
@@ -117,6 +118,23 @@ class ProductController extends Controller
 		}
 
 		$collection->images = $imageFilenames;
+
+		// Handle OG Image with a custom timestamp-based name
+		if ($request->hasFile('og_image')) {
+			$ogImage = $request->file('og_image');
+
+			// Generate a unique filename with a timestamp and original extension
+			$timestamp = now()->format('YmdHisu'); // Format: YYYYMMDD_HHMMSS_microseconds
+			$extension = $ogImage->getClientOriginalExtension(); // Get original file extension
+			$ogImageFilename = "{$timestamp}.{$extension}";
+
+			// Store the file with the generated filename
+			$ogImage->storeAs($storagePath, $ogImageFilename);
+
+			// Save filename to the `og_image` field
+			$collection->og_image = $ogImageFilename;
+		}
+
 		$collection->save();
 
 		// Attach category and subcategory
@@ -124,48 +142,52 @@ class ProductController extends Controller
 
 		// Store quantities
 		foreach ($request->quantities as $sizeId => $quantity) {
-			if ($quantity > 0) {
-				Quantity::create([
-					'product_id' => $collection->id,
-					'size_id' => $sizeId,
-					'quantity' => $quantity,
-				]);
-			}
+			Quantity::create([
+				'product_id' => $collection->id,
+				'size_id' => $sizeId,
+				'quantity' => $quantity,
+			]);
 		}
 
 		return response()->json([
 			'success' => true,
 			'message' => 'Product created successfully!',
-			'redirect_url' => route('products.show', $collection->id), // Redirect to the product page
+			'redirect_url' => route('products.index'), // Redirect to the product page
 		]);
 	}
 
 
-	
-    /**
-     * Update the specified resource in storage.
-     */
-
-	 public function update(Request $request, $product)
+	public function update(Request $request, Product $product)
 	{
-		// Manually validate the request
+		// Validate the request
 		$validator = Validator::make($request->all(), [
-
+			'title' => "required|string|max:255|unique:products,title,{$product->id}",
 			'price' => 'nullable|numeric|required_unless:category,1',
 			'description' => 'required|string',
-			'category' => 'required|exists:categories,id', // Ensure the category exists
-			'subcategory' => 'required|exists:categories,id', // Ensure the subcategory exists
+			'category' => 'required|exists:categories,id',
+			'subcategory' => 'required|exists:categories,id',
 			'quantities.*' => 'nullable|numeric|min:0',
 			'specifications' => 'nullable|array',
 			'specifications.*' => 'exists:specifications,id',
-			'images' => 'required|array',
-			'images.*' => 'required|image|mimes:jpg,jpeg,png,gif,webp',
+			'images_order' => 'array', // Order of images (only needed for updates)
+			'images_order.*' => 'string', // Ensure each image order entry is a string or null
+			'images' => 'array', // Images required only if images_order is not present
+			'images.*' => 'image|mimes:jpg,jpeg,png,gif,webp',
 			'meta_title' => 'nullable|string|max:255',
 			'keywords' => 'nullable|array',
 			'meta_desc' => 'nullable|string',
+			'og_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
 		]);
 
-		// Check for validation errors
+		$slug = Str::slug($request->title);
+
+		// Check if the slug is unique (excluding the current product)
+		if (Product::where('slug', $slug)->where('id', '!=', $product->id)->exists()) {
+			$validator->after(function ($validator) {
+				$validator->errors()->add('title', 'The title generates a duplicate slug. Please choose a different title.');
+			});
+		}
+		// Handle validation errors
 		if ($validator->fails()) {
 			return response()->json([
 				'success' => false,
@@ -174,155 +196,134 @@ class ProductController extends Controller
 			], 422);
 		}
 
-		$product = Product::findOrFail($product);  // Find the product to update
-		// return $product;
+		// Define storage path
+		$storagePath = "public/collections/{$product->id}";
+		$directory = storage_path("app/{$storagePath}");
 
-		// Process the existing images
-		$existingImages = $product->images; // Assuming you have a relationship or field `images` for existing images
-
-		// Prepare an array for the new images that will be uploaded
-		$updatedImages = [];
-
-		// If new images were uploaded
-		if ($request->hasFile('images')) {
-			// Loop over the uploaded images and rename them sequentially
-			foreach ($request->file('images') as $index => $image) {
-				$filename = str_pad($index + 1, 2, '0', STR_PAD_LEFT) . '.' . $image->getClientOriginalExtension();
-				$path = $image->storeAs('products', $filename, 'public');
-				
-				// Store the new image information
-				$updatedImages[] = $path;
-			}
+		// Ensure the directory exists
+		if (!file_exists($directory)) {
+			mkdir($directory, 0775, true);
 		}
 
-		// Delete the old images if necessary
-		if (!empty($updatedImages)) {
-			foreach ($existingImages as $existingImage) {
-				// Remove the old images from storage (if they exist)
-				if (Storage::exists($existingImage)) {
-					Storage::delete($existingImage);
+		// If images_order is provided (for reordering existing images)
+		if ($request->has('images_order')) {
+			$imagesOrder = $request->input('images_order', []);
+			$existingImages = $product->images ?? [];
+
+			// Identify any images to delete (those not in the new order)
+			$imagesToDelete = array_diff($existingImages, $imagesOrder);
+			foreach ($imagesToDelete as $image) {
+				$imagePath = storage_path("app/{$storagePath}/{$image}");
+				if (file_exists($imagePath)) {
+					unlink($imagePath);
 				}
 			}
+
+			// Ensure the images_order maintains uniqueness and proper order
+			$product->images = array_unique($imagesOrder); // Ensure unique entries and preserve order
+
+			// $product->save();
 		}
 
-		// Update product with new images
-		$product->images = $updatedImages;  // You may need to update this part based on how your images are stored in the database
+		// Check if new images are uploaded
+		if ($request->hasFile('images')) {
+			$newImages = $request->file('images');
+			$uploadedImages = [];
 
-		// Save the product
-		$product->save();
+			// Ensure the new images are uploaded correctly in order
+			foreach ($newImages as $image) {
+				$uniqueName = $image->getClientOriginalName();
+				$image->storeAs($storagePath, $uniqueName);
+				$uploadedImages[] = $uniqueName;
+			}
+		}
 
-		// Return a success response
+		// Handle OG Image with a custom timestamp-based name
+		if ($request->hasFile('og_image')) {
+			$ogImage = $request->file('og_image');
+
+			// Generate a unique filename with a timestamp and original extension
+			$timestamp = now()->format('YmdHisu'); // Format: YYYYMMDD_HHMMSS_microseconds
+			$extension = $ogImage->getClientOriginalExtension(); // Get original file extension
+			$ogImageFilename = "{$timestamp}.{$extension}";
+
+			// Store the file with the generated filename
+			$ogImage->storeAs($storagePath, $ogImageFilename);
+
+			// Remove the old OG image from storage (if exists)
+			$oldOgImage = $product->og_image; // Assuming 'og_image' contains the current filename
+			if ($oldOgImage && Storage::exists("{$storagePath}/{$oldOgImage}")) {
+				Storage::delete("{$storagePath}/{$oldOgImage}"); // Remove the old image from storage
+			}
+
+			// Update the OG image in the product
+			$product->og_image = $ogImageFilename; // Set the new OG image filename
+			$product->save(); // Save the changes to the product
+		}
+
+		// For the update action
+		$keywords = !empty($request->keywords) 
+		? array_map('trim', explode(',', implode(',', $request->keywords))) 
+		: null;
+
+		// Process keywords and specifications
+		$keywords = !empty($request->keywords) ? json_encode(array_filter($keywords)) : null;
+		$specifications = !empty($request->specifications) ? json_encode(array_filter($request->specifications)) : null;
+
+
+		// Update the product data
+		$product->update([
+			'images' => $request->images_order,
+			'title' => $request->title,
+			'slug' => $slug,
+			'price' => $request->price,
+			'sale' => $request->sale,
+			'description' => $request->description,
+			'specifications' => $specifications,
+			'meta_title' => $request->meta_title,
+			'keywords' => $keywords,
+			'meta_desc' => $request->meta_desc,
+		]);
+
+		// Attach category and subcategory
+		$product->categories()->sync([$request->category => ['subcategory_id' => $request->subcategory]]);
+
+		// Update the quantities in the quantities table
+		foreach ($request->quantities as $sizeId => $quantity) {
+			Quantity::updateOrCreate(
+				['product_id' => $product->id, 'size_id' => $sizeId],
+				['quantity' => $quantity]
+			);
+		}
+		// Return success response
 		return response()->json([
 			'success' => true,
-			'message' => 'Product updated successfully with new images!',
-			'redirect_url' => route('products.show', $product->id), // Redirect to the product page
+			'message' => 'Product updated successfully',
+			'redirect_url' => route('products.index'),
 		]);
 	}
-
+	 
+	// Helper method to delete a directory and its contents
+	private function deleteDirectory($dirPath)
+	{
+		if (!file_exists($dirPath)) return;
 	
-	//  public function update(Request $request, Product $product)
-	//  {
-	// 	 // Generate slug from the new title
-	// 	 $slug = Str::slug($request->title);
-	 
-	// 	 // Validate the request
-	// 	 $validator = Validator::make($request->all(), [
-	// 		 'title' => 'required|string|max:255',
-	// 		 'price' => 'nullable|numeric|required_unless:category,1',
-	// 		 'description' => 'required|string',
-	// 		 'category' => 'required|exists:categories,id',
-	// 		 'subcategory' => 'required|exists:categories,id',
-	// 		 'images' => 'required|array',  // Ensure images are present in request
-	// 		 'images.*' => 'required|image|mimes:jpg,jpeg,png,gif,webp', // Validate the image type
-	// 		 'meta_title' => 'nullable|string|max:255',
-	// 		 'keywords' => 'nullable|array',
-	// 		 'meta_desc' => 'nullable|string',
-	// 	 ]);
-	 
-	// 	 // Check for validation errors
-	// 	 if ($validator->fails()) {
-	// 		 return response()->json([
-	// 			 'success' => false,
-	// 			 'message' => 'Validation errors occurred.',
-	// 			 'errors' => $validator->errors()->toArray(),
-	// 		 ], 422);
-	// 	 }
-	 
-	// 	 // Update the product data
-	// 	 $product->update([
-	// 		 'title' => $request->title,
-	// 		 'slug' => $slug,
-	// 		 'price' => $request->price,
-	// 		 'sale' => $request->sale,
-	// 		 'description' => $request->description,
-	// 		 'specifications' => json_encode($request->specifications),
-	// 		 'meta_title' => $request->meta_title,
-	// 		 'keywords' => !empty($request->keywords) ? json_encode(array_filter($request->keywords)) : null,
-	// 		 'meta_desc' => $request->meta_desc,
-	// 	 ]);
-	 
-	// 	 $productId = $product->id;
-	// 	 $storagePath = "public/collections/{$productId}";
-	// 	 $directory = storage_path("app/{$storagePath}");
-	 
-	// 	 // Delete the entire directory to remove old images (if it exists)
-	// 	 if (file_exists($directory)) {
-	// 		 $this->deleteDirectory($directory);
-	// 	 }
-	 
-	// 	 // Recreate the directory to store new images
-	// 	 mkdir($directory, 0775, true);
-	 
-	// 	 // Store new images (even the reordered ones will be treated as new)
-	// 	 $newImageFilenames = [];
-	// 	 if ($request->hasFile('images')) {
-	// 		 foreach ($request->file('images') as $image) {
-	// 			 $newFilename = $image->storeAs($storagePath, $image->getClientOriginalName());
-	// 			 $newImageFilenames[] = basename($newFilename);  // Store the new image filenames
-	// 		 }
-	// 	 }
-	 
-	// 	 // Update the product with the new image filenames
-	// 	 if (count($newImageFilenames) > 0) {
-	// 		 $product->images = $newImageFilenames;
-	// 		 $product->save();
-	// 	 }
-	 
-	// 	 // Attach category and subcategory
-	// 	 $product->categories()->sync([$request->category => ['subcategory_id' => $request->subcategory]]);
-	 
-	// 	 return response()->json([
-	// 		 'success' => true,
-	// 		 'message' => 'Product updated successfully!',
-	// 		 'redirect_url' => route('product.index'),
-	// 	 ]);
-	//  }
-		  
-	 
-	 // Helper method to delete a directory and its contents
-	 private function deleteDirectory($dirPath)
-	 {
-		 if (!file_exists($dirPath)) return;
-	 
-		 // Get all files and subdirectories
-		 $files = array_diff(scandir($dirPath), array('.', '..'));
-	 
-		 foreach ($files as $file) {
-			 $filePath = $dirPath . '/' . $file;
-			 if (is_dir($filePath)) {
-				 $this->deleteDirectory($filePath); // Recurse into subdirectories
-			 } else {
-				 unlink($filePath); // Delete file
-			 }
-		 }
-	 
-		 rmdir($dirPath); // Delete the directory itself
-	 }
+		// Get all files and subdirectories
+		$files = array_diff(scandir($dirPath), array('.', '..'));
+	
+		foreach ($files as $file) {
+			$filePath = $dirPath . '/' . $file;
+			if (is_dir($filePath)) {
+				$this->deleteDirectory($filePath); // Recurse into subdirectories
+			} else {
+				unlink($filePath); // Delete file
+			}
+		}
+	
+		rmdir($dirPath); // Delete the directory itself
+	}
 	 
 	 
-
-
-
 
 	public function updateStatus(Request $request, Product $product)
 	{
@@ -368,38 +369,38 @@ class ProductController extends Controller
      * Remove the specified resource from storage.
      */
 	public function destroy(Product $product)
-{
-    // Delete related quantities first
-    $product->quantities()->delete();
+	{
+		// Delete related quantities first
+		$product->quantities()->delete();
 
-    // Assuming images are stored in the 'public/collections/{productId}' directory
-    $storagePath = "collections/{$product->id}";  // Path relative to 'public'
+		// Assuming images are stored in the 'public/collections/{productId}' directory
+		$storagePath = "collections/{$product->id}";  // Path relative to 'public'
 
-    $images = $product->images; // Assuming images are stored as an array of filenames
-    
-    if (!empty($images)) {
-        foreach ($images as $image) {
-            $imagePath = "{$storagePath}/{$image}"; // Image path relative to 'public'
-            if (Storage::disk('public')->exists($imagePath)) {
-                Storage::disk('public')->delete($imagePath); // Delete the image
-            }
-        }
-    }
+		$images = $product->images; // Assuming images are stored as an array of filenames
+		
+		if (!empty($images)) {
+			foreach ($images as $image) {
+				$imagePath = "{$storagePath}/{$image}"; // Image path relative to 'public'
+				if (Storage::disk('public')->exists($imagePath)) {
+					Storage::disk('public')->delete($imagePath); // Delete the image
+				}
+			}
+		}
 
-    // Delete the product
-    $product->delete();
+		// Delete the product
+		$product->delete();
 
-    // Now remove the product-specific folder if it is empty
-    if (Storage::disk('public')->exists($storagePath) && count(Storage::disk('public')->files($storagePath)) == 0) {
-        Storage::disk('public')->deleteDirectory($storagePath); // Delete the folder only if it's empty
-    }
+		// Now remove the product-specific folder if it is empty
+		if (Storage::disk('public')->exists($storagePath) && count(Storage::disk('public')->files($storagePath)) == 0) {
+			Storage::disk('public')->deleteDirectory($storagePath); // Delete the folder only if it's empty
+		}
 
-    // Return success response
-    return response()->json(['success' => true]);
-}
+		// Return success response
+		return response()->json(['success' => true]);
+	}
 	
 
-	    /**
+	/**
      * Display a listing of the resource.
      */
 	public function index(Request $request)
@@ -479,9 +480,9 @@ class ProductController extends Controller
 		]);
 	}
 	
-	public function show(Product $product)
+	public function show(Category $category, $subcategorySlug, Product $product)
 	{
-		return $product;
+		// return $product;
 		
 		// Ensure the product belongs to the specified category
 		if (!$product->categories->contains($category)) {
@@ -531,6 +532,7 @@ class ProductController extends Controller
 
 	public function edit(Product $product)
 	{
+		// return $product;
 		$existingImages = $product->allImagePaths; // Get the existing images
 		// return $existingImages;
 

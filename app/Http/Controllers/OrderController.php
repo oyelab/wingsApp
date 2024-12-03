@@ -141,7 +141,7 @@ class OrderController extends Controller
 					'salePrice' => $product->offer_price,
 					'categories' => $product->categories->pluck('title')->implode(', '),
 					'size_name' => $size->name,
-					'imagePath' => $product->imagePaths[0],
+					'imagePath' => $product->thumbnail,
 				]);
 			}
 			return $item;

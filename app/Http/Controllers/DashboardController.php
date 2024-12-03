@@ -48,6 +48,7 @@ class DashboardController extends Controller
 		// return $monthlyOrdersCounts;
 				
 		$popularProducts = Product::topOrders()->get(); // Fetch all popular products
+		// return $popularProducts;
 
 		 // Get users with the count of reviews they have
 		 $loyalCustomers = User::withCount('reviews') // Count reviews for each user

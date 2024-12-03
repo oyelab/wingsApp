@@ -288,6 +288,11 @@
 										<label class="form-label" for="metadescription">Meta Description</label>
 										<textarea class="form-control" id="metadescription" name="meta_desc" placeholder="Enter Description" rows="4">{{ old('meta_desc') }}</textarea>
 									</div>
+									<div class="mt-3">
+										<label class="form-label" for="ogImage">Upload Open Graph Image</label>
+										<input id="ogImage" name="og_image" type="file" class="form-control" accept="image/*">
+										<img id="imagePreview" src="" alt="Image Preview" class="d-none"> <!-- Image preview -->
+									</div>
 								</div>
 							</div>
 						</div>
@@ -312,6 +317,42 @@
 
     @section('scripts')
 
+	<script>
+		// Function to preview images
+		function previewImages(event) {
+			const imagePreviewContainer = document.getElementById('previewProductImage');
+			imagePreviewContainer.innerHTML = ''; // Clear previous images
+			const files = event.target.files;
+			// Loop through each selected file
+			for (let i = 0; i < files.length; i++) {
+				const file = files[i];
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					// Create a div for each image
+					const imgDiv = document.createElement('div');
+					imgDiv.className = 'img-div';
+					imgDiv.id = 'prev-img-div-' + i; // Assign an ID to the div
+					imgDiv.innerHTML = `
+						<img src="${e.target.result}" class="img-responsive image img-thumbnail" title="${file.name}">
+						<input type="hidden" name="existing_images[]" value="${file.name}"> <!-- Hidden input for existing images -->
+						<div class="middle">
+							<button id="remove-prev-image" class="btn btn-danger" onclick="removeImage(this)">
+								<i class="fa fa-trash"></i>
+							</button>
+						</div>
+					`;
+					imagePreviewContainer.appendChild(imgDiv);
+				};
+				reader.readAsDataURL(file); // Read the file as a data URL
+			}
+		}
+		// Function to remove an image preview
+		function removeImage(button) {
+			const imgDiv = button.parentElement.parentElement; // Get the parent div
+			imgDiv.remove(); // Remove the image div
+		}
+		
+	</script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function () {
 			const mainCategorySelect = document.getElementById('mainCategory');

@@ -111,7 +111,7 @@
 											</div>
 										</div>
 										<div class="flex-grow-1 overflow-hidden">
-											<h5 class="font-size-16 mb-1">Product Info</h5>
+											<h5 class="font-size-16 mb-1">Collection Info</h5>
 											<p class="text-muted text-truncate mb-0">Fill all information below</p>
 										</div>
 										<div class="flex-shrink-0">
@@ -122,26 +122,8 @@
 							</a>
 							<div id="addproduct-productinfo-collapse" class="collapse show" data-bs-parent="#addproduct-accordion">
 								<div class="p-4 border-top">
-									<div class="mb-3">
-										<label class="form-label" for="productname">Product Title <span class="text-danger">*</span></label>
-										<input id="productname" name="title" placeholder="Enter Product Name" type="text" class="form-control" value="{{ $product->title }}">
-									</div>
+									
 									<div class="row">
-										<div class="col-lg-4">
-											<div class="mb-3">
-												<label class="form-label" for="price">Price <span class="text-danger">*</span></label>
-												<input 
-													id="price" 
-													name="price" 
-													placeholder="Enter Price" 
-													type="text" 
-													class="form-control" 
-													value="{{ $product->price }}" 			
-												>
-												<span class="text-danger error-message" style="display: none;" data-for="price">Please enter a valid price.</span>
-											</div>
-										</div>
-
 										<div class="col-lg-8 d-flex gap-3">
 											<div class="flex-grow-1">
 												<label class="form-label" for="mainCategory">Select Category <span class="text-danger">*</span></label>
@@ -174,8 +156,27 @@
 												@error('subcategory') <div class="text-danger">{{ $message }}</div> @enderror
 											</div>
 										</div><!-- Main Category -->
-										
+										<div class="col-lg-4">
+											<div class="mb-3">
+												<label class="form-label" for="price">Price</label>
+												<input 
+													id="price" 
+													name="price" 
+													placeholder="Enter Price" 
+													type="text" 
+													class="form-control" 
+													value="{{ $product->price }}" 			
+												>
+												<span class="text-danger error-message" style="display: none;" data-for="price">Please enter a valid price.</span>
+											</div>
+										</div>
 									</div>
+
+									<div class="mb-3">
+										<label class="form-label" for="productname">Collection Title <span class="text-danger">*</span></label>
+										<input id="productname" name="title" placeholder="Enter Collection Name" type="text" class="form-control" value="{{ $product->title }}">
+									</div>
+
 									<div class="mb-0">
 										<div class="card">
 											<div class="card-header">
@@ -232,14 +233,14 @@
 
 									<!-- Product Description Field with Quill Editor and Hidden Input -->
 									<div class="mb-0 mt-5">
-										<label class="form-label" for="productdesc">Product Description <span class="text-danger">*</span></label>
+										<label class="form-label" for="productdesc">Collection Description <span class="text-danger">*</span></label>
 
 										<!-- Textarea to store Summernote content -->
 										<textarea id="summernote" name="description" class="form-control" rows="10">{{ $product->description }}</textarea>
 									</div>
 									
 									<div class="form-group mt-4">
-										<label for="images">Upload Product Photos <span class="text-danger">*</span></label>
+										<label for="images">Upload Collection Photos <span class="text-danger">*</span></label>
 										<div class="d-flex align-items-center gap-2">
 											<!-- Preview Container for images -->
 											<div class="preview-container" id="preview-container"></div>
@@ -285,15 +286,19 @@
 										<div class="col-sm-6">
 											<div class="mb-3">
 												<label class="form-label" for="metatitle">Meta Title</label>
-												<input id="metatitle" name="meta_title" placeholder="Enter Title" type="text" class="form-control" value="{{ old('meta_title') }}">
+												<input id="metatitle" name="meta_title" placeholder="Enter Title" type="text" class="form-control" value="{{ $product->meta_title }}">
 											</div>
 										</div>
 
 										<div class="col-lg-4 col-md-6">
+											@php
+												// Decode the keywords field from JSON to array (if it's stored as JSON)
+												$keywords = json_decode($product->keywords, true);
+											@endphp
 											<div class="mb-3">
 												<label for="choices-text-remove-button" class="form-label">Keywords</label>
 												
-												<input class="form-control" name="keywords[]" value="{{ old('keywords.0') }}" id="choices-text-remove-button" type="text" placeholder="Enter something" />
+												<input class="form-control" name="keywords[]" value="{{ implode(',', $keywords ?? []) }}"  id="choices-text-remove-button" type="text" placeholder="Enter something" />
 											</div>
 										</div>
 
@@ -301,7 +306,16 @@
 
 									<div class="mb-0">
 										<label class="form-label" for="metadescription">Meta Description</label>
-										<textarea class="form-control" id="metadescription" name="meta_desc" placeholder="Enter Description" rows="4">{{ old('meta_desc') }}</textarea>
+										<textarea class="form-control" id="metadescription" name="meta_desc" placeholder="Enter Description" rows="4">{{ $product->meta_desc }}</textarea>
+									</div>
+									<div class="mt-3">
+										<label class="form-label" for="ogImage">Upload Open Graph Image</label>
+										<input id="ogImage" name="og_image" type="file" class="form-control" accept="image/*">
+										<!-- Check if there's an existing OG image and set its source -->
+										<img id="imagePreview" 
+											src="{{ $product->ogImagePath }}" 
+											alt="Image Preview" 
+											class="{{ $product->ogImagePath ? '' : 'd-none' }}">
 									</div>
 								</div>
 							</div>

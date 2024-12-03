@@ -43,7 +43,7 @@ class PaymentController extends Controller
 				return array_merge($item, [
 					'id' => $product->id,
 					'title' => $product->title,
-					'imagePath' => $product->imagePaths[0],
+					'imagePath' => $product->thumbnail,
 					'price' => $product->price,
 					'offerPrice' => $offerPrice, // Only assign if valid
 					'categories' => $product->categories->pluck('title')->implode(', '),
