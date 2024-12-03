@@ -58,7 +58,7 @@ class Category extends Model
 
 	public function getImagePathAttribute()
     {
-        return Storage::url('public/images/categories/' . $this->image);
+        return Storage::url('public/categories/' . $this->image);
     }
 
 	// Get the child categories (categories that have this category as their parent)

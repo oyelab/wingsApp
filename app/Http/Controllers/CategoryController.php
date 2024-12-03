@@ -139,6 +139,8 @@ class CategoryController extends Controller
 
 	public function frontShow(Request $request)
 	{
+		$collections = Product::all();
+		
 		// Fetch the query parameters
 		$mainCategoryId = $request->query('category');
 		$subCategoryId = $request->query('subCategory');
@@ -324,7 +326,7 @@ class CategoryController extends Controller
 	 // Private function to get the slider path
 	 private function getCategoryPath()
 	 {
-		return Storage::url('public/images/categories/');
+		return Storage::url('public/categories/');
 	 }
 
     /**
@@ -418,7 +420,7 @@ class CategoryController extends Controller
 			->encode('webp', 85); // Reduce quality to 85% for WebP format
 
 		// Save the processed image to the storage/app/public/categories directory
-		$path = $image->storeAs('public/images/categories', $filename);
+		$path = $image->storeAs('public/categories', $filename);
 
 		// Create a new category
 		$category = Category::create([
@@ -493,13 +495,13 @@ class CategoryController extends Controller
 		// Handle image upload
 		if ($request->hasFile('image')) {
 			// Remove old image if it exists
-			if ($category->image && file_exists(storage_path('app/public/images/categories/' . $category->image))) {
-				unlink(storage_path('app/public/images/categories/' . $category->image));
+			if ($category->image && file_exists(storage_path('app/public/categories/' . $category->image))) {
+				unlink(storage_path('app/public/categories/' . $category->image));
 			}
 
 			$file = $request->file('image');
 			$filename = $slug . '.webp'; // Save the file as WebP
-			$path = storage_path('app/public/images/categories/' . $filename);
+			$path = storage_path('app/public/categories/' . $filename);
 
 			// Save the new image using Intervention Image
 			Image::make($file)
@@ -535,21 +537,27 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-	public function destroy($id)
+	public function destroy(Category $category)
 	{
-		// Find the category by its ID
-		$category = Category::findOrFail($id);
-	
-		// If this category has parents, just detach it from them
+		// Check if the category has parents
 		if ($category->parents()->exists()) {
+			// Detach the category from its parents (no need to unlink the image here)
 			$category->parents()->detach();
 		} else {
-			// Otherwise, delete the category itself (if it's a main category)
+			// If it's a main category, unlink the image and delete the category
+			if ($category->image) {
+				$imagePath = 'categories/' . $category->image;
+	
+				if (Storage::disk('public')->exists($imagePath)) {
+					Storage::disk('public')->delete($imagePath);
+				}
+			}
+	
+			// Delete the category record
 			$category->delete();
 		}
 	
 		return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
 	}
-	
 
 }
