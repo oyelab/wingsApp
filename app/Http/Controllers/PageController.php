@@ -24,7 +24,7 @@ class PageController extends Controller
     public function help()
     {
 		// Fetch all pages from the database
-        $pages = Page::all();
+		$pages = Page::where('type', '!=', 4)->orderBy('order', 'asc')->get();
 
         // Pass the pages to the view
         return view('frontEnd.pages.index', compact('pages'));
@@ -40,6 +40,7 @@ class PageController extends Controller
 			1 => 'Footer Menu 1',
 			2 => 'Footer Menu 2',
 			3 => 'Behind Wings',
+			4 => 'Unpublished',
 		];
 
         // Pass the pages to the view

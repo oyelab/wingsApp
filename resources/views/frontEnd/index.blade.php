@@ -633,17 +633,6 @@
 		<div class="row">
 			<div class="col-12">
 				<div class="bulk-banner">
-					<a href="{{ route('help.index') . '#' . $customOrder->slug }}">
-						Explore More
-						<i class="bi bi-arrow-right"></i>
-							<g mask="url(#mask0_397_3859)">
-								<path
-									d="M15.3256 13H4V11H15.3256L10.1163 5.4L11.4419 4L18.8837 12L11.4419 20L10.1163 18.6L15.3256 13Z"
-									fill="currentColor"
-								/>
-							</g>
-						</svg>
-					</a>
 					<div
 						class="custom-order-wrap"
 						style="background-image: url('{{ $customOrder->imagePath }}');"
