@@ -175,7 +175,7 @@
 								/>
 							</a>
 						</div>
-						<div class="menu-area">
+						<div class="menu-area d-none d-lg-block">
 							<ul class="d-flex align-items-center">
 								<li>
 									<a href="{{ route('shop.page', ['section' => 'latest']) }}">NEW ARRIVALS</a>
@@ -260,12 +260,50 @@
 										<a href="{{ route('login') }}"><i class="fas fa-sign-in-alt"></i></a>
 									@endif
 								</li>
+								<li class='d-block d-lg-none'>
+								<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" 		data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+									<i class="fa-solid fa-bars"></i>
+								</button>
+								</li>
 							</ul>
 						</div>
 					</div>
 				</div>
 			</div>
 		</header>
+		<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+      <div class="offcanvas-header">
+	  <div class="wings-logo">
+							<a href="{{ route('index') }}">
+								<img
+									src="{{ $siteSettings->getImagePath('logo_v1') }}"
+									class="img-fluid"
+									alt="Logo"
+									draggable="false"
+								/>
+							</a>
+						</div>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+	  <div class="menu-area">
+							<ul class="">
+								<li>
+									<a href="{{ route('shop.page', ['section' => 'latest']) }}">NEW ARRIVALS</a>
+								</li>
+								<li>
+									<a href="{{ route('collections') }}">COLLECTIONS</a>
+								</li>
+								<li>
+									<a href="{{ route('wings.edited') }}">WINGS EDITED</a>
+								</li>
+								<li>
+									<a href="{{ route('shop.page', parameters: ['section' => 'trending']) }}">TRENDING</a>
+								</li>
+							</ul>
+						</div>
+      </div>
+    </div>
 
 		@yield('content')
 		
