@@ -983,6 +983,10 @@ a {
     box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.25);
     text-align: center;
     padding: 20px;
+    height: 100%;
+}
+.official-manufacture-content img {
+    width: 130px;
 }
 .official-manufacture-content h3,
 .proud-kit-partner-content h3 {
@@ -2413,6 +2417,132 @@ a {
 	 Responsive css start
   ---------------------------------*/
 @media screen and (max-width: 576px) {
+    .section-buttom-padding {
+        padding-bottom: 50px;
+    }
+    /* Home page */
+    .hero_slider_wrapper,
+    .showcase-1,
+    .showcase-2,
+    .showcase-3,
+    .showcase-4,
+    .showcase-5,
+    .official-manufacture-content,
+    .proud-kit-partner-content {
+        height: auto;
+    }
+    .heroSlider .swiper-pagination-bullet {
+        width: 20px;
+    }
+    .heroSlider .swiper-pagination,
+    .wings-showcase-wrappers {
+        margin-bottom: 0;
+    }
+    .showcase-1 img,
+    .showcase-2 img,
+    .showcase-3 img,
+    .showcase-4 img,
+    .showcase-5 img {
+        border-radius: 30px;
+    }
+    .custom-order-wrap {
+        padding: 30px;
+    }
+    .custom-order-content h3 {
+        font-size: 20px;
+    }
+    .section-title h2,
+    .section-title h3,
+    .navigation-items h3,
+    .wings-edited-heading p,
+    .custom-order-content p,
+    .bulk-banner a,
+    .explore-btn a,
+    .comfort-royalty a,
+    .wings-behind-tab-content p,
+    .contact-info ul li,
+    .contact-info ul span,
+    .footer-left p,
+    .newsletter-from form input,
+    .newsletter-from form button,
+    .footer-menu ul li a,
+    .footer-bottom p {
+        font-size: 16px;
+    }
+    .footer-menu h2 {
+        font-size: 18px;
+    }
+    .navigation-item {
+        width: 30px;
+        height: 30px;
+    }
+    .wings-edited-heading h2,
+    .custom-order-content h2,
+    .wings-behind-tab-content h2 {
+        font-size: 25px;
+    }
+    .wings-showcase-items,
+    .wings-showcase-gap,
+    .wings-behind-tab-content-wrap {
+        flex-direction: column;
+    }
+    .wings-edited-heading,
+    .wings-edited-item,
+    .wings-edited-item-wrap,
+    .official-manufacture-content {
+        margin-bottom: 30px;
+    }
+    .official-manufacture-content h3,
+    .proud-kit-partner-content h3,
+    .we-accept-payments-wrap h2 {
+        font-size: 20px;
+    }
+    .design-by a img {
+        height: 20px;
+    }
+    .partner_logo_wrap {
+        padding: 0;
+    }
+    .behind-wings-tabs .nav-tabs .nav-link {
+        font-size: 16px;
+        line-height: 24px;
+    }
+    .behind-wings-tabs .nav-tabs .nav-link {
+        padding: 0px 17px;
+        padding-bottom: 15px;
+    }
+    .gap-style,
+    .footer-wrapper {
+        flex-direction: column;
+    }
+    .need-assistance-content {
+        padding: 30px;
+        flex-direction: column;
+    }
+    .newsletter-from form {
+        gap: 10px;
+        align-items: start;
+        flex-direction: column;
+        margin-bottom: 30px;
+    }
+    .newsletter-from form input,
+    .newsletter-from form button {
+        width: 100%;
+    }
+    .need-assistance-content p {
+        font-size: 25px;
+        margin-bottom: 20px;
+    }
+    .footer-right {
+        gap: 10px;
+        width: 100%;
+        justify-content: space-between;
+    }
+    .contact-info ul {
+        flex-direction: column;
+        align-items: start !important;
+        gap: 5px;
+    }
     .section-padding {
         padding: 60px 0px;
     }
@@ -2421,6 +2551,10 @@ a {
     .checkout-heading h1 {
         font-size: 25px;
         line-height: 1.2;
+    }
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
     }
     .mobile-none {
         display: none;

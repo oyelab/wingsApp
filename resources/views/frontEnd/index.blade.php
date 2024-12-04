@@ -836,7 +836,7 @@
 					@if($manufactureLogo && $manufactureLogo->filePath)
 						<img
 							src="{{ $manufactureLogo->filePath }}"
-							class="img-fluid w-50"
+							class="img-fluid"
 							alt="Manufacture Logo"
 							draggable="{{ $manufactureLogo->title }}"
 						/>
