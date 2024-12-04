@@ -627,35 +627,15 @@
 	</div>
 </section>
 <!-- Custom Order -->
+@if (!empty($customOrder))
 <section class="bulk-order-area section-buttom-padding">
 	<div class="container">
 		<div class="row">
 			<div class="col-12">
 				<div class="bulk-banner">
-					<a href="#">
+					<a href="{{ route('help.index') . '#' . $customOrder->slug }}">
 						Explore More
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="24"
-							height="24"
-							viewBox="0 0 24 24"
-							fill="none"
-						>
-							<mask
-								id="mask0_397_3859"
-								style="mask-type: alpha"
-								maskUnits="userSpaceOnUse"
-								x="0"
-								y="0"
-								width="24"
-								height="24"
-							>
-								<rect
-									width="24"
-									height="24"
-									fill="#D9D9D9"
-								/>
-							</mask>
+						<i class="bi bi-arrow-right"></i>
 							<g mask="url(#mask0_397_3859)">
 								<path
 									d="M15.3256 13H4V11H15.3256L10.1163 5.4L11.4419 4L18.8837 12L11.4419 20L10.1163 18.6L15.3256 13Z"
@@ -666,16 +646,11 @@
 					</a>
 					<div
 						class="custom-order-wrap"
-						style="background-image: url('{{ asset('frontEnd/images/custom-order.png') }}');"
+						style="background-image: url('{{ $customOrder->imagePath }}');"
 					>
 						<div class="custom-order-content">
-							<h3>Make it truly yours</h3>
-							<h2>Custom Order</h2>
 							<p>
-								Bring your unique vision to life with
-								Wings Custom. Whether it's a special
-								design or personalized touch, our team
-								is here to turn your ideas into reality.
+								{!! $customOrder->content !!}
 							</p>
 							<div class="custom-order-button-group">
 								<div class="get-in-touch">
@@ -713,6 +688,8 @@
 		</div>
 	</div>
 </section>
+@endif
+
 
 <!-- Behind Wings -->
 <section class="behind-wings-area bg-black section-padding">

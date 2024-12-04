@@ -40,7 +40,9 @@ class HomeController extends Controller
 		->first();
 
 		$behindWings = Page::where('type', 3)->get();
-		// return $behindWings;
+
+		$customOrder = Page::where('slug', 'custom-order')->first();
+		// return $customOrder;
 
 		$siteReviews = Review::with('user', 'products')->where('status', true)->limit(9)->get();
 		// return $siteReviews;
@@ -76,7 +78,7 @@ class HomeController extends Controller
 		// return $titles;
         
 
-        return view('frontEnd.index', compact('data', 'titles', 'bulksData', 'sliders', 'wingsEdited', 'showcases', 'manufactureLogo', 'partnerLogos', 'paymentBanner', 'siteReviews', 'behindWings', ));
+        return view('frontEnd.index', compact('data', 'titles', 'bulksData', 'sliders', 'wingsEdited', 'showcases', 'manufactureLogo', 'partnerLogos', 'paymentBanner', 'siteReviews', 'behindWings', 'customOrder'));
     }
 
 	// public function show(Category $category, $subcategorySlug, Product $product)
