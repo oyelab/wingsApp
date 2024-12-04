@@ -186,12 +186,21 @@
 						<i class="bi bi-arrow-right"></i>
 					</a>
 					<a href="{{ route('collections', ['sort' => 'bulks']) }}">
+					@if (!empty($bulksData->imagePath))
 						<img
 							src="{{ $bulksData->imagePath }}"
 							draggable="false"
 							class="img-fluid"
 							alt="{{ $bulksData->title }}"
 						/>
+					@else
+						<img
+							src="{{ asset('frontEnd/images/bulk-order.png') }}"
+							draggable="false"
+							class="img-fluid"
+							alt="Default Bulk Order Image"
+						/>
+					@endif
 					</a>
 				</div>
 			</div>
