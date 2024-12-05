@@ -190,12 +190,7 @@
 				</ul>
 			</div>
 			<div class="mb-3 pt-5">
-				<!-- Row 2: Rating -->
-				@foreach($assets as $asset)
-					@if($asset->type == 'wings_power_banner')
-						<img class="w-75" src="{{ $asset->filePath }}" alt="{{ $asset->title }}">
-					@endif
-				@endforeach
+				<img class="w-75" src="{{ $wingsPower->filePath }}" alt="{{ $wingsPower->title }}">
 			</div>
 			<!-- social media -->
 			<div class="container pt-5">
