@@ -273,8 +273,8 @@ class SliderController extends Controller
 		 $slider = Slider::findOrFail($id);
 
 		 // Check if the image exists and delete it using Storage
-		 if (Storage::disk('public')->exists('images/sliders/' . $slider->image)) {
-			 Storage::disk('public')->delete('images/sliders/' . $slider->image);
+		 if (Storage::disk('public')->exists('sliders/' . $slider->image)) {
+			 Storage::disk('public')->delete('sliders/' . $slider->image);
 		 }
 	 
 		 // Delete the slider record from the database
