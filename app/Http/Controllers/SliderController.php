@@ -94,7 +94,7 @@ class SliderController extends Controller
 	
 		// Generate a slug from the title
 		$slug = Str::slug($request->input('title'));
-	
+
 		// Get the uploaded image file
 		$file = $request->file('image');
 	
@@ -103,10 +103,17 @@ class SliderController extends Controller
 	
 		$image = Image::make($file)
 			->encode('webp', 85); // Reduce quality to 85% for WebP format
-	
-		// Save the file to the desired location in the storage path
-		$path = storage_path('app/public/sliders/' . $filename);
-		$image->save($path);
+
+		// Define the directory path within the storage folder
+		$sliderPath = 'app/public/sliders';
+
+		// Ensure the directory exists or create it
+		if (!file_exists(storage_path($sliderPath))) {
+			mkdir(storage_path($sliderPath), 0777, true); // Create directory with 0777 permissions
+		}
+
+		// Save the image to the storage path
+		$imagePath = $image->save(storage_path($sliderPath . '/' . $filename));
 	
 		// Save the slider details in the database (only the image filename)
 		Slider::create([
@@ -189,47 +196,55 @@ class SliderController extends Controller
 	
 		// Generate a slug from the title
 		$slug = Str::slug($request->input('title'));
-	
+
+		// Define the full path for the slider images inside storage/app/public
+		$sliderPath = 'app/public/sliders'; // This already includes 'app/public'
+
+		// Ensure the directory exists or create it
+		if (!file_exists(storage_path($sliderPath))) {
+			mkdir(storage_path($sliderPath), 0777, true); // Create the directory with 0777 permissions
+		}
+
 		// Check if a new image is uploaded
 		if ($request->hasFile('image')) {
 			// Delete the old image if it exists
-			$oldImagePath = storage_path('app/public/sliders/' . $slider->image);
-			if (file_exists($oldImagePath)) {
-				unlink($oldImagePath); // Delete the old image
+			if ($slider->image) {
+				$oldImagePath = storage_path($sliderPath . '/' . $slider->image);
+				if (file_exists($oldImagePath)) {
+					unlink($oldImagePath); // Delete the old image
+				}
 			}
-	
+
 			// Get the new image file
 			$file = $request->file('image');
-	
-			// Generate unique filename using the slug
-			$filename = $slug . '.webp'; // Convert to WebP format
-	
-			// Use Intervention Image to compress, resize, and save the new image
+
+			// Generate unique filename using the slug and WebP extension
+			$filename = $slug . '.webp';
+
+			// Use Intervention Image to process and save the new image
 			$image = Image::make($file)
 				->encode('webp', 85); // Reduce quality to 85% for WebP format
-	
-			// Save the processed image to the desired location
-			$path = storage_path('app/public/sliders/' . $filename);
-			$image->save($path);
-	
+
+			// Save the image to the storage path
+			$image->save(storage_path($sliderPath . '/' . $filename)); // Save inside storage/app/public
+
 			// Update the slider with the new image filename
 			$slider->image = $filename;
 		} elseif ($slider->title !== $request->input('title')) {
 			// Rename the existing image if the title has changed
-			$oldImagePath = storage_path('app/public/sliders/' . $slider->image);
-	
-			// Generate the new image name based on the new slug
-			$newFilename = $slug . '.webp'; // Keep consistent with WebP format
-			$newImagePath = storage_path('app/public/sliders/' . $newFilename);
-	
+			$oldImagePath = storage_path($sliderPath . '/' . $slider->image);
+			$newFilename = $slug . '.webp'; // Use new slug-based filename
+			$newImagePath = storage_path($sliderPath . '/' . $newFilename);
+
 			// Rename the old image file
 			if (file_exists($oldImagePath)) {
 				rename($oldImagePath, $newImagePath); // Rename the old image
 			}
-	
+
 			// Update the slider with the new image filename
 			$slider->image = $newFilename;
 		}
+
 	
 		// Update the slider details
 		$slider->title = $request->input('title');
@@ -258,8 +273,8 @@ class SliderController extends Controller
 		 $slider = Slider::findOrFail($id);
 
 		 // Check if the image exists and delete it using Storage
-		 if (Storage::disk('public')->exists('images/sliders/' . $slider->image)) {
-			 Storage::disk('public')->delete('images/sliders/' . $slider->image);
+		 if (Storage::disk('public')->exists('sliders/' . $slider->image)) {
+			 Storage::disk('public')->delete('sliders/' . $slider->image);
 		 }
 	 
 		 // Delete the slider record from the database
