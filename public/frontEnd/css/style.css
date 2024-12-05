@@ -322,7 +322,7 @@ a {
     gap: 25px;
 }
 .menu-area ul li a {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     line-height: normal;
     padding: 38px 0px;
@@ -358,7 +358,7 @@ a {
 }
 /* Latest Arrival */
 .navigation-items h3 {
-    font-size: 20px;
+    font-size: 18px;
     line-height: normal;
 }
 .navigation-items {
@@ -461,7 +461,7 @@ a {
 .custom-order-content h2 {
     color: var(--wings-white);
     text-align: center;
-    font-size: 50px;
+    font-size: 40px;
     font-weight: 800;
     line-height: 100%;
     margin-bottom: 14px;
@@ -504,13 +504,17 @@ a {
     width: 100%;
     height: 350px;
 }
-.wings-showcase-heading,
-.wings-showcase-wrappers {
-    margin-bottom: 60px;
-}
 .wings-showcase-heading h2,
 .wings-showcase-heading p {
     color: var(--wings-primary);
+}
+#searchInput {
+    border-radius: 0px;
+    border: 1px solid var(--wings-primary);
+}
+#searchInput:focus {
+    outline: none;
+    box-shadow: none;
 }
 .wings-showcase-items,
 .wings-showcase-gap {
@@ -898,7 +902,6 @@ a {
 }
 .footer-left p {
     color: var(--wings-secondary);
-    font-size: 18px;
     font-weight: 400;
     line-height: normal;
 }
@@ -951,7 +954,7 @@ a {
 .footer-menu ul li a {
     color: var(--wings-secondary);
     font-family: Manrope;
-    font-size: 20px;
+    font-size: 16px;
     font-style: normal;
     font-weight: 600;
     line-height: normal;
@@ -961,8 +964,6 @@ a {
 }
 .footer-bottom p {
     color: var(--wings-secondary);
-    font-size: 18px;
-    font-weight: 400;
     line-height: normal;
     margin-bottom: 0px;
 }
@@ -1070,7 +1071,7 @@ a {
 }
 .availabel-size h2,
 .top-part h2 {
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 600;
     margin-bottom: 14px;
 }
@@ -1115,13 +1116,13 @@ a {
     border: 1px solid #000;
     padding: 10px;
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     line-height: normal;
 }
 .size-table th {
     background-color: #ddd;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
 }
 .form-group {
@@ -1183,7 +1184,7 @@ a {
 .add-to-cart,
 .buy-now,
 .favorite {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 800;
     line-height: normal;
     display: flex;
@@ -1221,7 +1222,7 @@ a {
     align-items: center;
     justify-content: space-between;
     color: var(--wings-primary);
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 600;
     line-height: normal;
 }
@@ -1324,7 +1325,7 @@ a {
     padding-bottom: 20px;
 }
 .review-analysis h2 {
-    font-size: 50px;
+    font-size: 40px;
     font-style: normal;
     font-weight: 800;
     line-height: 50px;
@@ -2662,5 +2663,12 @@ a {
     .message-info p {
         font-size: 15px;
         line-height: 20px;
+    }
+    .breadcrumb-content {
+        padding: 15px 0px;
+    }
+    .breadcrumb-content ul li,
+    .breadcrumb-content ul li a {
+        font-size: 16px;
     }
 }
