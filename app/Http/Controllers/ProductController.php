@@ -508,7 +508,8 @@ class ProductController extends Controller
 		// Eager load the sizes relation (only available sizes) and categories
 		$product->load('availableSizes', 'categories');
 
-		$assets = Asset::all();
+		$wingsPower = Asset::where('type', 'wings_power_banner')->firstOrFail();
+		// return $asset;
 
 	
 		// Determine the view based on the category slug
@@ -525,7 +526,7 @@ class ProductController extends Controller
 			'mainCategory' => $mainCategory,
 			'section' => null,
 			'collection' => $category,
-			'assets' => $assets,
+			'wingsPower' => $wingsPower,
 		]);
 	}
 	
