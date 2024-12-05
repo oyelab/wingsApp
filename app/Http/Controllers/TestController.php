@@ -8,11 +8,38 @@ use App\Models\Order;
 use App\Models\SiteSetting;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\Snappy\Facades\SnappyPdf;
+use Illuminate\Support\Facades\View;
+
+
 
 
 
 class TestController extends Controller
 {
+	public function generatePdf()
+{
+	    // Example data to pass to the template
+		$order = Order::with('transactions')->findOrFail(132);
+		$items = $order->getOrderDetails()->getOrderItems();
+    	$html = view('test.pdf-template', compact('imagePath', 'order', 'items'))->render();
+
+    $pdf = SnappyPdf::loadHTML($html)->setPaper('a4', 'portrait');
+
+    return $pdf->download('document.pdf');
+}
+// 	public function generatePdf()
+// {
+// 	    // Example data to pass to the template
+// 		$order = Order::with('transactions')->findOrFail(132);
+// 		$items = $order->getOrderDetails()->getOrderItems();
+//     $imagePath = asset("images/invoice-template.png"); // Example storage image
+//     $html = view('test.pdf-template', compact('imagePath', 'order', 'items'))->render();
+
+//     $pdf = SnappyPdf::loadHTML($html)->setPaper('a4', 'portrait');
+
+//     return $pdf->download('document.pdf');
+// }
 
 	public function store(Request $request)
 	{

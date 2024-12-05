@@ -50,13 +50,8 @@ Auth::routes();
 
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
-Route::get('/test/new-file-upload', [TestController::class, 'create'])->name('test.create');
-Route::get('/devFImg', [TestController::class, 'devF'])->name('test.devF');
-Route::post('/test/store', [TestController::class, 'store'])->name('test.store');
-Route::get('/invoice', [TestController::class, 'invoice'])->name('invoice');
-
-
-// Route::get('/search', [CategoryController::class, 'search'])->name('search');
+Route::get('/sections', [SectionController::class, 'sections'])->name('sections');
+Route::get('/sections/{section}', [SectionController::class, 'shopPage'])->name('shop.page');
 Route::get('/collections', [CategoryController::class, 'frontShow'])->name('collections');
 Route::get('/wings-edited', [CategoryController::class, 'wingsEdited'])->name('wings.edited');
 
@@ -111,8 +106,6 @@ Route::get('/help', [PageController::class, 'help'])->name('help.index');
 // Route::get('help', [PageController::class, 'index'])->name('help.index');
 Route::get('/getInTouch', [PageController::class, 'getInTouch'])->name('getInTouch');
 
-Route::get('/sections', [SectionController::class, 'sections'])->name('sections');
-Route::get('/sections/{section}', [SectionController::class, 'shopPage'])->name('shop.page');
 
 Route::resource('backEnd/products', ProductController::class);
 
@@ -178,3 +171,10 @@ Route::get('/monthly-data', [App\Http\Controllers\DashboardController::class, 'g
 Route::get('/backEnd/profile', [UserController::class, 'profile'])->name('profile');
 Route::get('/backEnd/userOrders', [UserController::class, 'userOrders'])->name('user.orders');
 Route::put('/profile/update', [UserController::class, 'update'])->name('profile.update');
+
+
+
+Route::get('/test/new-file-upload', [TestController::class, 'create'])->name('test.create');
+Route::get('/devFImg', [TestController::class, 'devF'])->name('test.devF');
+Route::post('/test/store', [TestController::class, 'store'])->name('test.store');
+Route::get('/invoice', [TestController::class, 'generatePdf'])->name('test.invoice');
