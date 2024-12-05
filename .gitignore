@@ -18,6 +18,7 @@ yarn-error.log
 /.idea
 /.vscode
 /wings
+/resources/views/test
 .DS_Store
 /public/.DS_Store
 /storage/*
