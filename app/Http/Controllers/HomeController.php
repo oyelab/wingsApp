@@ -56,9 +56,10 @@ class HomeController extends Controller
 
 		// return $showcases;
 		
-		$manufactureLogo = Asset::where('type', 'manufacturer')->first();
-		$paymentBanner = Asset::where('type', 'payment')->first();
-		$partnerLogos = Asset::where('type', 'partner')->get();
+		$manufactureLogo = Asset::where('type', 1)->first();
+		$partnerLogos = Asset::where('type', 2)->get();
+		$paymentBanner = Asset::where('type', 3)->first();
+
 
 		// return $wingsEdited;
 

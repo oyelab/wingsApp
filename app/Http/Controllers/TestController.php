@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Test;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\SiteSetting;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Barryvdh\Snappy\Facades\SnappyPdf;
+use Mpdf\Mpdf;
 use Illuminate\Support\Facades\View;
 
 
@@ -17,29 +18,43 @@ use Illuminate\Support\Facades\View;
 
 class TestController extends Controller
 {
-	public function generatePdf()
-{
-	    // Example data to pass to the template
-		$order = Order::with('transactions')->findOrFail(132);
-		$items = $order->getOrderDetails()->getOrderItems();
-    	$html = view('test.pdf-template', compact('imagePath', 'order', 'items'))->render();
+	public function test()
+	{
+		$product = Product::with('categories')->find(67);
+		return $product;
 
-    $pdf = SnappyPdf::loadHTML($html)->setPaper('a4', 'portrait');
+		// Get the subcategory (based on category_parent_id)
+		// $subcategory = $product->category;  // This is the subcategory (e.g., Football)
+	}
+	public function generatePdf(Order $order)
+	{
+		// $siteSettings = SiteSetting::first(); 
 
-    return $pdf->download('document.pdf');
-}
-// 	public function generatePdf()
-// {
-// 	    // Example data to pass to the template
-// 		$order = Order::with('transactions')->findOrFail(132);
-// 		$items = $order->getOrderDetails()->getOrderItems();
-//     $imagePath = asset("images/invoice-template.png"); // Example storage image
-//     $html = view('test.pdf-template', compact('imagePath', 'order', 'items'))->render();
+		// Example data to pass to the template
+		// $order = Order::with('transactions')->findOrFail(136);
+		// return $order;
+		$order->getOrderDetails()->calculateTotals();
 
-//     $pdf = SnappyPdf::loadHTML($html)->setPaper('a4', 'portrait');
-
-//     return $pdf->download('document.pdf');
-// }
+		$items = $order->getOrderItems();
+		// return $items;
+	
+		// Pass variables to the Blade template
+		// return view('test.pdf-template', compact('order', 'items', 'siteSettings'));
+		$html = View::make('test.pdf-template', compact('order', 'items', ))->render();
+	
+		// Configure mPDF
+		$mpdf = new Mpdf([
+			'mode' => 'utf-8',
+			'format' => 'A4',
+		]);
+	
+		// Load the HTML content into mPDF
+		$mpdf->WriteHTML($html);
+	
+		// Output the PDF as a downloadable file
+		return $mpdf->Output($order->ref . '.pdf', 'D'); // 'D' forces a download; use 'I' to display in-browser
+	}
+	
 
 	public function store(Request $request)
 	{
@@ -61,7 +76,7 @@ class TestController extends Controller
 		// Proceed with storing images if validation passes
 		$collection = Test::create();
 		$collectionId = $collection->id;
-		$storagePath = "public/collections/{$collectionId}";
+		$storagePath = "public/devFImg/{$collectionId}";
 
 		$directory = storage_path("app/{$storagePath}");
 		if (!file_exists($directory)) {

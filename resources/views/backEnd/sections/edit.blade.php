@@ -1,7 +1,9 @@
 <!-- resources/views/pages/edit.blade.php -->
 
 @extends('backEnd.layouts.master')
-
+@section('title')
+Edit Section
+@endsection
 @section('content')
 <div class="container">
     <form action="{{ route('sections.update', $section->id) }}" method="POST" enctype="multipart/form-data">

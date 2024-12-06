@@ -22,4 +22,3 @@ yarn-error.log
 .DS_Store
 /public/.DS_Store
 /storage/*
-!/storage/app/public

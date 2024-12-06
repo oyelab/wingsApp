@@ -1,6 +1,6 @@
 @extends('backEnd.layouts.master')
 @section('title')
-   	Sliders
+	Sliders
 @endsection
 @section('css')
     <!-- datepicker css -->

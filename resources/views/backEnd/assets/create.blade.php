@@ -9,9 +9,15 @@ Create Asset
     <form action="{{ route('assets.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="form-group">
-            <label for="type">Asset Type</label>
-            <input type="text" name="type" class="form-control" value="{{ old('type') }}" required>
-        </div>
+			<label for="type">Asset Type</label>
+			<select name="type" class="form-control" required>
+				<option value="" disabled selected>Select Asset Type</option>
+				@foreach ($assetTypes as $value => $label)
+					<option value="{{ $value }}" {{ old('type') == $value ? 'selected' : '' }}>{{ $label }}</option>
+				@endforeach
+			</select>
+		</div>
+
 
 
         <div class="form-group">

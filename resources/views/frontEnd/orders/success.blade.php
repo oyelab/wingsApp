@@ -112,15 +112,15 @@
 		</aside>
 	</div>
 
-	<button 
-		class="print-button" 
-		data-bs-toggle="modal"
-		data-bs-target="#staticBackdrop"
-	>
-		<span class="print-content">
-			<span>Print Invoice</span>
-		</span>
-	</button>
+	<a href="{{ route('order.invoice', $order_details) }}">
+		<button 
+			class="print-button" 
+		>
+			<span class="print-content">
+				<span>Download Invoice</span>
+			</span>
+		</button>
+	</a>
 </section>
 @if ($showModal)
 <div
@@ -183,6 +183,7 @@
                             @csrf
                             <input type="hidden" name="name" value="{{ $order_details->name }}">
                             <input type="hidden" name="email" value="{{ $order_details->email }}">
+							<input type="hidden" name="order_id" value="{{ $order_details->id }}">
 							<input type="hidden" name="redirect_to" value="{{ url()->previous() }}">
 
 
@@ -198,7 +199,6 @@
                                 <a href="{{ route('help.index') }}#terms-conditions" target="_blank" style="text-decoration: none; color: inherit;">Terms & Policy.</a>
                             </label>
                         </form>
-						
 
                     </div>
                     

@@ -20,6 +20,11 @@ class Slider extends Model
 
 	public function getSliderPathAttribute()
     {
-        return Storage::url('public/sliders/' . $this->image);
+        // Construct the public URL to the file (assuming files are stored in the 'public' disk)
+        if ($this->image) {
+            return Storage::disk('public')->url("sliders/{$this->image}");
+        }
+
+        return null; // Return null if there's no file
     }
 }

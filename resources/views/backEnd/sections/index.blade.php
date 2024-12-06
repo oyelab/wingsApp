@@ -1,5 +1,7 @@
 @extends('backEnd.layouts.master')
-
+@section('title')
+Sections
+@endsection
 @section('content')
     <div class="container">
         <h1>Sections</h1>

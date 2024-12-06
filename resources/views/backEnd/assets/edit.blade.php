@@ -1,6 +1,8 @@
 <!-- resources/views/admin/assets/edit.blade.php -->
 @extends('backEnd.layouts.master')
-
+@section('title')
+Update Asset
+@endsection
 @section('content')
 <div class="container">
     <h2>Edit Asset</h2>
@@ -8,10 +10,16 @@
         @csrf
         @method('PUT')
         
-        <div class="form-group">
-            <label for="type">Asset Type</label>
-            <input type="text" name="type" class="form-control" value="{{ old('type', $asset->type) }}" required>
-        </div>
+		<div class="form-group">
+			<label for="type">Asset Type</label>
+			<select name="type" class="form-control" required>
+				<option value="" disabled>Select Asset Type</option>
+				@foreach ($assetTypes as $value => $label)
+					<option value="{{ $value }}" {{ old('type', $asset->type) == $value ? 'selected' : '' }}>{{ $label }}</option>
+				@endforeach
+			</select>
+		</div>
+
 
         <div class="form-group">
             <label for="title">Asset Title</label>
@@ -21,9 +29,6 @@
         <div class="form-group">
             <label for="file">Upload File</label>
             <input type="file" name="file" class="form-control">
-            @if($asset->file)
-                <p>Current file: <a href="{{ asset('storage/' . $asset->file) }}" target="_blank">View File</a></p>
-            @endif
         </div>
 
         <div class="form-group">

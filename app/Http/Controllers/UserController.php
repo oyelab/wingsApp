@@ -7,12 +7,19 @@ use App\Models\Review;
 use App\Models\User;
 use Storage;
 use Auth;
+use App\Services\FileHandlerService;
 
 class UserController extends Controller
 {
-	public function __construct()
+
+	protected $fileHandler;
+
+	public function __construct(FileHandlerService $fileHandler)
     {
+		$this->fileHandler = $fileHandler;
+
         $this->middleware('auth');
+		$this->middleware('role'); // Only allow role 1 users
     }
 	
 	public function userOrders()
@@ -53,7 +60,7 @@ class UserController extends Controller
 			'area' => 'nullable|string|max:255',
 			'country' => 'nullable|string|max:255',
 			'zip' => 'nullable|string|max:10',
-			'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+			'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp,svg|max:2048',
 		]);
 
 		// Get the authenticated user
@@ -62,20 +69,16 @@ class UserController extends Controller
 		// Update user attributes from validated data
 		$user->fill($validated);
 
-		// Handle avatar upload
+		// If a new file is uploaded, handle it
 		if ($request->hasFile('avatar')) {
-			// Check if a previous avatar exists and delete it
-			if ($user->avatar && Storage::disk('public')->exists('avatars/' . $user->avatar)) {
-				Storage::disk('public')->delete('avatars/' . $user->avatar);
-			}
+			// Delete the old file if it exists
+			$this->fileHandler->deleteFile("avatars/{$user->avatar}");
 
-			// Generate a meaningful filename and store the new avatar
-			$filename = 'user_' . $user->id . '_' . time() . '.' . $request->file('avatar')->getClientOriginalExtension();
-			$avatarPath = $request->file('avatar')->storeAs('avatars', $filename, 'public');
-			$user->avatar = $filename; // Update avatar field with new filename
+			// Store the new image and get the filename
+			$user->avatar = $this->fileHandler->storeFile($request->file('avatar'), 'avatars');
 		}
 
-		// Save the user profile
+		// Save the updated slider
 		$user->save();
 
 

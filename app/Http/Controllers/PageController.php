@@ -3,16 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Page;
+use App\Models\TypeList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
-
-
-
+use App\Services\FileHandlerService;
 
 class PageController extends Controller
 {
+
+	protected $fileHandler;
+
+	public function __construct(FileHandlerService $fileHandler)
+    {
+
+		$this->fileHandler = $fileHandler;
+
+        $this->middleware('auth')->except('getInTouch', 'help');
+		$this->middleware('role')->except('getInTouch', 'help');
+    }
+
 	public function getInTouch()
 	{
 		return view('frontEnd.pages.getInTouch');
@@ -35,13 +46,11 @@ class PageController extends Controller
 		// Fetch all pages from the database
         $pages = Page::orderBy('order', 'asc')->get();
 
-		$menuTypes = [
-			0 => 'None',  // Option for "None"
-			1 => 'Footer Menu 1',
-			2 => 'Footer Menu 2',
-			3 => 'Behind Wings',
-			4 => 'Unpublished',
-		];
+		// Fetch the asset types from the 'type_lists' table where 'table' is 'assets'
+		$typeList = TypeList::where('table', 'pages')->first();
+
+		// Directly access the 'items' field, which is already cast to an array
+		$menuTypes = $typeList ? $typeList->items : [];
 
         // Pass the pages to the view
         return view('backEnd.pages.index', compact('pages', 'menuTypes'));
@@ -80,40 +89,13 @@ class PageController extends Controller
 		// Generate the slug
 		$slug = Str::slug($request->title);
 	
-		// Handle the image upload if present
-		$imagePath = null;
-		$imageName = null;
 	
-		if ($request->hasFile('image')) {
-			// Get the image from the request
-			$image = $request->file('image');
-	
-			// Create an image instance using Intervention Image
-			$imageInstance = Image::make($image);
-	
-			// Generate a base filename (slug)
-			$baseName = $slug;
-			$extension = 'webp';
-	
-			// Ensure the filename is unique by incrementing a counter
-			$counter = 0;
-			do {
-				$imageName = $baseName . ($counter > 0 ? '-' . $counter : '') . '.' . $extension;
-				$imagePath = 'public/pages/images/' . $imageName;
-				$counter++;
-			} while (Storage::exists($imagePath));
-	
-			// Resize and convert the image to webP format without reducing quality
-			$imageInstance->encode('webp', 75); // Adjust quality if needed (75 is a good balance)
-	
-			// Save the image to the storage folder (not public)
-			Storage::put($imagePath, $imageInstance->stream());
-		}
+		$filename = $this->fileHandler->storeFile($request->file('image'), 'pages');  // 'sliders' is the directory
 	
 		// Create a new page entry in the database
 		Page::create([
 			'title' => $request->title,
-			'image' => $imageName,  // Store the unique path to the image
+			'image' => $filename,  // Store the unique path to the image
 			'content' => $request->content,
 			'slug' => $slug,
 		]);
@@ -157,63 +139,20 @@ class PageController extends Controller
 		// Generate the slug
 		$slug = Str::slug($request->title);
 
-		// Handle the image logic
-		$imagePath = $page->imagePath; // Keep the current image path if no new image is uploaded
-		$imageName = $page->image;     // Keep the current image name
+			// Update the slider fields
+		$page->fill($request->only(['title', 'slug', 'content']));
 
+		// If a new file is uploaded, handle it
 		if ($request->hasFile('image')) {
-			// Get the image from the request
-			$image = $request->file('image');
+			// Delete the old file if it exists
+			$this->fileHandler->deleteFile("pages/{$page->image}");
 
-			// Create an image instance using Intervention Image
-			$imageInstance = Image::make($image);
-
-			// Generate a base filename (slug)
-			$baseName = $slug;
-			$extension = 'webp';
-
-			// Ensure the filename is unique by incrementing a counter
-			$counter = 0;
-			do {
-				$imageName = $baseName . ($counter > 0 ? '-' . $counter : '') . '.' . $extension;
-				$imagePath = 'public/pages/images/' . $imageName;
-				$counter++;
-			} while (Storage::exists($imagePath));
-
-			// Resize and convert the image to webP format without reducing quality
-			$imageInstance->encode('webp', 75); // Adjust quality if needed (75 is a good balance)
-
-			// Delete the old image if it exists in storage
-			if ($page->imagePath && Storage::exists($page->imagePath)) {
-				Storage::delete($page->imagePath);
-			}
-
-			// Save the new image to the storage folder
-			Storage::put($imagePath, $imageInstance->stream());
-		} else if ($page->imagePath) {
-			// Rename the old image if it exists
-			$baseName = $slug;
-			$counter = 0;
-			do {
-				$newImageName = $baseName . ($counter > 0 ? '-' . $counter : '') . '.webp';
-				$newImagePath = 'public/pages/images/' . $newImageName;
-				$counter++;
-			} while (Storage::exists($newImagePath));
-
-			if (Storage::exists($page->imagePath)) {
-				Storage::move($page->imagePath, $newImagePath);
-				$imagePath = $newImagePath;
-				$imageName = $newImageName;
-			}
+			// Store the new image and get the filename
+			$page->image = $this->fileHandler->storeFile($request->file('image'), 'pages');
 		}
 
-		// Update the page entry in the database
-		$page->update([
-			'title' => $request->title,
-			'image' => $imageName,  // Store the path to the new image or keep the old one
-			'content' => $request->content,
-			'slug' => $slug,
-		]);
+		// Save the updated slider
+		$page->save();
 
 		// Redirect with success message
 		return redirect()->route('pages.index')->with('success', 'Page updated successfully.');
@@ -258,7 +197,12 @@ class PageController extends Controller
 
 	public function destroy(Page $page)
 	{
-		// Delete the page
+		// Check if the image exists and delete it using Storage
+		if (Storage::disk('public')->exists('pages/' . $page->image)) {
+			Storage::disk('public')->delete('pages/' . $page->image);
+		}
+
+		// Delete the slider record from the database
 		$page->delete();
 
 		// Redirect back to the index page with a success message

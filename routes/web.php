@@ -99,8 +99,7 @@ Route::post('/payment/ipn', [PaymentController::class, 'paymentIpn'])->name('pay
 Route::get('/order/{order:ref}/success', [OrderController::class, 'orderPlaced'])->name('order.placed');
 Route::get('/order/{order:ref}/failed', [OrderController::class, 'orderFailed'])->name('order.failed');
 
-Route::get('/orders/{order}/download-invoice', [OrderController::class, 'downloadInvoice'])->name('orders.downloadInvoice');
-Route::post('/order/invoice', [OrderController::class, 'invoice'])->name('invoice');
+Route::get('/order/{order}/invoice', [OrderController::class, 'generateInvoice'])->name('order.invoice');
 
 Route::get('/help', [PageController::class, 'help'])->name('help.index');
 // Route::get('help', [PageController::class, 'index'])->name('help.index');
@@ -174,6 +173,7 @@ Route::put('/profile/update', [UserController::class, 'update'])->name('profile.
 
 
 
+Route::get('/test', [TestController::class, 'test'])->name('test');
 Route::get('/test/new-file-upload', [TestController::class, 'create'])->name('test.create');
 Route::get('/devFImg', [TestController::class, 'devF'])->name('test.devF');
 Route::post('/test/store', [TestController::class, 'store'])->name('test.store');
