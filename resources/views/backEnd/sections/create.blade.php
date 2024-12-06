@@ -1,5 +1,7 @@
 @extends('backEnd.layouts.master')
-
+@section('title')
+Create Section
+@endsection
 @section('content')
 <div class="container">
     <form action="{{ route('sections.store') }}" method="POST" enctype="multipart/form-data">

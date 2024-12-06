@@ -1,6 +1,9 @@
 <!-- resources/views/pages/index.blade.php -->
 
 @extends('backEnd.layouts.master')
+@section('title')
+Pages
+@endsection
 @section('css')
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

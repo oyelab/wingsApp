@@ -7,6 +7,9 @@
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.js"></script>
 
 @endsection
+@section('title')
+Create Page
+@endsection
 @section('content')
 <div class="container mt-4">
     <h1>Create New Page</h1>

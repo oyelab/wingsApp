@@ -173,6 +173,9 @@ return [
         App\Providers\RouteServiceProvider::class,
 		Barryvdh\Snappy\ServiceProvider::class,
 
+		// Other providers...
+		App\Providers\FileHandlerServiceProvider::class,
+
 		
 		
     ])->toArray(),

@@ -58,9 +58,13 @@ class Category extends Model
 
 	public function getImagePathAttribute()
     {
-        return Storage::url('public/categories/' . $this->image);
-    }
+        // Construct the public URL to the file (assuming files are stored in the 'public' disk)
+        if ($this->image) {
+            return Storage::disk('public')->url("categories/{$this->image}");
+        }
 
+        return null; // Return null if there's no file
+    }
 	// Get the child categories (categories that have this category as their parent)
 
 

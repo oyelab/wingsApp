@@ -7,14 +7,19 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Slider;
 use Intervention\Image\Facades\Image;
+use App\Services\FileHandlerService;
 
 class SliderController extends Controller
 {
-	public function __construct()
+	protected $fileHandler;
+
+	public function __construct(FileHandlerService $fileHandler)
     {
+
+		$this->fileHandler = $fileHandler;
+
         $this->middleware('auth');
 		$this->middleware('role'); // Only allow role 1 users
-
     }
 
 	 // Private function to get the slider path
@@ -91,37 +96,18 @@ class SliderController extends Controller
 				]);
 			}
 		}
-	
-		// Generate a slug from the title
-		$slug = Str::slug($request->input('title'));
 
-		// Get the uploaded image file
-		$file = $request->file('image');
-	
-		// Generate a unique filename using the slug and WebP extension
-		$filename = $slug . '.webp';
-	
-		$image = Image::make($file)
-			->encode('webp', 85); // Reduce quality to 85% for WebP format
+		$filename = $this->fileHandler->storeFile($request->file('image'), 'sliders');  // 'sliders' is the directory
 
-		// Define the directory path within the storage folder
-		$sliderPath = 'app/public/sliders';
-
-		// Ensure the directory exists or create it
-		if (!file_exists(storage_path($sliderPath))) {
-			mkdir(storage_path($sliderPath), 0777, true); // Create directory with 0777 permissions
-		}
-
-		// Save the image to the storage path
-		$imagePath = $image->save(storage_path($sliderPath . '/' . $filename));
 	
 		// Save the slider details in the database (only the image filename)
-		Slider::create([
+		$slider = Slider::create([
 			'title' => $request->input('title'),
-			'image' => $filename, // Save only the filename
 			'order' => $request->input('status') == 1 ? $request->input('order') : null, // Assign order only if status is 1
 			'status' => $request->input('status'), // Set status based on request
+			'image' => $filename, // Save the image filename
 		]);
+
 	
 		return redirect()->route('sliders.index')->with('success', 'Slider created successfully.');
 	}
@@ -141,13 +127,9 @@ class SliderController extends Controller
      */
     public function edit(Slider $slider)
     {
-        // Slider image path
-		$sliderPath = $this->getSliderPath();
-
 		// Return the view with the slider data
 		return view('backEnd.sliders.edit', [
 			'slider' => $slider,
-			'sliderPath' => $sliderPath,
 		]);
     }
 
@@ -193,69 +175,26 @@ class SliderController extends Controller
 				]);
 			}
 		}
+
+		
 	
-		// Generate a slug from the title
-		$slug = Str::slug($request->input('title'));
+	// Update the slider fields
+	$slider->fill($request->only(['title', 'order', 'status']));
 
-		// Define the full path for the slider images inside storage/app/public
-		$sliderPath = 'app/public/sliders'; // This already includes 'app/public'
+	// If a new file is uploaded, handle it
+	if ($request->hasFile('image')) {
+		// Delete the old file if it exists
+		$this->fileHandler->deleteFile("sliders/{$slider->image}");
 
-		// Ensure the directory exists or create it
-		if (!file_exists(storage_path($sliderPath))) {
-			mkdir(storage_path($sliderPath), 0777, true); // Create the directory with 0777 permissions
-		}
-
-		// Check if a new image is uploaded
-		if ($request->hasFile('image')) {
-			// Delete the old image if it exists
-			if ($slider->image) {
-				$oldImagePath = storage_path($sliderPath . '/' . $slider->image);
-				if (file_exists($oldImagePath)) {
-					unlink($oldImagePath); // Delete the old image
-				}
-			}
-
-			// Get the new image file
-			$file = $request->file('image');
-
-			// Generate unique filename using the slug and WebP extension
-			$filename = $slug . '.webp';
-
-			// Use Intervention Image to process and save the new image
-			$image = Image::make($file)
-				->encode('webp', 85); // Reduce quality to 85% for WebP format
-
-			// Save the image to the storage path
-			$image->save(storage_path($sliderPath . '/' . $filename)); // Save inside storage/app/public
-
-			// Update the slider with the new image filename
-			$slider->image = $filename;
-		} elseif ($slider->title !== $request->input('title')) {
-			// Rename the existing image if the title has changed
-			$oldImagePath = storage_path($sliderPath . '/' . $slider->image);
-			$newFilename = $slug . '.webp'; // Use new slug-based filename
-			$newImagePath = storage_path($sliderPath . '/' . $newFilename);
-
-			// Rename the old image file
-			if (file_exists($oldImagePath)) {
-				rename($oldImagePath, $newImagePath); // Rename the old image
-			}
-
-			// Update the slider with the new image filename
-			$slider->image = $newFilename;
-		}
-
-	
-		// Update the slider details
-		$slider->title = $request->input('title');
-		$slider->order = $request->input('status') == 1 ? $request->input('order') : null; // Assign order only if status is 1
-		$slider->status = $request->input('status'); // Set status based on request
-	
-		// Save the updated slider
-		$slider->save();
-	
-		return redirect()->route('sliders.index')->with('success', 'Slider updated successfully.');
+		// Store the new image and get the filename
+		$slider->image = $this->fileHandler->storeFile($request->file('image'), 'sliders');
 	}
+
+	// Save the updated slider
+	$slider->save();
+	
+	return redirect()->route('sliders.index')->with('success', 'Slider updated successfully.');
+}
 	
 
 
@@ -267,10 +206,8 @@ class SliderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Slider $slider)
 	{
-		 // Find the slider by its ID
-		 $slider = Slider::findOrFail($id);
 
 		 // Check if the image exists and delete it using Storage
 		 if (Storage::disk('public')->exists('sliders/' . $slider->image)) {

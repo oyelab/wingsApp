@@ -121,9 +121,9 @@
 								<tr>
 									<th>Ref</th>
 									<th>Date</th>
-									<th>Customer</th>
+									<th>Shipping Info</th>
 									<th>Product</th>
-									<th>Shipping (Pathao)</th>
+									<th>Shipping</th>
 									<th>Payments</th>
 									<th>Status</th>
 									<th>Action</th>
@@ -205,7 +205,7 @@
 
 										<!-- Add a review-related icon (star icon) next to it -->
 										<!-- <a href="javascript:void(0);" onclick="openOrderReviewModal({{ $order->id }})"> -->
-										<a href="{{ route('orders.downloadInvoice', $order->id) }}">
+										<a href="{{ route('order.invoice', $order) }}">
 											<i class="bi bi-download"></i>
 										</a>
 									</td>
