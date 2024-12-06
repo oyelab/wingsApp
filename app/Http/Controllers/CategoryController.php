@@ -9,14 +9,22 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Section;
 use Intervention\Image\Facades\Image;
+use App\Services\FileHandlerService;
+
 
 
 class CategoryController extends Controller
 {
-	public function __construct()
+	protected $fileHandler;
+
+	public function __construct(FileHandlerService $fileHandler)
     {
+		$this->fileHandler = $fileHandler;
+
         $this->middleware('auth')->except('mainCategory', 'wingsEdited', 'subCategory', 'frontShow', 'search');
 		$this->middleware('role')->except('mainCategory', 'wingsEdited', 'subCategory', 'frontShow', 'search'); // Only allow role 1 users
+
+		
     }
 
 	public function mainCategory(Category $category)
@@ -167,13 +175,7 @@ class CategoryController extends Controller
 
 		// Base query for fetching products with their categories
 		$productsQuery = Product::with('categories')->where('status', 1);
-		// return $productsQuery;
-		// Exclude products that belong to category ID 1
-		// $productsQuery->whereDoesntHave('categories', function ($query) {
-		// 	$query->where('category_product.category_id', 1);
-		// });
 
-		// return $productsQuery;
 
 		// Apply filters based on main category and subcategory
 		if ($mainCategoryId) {
@@ -217,93 +219,6 @@ class CategoryController extends Controller
 			'mainCategoryId',
 			'subCategoryId',
 			'pageTitle',
-			'section',
-			'collection',
-		));
-	}
-	
-	public function search(Request $request)
-	{
-		// return $request;
-		// Fetch the query parameters
-		$mainCategoryId = $request->query('category');
-		$subCategoryId = $request->query('subCategory');
-		$sortOption = $request->query('sort'); // Capture the sort query parameter
-		$searchTerm = $request->query('query'); // Capture the search query parameter
-
-
-		// Initialize category and subcategory titles
-		$categoryTitle = null;
-		$subCategoryTitle = null;
-		$excludedCategoryId = 1; // ID of the category you want to exclude
-
-
-		// Fetch the category and subcategory titles if available
-		if ($mainCategoryId) {
-			$category = Category::find($mainCategoryId);
-			$categoryTitle = $category ? $category->title : null;
-		}
-
-		if ($subCategoryId) {
-			$subCategory = Category::find($subCategoryId);
-			$subCategoryTitle = $subCategory ? $subCategory->title : null;
-		}
-
-		// Base query for fetching products with their categories
-		$productsQuery = Product::with('categories')->where('status', 1);
-		// Exclude products that belong to category ID 1
-		$productsQuery->whereDoesntHave('categories', function ($query) {
-			$query->where('category_product.category_id', 1);
-		});
-
-		// Apply filters based on main category and subcategory
-		if ($mainCategoryId) {
-			$productsQuery->whereHas('categories', function ($query) use ($mainCategoryId) {
-				$query->where('category_product.category_id', $mainCategoryId);
-			});
-		}
-
-		if ($subCategoryId) {
-			$productsQuery->whereHas('categories', function ($query) use ($subCategoryId) {
-				$query->where('category_product.subcategory_id', $subCategoryId);
-			});
-		}
-
-
-		// Count the products after applying filters
-		$productCount = $productsQuery->count(); // Total product count after filters
-
-		// Paginate the products, let's say 6 products per page
-		$products = $productsQuery->paginate(6)->appends([
-			'category' => $mainCategoryId,
-			'subCategory' => $subCategoryId,
-			'sort' => $sortOption,
-			'query' => $searchTerm
-		]);
-
-
-
-		// Fetch all categories excluding a specific category ID if needed (e.g., 1)
-		$categories = Category::with(['parents', 'children'])
-			->where('id', '!=', $excludedCategoryId)
-			->get();
-
-		// Get the main category and subcategory ID from the request, or set them to null if not provided
-		$selectedMainCategoryId = $request->query('category') ?? null;
-		$selectedSubcategoryId = $request->query('subCategory') ?? null;
-
-
-		$section = null;
-		$collection = null;
-
-		return view('frontEnd.categories.index', compact(
-			'categories',
-			'products',
-			'categoryTitle',
-			'subCategoryTitle',
-			'productCount',
-			'mainCategoryId',
-			'subCategoryId',
 			'section',
 			'collection',
 		));
@@ -392,13 +307,15 @@ class CategoryController extends Controller
 		]);
     }
 
+
+
 	public function store(Request $request)
 	{
 		// Define base validation rules
 		$request->validate([
 			'title' => 'required|string|max:255|unique:categories,title',
 			'slug' => 'unique:categories,slug',
-			'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096', // Image validation
+			'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:4096', // Image validation
 			'description' => 'required|string',
 			'status' => 'required',
 			'parent_ids' => 'nullable|array', // Ensure parent_ids is an array
@@ -408,27 +325,26 @@ class CategoryController extends Controller
 		// Generate a slug from the title
 		$slug = Str::slug($request->input('title'));
 
-		// Get the uploaded file
-		$file = $request->file('image');
-
-		// Generate unique filename using the slug
-		$filename = $slug . '.' . $file->getClientOriginalExtension();
-
-		// Use Intervention Image to process the image and reduce quality to 85%
-		$image = Image::make($file)
-			->encode('webp', 85); // Reduce quality to 85% for WebP format
-
-		// Save the processed image to the storage/app/public/categories directory
-		$path = $image->storeAs('public/categories', $filename);
-
 		// Create a new category
 		$category = Category::create([
 			'title' => $request->input('title'),
 			'slug' => $slug,
 			'description' => $request->input('description'),
-			'image' => basename($path),
 			'status' => $request->input('status'), // Set status based on request
 		]);
+
+		// Check if a file is uploaded
+		if ($request->hasFile('image')) {
+			$file = $request->file('image');
+
+			// Store the file and get only the filename
+			$filename = $this->fileHandler->storeFile($file, 'categories');  // 'Asset' is the directory based on your model
+			
+			// Save the filename in the database
+			$category->image = $filename;  // Assuming 'file_name' is a column in your 'assets' table
+
+			$category->save();
+		}
 
 		// If parent_ids are provided, attach them to the new category using the pivot table
 		if ($request->has('parent_ids') && count($request->input('parent_ids')) > 0) {
@@ -479,7 +395,7 @@ class CategoryController extends Controller
 		$request->validate([
 			'title' => 'required|string|max:255|unique:categories,title,' . $category->id,
 			'slug' => 'unique:categories,slug,' . $category->id,
-			'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096',
+			'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
 			'description' => 'required|string',
 			'status' => 'required',
 			'parent_ids' => 'array', // Validate that parent_ids is an array if provided
@@ -491,23 +407,20 @@ class CategoryController extends Controller
 			? Str::slug($request->input('title')) 
 			: $category->slug;
 
-		// Handle image upload
+		// Check if a new file is uploaded
 		if ($request->hasFile('image')) {
-			// Remove old image if it exists
-			if ($category->image && file_exists(storage_path('app/public/categories/' . $category->image))) {
-				unlink(storage_path('app/public/categories/' . $category->image));
+			$file = $request->file('image');
+
+			// Delete the old file if it exists
+			if ($category->image) {
+				$this->fileHandler->deleteFile('categories/' . $category->image); // 'assets' directory is used
 			}
 
-			$file = $request->file('image');
-			$filename = $slug . '.webp'; // Save the file as WebP
-			$path = storage_path('app/public/categories/' . $filename);
+			// Store the new file and update the filename in the database
+			$filename = $this->fileHandler->storeFile($file, 'categories');
+			$category->image = $filename; // Assuming 'file' is the column for filename
 
-			// Save the new image using Intervention Image
-			Image::make($file)
-				->encode('webp', 85) // Reduce quality to 85%
-				->save($path);
-
-			$category->image = $filename;
+			$category->save();
 		}
 
 		// Update the category's other fields
@@ -538,25 +451,17 @@ class CategoryController extends Controller
      */
 	public function destroy(Category $category)
 	{
-		// Check if the category has parents
-		if ($category->parents()->exists()) {
-			// Detach the category from its parents (no need to unlink the image here)
-			$category->parents()->detach();
-		} else {
-			// If it's a main category, unlink the image and delete the category
-			if ($category->image) {
-				$imagePath = 'categories/' . $category->image;
-	
-				if (Storage::disk('public')->exists($imagePath)) {
-					Storage::disk('public')->delete($imagePath);
-				}
-			}
-	
-			// Delete the category record
-			$category->delete();
+		// Directly use the file path from the asset
+		if ($category->image) {
+			// Use the FileHandlerService to delete the file
+			$this->fileHandler->deleteFile('categories/' . $category->image);
 		}
 	
-		return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
+		// Delete the asset from the database
+		$category->delete();
+	
+		// Redirect with a success message
+		return redirect()->route('categories.index')->with('success', 'Category deleted successfully');
 	}
 
 }

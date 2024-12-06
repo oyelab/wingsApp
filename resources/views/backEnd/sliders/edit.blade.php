@@ -1,6 +1,6 @@
 @extends('backEnd.layouts.master')
 @section('title')
-Create Slider
+Update Slider
 @endsection
 @section('css')
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
@@ -76,7 +76,7 @@ Create Slider
 		<!-- Image Preview Section -->
 		<div class="row mb-3" id="imagePreviewSection" style="{{ $slider->image ? '' : 'display: none;' }}">
 			<div class="col-md-5 mx-auto">
-				<img class="rounded" id="imagePreview" src="{{ $sliderPath . $slider->image }}" alt="{{ $slider->title }}" style="max-width: 100%; height: auto;">
+				<img class="rounded" id="imagePreview" src="{{ $slider->sliderPath }}" alt="{{ $slider->title }}" style="max-width: 100%; height: auto;">
 			</div>
 		</div>
 	</form>

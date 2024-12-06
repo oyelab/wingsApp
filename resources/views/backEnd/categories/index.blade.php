@@ -86,7 +86,7 @@
 											</span>
 										</td>
 										<td class="text-center mx-auto">
-											<img class="rounded w-50" src="{{ asset('storage/images/categories/' . $parent->image) }}"
+											<img class="rounded w-50" src="{{ $parent->imagePath }}"
 												alt="{{ $parent->title }}" style="max-width: 100px; max-height: 100px;">
 										</td>
 										<td>
@@ -114,7 +114,7 @@
 												</span>
 											</td>
 											<td class="text-center mx-auto">
-												<img class="rounded w-50" src="{{ asset('storage/images/categories/' . $child->image) }}"
+												<img class="rounded w-50" src="{{ $child->imagePath }}"
 													alt="{{ $child->title }}" style="max-width: 100px; max-height: 100px;">
 											</td>
 											<td>

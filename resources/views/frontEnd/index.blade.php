@@ -34,14 +34,10 @@
                 <div class="navigation-items d-flex align-items-center">
                     <h3><a href="{{ route('shop.page', ['section' => 'latest']) }}">Shop</a></h3> <!-- Update this route if necessary -->
                     <div class="navigation-item la-prev d-flex align-items-center justify-content-center">
-                        <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7.28125 15L0 7.5L7.28125 0L8.4375 1.17489L2.28125 7.5L8.4375 13.8251L7.28125 15Z" fill="currentColor"/>
-                        </svg>
+						<i class="bi bi-chevron-left"></i>
                     </div>
                     <div class="navigation-item la-next d-flex align-items-center justify-content-center">
-                        <svg width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1.15625 15L8.4375 7.5L1.15625 0L0 1.17489L6.15625 7.5L0 13.8251L1.15625 15Z" fill="currentColor"/>
-                        </svg>
+                        <i class="bi bi-chevron-right"></i>
                     </div>
                 </div>
             </div>
@@ -98,38 +94,12 @@
 				</div>
 				<div class="navigation-items d-flex align-items-center">
 					<h3><a href="{{ route('shop.page', ['section' => 'topPicks']) }}">Shop</a></h3>
-					<div
-						class="navigation-item tp-prev d-flex align-items-center justify-content-center"
-					>
-						<svg
-							width="9"
-							height="15"
-							viewBox="0 0 9 15"
-							fill="none"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								d="M7.28125 15L0 7.5L7.28125 0L8.4375 1.17489L2.28125 7.5L8.4375 13.8251L7.28125 15Z"
-								fill="currentColor"
-							/>
-						</svg>
-					</div>
-					<div
-						class="navigation-item tp-next d-flex align-items-center justify-content-center"
-					>
-						<svg
-							width="9"
-							height="15"
-							viewBox="0 0 9 15"
-							fill="none"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								d="M1.15625 15L8.4375 7.5L1.15625 0L0 1.17489L6.15625 7.5L0 13.8251L1.15625 15Z"
-								fill="currentColor"
-							/>
-						</svg>
-					</div>
+					<div class="navigation-item la-prev d-flex align-items-center justify-content-center">
+						<i class="bi bi-chevron-left"></i>
+                    </div>
+                    <div class="navigation-item la-next d-flex align-items-center justify-content-center">
+                        <i class="bi bi-chevron-right"></i>
+                    </div>
 				</div>
 			</div>
 		</div>
@@ -226,35 +196,7 @@
 					<div class="explore-btn">
 						<a href="{{ route('wings.edited') }}">
 							Explore All
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="24"
-								height="24"
-								viewBox="0 0 24 24"
-								fill="none"
-							>
-								<mask
-									id="mask0_397_3859"
-									style="mask-type: alpha"
-									maskUnits="userSpaceOnUse"
-									x="0"
-									y="0"
-									width="24"
-									height="24"
-								>
-									<rect
-										width="24"
-										height="24"
-										fill="#D9D9D9"
-									/>
-								</mask>
-								<g mask="url(#mask0_397_3859)">
-									<path
-										d="M15.3256 13H4V11H15.3256L10.1163 5.4L11.4419 4L18.8837 12L11.4419 20L10.1163 18.6L15.3256 13Z"
-										fill="currentColor"
-									/>
-								</g>
-							</svg>
+							<i class="bi bi-arrow-right"></i>
 						</a>
 					</div>
 				</div>
@@ -305,38 +247,12 @@
 				</div>
 				<div class="navigation-items d-flex align-items-center">
 					<h3><a href="{{ route('shop.page', ['section' => 'trending']) }}">Shop</a></h3>
-					<div
-						class="navigation-item ot-prev d-flex align-items-center justify-content-center"
-					>
-						<svg
-							width="9"
-							height="15"
-							viewBox="0 0 9 15"
-							fill="none"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								d="M7.28125 15L0 7.5L7.28125 0L8.4375 1.17489L2.28125 7.5L8.4375 13.8251L7.28125 15Z"
-								fill="currentColor"
-							/>
-						</svg>
-					</div>
-					<div
-						class="navigation-item ot-next d-flex align-items-center justify-content-center"
-					>
-						<svg
-							width="9"
-							height="15"
-							viewBox="0 0 9 15"
-							fill="none"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								d="M1.15625 15L8.4375 7.5L1.15625 0L0 1.17489L6.15625 7.5L0 13.8251L1.15625 15Z"
-								fill="currentColor"
-							/>
-						</svg>
-					</div>
+					<div class="navigation-item la-prev d-flex align-items-center justify-content-center">
+						<i class="bi bi-chevron-left"></i>
+                    </div>
+                    <div class="navigation-item la-next d-flex align-items-center justify-content-center">
+                        <i class="bi bi-chevron-right"></i>
+                    </div>
 				</div>
 			</div>
 		</div>
@@ -550,38 +466,12 @@
 				</div>
 				<div class="navigation-items d-flex align-items-center">
 					<h3><a href="{{ route('shop.page', ['section' => 'hotDeals']) }}">Shop</a></h3>
-					<div
-						class="navigation-item hd-prev d-flex align-items-center justify-content-center"
-					>
-						<svg
-							width="9"
-							height="15"
-							viewBox="0 0 9 15"
-							fill="none"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								d="M7.28125 15L0 7.5L7.28125 0L8.4375 1.17489L2.28125 7.5L8.4375 13.8251L7.28125 15Z"
-								fill="currentColor"
-							/>
-						</svg>
-					</div>
-					<div
-						class="navigation-item hd-next d-flex align-items-center justify-content-center"
-					>
-						<svg
-							width="9"
-							height="15"
-							viewBox="0 0 9 15"
-							fill="none"
-							xmlns="http://www.w3.org/2000/svg"
-						>
-							<path
-								d="M1.15625 15L8.4375 7.5L1.15625 0L0 1.17489L6.15625 7.5L0 13.8251L1.15625 15Z"
-								fill="currentColor"
-							/>
-						</svg>
-					</div>
+					<div class="navigation-item la-prev d-flex align-items-center justify-content-center">
+						<i class="bi bi-chevron-left"></i>
+                    </div>
+                    <div class="navigation-item la-next d-flex align-items-center justify-content-center">
+                        <i class="bi bi-chevron-right"></i>
+                    </div>
 				</div>
 			</div>
 		</div>
@@ -655,18 +545,7 @@
 								<div class="get-idea">
 									<a href="{{ route('help.index') }}#get-idea"
 										>Get Idea
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="17"
-											height="19"
-											viewBox="0 0 17 19"
-											fill="none"
-										>
-											<path
-												d="M2.10841 3.48506H12.7134L0 16.4779L1.74651 18.2628L14.46 5.26995V16.1081H16.9303V0.960449H2.10841V3.48506Z"
-												fill="currentColor"
-											/>
-										</svg>
+										<i class="bi bi-arrow-up-right"></i>
 									</a>
 								</div>
 							</div>
@@ -848,25 +727,26 @@
 </div>
 <!-- Payment banner -->
 <div class="we-accept-payments-wrap">
-	<div class="container">
-		<div class="row">
-			<div class="col-12 d-flex align-items-center gap-style">
-				<h2>
-					We Accept <br />
-					Payments
-				</h2>
-				@if($paymentBanner && $paymentBanner->filePath)
-				<div class="payment-banner">
-					<img
-						src="{{ $paymentBanner->filePath }}"
-						draggable="false"
-						class="img-fluid"
-						alt="{{ $paymentBanner }}"
-					/>
-				@endif
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-12 d-flex justify-content-center align-items-center gap-3">
+                <h2 class="mb-0">
+                    We Accept <br />
+                    Payments
+                </h2>
+                @if($paymentBanner && $paymentBanner->filePath)
+                    <div class="payment-banner">
+                        <img
+                            src="{{ $paymentBanner->filePath }}"
+                            draggable="false"
+                            class="img-fluid"
+                            alt="{{ $paymentBanner->title }}"
+                        />
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
 </div>
+
 @endsection

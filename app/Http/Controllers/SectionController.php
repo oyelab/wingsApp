@@ -10,16 +10,29 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
+use App\Services\FileHandlerService;
+
 
 
 class SectionController extends Controller
 {
     protected $productRepo;
+	protected $fileHandler;
 
-    public function __construct(ProductRepository $productRepo)
+	public function __construct(ProductRepository $productRepo, FileHandlerService $fileHandler)
     {
-        $this->productRepo = $productRepo;
+		$this->productRepo = $productRepo;
+
+		$this->fileHandler = $fileHandler;
+
+        $this->middleware('auth')->except('sections');
+		$this->middleware('role')->except('sections'); // Only allow role 1 users
     }
+
+    // public function __construct(ProductRepository $productRepo)
+    // {
+    //     $this->productRepo = $productRepo;
+    // }
     public function create(Section $section)
     {
 		return view('backEnd.sections.create'); // Ensure this points to the correct Blade view file
@@ -40,37 +53,26 @@ class SectionController extends Controller
 		$slug = Str::slug($request->title);
 		// return $slug;
 	
-		// Handle the image upload if present
-		$imagePath = null;
-		$imageName = null;
-
-		if ($request->hasFile('image')) {
-			// Get the image from the request
-			$image = $request->file('image');
-			
-			// Create an image instance using Intervention Image
-			$imageInstance = Image::make($image);
-			
-			// Generate a unique filename with a timestamp and original extension
-			$timestamp = now()->format('YmdHisu'); // Format: YYYYMMDD_HHMMSS_microseconds
-			$imageName = $timestamp . '.webp';
-			
-			// Resize and convert the image to webP format without reducing quality
-			$imageInstance->encode('webp', 75); // Adjust quality if needed (90 is a good balance)
-			
-			// Save the image to the storage folder (not public)
-			$imagePath = 'public/sections/' . $imageName;
-			Storage::put($imagePath, $imageInstance->stream());
-		}
-	
 		// Create a new page entry in the database
-		Section::create([
+		$section = Section::create([
 			'title' => $request->title,
-			'image' => $imageName,  // Store the path to the image
 			'description' => $request->description,
 			'slug' => $slug,
 			'status' => $request->status,
 		]);
+
+		// Check if a file is uploaded
+		if ($request->hasFile('image')) {
+			$file = $request->file('image');
+
+			// Store the file and get only the filename
+			$filename = $this->fileHandler->storeFile($file, 'sections');  // 'Asset' is the directory based on your model
+			
+			// Save the filename in the database
+			$section->image = $filename;  // Assuming 'file_name' is a column in your 'assets' table
+
+			$section->save();
+		}
 	
 		// Redirect with success message
 		return redirect()->route('sections.index')->with('success', 'Section created successfully.');
@@ -207,38 +209,25 @@ class SectionController extends Controller
 		// Generate the slug
 		$slug = Str::slug($request->title);
 
-		// Handle the image upload if present
-		$imagePath = $section->imagePath;  // Keep the current image path if no new image is uploaded
-		$imageName = null;
-
+		// Check if a new file is uploaded
 		if ($request->hasFile('image')) {
-			// Get the image from the request
-			$image = $request->file('image');
-			
-			// Create an image instance using Intervention Image
-			$imageInstance = Image::make($image);
-			
-			// Generate a unique filename with a timestamp and original extension
-			$timestamp = now()->format('YmdHisu'); // Format: YYYYMMDD_HHMMSS_microseconds
-			$imageName = $timestamp . '.webp';
-			
-			// Resize and convert the image to webP format without reducing quality
-			$imageInstance->encode('webp', 75); // Adjust quality if needed (75 is a good balance)
-			
-			// Delete the old image if it exists in storage
-			if ($section->imagePath && Storage::exists($section->imagePath)) {
-				Storage::delete($section->imagePath);
+			$file = $request->file('image');
+
+			// Delete the old file if it exists
+			if ($section->image) {
+				$this->fileHandler->deleteFile('sections/' . $section->image); // 'assets' directory is used
 			}
-			
-			// Save the new image to the storage folder (not public)
-			$imagePath = 'public/sections/' . $imageName;
-			Storage::put($imagePath, $imageInstance->stream());
+
+			// Store the new file and update the filename in the database
+			$filename = $this->fileHandler->storeFile($file, 'sections');
+			$section->image = $filename; // Assuming 'file' is the column for filename
+
+			$section->save();
 		}
 
 		// Update the page entry in the database
 		$section->update([
 			'title' => $request->title,
-			'image' => $imageName,  // Store the path to the new image or keep the old one
 			'description' => $request->description,
 			'slug' => $slug,
 			'status' => $request->status,

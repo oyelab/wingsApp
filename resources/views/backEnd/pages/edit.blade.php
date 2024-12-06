@@ -7,6 +7,9 @@
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.js"></script>
 
 @endsection
+@section('title')
+Update Page
+@endsection
 @section('content')
 <div class="container">
     <h1>Edit Page</h1>

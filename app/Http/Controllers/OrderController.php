@@ -2,37 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use Session;
 use App\Models\Size;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\SiteSetting;
-use App\Models\Quantity;
 use Illuminate\Http\Request;
-use Session;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\View;
+use Mpdf\Mpdf;
+
+
 
 
 
 class OrderController extends Controller
 {
 
-	public function downloadInvoice(Order $order)
-    {
-		
-        // You can load any necessary relationships like transactions or items here
-        $order->load('transactions', 'user');  // Example relationships
-
+	public function generateInvoice(Order $order)
+	{	
+		// Perform necessary calculations
 		$order->getOrderDetails()->calculateTotals();
-		$items = $order->getOrderDetails()->getOrderItems();
-
-        // Pass the order data to the Blade template
-        $pdf = PDF::loadView('test.invoice-template', compact('order', 'items'));
-
-        // Download the invoice as a PDF file
-        return $pdf->download('invoice-' . $order->ref . '.pdf');
-    }
+		$items = $order->getOrderItems();
+	
+		// Render the Blade template with the necessary data
+		$html = View::make('frontEnd.orders.invoice', compact('order', 'items'))->render();
+	
+		// Configure mPDF
+		$mpdf = new Mpdf([
+			'mode' => 'utf-8',
+			'format' => 'A4',
+		]);
+	
+		// Load the HTML into mPDF and generate the PDF
+		$mpdf->WriteHTML($html);
+	
+		// Output the PDF
+		return $mpdf->Output($order->ref . '.pdf', 'D'); // 'I' displays in-browser, 'D' forces download
+	}
+	
 
 	public function invoice(Request $request)
 	{
@@ -267,15 +275,12 @@ class OrderController extends Controller
 
 	public function orderPlaced(Order $order)
 	{
+		// return $order;
 		if (session('order_ref')) {
 			$orderDetails = $order->getOrderDetails()->calculateTotals();
 	
 			// Check if the user is logged in or exists in the database
 			$showModal = !auth()->check() && !User::where('email', $order->email)->exists();
-
-			// $order_items = $orderDetails->getOrderItems();
-
-			// return $orderDetails;
 	
 			// session()->forget('order_ref');
 	

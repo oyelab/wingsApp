@@ -103,7 +103,7 @@ Create Category
     @if ($category->image)
         <div class="row mb-3">
             <div class="col-md-5 mx-auto">
-                <img src="{{ asset('storage/images/categories/' . $category->image) }}" alt="Current Image" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
+                <img src="{{ $category->imagePath }}" alt="Current Image" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin-top: 10px;">
             </div>
         </div>
     @endif

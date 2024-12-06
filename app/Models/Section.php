@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Storage;
 
 class Section extends Model
 {
@@ -18,14 +19,14 @@ class Section extends Model
 	];
 
 	public function getImagePathAttribute()
-	{
-		// Check if the image path exists and if the file is in storage
-		if ($this->attributes['image']) {
-			// Return the full URL to the image in storage
-			return asset('storage/sections/' . $this->attributes['image']);
-		}
-		
-	}
+    {
+        // Construct the public URL to the file (assuming files are stored in the 'public' disk)
+        if ($this->image) {
+            return Storage::disk('public')->url("sections/{$this->image}");
+        }
+
+        return null; // Return null if there's no file
+    }
 	// public function loadProducts()
     // {
     //     // Get the scope method name from the section model

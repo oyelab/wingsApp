@@ -43,7 +43,9 @@ class Product extends Model
 		'images',
     ];
 
-
+	protected $casts = [
+		'images' => 'array',
+	];
 
 
 	public function sizes()
@@ -179,9 +181,7 @@ class Product extends Model
 	
 
 
-	protected $casts = [
-		'images' => 'array',
-	];
+
 
 	// public function getImagePathsAttribute()
 	// {
@@ -427,22 +427,4 @@ class Product extends Model
     {
         return $this->views->count(); // Assuming clicks relation exists
     }
-
-	// In your Product model (Product.php)
-	// public function scopeSearchProducts($query, $searchTerm)
-	// {
-	// 	if (!empty($searchTerm)) {
-	// 		return $query->where('title', 'like', '%' . $searchTerm . '%')
-	// 					->orWhere('description', 'like', '%' . $searchTerm . '%')
-	// 					->orWhere('meta_desc', 'like', '%' . $searchTerm . '%')
-	// 					->orWhere('meta_title', 'like', '%' . $searchTerm . '%')
-	// 					->orWhere('keywords', 'like', '%' . $searchTerm . '%')
-	// 					->orWhereRaw("title SOUNDS LIKE ?", [$searchTerm]) // Fuzzy match on 'title'
-	// 					->orWhereRaw("description SOUNDS LIKE ?", [$searchTerm]) // Fuzzy match on 'description'
-	// 					->orWhereRaw("keywords SOUNDS LIKE ?", [$searchTerm]); // Fuzzy match on 'keywords'
-	// 	}
-
-	// 	return $query;
-	// }
-
 }
