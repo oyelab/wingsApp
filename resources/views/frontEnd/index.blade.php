@@ -615,7 +615,7 @@
 									</div>
 									<div class="wings-behind-tab-image">
 										<img
-											src="{{ asset($item['imagePath']) }}"
+											src="{{ $item['imagePath'] }}"
 											draggable="false"
 											class="img-fluid"
 											alt="{{ $item['title'] }}"
