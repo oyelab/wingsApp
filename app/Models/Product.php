@@ -271,11 +271,19 @@ class Product extends Model
 	{
 		$collectionId = $this->id; // Get the product ID
 		$storagePath = "collections/{$collectionId}"; // Path without 'public/'
-
+	
 		$ogImage = $this->og_image; // Assuming the 'og_image' field contains the filename or path
-
-		return Storage::url("{$storagePath}/{$ogImage}");
+	
+		// Check if there is an og_image, return null if not
+		if (empty($ogImage)) {
+			return null;
+		}
+	
+		// Generate a full URL for the image
+		return url(Storage::url("{$storagePath}/{$ogImage}"));
 	}
+	
+	
 	
 
 	// public function getOgImagePathAttribute()

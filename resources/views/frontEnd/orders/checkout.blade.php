@@ -6,7 +6,7 @@
 <!-- Checkout -->
 <section class="checkout-wrap section-padding">
 	<div class="container">
-		<div class="row">
+		<div class="row mb-5">
 			<div class="col-12">
 				<div class="checkout-heading text-center">
 					<h1>Checkout</h1>
@@ -50,63 +50,66 @@
 			<div class="row">
 				
 				<div class="col-md-8">
-					<div class="checkout-form">
+					<div class="checkout-form mb-3">
 						<h2>Delivery Address</h2>
 
-						<div class="form-group">
+						<div class="form-group mb-3">
 							<label for="full_name">Full name
-								<span class="text-danger">*</span></label>
+								<span class="text-danger">*</span>
+							</label>
 							<input type="text" class="form-control" id="name" name="name" placeholder="Enter your name"
-								value="{{ old('name') }}" !required />
+								value="{{ old('name') }}" required />
 						</div>
-						<div class="form-group">
+						<div class="form-group mb-3">
 							<label for="phone">Phone Number
-								<span class="text-danger">*</span></label>
+								<span class="text-danger">*</span>
+							</label>
 							<input type="text" class="form-control" name="phone" id="phone" placeholder="Enter phone number"
-								value="{{ old('phone') }}" !required />
+								value="{{ old('phone') }}" required />
 						</div>
-						<div class="form-group">
+						<div class="form-group mb-3">
 							<label for="email">Email Address
-								<span class="text-danger">*</span></label>
+								<span class="text-danger">*</span>
+							</label>
 							<input type="email" class="form-control" id="email" name="email"
-								placeholder="Enter email address" value="{{ old('email') }}" !required />
+								placeholder="Enter email address" value="{{ old('email') }}" required />
 						</div>
-						<div class="form-group">
+						<div class="form-group mb-3">
 							<label for="address">House/Road/Post
-								<span class="text-danger">*</span></label>
-							<input type="text" class="form-control" id="address" name="address"
-								placeholder="Enter detail address" />
+								<span class="text-danger">*</span>
+							</label>
+							<input type="text" class="form-control" id="address" name="address" placeholder="Enter detail address" />
 						</div>
 						<div class="dristic-wrap">
-							<div class="form-group">
+							<div class="form-group mb-3">
 								<label for="city">City </label>
-								<select class="form-control" id="recipient_city" name="recipient_city" !required
+								<select class="form-control" id="recipient_city" name="recipient_city" required
 									onchange="fetchZones()">
 									<option value="">Select City</option>
 								</select>
 							</div>
-							<div class="form-group">
+							<div class="form-group mb-3">
 								<label for="zone">Zone </label>
-								<select class="form-select" id="recipient_zone" name="recipient_zone" !required
+								<select class="form-select" id="recipient_zone" name="recipient_zone" required
 									onchange="fetchAreas()">
 									<option value="">Select Zone</option>
 								</select>
 							</div>
-							<div class="form-group">
+							<div class="form-group mb-3">
 								<label for="area">Area </label>
-								<select class="form-select" id="recipient_area" name="recipient_area" !required>
+								<select class="form-select" id="recipient_area" name="recipient_area" required>
 									<option value="">Select Area</option>
 								</select>
 							</div>
 						</div>
 						<div class="form-check mt-2">
-							<input type="checkbox" id="exampleCheck1" class="form-check-input" name="terms" !required>
+							<input type="checkbox" id="exampleCheck1" class="form-check-input" name="terms" required>
 							<label class="form-check-label" for="exampleCheck1">I have read and agree to the
 								<a href="{{ route('help.index') }}#terms-conditions">Terms and Conditions.</a></label>
 						</div>
-
 					</div>
 				</div>
+
 				<div class="col-md-4">
 					<div class="review-your-cart-wrap">
 						<div class="review-your-cart-top">
@@ -155,10 +158,8 @@
 							<input type="hidden" name="products[{{ $loop->index }}][size_id]" value="{{ $item['size_id'] }}">
 							<input type="hidden" name="products[{{ $loop->index }}][quantity]" value="{{ $item['quantity'] }}">
 						@endforeach
-
-
 						</div>
-
+						
 						<div class="payment-methods">
 							<label class="payment-option">
 								<input type="radio" id="cod" name="payment_method" value="COD" !required
@@ -170,6 +171,9 @@
 									onclick="updatePayable()" {{ old('payment_method') == 'Full Payment' ? 'checked' : '' }}>
 								<span>Online Payment</span>
 							</label>
+						</div>
+						<div class="mb-5">
+							<small><strong><i class="bi bi-clock-history"></i> Estimated delivery by {{ $estimateShipping }}</strong></small>
 						</div>
 
 						<div class="total-product-pricing">
@@ -220,19 +224,16 @@
 							<button type="submit" class="btn btn-primary w-100">Pay Now</button>
 						</div>
 						<div class="payment-accept text-center">
-							<img src="{{ asset('images/payment.png') }}" draggable="false" class="img-fluid"
-								alt="Payment accept" />
+							@foreach($assets->filter(fn($asset) => $asset->type === 5) as $asset)
+								<img src="{{ $asset->filePath }}" draggable="false" class="img-fluid"
+								alt="{{ $asset->title }}" />
+							@endforeach
+							
 						</div>
 						<div class="message-info">
 							<div class="message-info-top">
 								<div>
-									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-										fill="none">
-										<path
-											d="M17 10V8C17 5.23858 14.7614 3 12 3C9.23858 3 7 5.23858 7 8V10M12 14.5V16.5M8.8 21H15.2C16.8802 21 17.7202 21 18.362 20.673C18.9265 20.3854 19.3854 19.9265 19.673 19.362C20 18.7202 20 17.8802 20 16.2V14.8C20 13.1198 20 12.2798 19.673 11.638C19.3854 11.0735 18.9265 10.6146 18.362 10.327C17.7202 10 16.8802 10 15.2 10H8.8C7.11984 10 6.27976 10 5.63803 10.327C5.07354 10.6146 4.6146 11.0735 4.32698 11.638C4 12.2798 4 13.1198 4 14.8V16.2C4 17.8802 4 18.7202 4.32698 19.362C4.6146 19.9265 5.07354 20.3854 5.63803 20.673C6.27976 21 7.11984 21 8.8 21Z"
-											stroke="#1E1E1E" stroke-width="1.5" stroke-linecap="round"
-											stroke-linejoin="round" />
-									</svg>
+									<i class="bi bi-fingerprint"></i>
 								</div>
 								<h4>
 									Ensuring your financial and personal
@@ -240,10 +241,6 @@
 									transaction.
 								</h4>
 							</div>
-							<p>
-								Ensuring your financial and personal details
-								are secure during every transaction.
-							</p>
 						</div>
 					</div>
 				</div>

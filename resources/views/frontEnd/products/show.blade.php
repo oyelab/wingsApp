@@ -87,11 +87,6 @@
 </div>
 @endsection
 @section('scripts')
-<!-- Buttons -->
-<div class="d-flex gap-2 mb-4">
-    <button id="addToCartBtn" class="btn btn-primary w-50" data-product-id="{{ $product->id }}">Add to Cart</button>
-    <button id="checkoutBtn" class="btn btn-success w-50">Checkout</button>
-</div>
 
 <script>
     // Function to add product to cart
