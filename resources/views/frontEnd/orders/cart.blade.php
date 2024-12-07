@@ -208,13 +208,14 @@
 							<p id="subtotal">৳ {{ number_format($subtotal, 2) }}</p>
 						</div>
 						<div class="item total-pricing">
-							<h3>Discount</h3>
+							<h3>Product Discount</h3>
 							<p id="totalDiscount">{{ $totalDiscount ? '৳ ' . number_format($totalDiscount, 2) : 'N/A' }}</p>
 						</div>
 						<div class="item total-pricing">
 							<h3>Total (without shipping)</h3>
 							<p id="total">৳ {{ number_format($subtotal - $totalDiscount, 2) }}</p>
 						</div>
+						
 					</div>
 
 
@@ -242,7 +243,7 @@
 									type="text"
 									name="voucher"
 									value="{{ old('voucher') }}"
-									placeholder="Enter discount code"
+									placeholder="Enter voucher code"
 									class="discount-input form-control me-2 w-100"
 								/>
 								<button type="submit" class="apply-btn">Apply</button>
@@ -270,7 +271,9 @@
 						</div>
 					@endif
 
-
+					<div class="item mt-2">
+						<strong><small><i class="bi bi-truck me-2"></i> Delivery fee & voucher discount will be calculated at checkout.</small></strong>
+					</div>
 
 					<!-- button -->
 					<div class="button-wrap mt-3">

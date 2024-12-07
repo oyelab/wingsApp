@@ -70,9 +70,12 @@ class PaymentController extends Controller
 		$totalQuantity = $cartItems->sum('quantity'); // Calculate total quantity
 		$voucherDiscount = session('voucher', 0); // Default to 0 if no voucher is applied
 
+		$startFrom = now()->hour >= 19 ? now()->addDay() : now(); // If after 7 PM, start from the next day
+		$estimateShipping = $startFrom->addDay()->format('l, F j') . ' - ' . $startFrom->addDays(2)->format('l, F j');
+				// return $estimateShipping;
 		// return $cartItems;
 	
-		return view('frontEnd.orders.checkout', compact('cartItems', 'voucherDiscount', 'orderTotal', 'totalQuantity'));
+		return view('frontEnd.orders.checkout', compact('cartItems', 'voucherDiscount', 'orderTotal', 'totalQuantity', 'estimateShipping'));
 	}
 	
 	

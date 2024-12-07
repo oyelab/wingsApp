@@ -21,17 +21,15 @@
 				</div>
 			</div>
 		</div>
-		<div class="row mb-30">
+		<div class="section-buttom-padding">
 			<div class="col-12">
-				<div class="bulk-banner">
-					<a href="">
-						<img
-							src="{{ asset('frontEnd/images/showcase-banner.png') }}"
-							draggable="false"
-							class="img-fluid"
-							alt="Showcase banner"
-						/>
-					</a>
+				<div class="section-banner">
+					<img
+						src="{{ $section->imagePath }}"
+						draggable="false"
+						class="img-fluid rounded"
+						alt="{{ $section->title }}"
+					/>
 				</div>
 			</div>
 		</div>

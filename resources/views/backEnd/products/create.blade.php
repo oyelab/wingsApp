@@ -291,7 +291,6 @@
 									<div class="mt-3">
 										<label class="form-label" for="ogImage">Upload Open Graph Image</label>
 										<input id="ogImage" name="og_image" type="file" class="form-control" accept="image/*">
-										<img id="imagePreview" src="" alt="Image Preview" class="d-none"> <!-- Image preview -->
 									</div>
 								</div>
 							</div>
