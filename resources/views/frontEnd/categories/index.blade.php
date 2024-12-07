@@ -157,7 +157,7 @@
 				<div class="col-md-4">
 					<div class="product-item">
 						<div class="product-img">
-							<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, 'subcategory' => $product->subcategory->slug, 'product' => $product->slug]) }}">
+							<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, 'subcategory' => $product->subcategory->slug, $product]) }}">
 								<img
 									src="{{ $product->thumbnail }}"
 									class="img-fluid"
