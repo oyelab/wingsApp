@@ -482,33 +482,39 @@ class ProductController extends Controller
 	
 	public function show(Category $category, $subcategorySlug, Product $product)
 	{
-		// return $product;
-		
+	
 		// Ensure the product belongs to the specified category
 		if (!$product->categories->contains($category)) {
 			abort(404); // If the product is not associated with this category, return 404
 		}
+
 	
 		// Ensure the product's subcategory matches the provided slug
 		$subcategory = $product->subcategory;
 		if ($subcategory && $subcategory->slug !== $subcategorySlug) {
 			abort(404); // If the subcategory slug does not match, return 404
 		}
+
+
 	
 		// Increment product views
 		$product->increment('views');
+
 	
 		// Get related products based on the current product
 		$relatedProducts = Product::relatedProducts($product)->get();
+
 	
 		// Breadcrumb section
 		$breadcrumbSection = Section::find($product->section_id); // Adjust as needed
 		$mainCategory = $product->mainCategory; // Assuming there's a method or relation
 	
+		
 		// Eager load the sizes relation (only available sizes) and categories
 		$product->load('availableSizes', 'categories');
 
-		$wingsPower = Asset::where('type', 'wings_power_banner')->firstOrFail();
+
+		$wingsPower = Asset::where('type', 4)->firstOrFail();
 		// return $asset;
 
 	
