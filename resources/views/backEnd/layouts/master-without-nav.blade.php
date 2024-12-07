@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ asset('build/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ $siteSettings->favicon ?? asset('favicon.ico') }}">
 
     <!-- include head css -->
     @include('backEnd.layouts.head-css')
