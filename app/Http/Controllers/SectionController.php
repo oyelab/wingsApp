@@ -25,8 +25,8 @@ class SectionController extends Controller
 
 		$this->fileHandler = $fileHandler;
 
-        $this->middleware('auth')->except('sections');
-		$this->middleware('role')->except('sections'); // Only allow role 1 users
+        $this->middleware('auth')->except('sections', 'show', 'shopPage');
+		$this->middleware('role')->except('sections', 'show', 'shopPage'); // Only allow role 1 users
     }
 
     // public function __construct(ProductRepository $productRepo)
@@ -49,15 +49,11 @@ class SectionController extends Controller
 			'description' => 'nullable|string',
 		]);
 	
-		// Generate the slug
-		$slug = Str::slug($request->title);
-		// return $slug;
 	
 		// Create a new page entry in the database
 		$section = Section::create([
 			'title' => $request->title,
 			'description' => $request->description,
-			'slug' => $slug,
 			'status' => $request->status,
 		]);
 
@@ -88,13 +84,13 @@ class SectionController extends Controller
 
 	public function shopPage($section, Category $category)
 	{
-		// return $section->slug;
+		// return $section;
 		// Fetch the section record from the database
 		$sectionRecord = Section::where('slug', $section)->first();
 		// return $sectionRecord;
 		$sectionTitle = Section::where('slug', $section)->first()->title;
 
-		// return $sectionTitle;
+		// return $sectionRecord;
 
 	
 		if (!$sectionRecord || !$sectionRecord->scopeMethod) {
@@ -111,6 +107,9 @@ class SectionController extends Controller
 
 		$pageTitle = $sectionTitle;
 		$title = "Title";
+
+		$section = Section::where('slug', $section)->first();
+
 		// return $section;
 	
 		return view('frontEnd.sections.show', [
@@ -206,8 +205,6 @@ class SectionController extends Controller
 		// Find the page by ID
 		$section = Section::findOrFail($id);
 
-		// Generate the slug
-		$slug = Str::slug($request->title);
 
 		// Check if a new file is uploaded
 		if ($request->hasFile('image')) {
@@ -229,7 +226,6 @@ class SectionController extends Controller
 		$section->update([
 			'title' => $request->title,
 			'description' => $request->description,
-			'slug' => $slug,
 			'status' => $request->status,
 		]);
 

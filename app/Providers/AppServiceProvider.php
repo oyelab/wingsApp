@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use App\Models\SiteSetting;
 use App\Models\Page;
+use App\Models\Asset;
 use App\Helpers\FilePathHelper;
 use App\Services\OrderService;
 use Illuminate\Support\Facades\Session;
@@ -40,6 +41,8 @@ class AppServiceProvider extends ServiceProvider
 	{
 		Paginator::useBootstrapFive();
 
+		$assets = Asset::all();
+
 		// Share global data with all views
 		$settings = SiteSetting::first(); 
 		$footerLinks = Page::where('type', 1)->orderBy('order', 'asc')->get();
@@ -66,6 +69,7 @@ class AppServiceProvider extends ServiceProvider
 			'footerLinks' => $footerLinks,
 			'quickLinks' => $quickLinks,
 			'siteUrl' => $baseUrl,
+			'assets' => $assets,
 		]);
 	}
 

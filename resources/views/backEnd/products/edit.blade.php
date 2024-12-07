@@ -312,10 +312,6 @@
 										<label class="form-label" for="ogImage">Upload Open Graph Image</label>
 										<input id="ogImage" name="og_image" type="file" class="form-control" accept="image/*">
 										<!-- Check if there's an existing OG image and set its source -->
-										<img id="imagePreview" 
-											src="{{ $product->ogImagePath }}" 
-											alt="Image Preview" 
-											class="{{ $product->ogImagePath ? '' : 'd-none' }}">
 									</div>
 								</div>
 							</div>

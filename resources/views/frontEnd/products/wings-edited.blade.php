@@ -67,22 +67,7 @@
 </style>
 @endsection
 @section('content')
-<!-- breadcrumb section -->
-<!-- <div class="breadcrumb-section">
-	<div class="container">
-		<div class="row">
-			<div class="col-12">
-				<div class="breadcrumb-content">
-					<x-breadcrub
-						:section="$section"
-						:collection="$collection"
-						:pagetitle="$product->slug"
-					/>
-				</div>
-			</div>
-		</div>
-	</div>
-</div> -->
+
 <div class="container-fluid no-gap">
 	<div class="row">
 		<!-- Left Column -->
@@ -192,6 +177,27 @@
 			<div class="mb-3 pt-5">
 				<img class="w-75" src="{{ $wingsPower->filePath }}" alt="{{ $wingsPower->title }}">
 			</div>
+			
+			<!-- Get in Touch -->
+			<div class="container pt-5">
+				<div class="row">
+					<div class="get-in-touch-btn">
+						<p class="text-center">If you want to get this design for your team</p>
+						<a 
+							href="https://wa.me/{{ config('app.whatsapp_number') }}?text={{ urlencode('Hello, I am interested in this product: ' . route('products.details', [
+								'category' => $product->categories->first()->slug,
+								'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
+								'product' => $product->slug
+							])) }}" 
+							target="_blank" 
+							rel="noopener noreferrer"
+							class="btn btn-success"
+							>
+							GET IN TOUCH
+						</a>
+					</div>
+				</div>
+			</div>
 			<!-- social media -->
 			<div class="container pt-5">
 				<div class="row">
@@ -234,31 +240,6 @@
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class="get-in-touct-btn-wrap section-padding">
-	<div class="container">
-		<div class="row">
-			<div class="col-12">
-			<div class="get-in-touch-btn text-center">
-				<p>If you want to get this design for your team</p>
-				<a 
-					href="https://wa.me/{{ config('app.whatsapp_number') }}?text={{ urlencode('Hello, I am interested in this product: ' . route('products.details', [
-	'category' => $product->categories->first()->slug,
-	'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-	'product' => $product->slug
-])) }}" 
-					target="_blank" 
-					rel="noopener noreferrer"
-					class="btn btn-success"
-					>
-					GET IN TOUCH
-				</a>
-			</div>
-
 			</div>
 		</div>
 	</div>

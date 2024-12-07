@@ -308,22 +308,25 @@
 		@yield('content')
 		
 		<!-- Call to action -->
-		<div class="call-to-action-area text-center">
-			<div class="container">
-				<div class="row">
-					<div class="col-12">
-						<div
-							class="call-to-action-content d-flex align-items-center justify-content-center"
-						>
-							<p>
-								We’d love to hear from you >
-							</p>
-							<a href="{{ route('getInTouch') }}">Get In Touch</a>
+		@if(Route::currentRouteName() !== 'getInTouch')
+			<div class="call-to-action-area text-center">
+				<div class="container">
+					<div class="row">
+						<div class="col-12">
+							<div
+								class="call-to-action-content d-flex align-items-center justify-content-center"
+							>
+								<p>
+									We’d love to hear from you >
+								</p>
+								<a href="{{ route('getInTouch') }}">Get In Touch</a>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		@endif
+
 		<!-- Need Assistance -->
 		<div class="need-assistance-area text-center">
 			<div class="container">

@@ -27,9 +27,8 @@
         });
     }
 
-    // Update the cart count every 5 seconds
     setInterval(updateCartCount, 1000);
-
+	
     // Initial load of cart count
     updateCartCount();
 </script>
