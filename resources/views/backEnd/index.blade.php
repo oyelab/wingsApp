@@ -481,7 +481,6 @@
 
         <!-- Vector map-->
         <script src="{{ asset('build/libs/jsvectormap/js/jsvectormap.min.js') }}"></script>
-		<script src="{{ asset('build/libs/jsvectormap/maps/bangladesh.js') }}"></script>
         <script src="{{ asset('build/libs/jsvectormap/maps/world-merc.js') }}"></script>
 		
 		<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
