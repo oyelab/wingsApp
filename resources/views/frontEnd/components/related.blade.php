@@ -21,8 +21,8 @@
 								draggable="false"
 								oncontextmenu="return false;"
 							/>
-							<a href="#" class="wishlist-icon">
-								<i class="bi bi-heart-fill"></i>
+							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
+								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
 							</a>
 						</div>
 						<div
