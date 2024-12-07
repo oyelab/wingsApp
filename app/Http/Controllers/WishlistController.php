@@ -93,6 +93,6 @@ class WishlistController extends Controller
         $wishlist = session()->get('wishlist', []);
         $products = Product::whereIn('id', $wishlist)->get();
 
-        return view('test.wishlist', compact('products'));
+        return view('frontEnd.products.wishlist', compact('products'));
     }
 }
