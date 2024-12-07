@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Storage;
 
 class Showcase extends Model
 {
@@ -12,32 +13,35 @@ class Showcase extends Model
 
 	protected $fillable = ['title', 'slug', 'banners', 'thumbnail', 'short_description', 'status', 'order'];
 
-	// protected $casts = [
-	// 	'status' => 'boolean',  // Cast 'status' to a boolean value
-	// ];
-	
-    public function details()
-    {
-        return $this->hasMany(ShowcaseDetail::class);
-    }
-
 	// Showcase Model (Showcase.php)
 
 	public function getBannersImagePathAttribute()
 	{
 		// Decode the banners JSON field into an array
-		$banners = json_decode($this->banners);
+		$banners = json_decode($this->banners, true);
 	
-		// Map each banner to its correct path and return the array of paths
+		if (!is_array($banners)) {
+			$banners = [];
+		}
+	
+		// Map each banner to its correct path and return as an array
 		return collect($banners)->map(function ($banner) {
-			return asset("storage/showcases/{$this->id}/{$banner}");
-		});
+			return Storage::disk('public')->url("showcases/{$this->id}/{$banner}");
+		})->all(); // Return as plain array
 	}
+	
 	
 	
 	public function getThumbnailImagePathAttribute()
 	{
-		return asset("storage/showcases/{$this->id}/{$this->thumbnail}");
+		// return asset("storage/showcases/{$this->id}/{$this->thumbnail}");
+
+		if ($this->thumbnail) {
+			// Get the absolute path of the image
+			return Storage::disk('public')->url("showcases/{$this->id}/{$this->thumbnail}");
+		}
+
+		return null;
 	}
-	
+
 }

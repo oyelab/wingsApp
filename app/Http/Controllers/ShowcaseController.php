@@ -75,7 +75,7 @@ class ShowcaseController extends Controller
 			 'title' => 'required|string|max:255',
 			 'short_description' => 'nullable|string|max:500',
 			 'banners' => 'required|array|min:1',
-			 'banners.*' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
+			 'banners.*' => 'image|mimes:jpg,jpeg,png,gif|max:20480',
 			 'thumbnail' => 'required|image|mimes:jpg,jpeg,png,gif|max:20480',
 			 'status' => 'required|boolean',
 			 'order' => 'nullable|integer|between:1,5',
@@ -131,37 +131,26 @@ class ShowcaseController extends Controller
 	 }
 	 
 	 // Updated helper function to store images
-	private function storeImage($image, $id, $folder)
-	{
-		// Generate a simple file name using the ID and folder type
-		$fileName = "{$id}-{$folder}.webp"; // Save as .webp extension
-
-		// Define the directory path using ID
-		$directory = storage_path("app/public/showcases/{$id}");
-
-		// Ensure the directory exists
-		if (!file_exists($directory)) {
-			mkdir($directory, 0777, true);
-		}
-
-		// Open the image using Intervention Image
-		$img = Image::make($image);
-
-		// Compress and save as WebP
-		$quality = 75;
-		$maxSize = 300 * 1024;
-		do {
-			$img->encode('webp', $quality);
-			$path = "{$directory}/{$fileName}";
-			$img->save($path);
-			$fileSize = filesize($path);
-			if ($fileSize > $maxSize) {
-				$quality -= 5;
-			}
-		} while ($fileSize > $maxSize && $quality > 10);
-
-		return $fileName;
-	}
+	 private function storeImage($image, $id, $folder)
+	 {
+		 // Generate a unique file name using UUID and the original file extension
+		 $fileName = Str::uuid() . '.' . $image->getClientOriginalExtension();
+	 
+		 // Define the directory path using ID
+		 $directory = storage_path("app/public/showcases/{$id}");
+	 
+		 // Ensure the directory exists
+		 if (!file_exists($directory)) {
+			 mkdir($directory, 0777, true);
+		 }
+	 
+		 // Save the image in the directory
+		 $path = "{$directory}/{$fileName}";
+		 $image->move($directory, $fileName);
+	 
+		 return $fileName;
+	 }
+	 
 	 
 	
 	
