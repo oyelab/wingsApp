@@ -1,6 +1,7 @@
 @extends('frontEnd.layouts.app')
 
 @section('content')
+
 <!-- Hero -->
 <section class="hero_slider_wrapper">
 	<div class="swiper heroSlider">
@@ -54,9 +55,12 @@
 								]) }}">
                                 <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
                             </a>
-                            <a href="#" class="wishlist-icon">
-                                <i class="bi bi-heart-fill"></i>
-                            </a>
+							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
+								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+							</a>
+
+
+
                         </div>
                         <div class="product-content d-flex justify-content-between">
 							<a href="{{ route('sections.products.details', [
@@ -116,9 +120,9 @@
 								]) }}">
                                 <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
                             </a>
-                            <a href="#" class="wishlist-icon">
-                                <i class="bi bi-heart-fill"></i>
-                            </a>
+                            <a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
+								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+							</a>
                         </div>
                         <div class="product-content d-flex justify-content-between">
 							<a href="{{ route('products.details', [
@@ -210,8 +214,8 @@
 							]) }}">
 							<img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
 						</a>
-						<a href="#" class="wishlist-icon">
-							<i class="bi bi-heart-fill"></i>
+						<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
+							<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
 						</a>
 					</div>
 				</div>
@@ -269,9 +273,9 @@
 								]) }}">
                                 <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
                             </a>
-                            <a href="#" class="wishlist-icon">
-                                <i class="bi bi-heart-fill"></i>
-                            </a>
+                            <a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
+								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+							</a>
                         </div>
                         <div class="product-content d-flex justify-content-between">
 							<a href="{{ route('products.details', [
@@ -488,9 +492,9 @@
 								]) }}">
                                 <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
                             </a>
-                            <a href="#" class="wishlist-icon">
-                                <i class="bi bi-heart-fill"></i>
-                            </a>
+                            <a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
+								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+							</a>
                         </div>
                         <div class="product-content d-flex justify-content-between">
 							<a href="{{ route('products.details', [

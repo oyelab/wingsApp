@@ -136,9 +136,10 @@
 						<button id="checkoutBtn" class="buy-now">
 							Checkout
 						</button>
-						<button class="favorite">
+						<button class="favorite" data-product-id="{{ $product->id }}">
 							Favorite
 						</button>
+
 					</div>
 					<div class="size-guid-area">
 						<div class="top-part d-flex align-items-center justify-content-between">
