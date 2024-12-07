@@ -61,7 +61,7 @@ class Category extends Model
     {
         if ($this->image) {
 			// Get the absolute path of the image
-			return Storage::disk('public')->path("categories/{$this->image}");
+			return Storage::disk('public')->url("categories/{$this->image}");
 		}
 		return null;
     }
