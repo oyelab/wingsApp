@@ -255,8 +255,6 @@ class Product extends Model
 		}, $allImages);
 	}
 
-	
-
 
 	public function getThumbnailAttribute()
 	{
