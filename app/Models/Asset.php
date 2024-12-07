@@ -21,7 +21,6 @@ class Asset extends Model
         if ($this->file) {
             return Storage::disk('public')->url("assets/{$this->file}");
         }
-
         return null; // Return null if there's no file
     }
 }
