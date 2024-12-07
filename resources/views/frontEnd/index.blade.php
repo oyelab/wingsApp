@@ -190,7 +190,7 @@
 				</div>
 			</div>
 		</div>
-		<div cs="wings-edited-item-wrap">
+		<div class="wings-edited-item-wrap">
 			<div class="row">
 				<div class="col-12">
 					<div class="explore-btn">
