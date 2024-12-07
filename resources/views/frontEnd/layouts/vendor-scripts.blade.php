@@ -32,4 +32,5 @@
     // Initial load of cart count
     updateCartCount();
 </script>
+
 @yield('scripts')

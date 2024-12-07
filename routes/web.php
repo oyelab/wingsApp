@@ -23,6 +23,7 @@ use App\Http\Controllers\SpecificationController;
 use App\Http\Controllers\ShowcaseController;
 use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\TestController;
 
 
@@ -76,6 +77,11 @@ Route::get('/shippingPriceCalculate', function () {
     return view('test.priceCalculate');
 });
 
+Route::post('/wishlist/toggle', [WishlistController::class, 'toggleWishlist'])->name('wishlist.toggle');
+
+Route::post('/wishlist/add', [WishlistController::class, 'addToWishlist'])->name('wishlist.add');
+Route::post('/wishlist/remove', [WishlistController::class, 'removeFromWishlist'])->name('wishlist.remove');
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
 
 Route::get('/cart', [OrderController::class, 'showCart'])->name('cart.show');
 Route::post('/cart/update/{index}', [OrderController::class, 'updateQuantity'])->name('cart.updateQuantity');
