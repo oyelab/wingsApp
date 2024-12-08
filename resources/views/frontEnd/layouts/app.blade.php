@@ -408,18 +408,53 @@
 									apparel that supports your journey to
 									greatness.' }}
 								</p>
-								<div class="newsletter-from">
-									<form action="{{ route('subscribe') }}" method="POST">
-										@csrf
-										<input
-											type="email"
-											name="email"
-											placeholder="Enter your email"
-											required
-										/>
-										<button type="submit">SUBSCRIBE</button>
-									</form>
+								<div id="subscription" class="newsletter-form d-flex flex-column align-items-start pb-2">
+									<!-- Success or Error Message -->
+									@if(session('success'))
+										<!-- Thank You Message -->
+										<div class="alert alert-success d-flex" role="alert">
+											<i class="bi bi-check-circle me-2"></i> {{ session('success') }}
+										</div>
+									@else
+										<!-- Show form only if there's no success -->
+										@if(session('error'))
+											<div class="alert alert-danger" role="alert">
+												<i class="bi bi-x-circle"></i> {{ session('error') }}
+											</div>
+										@endif
+
+										<form
+											action="{{ route('subscribe') }}"
+											method="POST"
+											class="d-flex flex-column w-100"
+											onsubmit="saveScrollPosition()"
+										>
+											@csrf
+											<!-- Input and Button in a single row -->
+											<div class="form-group d-flex justify-content-start align-items-center">
+												<input
+													type="email"
+													name="email"
+													placeholder="Enter your email"
+													required
+													value="{{ old('email') }}"
+													class="form-control @error('email') is-invalid @enderror w-auto"
+												/>
+												<button type="submit" class="btn btn-outline-success ms-2">Subscribe</button>
+											</div>
+
+											<!-- Error message on a new row -->
+											@error('email')
+												<div class="mt-2 text-danger">
+													<i class="bi bi-exclamation-circle"></i> {{ $message }}
+												</div>
+											@enderror
+										</form>
+									@endif
 								</div>
+
+								
+
 							</div>
 							<div class="footer-right d-flex">
 								<div class="footer-menu">
@@ -473,6 +508,7 @@
 			</div>
 		</footer>
 		
+
 		@include('frontEnd.layouts.vendor-scripts')
 		<script>
 			$(document).ready(function() {
@@ -605,6 +641,22 @@
 			});
 
 		</script>
+		<script>
+			// Save the current scroll position before form submission
+			function saveScrollPosition() {
+				sessionStorage.setItem('scrollPosition', window.scrollY);
+			}
+
+			// Restore scroll position on page load
+			window.addEventListener('load', function () {
+				const scrollPosition = sessionStorage.getItem('scrollPosition');
+				if (scrollPosition) {
+					window.scrollTo(0, parseInt(scrollPosition));
+					sessionStorage.removeItem('scrollPosition'); // Clean up after restoring
+				}
+			});
+		</script>
+		
 		<!-- Start of LiveChat (www.livechat.com) code -->
 		<!-- <script>
 			window.__lc = window.__lc || {};
