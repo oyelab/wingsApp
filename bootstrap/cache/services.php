@@ -40,7 +40,6 @@
     36 => 'App\\Providers\\EventServiceProvider',
     37 => 'App\\Providers\\RouteServiceProvider',
     38 => 'Barryvdh\\Snappy\\ServiceProvider',
-    39 => 'App\\Providers\\FileHandlerServiceProvider',
   ),
   'eager' => 
   array (
@@ -69,7 +68,6 @@
     22 => 'App\\Providers\\EventServiceProvider',
     23 => 'App\\Providers\\RouteServiceProvider',
     24 => 'Barryvdh\\Snappy\\ServiceProvider',
-    25 => 'App\\Providers\\FileHandlerServiceProvider',
   ),
   'deferred' => 
   array (
