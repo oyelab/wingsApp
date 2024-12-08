@@ -172,7 +172,7 @@
 								<span>Online Payment</span>
 							</label>
 						</div>
-						<div class="mb-5">
+						<div class="mb-5a">
 							<small><strong><i class="bi bi-clock-history"></i> Estimated delivery by {{ $estimateShipping }}</strong></small>
 						</div>
 
