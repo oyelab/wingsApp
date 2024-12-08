@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\SubscriptionController;
 
 
 
@@ -51,6 +52,8 @@ Auth::routes();
 
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
+Route::post('/subscribe', [SubscriptionController::class, 'store'])->name('subscribe');
+
 Route::get('/sections', [SectionController::class, 'sections'])->name('sections');
 Route::get('/sections/{section}', [SectionController::class, 'shopPage'])->name('shop.page');
 Route::get('/collections', [CategoryController::class, 'frontShow'])->name('collections');
