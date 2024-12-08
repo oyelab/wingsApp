@@ -56,10 +56,8 @@
                                 <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
                             </a>
 							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
-								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
 							</a>
-
-
 
                         </div>
                         <div class="product-content d-flex justify-content-between">
@@ -98,10 +96,10 @@
 				</div>
 				<div class="navigation-items d-flex align-items-center">
 					<h3><a href="{{ route('shop.page', ['section' => 'topPicks']) }}">Shop</a></h3>
-					<div class="navigation-item la-prev d-flex align-items-center justify-content-center">
+					<div class="navigation-item tp-prev d-flex align-items-center justify-content-center">
 						<i class="bi bi-chevron-left"></i>
                     </div>
-                    <div class="navigation-item la-next d-flex align-items-center justify-content-center">
+                    <div class="navigation-item tp-next d-flex align-items-center justify-content-center">
                         <i class="bi bi-chevron-right"></i>
                     </div>
 				</div>
@@ -121,7 +119,7 @@
                                 <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
                             </a>
                             <a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
-								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
 							</a>
                         </div>
                         <div class="product-content d-flex justify-content-between">
@@ -215,7 +213,7 @@
 							<img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
 						</a>
 						<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
-							<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+							<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
 						</a>
 					</div>
 				</div>
@@ -251,10 +249,10 @@
 				</div>
 				<div class="navigation-items d-flex align-items-center">
 					<h3><a href="{{ route('shop.page', ['section' => 'trending']) }}">Shop</a></h3>
-					<div class="navigation-item la-prev d-flex align-items-center justify-content-center">
+					<div class="navigation-item ot-prev d-flex align-items-center justify-content-center">
 						<i class="bi bi-chevron-left"></i>
                     </div>
-                    <div class="navigation-item la-next d-flex align-items-center justify-content-center">
+                    <div class="navigation-item ot-next d-flex align-items-center justify-content-center">
                         <i class="bi bi-chevron-right"></i>
                     </div>
 				</div>
@@ -273,8 +271,8 @@
 								]) }}">
                                 <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
                             </a>
-                            <a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
-								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
+								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
 							</a>
                         </div>
                         <div class="product-content d-flex justify-content-between">
@@ -470,10 +468,10 @@
 				</div>
 				<div class="navigation-items d-flex align-items-center">
 					<h3><a href="{{ route('shop.page', ['section' => 'hotDeals']) }}">Shop</a></h3>
-					<div class="navigation-item la-prev d-flex align-items-center justify-content-center">
+					<div class="navigation-item hd-prev d-flex align-items-center justify-content-center">
 						<i class="bi bi-chevron-left"></i>
                     </div>
-                    <div class="navigation-item la-next d-flex align-items-center justify-content-center">
+                    <div class="navigation-item hd-next d-flex align-items-center justify-content-center">
                         <i class="bi bi-chevron-right"></i>
                     </div>
 				</div>
@@ -493,7 +491,7 @@
                                 <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
                             </a>
                             <a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
-								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
 							</a>
                         </div>
                         <div class="product-content d-flex justify-content-between">

@@ -22,7 +22,7 @@
 								oncontextmenu="return false;"
 							/>
 							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
-								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
 							</a>
 						</div>
 						<div
