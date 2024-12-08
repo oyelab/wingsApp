@@ -17,7 +17,7 @@
 
 
 		{{-- Site-wide Brand Name --}}
-		<meta name="brand_name" content="{{ $siteSettings->title ?? 'Wings Sportswear' }}">
+		<meta name="brand_name" content="{{ $siteSettings->title ?? 'Wings Sportswear' }}" />
 
 		{{-- Open Graph Tags --}}
 		<meta property="og:type" content="website" />
@@ -29,16 +29,17 @@
 		<meta property="og:description" content="@yield('pageDescription', isset($pageDescription) ? $pageDescription : $siteSettings->description)" />
 
 		
-		<meta property="og:image" content="@yield('pageOgImage', $siteSettings->getImagePath('og_image'))" />
+		<meta property="og:image" content="@yield('pageOgImage', $siteSettings->getImagePath('og_image'))" >
 
 
-		<meta property="og:image:width" content="1200">
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+
 		<meta property="og:url" content="{{ request()->url() }}">
 		<meta property="og:site_name" content="{{ $siteSettings->title ?? 'Wings Sportswear' }}">
 
 		{{-- Other Static Meta Tags --}}
 		<meta property="fb:app_id" content="1081491186574205">
-		<meta name="facebook-domain-verification" content="hz0x3j2q8n5208bfcxd5i6ruryhbcn" />
 		<meta name="theme-color" content="#000000">
 		
 		<link rel="icon" href="{{ $siteSettings->favicon ?? asset('favicon.ico') }}" type="image/x-icon">
@@ -408,10 +409,13 @@
 									greatness.' }}
 								</p>
 								<div class="newsletter-from">
-									<form action="#">
+									<form action="{{ route('subscribe') }}" method="POST">
+										@csrf
 										<input
 											type="email"
+											name="email"
 											placeholder="Enter your email"
+											required
 										/>
 										<button type="submit">SUBSCRIBE</button>
 									</form>
@@ -456,13 +460,12 @@
 							</p>
 							<div class="design-by d-flex align-items-center">
 								<p>Design & Developed by-</p>
-								<a href="https://oyelab.com" target="_blank">
-									<img
-										src="{{ asset('frontEnd/images/oyelab.png') }}"
-										draggable="false"
-										alt="Oyelab"
-									/>
-								</a>
+								@foreach($assets->filter(fn($asset) => $asset->type === 0) as $asset)
+									<a href="{{ $asset->url }}" target="_blank">
+										<img src="{{ $asset->filePath }}" draggable="false" class="img-fluid"
+										alt="{{ $asset->title }}" />
+									</a>
+								@endforeach
 							</div>
 						</div>
 					</div>

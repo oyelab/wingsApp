@@ -18,10 +18,10 @@
                         <div class="col-md-8 col-lg-6 col-xl-5">
 
                             <div class="mb-4 pb-2">
-                                <a href="index" class="d-block auth-logo">
-                                    <img src="{{ asset('build/images/logo-dark.svg') }}" alt="" height="30"
+                                <a href="{{ route('index') }}" class="d-block auth-logo">
+                                    <img src="{{ $siteSettings->getImagePath('logo_v1') }}" alt="{{ $siteSettings->title }}" height="50"
                                         class="auth-logo-dark me-start">
-                                    <img src="{{ asset('build/images/logo-light.svg') }}" alt="" height="30"
+                                    <img src="{{ $siteSettings->getImagePath('logo_v2') }}" alt="{{ $siteSettings->title }}" height="50"
                                         class="auth-logo-light me-start">
                                 </a>
                             </div>
@@ -96,11 +96,15 @@
 								<p>©
                                     <script>
                                         document.write(new Date().getFullYear())
-                                    </script> Wings Sportswear. Crafted with <i
-                                        class="mdi mdi-heart text-danger"></i> by 
-									<a href="https://oyelab.com" class="flex auth-logo">
-										<img src="{{ asset('build/images/oyelab-dark-logo.svg') }}" alt="" height="25">
-									</a>
+                                    </script> {{ $siteSettings->title }}. Crafted with 
+									<i class="mdi mdi-heart text-danger"></i> 
+									by 
+									@foreach($assets->filter(fn($asset) => $asset->type === 0) as $asset)
+										<a href="{{ $asset->url }}" target="_blank">
+											<img src="{{ $asset->filePath }}" draggable="false" height="30" class="auth-logo-light"
+											alt="{{ $asset->title }}" />
+										</a>
+									@endforeach
                                 </p>
                             </div>
                         </div>
