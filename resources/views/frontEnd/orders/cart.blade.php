@@ -278,10 +278,10 @@
 					<!-- button -->
 					<div class="button-wrap mt-3">
 						<a href="{{ route('checkout.show') }}" class="guest-checkout"
-							>CHECKOUT</a
+							>Checkout</a
 						>
 						<a href="{{ route('collections') }}" class="continue-shopping"
-							>MORE SHOPPING
+							>Shopping More
 							<i class="bi bi-arrow-right"></i>
 						</a>
 					</div>

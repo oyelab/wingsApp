@@ -7,6 +7,7 @@ use App\Models\Size;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Order;
+use App\Models\Voucher;
 use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
@@ -132,9 +133,7 @@ class OrderController extends Controller
 	public function showCart()
 	{
 		// Get cart items from session or initialize an empty array
-		$cartItems = collect(Session::get('cart', []));
-		// return $cartItems;
-
+		$cartItems = collect(Session::get('cart', []));		
 		// Load additional product and size details for each item
 		$cartItems = $cartItems->map(function($item) {
 			$product = Product::with('categories')->find($item['product_id']);
@@ -165,6 +164,19 @@ class OrderController extends Controller
 				'message' => 'Your cart is empty. Please add some products to continue shopping.'
 			]);
 		}
+
+		// Calculate total quantity in the cart
+		$totalQuantity = $cartItems->sum('quantity');
+
+		// Voucher validation
+		$voucherCode = session('applied_voucher'); // Get voucher code from session
+		$voucher = $voucherCode ? Voucher::where('code', $voucherCode)->first() : null;
+	
+		if ($voucher && $totalQuantity < $voucher->min_quantity) {
+			// Destroy voucher session if quantity condition is not met
+			Session::forget(['voucher_success', 'applied_voucher', 'voucher']);
+		}
+	
 
 		return view('frontEnd.orders.cart', compact('cartItems'));
 	}
