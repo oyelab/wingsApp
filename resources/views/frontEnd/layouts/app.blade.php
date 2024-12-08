@@ -290,7 +290,7 @@
 		</div>
 
 
-		<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+		<div class="offcanvas offcanvas-end mobile-device-offcanvas" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
 			<div class="offcanvas-header">
 				<div class="wings-logo">
 					<a href="{{ route('index') }}">

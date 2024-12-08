@@ -69,10 +69,10 @@
                             </a>
                             <div class="product-price">
 								@if($product->sale)
-                                    <h4>{{ $product->offerPrice }}</h4>
-                                    <h5>{{ $product->price }}</h5>
+                                    <h4>৳{{ $product->offerPrice }}</h4>
+                                    <h5>৳{{ $product->price }}</h5>
                                 @else
-                                    <h4>{{ $product->price }}</h4>
+                                    <h4>৳{{ $product->price }}</h4>
                                 @endif
                             </div>
                         </div>
@@ -132,10 +132,10 @@
                             </a>
                             <div class="product-price">
 								@if($product->sale)
-                                    <h4>{{ $product->offerPrice }}</h4>
-                                    <h5>{{ $product->price }}</h5>
+                                    <h4>৳{{ $product->offerPrice }}</h4>
+                                    <h5>৳{{ $product->price }}</h5>
                                 @else
-                                    <h4>{{ $product->price }}</h4>
+                                    <h4>৳{{ $product->price }}</h4>
                                 @endif
                             </div>
                         </div>
@@ -285,10 +285,10 @@
                             </a>
                             <div class="product-price">
 								@if($product->sale)
-                                    <h4>{{ $product->offerPrice }}</h4>
-                                    <h5>{{ $product->price }}</h5>
+                                    <h4>৳{{ $product->offerPrice }}</h4>
+                                    <h5>৳{{ $product->price }}</h5>
                                 @else
-                                    <h4>{{ $product->price }}</h4>
+                                    <h4>৳{{ $product->price }}</h4>
                                 @endif
                             </div>
                         </div>
@@ -504,10 +504,10 @@
                             </a>
                             <div class="product-price">
 								@if($product->sale)
-                                    <h4>{{ $product->offerPrice }}</h4>
-                                    <h5>{{ $product->price }}</h5>
+                                    <h4>৳{{ $product->offerPrice }}</h4>
+                                    <h5>৳{{ $product->price }}</h5>
                                 @else
-                                    <h4>{{ $product->price }}</h4>
+                                    <h4>৳{{ $product->price }}</h4>
                                 @endif
                             </div>
                         </div>
@@ -731,7 +731,7 @@
 <div class="we-accept-payments-wrap">
     <div class="container">
         <div class="row justify-content-center align-items-center">
-            <div class="col-12 d-flex justify-content-center align-items-center gap-3">
+            <div class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
                 <h2 class="mb-0">
                     We Accept <br />
                     Payments
