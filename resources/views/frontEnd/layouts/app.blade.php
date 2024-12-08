@@ -213,24 +213,24 @@
 								</div>
 
 								<li>
-									<a href="{{ route('wishlist') }}">
+									<a href="{{ route('wishlist') }}" class="d-flex align-items-center">
 										<i class="fa-solid fa-heart"></i>
 										<small>
-											<span id="wishlist-count" class="badge badge-pill bg-dark" 
+											<span id="wishlist-count" class=" text-dark" 
 												style="{{ session('wishlist') && count(session('wishlist')) > 0 ? 'display: inline-block;' : 'display: none;' }}">
 												{{ session('wishlist') ? count(session('wishlist')) : '' }}
 											</span>
 										</small>
 									</a>
-
 								</li>
+
 
 								<!-- Cart Icon with Badge -->
 								<li>
-									<a href="{{ route('cart.show') }}" id="cart-button" class="{{ session('cart') ? '' : 'disabled' }}">
+									<a href="{{ route('cart.show') }}" id="cart-button" class="{{ session('cart') ? '' : 'disabled' }} d-flex align-items-center">
 										<i class="fa-solid fa-cart-shopping"></i>
 										<small>
-											<span id="cart-count-badge" class="badge badge-pill bg-dark" style="display: {{ session('cart') ? 'inline' : 'none' }}">{{ session('cart') ? count(session('cart')) : '' }}</span>
+											<span id="cart-count-badge" class="text-dark" style="display: {{ session('cart') ? 'inline' : 'none' }}">{{ session('cart') ? count(session('cart')) : '' }}</span>
 										</small>
 									</a>
 								</li>
