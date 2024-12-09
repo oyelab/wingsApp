@@ -40,6 +40,8 @@ return new class extends Migration
             $table->boolean('hosting')->default(false);
             $table->string('query')->nullable();
             $table->ipAddress('ip_address')->nullable();
+            $table->ipAddress('vpn_ip_address')->nullable();
+            $table->ipAddress('real_ip_address')->nullable();
             $table->text('user_agent')->nullable();
             $table->string('device')->nullable();
             $table->string('platform')->nullable();
