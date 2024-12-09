@@ -29,10 +29,8 @@ class ReviewController extends Controller
 	public function index()
 	{
 		// Fetch all reviews with related user and product information
-		$reviews = Review::with(['user', 'products'])->paginate(10); // Paginate to show 10 reviews per page
+		$reviews = Review::with(['user', 'products'])->latest()->paginate(10); // Paginate to show 10 reviews per page
 	
-		$review = Review::with(['user', 'products'])->findOrFail(11);
-
 		// return $review->ratingStars;
 		// Return the reviews index view with the reviews data
 		return view('backEnd.reviews.index', compact('reviews'));
