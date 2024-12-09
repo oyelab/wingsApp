@@ -1133,7 +1133,7 @@ a {
     display: flex;
     gap: 15px;
     margin-bottom: 15px;
-    z-index: -1;
+    z-index: 1;
 }
 .size_item {
     width: 100%;
@@ -2546,6 +2546,9 @@ a {
     .wings-showcase-gap,
     .wings-behind-tab-content-wrap {
         flex-direction: column;
+    }
+    .wings-showcase-gap {
+        flex-direction: row;
     }
     .wings-edited-heading,
     .wings-edited-item,
