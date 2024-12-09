@@ -242,8 +242,8 @@ li.info-item {
     border: 2px solid var(--Icon-Default-Default, #1e1e1e);
     display: flex;
     margin-top: 55px;
-    width: 400px;
-    max-width: 100%;
+    max-width: 400px;
+    width: 100%;
     align-items: center;
     justify-content: center;
     padding: 13px 70px;
