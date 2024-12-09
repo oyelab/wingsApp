@@ -312,7 +312,7 @@
                                             <div class="flex-shrink-0">
                                                 <div class="avatar-md">
                                                     <div
-                                                        class="popular-product-img p-2">
+                                                        class="product-img avatar-title bg-primary-subtle border-0">
                                                         <img src="{{ $product->thumbnail }}" class="img-fluid rounded"
                                                             alt="{{ $product->title }}">
                                                     </div>
