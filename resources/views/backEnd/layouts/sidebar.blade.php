@@ -52,8 +52,9 @@
                         <span class="menu-item" data-key="t-manage-collections">Collections</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="true">
-						<li><a href="{{ route('products.create') }}" data-key="t-add-product-new-product-item">Add New Product/Item</a></li>
-                        <li><a href="{{ route('products.index') }}" data-key="t-products">Products/Items</a></li>
+						<li><a href="{{ route('products.create') }}" data-key="t-add-product-new-product-item">Add New</a></li>
+                        <li><a href="{{ route('collections.item') }}" data-key="t-items">Items</a></li>
+                        <li><a href="{{ route('products.index') }}" data-key="t-products">Products</a></li>
                         <li><a href="{{ route('categories.index') }}" data-key="t-categories">Categories</a></li>
                         <li><a href="{{ route('specifications.index') }}" data-key="t-specifications">Specifications</a></li>
                     </ul>
@@ -72,14 +73,10 @@
 
 
 				<li>
-                    <a href="javascript: void(0);" class="has-arrow">
+                    <a href="{{ route('orders.index') }}">
                         <i class="bx bx-box icon nav-icon"></i>
                         <span class="menu-item" data-key="t-orders">Orders</span>
                     </a>
-                    <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('orders.index') }}" data-key="t-orders">Orders</a></li>
-                        <li><a href="#" data-key="t-invoice-lists">Invoice Lists</a></li>
-                    </ul>
                 </li>
 				<li>
 					<a href="{{ route('reviews.index') }}">
