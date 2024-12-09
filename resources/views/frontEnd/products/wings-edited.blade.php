@@ -13,22 +13,19 @@
 	<div>
 		<div class="collection-image-area collage">
 			@foreach($product->imagePaths as $key => $imagePath)
-				<div class="collection-image-item {{ $key >= 4 ? 'd-none' : '' }}">
+				<div class="collection-image-item d-none" data-index="{{ $key }}">
 					<img src="{{ $imagePath }}" alt="{{ $product->title }} Gallery Image {{ $key }} ">
 				</div>
 			@endforeach
 		</div>
 		<div class="see-more-btn">
-			<!-- see more button -->
 			<div class="collection-image-see-more">
 				<button id="seeMoreButton">
 					See More
-					<svg xmlns="http://www.w3.org/2000/svg" width="12" height="13" viewBox="0 0 12 13" fill="none">
-						<path fill-rule="evenodd" clip-rule="evenodd" d="M6 0C6.22729 0 6.44527 0.085593 6.60598 0.237949C6.7667 0.390306 6.85699 0.596945 6.85699 0.812409V10.225L10.5352 6.7365C10.6149 6.66096 10.7095 6.60105 10.8136 6.56017C10.9177 6.51929 11.0292 6.49825 11.1419 6.49825C11.2546 6.49825 11.3662 6.51929 11.4703 6.56017C11.5744 6.60105 11.669 6.66096 11.7487 6.7365C11.8284 6.81203 11.8916 6.9017 11.9347 7.00039C11.9778 7.09909 12 7.20486 12 7.31168C12 7.41851 11.9778 7.52428 11.9347 7.62297C11.8916 7.72166 11.8284 7.81134 11.7487 7.88687L6.60675 12.7613C6.52714 12.837 6.43257 12.897 6.32845 12.938C6.22434 12.9789 6.11272 13 6 13C5.88728 13 5.77566 12.9789 5.67154 12.938C5.56743 12.897 5.47286 12.837 5.39325 12.7613L0.251323 7.88687C0.171644 7.81134 0.108439 7.72166 0.0653168 7.62297C0.0221947 7.52428 0 7.41851 0 7.31168C0 7.20486 0.0221947 7.09909 0.0653168 7.00039C0.108439 6.9017 0.171644 6.81203 0.251323 6.7365C0.412243 6.58395 0.630497 6.49825 0.858071 6.49825C0.970755 6.49825 1.08233 6.51929 1.18644 6.56017C1.29055 6.60105 1.38514 6.66096 1.46482 6.7365L5.14301 10.225V0.812409C5.14301 0.596945 5.2333 0.390306 5.39402 0.237949C5.55473 0.085593 5.77271 0 6 0Z" fill="currentColor"/>
-					</svg>
 				</button>
 			</div>
 		</div>
+
 
 		<div class="container">
 			<div class="product-details-area">
@@ -47,15 +44,7 @@
 								aria-controls="descriptioncollapse"
 							>
 								Description
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									viewBox="0 0 24 24"
-									fill="rgba(30,30,30,1)"
-								>
-									<path
-										d="M11.9999 10.8284L7.0502 15.7782L5.63599 14.364L11.9999 8L18.3639 14.364L16.9497 15.7782L11.9999 10.8284Z"
-									></path>
-								</svg>
+								<i class="bi bi-chevron-down"></i>
 							</button>
 						</h2>
 						<div
@@ -74,10 +63,7 @@
 				</div>
 				<div class="accordion" id="reviewAccordion">
 					<div class="accordion-item">
-						<h2
-							class="accordion-header"
-							id="reviewHeading"
-						>
+						<h2 class="accordion-header" id="reviewHeading">
 							<button
 								class="accordion-button"
 								type="button"
@@ -112,6 +98,7 @@
 												@endif
 											@endfor
 										</div>
+										
 									</div>
 
 									<div class="review-lists">
@@ -131,7 +118,7 @@
 
 												</div>
 												<h3>
-													{{ $review->user->name }}
+													{{ $review->user->name ?? $review->username }}
 												</h3>
 											</div>
 											<div class="review-details">
@@ -143,7 +130,57 @@
 											</div>
 										</div>
 										@endforeach
+										
 									</div>
+									<div class="mt-3">
+										<h3>Write your review</h3>
+										<form action="{{ route('reviews.store') }}" method="POST">
+											@csrf
+											<div class="border shadow-sm rounded mt-4 p-3">
+												<div class="ms-1 d-flex align-items-center justify-content-between" role="group">
+													<div id="basic-rater" class="ms-2"></div> <!-- Add margin to separate the stars and text -->
+													<strong class="me-2 mb-0">Rate from 1 to 5 stars.</strong> 
+
+													<!-- Display the username input field if the user is not authenticated -->
+													@guest
+														<input type="text" class="form-control bg-transparent me-2 w-50" name="username" placeholder="Your Name" aria-label="Username" value="{{ old('username') }}">
+													@endguest
+
+													<!-- Display the authenticated user's name if they are logged in -->
+													@auth
+														<label class="form-control bg-transparent me-2 w-50">{{ auth()->user()->name }}</label>
+														<input type="hidden" name="username" value="{{ auth()->user()->name }}"> <!-- Include the authenticated username in the form -->
+													@endauth
+
+													<!-- Submit button -->
+													<button type="submit" class="btn btn-success me-2">Submit</button>
+												</div>
+
+												<!-- Hidden input to store the star rating -->
+												<input type="hidden" name="rating" id="ratingValue" value="{{ old('rating') }}">
+												<input type="hidden" name="item" value="{{ $product->id }}">
+
+												<textarea rows="3" class="form-control bg-transparent border mt-2" placeholder="Write Your Review..." name="content">{{ old('content') }}</textarea>
+											</div>
+
+											<!-- Error message display -->
+											@if ($errors->any())
+												<div class="mt-2 ms-3 text-danger">
+													@foreach ($errors->all() as $error)
+														<p class="mb-0">{{ $error }}</p>
+													@endforeach
+												</div>
+											@endif
+										</form>
+
+										<!-- Success message display -->
+										@if(session('success'))
+											<div class="mt-3 alert alert-success">
+												{{ session('success') }}
+											</div>
+										@endif
+									</div>
+
 								</div>
 							</div>
 						</div>
@@ -217,133 +254,7 @@
 		</div>
 	</div>
 </div>
-<div class="collection-product-desc">
-	<div class="container">
-		<div class="row">
-			<div class="col-md-6">
-				<div class="product-details-area">
-					<div class="accordion" id="descriptionAccordion">
-						<div class="accordion-item">
-							<h2
-								class="accordion-header"
-								id="descriptionHeading"
-							>
-								<button
-									class="accordion-button"
-									type="button"
-									data-bs-toggle="collapse"
-									data-bs-target="#descriptioncollapse"
-									aria-expanded="true"
-									aria-controls="descriptioncollapse"
-								>
-									Description
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										viewBox="0 0 24 24"
-										fill="rgba(30,30,30,1)"
-									>
-										<path
-											d="M11.9999 10.8284L7.0502 15.7782L5.63599 14.364L11.9999 8L18.3639 14.364L16.9497 15.7782L11.9999 10.8284Z"
-										></path>
-									</svg>
-								</button>
-							</h2>
-							<div
-								id="descriptioncollapse"
-								class="accordion-collapse collapse show"
-								aria-labelledby="descriptionHeading"
-								data-bs-parent="#descriptionAccordion"
-							>
-								<div class="accordion-body">
-									<div class="product-description">
-										{!! $product->description !!}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="accordion" id="reviewAccordion">
-						<div class="accordion-item">
-							<h2
-								class="accordion-header"
-								id="reviewHeading"
-							>
-								<button
-									class="accordion-button"
-									type="button"
-									data-bs-toggle="collapse"
-									data-bs-target="#reviewCollapse"
-									aria-expanded="true"
-									aria-controls="reviewCollapse"
-								>
-									Review ({{ $product->reviewsCount }})
-									<i class="bi bi-chevron-down"></i>
-								</button>
-							</h2>
-							<div
-								id="reviewCollapse"
-								class="accordion-collapse collapse show"
-								aria-labelledby="reviewHeading"
-								data-bs-parent="#reviewAccordion"
-							>
-								<div class="accordion-body">
-									<div class="product-description">
-										<div class="review-analysis">
-											<h2>{{ number_format($product->averageRating, 1) }}</h2>
-											
-											<div class="rating">
-												@for ($i = 0; $i < 5; $i++)
-													@if ($i < floor($product->averageRating))
-														<i class="bi bi-star-fill text-warning"></i>  <!-- Filled star -->
-													@elseif ($i == floor($product->averageRating) && $product->averageRating - floor($product->averageRating) >= 0.5)
-														<i class="bi bi-star-half text-warning"></i>  <!-- Half-filled star -->
-													@else
-														<i class="bi bi-star text-warning"></i>  <!-- Empty star -->
-													@endif
-												@endfor
-											</div>
-										</div>
 
-										<div class="review-lists">
-											@foreach ($product->reviews as $review)
-											<div class="list d-flex">
-												<div class="user-wrap">
-													<div class="starts d-flex align-items-center">
-														{{-- Display the filled stars --}}
-														@for ($i = 0; $i < $review->ratingStars['filled']; $i++)
-															<i class="bi bi-star-fill text-warning"></i>
-														@endfor
-
-														{{-- Display the empty stars --}}
-														@for ($i = 0; $i < $review->ratingStars['empty']; $i++)
-															<i class="bi bi-star text-warning"></i>
-														@endfor
-
-													</div>
-													<h3>
-														{{ $review->user->name }}
-													</h3>
-												</div>
-												<div class="review-details">
-													<div class="review-details-top d-flex align-items-center justify-content-between">
-														
-														<p>{{ $review->created_at->format('d F, Y') }}</p>
-													</div>
-													<p>{{ $review->content }}</p>
-												</div>
-											</div>
-											@endforeach
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
 @endsection
 @section('scripts')
 <script>
@@ -372,5 +283,67 @@
             clipboardButton.appendChild(clipboardIcon); // Re-attach the icon
         }, 1500); // 1.5 seconds delay
     }
+</script>
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+    const items = document.querySelectorAll('.collection-image-item');
+    const seeMoreButton = document.getElementById('seeMoreButton');
+    const loadBatchSize = 4; // Number of items to show per click
+    let currentlyVisible = 0; // Tracks how many items are visible
+
+    const toggleImages = () => {
+        const totalItems = items.length;
+
+        if (seeMoreButton.textContent.trim() === 'See More') {
+            // Show next batch of items
+            let nextVisible = currentlyVisible + loadBatchSize;
+
+            for (let i = currentlyVisible; i < nextVisible && i < totalItems; i++) {
+                items[i].classList.remove('d-none');
+            }
+
+            currentlyVisible = nextVisible;
+
+            if (currentlyVisible >= totalItems) {
+                seeMoreButton.textContent = 'See Less';
+            }
+        } else {
+            // Hide all except the first batch
+            for (let i = loadBatchSize; i < totalItems; i++) {
+                items[i].classList.add('d-none');
+            }
+
+            currentlyVisible = loadBatchSize;
+            seeMoreButton.textContent = 'See More';
+        }
+    };
+
+    seeMoreButton.addEventListener('click', toggleImages);
+
+    // Initially show the first batch of items
+    toggleImages();
+});
+
+</script>
+<script src="{{ asset('build/libs/rater-js/index.js') }}"></script>
+<script>
+	// Define the initial rating value
+	var initialRating = 4; // You can change this to 5 if needed
+
+	// Initialize raterJs
+	var basicRating = raterJs({
+		starSize: 22,
+		rating: initialRating, // Use the variable for initial display
+		element: document.querySelector("#basic-rater"),
+		rateCallback: function rateCallback(rating, done) {
+			// Set the rating value to the hidden input field when a user interacts
+			document.getElementById("ratingValue").value = rating;
+			this.setRating(rating); // Reflects the selected rating in the widget
+			done();
+		}
+	});
+
+	// Set the initial value of the hidden input field using the variable
+	document.getElementById("ratingValue").value = initialRating;
 </script>
 @endsection

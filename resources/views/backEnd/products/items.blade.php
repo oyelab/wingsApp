@@ -25,15 +25,11 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row align-items-center">
-                            <div class="col-6">
+                            <div class="col">
                                 <p class="text-muted text-truncate mb-0 pb-1">Total Collections</p>
                                 <h4 class="mb-0 mt-2">{{ $counts['total'] }}</h4>
                             </div>
-                            <div class="col-6">
-                                <div class="overflow-hidden">
-                                    <div id="mini-1"></div>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -286,49 +282,49 @@
 			});
 		</script>
 
-<script>
-    function confirmDelete(productId) {
-        const confirmation = confirm('Are you sure you want to delete this item?');
-        if (confirmation) {
-            deleteProduct(productId);
-        }
-    }
-
-    function deleteProduct(productId) {
-        const form = document.getElementById(`delete-form-${productId}`);
-
-        // Send the AJAX request to delete the product
-        fetch(form.action, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify({
-                _method: 'DELETE'  // Explicitly state the DELETE method
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-			// Check for success in the response
-			if (data.success) {
-				// Reload the page after successful deletion
-				window.location.reload();
-			} else {
-				throw new Error('Failed to delete the product');
+		<script>
+			function confirmDelete(productId) {
+				const confirmation = confirm('Are you sure you want to delete this item?');
+				if (confirmation) {
+					deleteProduct(productId);
+				}
 			}
-		})
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error deleting the product');
-        });
-    }
-</script>
+
+			function deleteProduct(productId) {
+				const form = document.getElementById(`delete-form-${productId}`);
+
+				// Send the AJAX request to delete the product
+				fetch(form.action, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+					},
+					body: JSON.stringify({
+						_method: 'DELETE'  // Explicitly state the DELETE method
+					})
+				})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+					return response.json();
+				})
+				.then(data => {
+					// Check for success in the response
+					if (data.success) {
+						// Reload the page after successful deletion
+						window.location.reload();
+					} else {
+						throw new Error('Failed to delete the product');
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					alert('Error deleting the product');
+				});
+			}
+		</script>
 
 		<script>
 			function confirmStatusChange(event, productId) {
@@ -377,7 +373,6 @@
 
 
         <!-- apexcharts -->
-        <script src="{{ asset('build/libs/apexcharts/apexcharts.min.js') }}"></script>
 
         <!-- gridjs js -->
         <script src="{{ asset('build/libs/gridjs/gridjs.umd.js') }}"></script>
@@ -385,7 +380,6 @@
         <!-- datepicker js -->
         <script src="{{ asset('build/libs/flatpickr/flatpickr.min.js') }}"></script>
 
-        <script src="{{ asset('build/js/pages/ecommerce-orders.init.js') }}"></script>
 
         <!-- App js -->
         <script src="{{ asset('build/js/app.js') }}"></script>

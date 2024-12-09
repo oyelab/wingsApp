@@ -1,5 +1,8 @@
 @extends('backEnd.layouts.master')
 
+@section('title')
+ Reviews
+@endsection
 @section('content')
 <div class="container">
     <h1 class="mb-4">Reviews</h1>
@@ -31,7 +34,7 @@
                 <tr>
                     <td>{{ $review->id }}</td>
 					
-                    <td>{{ $review->user->name ?? 'Anonymous' }}</td>
+                    <td>{{ $review->user->name ?? $review->username }}</td>
                     <td>{{ Str::limit($review->content, 50) }}</td>
 					<td>
                         <span class="badge {{ $review->status ? 'bg-success' : 'bg-danger' }}">

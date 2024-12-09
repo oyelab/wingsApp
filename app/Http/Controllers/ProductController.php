@@ -498,20 +498,24 @@ class ProductController extends Controller
 	
 	
 		// Count total products
-		$total = Product::count();
+		$total = $items->count();
 	
 		// Count total published products
-		$published = Product::where('status', 1)->count();
+		$published = Product::with('categories')
+		->whereHas('categories', function ($query) {
+			$query->where('slug', 'wings-edited'); // Filter by category_id = 1
+		})
+		->where('status', 1)
+		->count();
+
+		// return $published;
 	
-		// Count discounted products (assuming 'sale' field indicates discount)
-		$discounted = Product::whereNotNull('sale')->count();
 	
 	
 		// Pack all data into a single variable
 		$counts = [
 			'total' => $total,
 			'published' => $published,
-			'discounted' => $discounted,
 		];
 
 		
