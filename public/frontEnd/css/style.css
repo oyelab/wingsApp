@@ -2892,6 +2892,13 @@ a {
     .collection-new-section-area {
         margin-bottom: 0px;
     }
+    .wings-logo img {
+        width: 100px;
+        margin-top: 10px;
+    }
+    .right-area ul {
+        gap: 10px;
+    }
 }
 @media screen and (max-width: 380px) {
     .behind-wings-tabs .nav-tabs .nav-link {
