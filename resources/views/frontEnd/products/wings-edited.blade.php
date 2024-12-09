@@ -137,9 +137,9 @@
 										<form action="{{ route('reviews.store') }}" method="POST">
 											@csrf
 											<div class="border shadow-sm rounded mt-4 p-3">
-												<div class="ms-3 d-flex align-items-center justify-content-between" role="group">
+												<div class="ms-1 d-flex align-items-center justify-content-between" role="group">
 													<div id="basic-rater" class="ms-2"></div> <!-- Add margin to separate the stars and text -->
-													<strong class="me-5 mb-0">Rate from 1 to 5 stars.</strong> 
+													<strong class="me-2 mb-0">Rate from 1 to 5 stars.</strong> 
 
 													<!-- Display the username input field if the user is not authenticated -->
 													@guest
@@ -153,7 +153,7 @@
 													@endauth
 
 													<!-- Submit button -->
-													<button type="submit" class="btn btn-success me-2">Submit Review</button>
+													<button type="submit" class="btn btn-success me-2">Submit</button>
 												</div>
 
 												<!-- Hidden input to store the star rating -->
