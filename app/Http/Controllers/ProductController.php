@@ -405,14 +405,18 @@ class ProductController extends Controller
 	{
 		$search = $request->input('search'); // Get the search term from the request
 
-		// Retrieve products with their related quantities and categories, and paginate
+		// Retrieve products with their related quantities and categories, excluding those with category_slug = 'wings-edited'
 		$products = Product::with('quantities', 'categories')
-		->when($search, function ($query, $search) {
-			return $query->where('title', 'like', "%{$search}%"); // Search in multiple columns
-		})
-		->latest()
-		->paginate(10); // Adjust pagination as needed (e.g., 10 per page)
-			// return $products;
+			->whereHas('categories', function ($query) {
+				$query->where('slug', '!=', 'wings-edited'); // Exclude products with category_slug = 'wings-edited'
+			})
+			->when($search, function ($query, $search) {
+				return $query->where('title', 'like', "%{$search}%"); // Search in the title column
+			})
+			->latest()
+			->paginate(10); // Adjust pagination as needed (e.g., 10 per page)
+
+		// return $products;
 	
 		foreach ($products as $product) {
 			// Calculate the total quantity for each product
@@ -474,6 +478,47 @@ class ProductController extends Controller
 		// Pass the products with categories, quantities, and offer prices to the view
 		return view('backEnd.products.index', [
 			'products' => $products,
+			'counts' => $counts,
+		]);
+	}
+
+	public function items(Request $request)
+	{
+		$search = $request->input('search'); // Get the search term from the request
+
+		// Retrieve products with their related quantities and categories, and paginate
+		$items = Product::with('categories')
+		->whereHas('categories', function ($query) {
+			$query->where('slug', 'wings-edited'); // Filter by category_id = 1
+		})
+		->when($search, function ($query, $search) {
+			return $query->where('title', 'like', "%{$search}%"); // Search in the title column
+		})
+		->paginate(10); // Adjust pagination as needed (e.g., 10 per page)
+	
+	
+		// Count total products
+		$total = Product::count();
+	
+		// Count total published products
+		$published = Product::where('status', 1)->count();
+	
+		// Count discounted products (assuming 'sale' field indicates discount)
+		$discounted = Product::whereNotNull('sale')->count();
+	
+	
+		// Pack all data into a single variable
+		$counts = [
+			'total' => $total,
+			'published' => $published,
+			'discounted' => $discounted,
+		];
+
+		
+	
+		// Pass the products with categories, quantities, and offer prices to the view
+		return view('backEnd.products.items', [
+			'items' => $items,
 			'counts' => $counts,
 		]);
 	}
