@@ -3,15 +3,20 @@
 <link href="{{ asset('frontEnd/css/test.css')}}" rel="stylesheet" type="text/css" />
 <style>
 	.modal-middle-details {
-	padding: 100px 0px;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	height: 100%;
-}
-.modal-title {
-	color: var(--wings-secondary);
-}
+		padding: 100px 0px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 100%;
+	}
+	.modal-title {
+		color: var(--wings-secondary);
+	}
+	@media screen and (max-width: 576px) {
+		.modal-middle-details {
+			padding: 30px 0px 0px 0px;
+		}
+	}
 </style>
 @endsection
 @section('content')
@@ -138,7 +143,7 @@
                 <!-- Left section with features list -->
                 <div class="h-100">
                     <div class="modal-left-details">
-                        <div class="logo-wrap d-flex justify-content-center mb-4">
+                        <div class="logo-wrap d-flex justify-content-center mb-4 position-relative">
 							<a href="{{ route('index') }}">
 								<img
 									src="{{ $siteSettings->getImagePath('logo_v2') }}"
@@ -147,19 +152,24 @@
 									height="75"
 								/>
 							</a>
+							<div class="mobile-close-icon">
+									<div class="modal-close-icon" data-bs-dismiss="modal" aria-label="Close">
+								<i class="bi bi-x text-light fs-3"></i>
+							</div>
+							</div>
                         </div>
                     
                         <h3>Make shopping with Wings Sportswear easier and more convenient with these features:</h3>
                         <hr class="my-2">
 
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-sm-6 col-12">
                                 <ul>
                                     <li><a href="#"><i class="bi bi-grid"></i> Manage Orders</a></li>
                                     <li><a href="#"><i class="bi bi-fast-forward"></i> Faster Checkout</a></li>
                                 </ul>
                             </div>
-                            <div class="col-6">
+                            <div class="col-sm-6 col-12">
                                 <ul>
                                     <li><a href="#"><i class="bi bi-star"></i> Add Review</a></li>
                                     <li><a href="#"><i class="bi bi-arrow-repeat"></i> Refund Request</a></li>
@@ -170,7 +180,7 @@
                 </div>
 
                 <!-- Middle section with logo, login, and cancel link -->
-                <div class="modal-middle-details w-75">
+                <div class="modal-middle-details w-md-75">
                     <h3 class="modal-title" id="staticBackdropLabel">Hi, {{ $order_details->name }}</h3>
 
                     <div class="login-wrap">
@@ -209,14 +219,14 @@
 
                     </div>
                     
-                    <a class="mt-5" href="#">
+                    <a class="cancel-button" href="#">
                         Cancel & go to order page
                         <i class="bi bi-arrow-right"></i>
                     </a>
                 </div>
                 
                 <!-- Close icon -->
-                <div class="h-100">
+                <div class="h-100 close-icon-mobile-none">
                     <div class="modal-close-icon" data-bs-dismiss="modal" aria-label="Close">
                         <i class="bi bi-x text-light fs-3"></i>
                     </div>

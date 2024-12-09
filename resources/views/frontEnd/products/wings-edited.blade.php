@@ -6,235 +6,335 @@
 @section('pageOgImage', $product->ogImagePath)  <!-- Image specific to this page -->
 
 @section('page')
-@section('css')
-<style>
-	    .no-gap {
-            margin: 0;
-            padding: 0;
-        }
-     .collage img {
-      width: 100%;
-      height: auto;
-      object-fit: cover;
-    }
-	.toggle-container {
-        border-top: 1px solid var(--Wings-Secondary, #F9F9F9);
-        border-bottom: 1px solid var(--Wings-Secondary, #F9F9F9);
-        padding: 10px 0;
-        position: relative;
-        cursor: pointer; /* Make the whole container clickable */
-    }
-    .toggle-container h4 {
-        margin: 0;
-    }
-	.toggle-section {
-		max-height: 0;
-		overflow: hidden;
-		transition: max-height 0.3s ease-out; /* Smooth transition */
-	}
 
-	.toggle-section.expanded {
-		max-height: none; /* Allow full content height */
-		overflow: visible; /* Ensure content is visible */
-	}
-
-    .toggle-icon {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 1.25rem;
-        transition: transform 0.3s ease;
-    }
-    .toggle-icon.rotate {
-        transform: translateY(-50%) rotate(180deg);
-    }
-
-	.image-container {
-		position: relative;
-		overflow: hidden;
-		padding-top: 100%; /* Ensures the container is square */
-	}
-
-	.image-container img {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-	}
-
-</style>
-@endsection
 @section('content')
 
-<div class="container-fluid no-gap">
-	<div class="row">
-		<!-- Left Column -->
-		<div class="col-8">
-			<!-- Row 1: Collage of 4 Photos -->
-			<div class="row g-1 collage">
-				@foreach($product->imagePaths as $key => $imagePath)
-					<div class="col-6 {{ $key >= 4 ? 'd-none' : '' }}">
-						<img src="{{ $imagePath }}" alt="{{ $product->title }} Gallery Image {{ $key }} ">
-					</div>
-				@endforeach
-			</div>
-			<div class="text-center mt-3">
-				<button id="see-more-btn" class="btn btn-primary">See More</button>
-			</div>
-
-
-			<!-- Row 2: Context -->
-			<div class="mt-4 ps-5">
-				<div class="toggle-container" onclick="toggleSection('descriptionSection', this)">
-					<h4>Description</h4>
-					<i class="bi bi-arrow-down-short toggle-icon"></i>
-					<div class="description toggle-section" id="descriptionSection">
-						<p>{!! $product->description !!}</p>
-					</div>
+<div class="collection-new-section-area">
+	<div>
+		<div class="collection-image-area collage">
+			@foreach($product->imagePaths as $key => $imagePath)
+				<div class="collection-image-item {{ $key >= 4 ? 'd-none' : '' }}">
+					<img src="{{ $imagePath }}" alt="{{ $product->title }} Gallery Image {{ $key }} ">
 				</div>
+			@endforeach
+		</div>
+		<div class="see-more-btn">
+			<!-- see more button -->
+			<div class="collection-image-see-more">
+				<button id="seeMoreButton">
+					See More
+					<svg xmlns="http://www.w3.org/2000/svg" width="12" height="13" viewBox="0 0 12 13" fill="none">
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M6 0C6.22729 0 6.44527 0.085593 6.60598 0.237949C6.7667 0.390306 6.85699 0.596945 6.85699 0.812409V10.225L10.5352 6.7365C10.6149 6.66096 10.7095 6.60105 10.8136 6.56017C10.9177 6.51929 11.0292 6.49825 11.1419 6.49825C11.2546 6.49825 11.3662 6.51929 11.4703 6.56017C11.5744 6.60105 11.669 6.66096 11.7487 6.7365C11.8284 6.81203 11.8916 6.9017 11.9347 7.00039C11.9778 7.09909 12 7.20486 12 7.31168C12 7.41851 11.9778 7.52428 11.9347 7.62297C11.8916 7.72166 11.8284 7.81134 11.7487 7.88687L6.60675 12.7613C6.52714 12.837 6.43257 12.897 6.32845 12.938C6.22434 12.9789 6.11272 13 6 13C5.88728 13 5.77566 12.9789 5.67154 12.938C5.56743 12.897 5.47286 12.837 5.39325 12.7613L0.251323 7.88687C0.171644 7.81134 0.108439 7.72166 0.0653168 7.62297C0.0221947 7.52428 0 7.41851 0 7.31168C0 7.20486 0.0221947 7.09909 0.0653168 7.00039C0.108439 6.9017 0.171644 6.81203 0.251323 6.7365C0.412243 6.58395 0.630497 6.49825 0.858071 6.49825C0.970755 6.49825 1.08233 6.51929 1.18644 6.56017C1.29055 6.60105 1.38514 6.66096 1.46482 6.7365L5.14301 10.225V0.812409C5.14301 0.596945 5.2333 0.390306 5.39402 0.237949C5.55473 0.085593 5.77271 0 6 0Z" fill="currentColor"/>
+					</svg>
+				</button>
+			</div>
+		</div>
 
-				<div class="toggle-container" onclick="toggleSection('reviewsSection', this)">
-					<h4>Reviews ({{ $product->reviewsCount }})</h4>
-					<i class="bi bi-down-arrow-short toggle-icon"></i>
-					<div class="reviews toggle-section" id="reviewsSection">
-						<div class="review-analysis">
-							<h2>{{ number_format($product->averageRating, 1) }}</h2>
-							
-							<div class="rating">
-								@for ($i = 0; $i < 5; $i++)
-									@if ($i < floor($product->averageRating))
-										<i class="bi bi-star-fill"></i>  <!-- Filled star -->
-									@elseif ($i == floor($product->averageRating) && $product->averageRating - floor($product->averageRating) >= 0.5)
-										<i class="bi bi-star-half"></i>  <!-- Half-filled star -->
-									@else
-										<i class="bi bi-star"></i>  <!-- Empty star -->
-									@endif
-								@endfor
+		<div class="container">
+			<div class="product-details-area">
+				<div class="accordion" id="descriptionAccordion">
+					<div class="accordion-item">
+						<h2
+							class="accordion-header"
+							id="descriptionHeading"
+						>
+							<button
+								class="accordion-button"
+								type="button"
+								data-bs-toggle="collapse"
+								data-bs-target="#descriptioncollapse"
+								aria-expanded="true"
+								aria-controls="descriptioncollapse"
+							>
+								Description
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 24 24"
+									fill="rgba(30,30,30,1)"
+								>
+									<path
+										d="M11.9999 10.8284L7.0502 15.7782L5.63599 14.364L11.9999 8L18.3639 14.364L16.9497 15.7782L11.9999 10.8284Z"
+									></path>
+								</svg>
+							</button>
+						</h2>
+						<div
+							id="descriptioncollapse"
+							class="accordion-collapse collapse show"
+							aria-labelledby="descriptionHeading"
+							data-bs-parent="#descriptionAccordion"
+						>
+							<div class="accordion-body">
+								<div class="product-description">
+									{!! $product->description !!}
+								</div>
 							</div>
 						</div>
-
-						<div class="review-lists">
-							@foreach ($product->reviews as $review)
-							<div class="list d-flex">
-								<div class="user-wrap">
-									<div class="starts d-flex align-items-center">
-										{{-- Display the filled stars --}}
-										@for ($i = 0; $i < $review->ratingStars['filled']; $i++)
-											<i class="bi bi-star-fill"></i>
-										@endfor
-
-										{{-- Display the empty stars --}}
-										@for ($i = 0; $i < $review->ratingStars['empty']; $i++)
-											<i class="bi bi-star"></i>
-										@endfor
-
-									</div>
-									<h3>
-										{{ $review->user->name }}
-									</h3>
-								</div>
-								<div class="review-details">
-									<div class="review-details-top d-flex align-items-center justify-content-between">
+					</div>
+				</div>
+				<div class="accordion" id="reviewAccordion">
+					<div class="accordion-item">
+						<h2
+							class="accordion-header"
+							id="reviewHeading"
+						>
+							<button
+								class="accordion-button"
+								type="button"
+								data-bs-toggle="collapse"
+								data-bs-target="#reviewCollapse"
+								aria-expanded="true"
+								aria-controls="reviewCollapse"
+							>
+								Review ({{ $product->reviewsCount }})
+								<i class="bi bi-chevron-down"></i>
+							</button>
+						</h2>
+						<div
+							id="reviewCollapse"
+							class="accordion-collapse collapse show"
+							aria-labelledby="reviewHeading"
+							data-bs-parent="#reviewAccordion"
+						>
+							<div class="accordion-body">
+								<div class="product-description">
+									<div class="review-analysis">
+										<h2>{{ number_format($product->averageRating, 1) }}</h2>
 										
-										<p>{{ $review->created_at->format('d F, Y') }}</p>
+										<div class="rating">
+											@for ($i = 0; $i < 5; $i++)
+												@if ($i < floor($product->averageRating))
+													<i class="bi bi-star-fill text-warning"></i>  <!-- Filled star -->
+												@elseif ($i == floor($product->averageRating) && $product->averageRating - floor($product->averageRating) >= 0.5)
+													<i class="bi bi-star-half text-warning"></i>  <!-- Half-filled star -->
+												@else
+													<i class="bi bi-star text-warning"></i>  <!-- Empty star -->
+												@endif
+											@endfor
+										</div>
 									</div>
-									<p>{{ $review->content }}</p>
+
+									<div class="review-lists">
+										@foreach ($product->reviews as $review)
+										<div class="list d-flex">
+											<div class="user-wrap">
+												<div class="starts d-flex align-items-center">
+													{{-- Display the filled stars --}}
+													@for ($i = 0; $i < $review->ratingStars['filled']; $i++)
+														<i class="bi bi-star-fill text-warning"></i>
+													@endfor
+
+													{{-- Display the empty stars --}}
+													@for ($i = 0; $i < $review->ratingStars['empty']; $i++)
+														<i class="bi bi-star text-warning"></i>
+													@endfor
+
+												</div>
+												<h3>
+													{{ $review->user->name }}
+												</h3>
+											</div>
+											<div class="review-details">
+												<div class="review-details-top d-flex align-items-center justify-content-between">
+													
+													<p>{{ $review->created_at->format('d F, Y') }}</p>
+												</div>
+												<p>{{ $review->content }}</p>
+											</div>
+										</div>
+										@endforeach
+									</div>
 								</div>
 							</div>
-							@endforeach
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-
-		<!-- Right Column -->
-		<div class="col-4 pt-3">
-			<div class="mb-3">
-				<!-- Row 1: Title -->
-				<h5><span class="small">{{ $product->category_display }}</span></h5>
+	</div>
+	<div class="collection-content-area">
+		<div class="category-breadcrumb">
+			<ul class='d-flex align-items-center'>
+				<li>Official Jersey</li>
+				<li>Football</li>
+			</ul>
+		</div>
+		<div class="collection-product-rating d-flex align-items-center">
+			<div class="rating">
+				<i class="bi bi-star-fill text-warning"></i>
+				<i class="bi bi-star-fill text-warning"></i>
+				<i class="bi bi-star-fill text-warning"></i>
+				<i class="bi bi-star-fill text-warning"></i>
+				<i class="bi bi-star-fill text-warning"></i>
 			</div>
-			<div class="mb-3">
-				<!-- Row 1: Title -->
-				<h3>{{ $product->title }}</h3>
-			</div>
-			<div class="mb-3">
-				<!-- Row 2: Rating -->
-				<h6><strong class="">★ {{ number_format($product->averageRating, 1) }} Rating ({{ $product->reviews->count() }} Reviews)</strong></h6>
-			</div>
-			
-			<div class="mb-3">
-				<!-- Row 3: Specifications List -->
-				<h5>Specifications</h5>
+			<h3>10</h3>
+		</div>
+		<h2>ELMHURST FC’s third kit</h2>
+		<div class="product-details-area">
+			<h2>Specifications</h2>
+			<div class="product-description">
 				<ul>
-					@foreach($product->specifications() as $specification)
-					<li>✔ {{ $specification->item }}</li>
-					@endforeach
+					<li>✔ Fully Digital Sublimation Printed</li> 
+					<li>✔ High-Grade Double Knit Fabric</li>
+					<li>✔ 145-150 GSM.</li>
+					<li>✔ Twin Needle Topstitch Sewing</li>
+					<li>✔ Drop Shoulder Sleeve</li>
+					<li>✔ Crew Neck</li>
 				</ul>
 			</div>
-			<div class="mb-3 pt-5">
-				<img class="w-75" src="{{ $wingsPower->filePath }}" alt="{{ $wingsPower->title }}">
+		</div>
+		<div class="">
+			<img class="img-fluid" draggable='false' src="{{ $wingsPower->filePath }}" alt="{{ $wingsPower->title }}">
+		</div>
+		<div class="social-share-wrap">
+			<h3>Social Share:</h3>
+			<div class="social-share-icon">
+				<!-- Facebook Share -->
+				<a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->fullUrl()) }}" target="_blank" title="Share on Facebook">
+					<i class="bi bi-facebook fs-4"></i>
+				</a>
+				<!-- Twitter Share -->
+				<a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->fullUrl()) }}&text={{ urlencode('Check this out!') }}" target="_blank" title="Share on Twitter">
+					<i class="bi bi-twitter fs-4"></i>
+				</a>
+				<!-- LinkedIn Share -->
+				<a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(request()->fullUrl()) }}" target="_blank" title="Share on LinkedIn">
+					<i class="bi bi-linkedin fs-4"></i>
+				</a>
+				<!-- Messenger Share -->
+				<a href="https://www.facebook.com/dialog/send?link={{ urlencode(request()->fullUrl()) }}&app_id=YOUR_APP_ID" target="_blank" title="Share on Messenger">
+					<i class="bi bi-messenger fs-4"></i>
+				</a>
+				<!-- WhatsApp Share -->
+				<a href="https://api.whatsapp.com/send?text={{ urlencode(request()->fullUrl()) }}" target="_blank" title="Share on WhatsApp">
+					<i class="bi bi-whatsapp fs-4"></i>
+				</a>
+				<!-- Copy Link (with JavaScript functionality) -->
+				<button id="clipboardButton" onclick="copyLink()" title="Copy Link" style="border: none; background: none; cursor: pointer;">
+					<i id="clipboardIcon" class="bi bi-copy fs-4"></i>
+				</button>
 			</div>
-			
-			<!-- Get in Touch -->
-			<div class="container pt-5">
-				<div class="row">
-					<div class="get-in-touch-btn">
-						<p class="text-center">If you want to get this design for your team</p>
-						<a 
-							href="https://wa.me/{{ config('app.whatsapp_number') }}?text={{ urlencode('Hello, I am interested in this product: ' . route('products.details', [
-								'category' => $product->categories->first()->slug,
-								'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-								'product' => $product->slug
-							])) }}" 
-							target="_blank" 
-							rel="noopener noreferrer"
-							class="btn btn-success"
+		</div>
+	</div>
+</div>
+<div class="collection-product-desc">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="product-details-area">
+					<div class="accordion" id="descriptionAccordion">
+						<div class="accordion-item">
+							<h2
+								class="accordion-header"
+								id="descriptionHeading"
 							>
-							GET IN TOUCH
-						</a>
+								<button
+									class="accordion-button"
+									type="button"
+									data-bs-toggle="collapse"
+									data-bs-target="#descriptioncollapse"
+									aria-expanded="true"
+									aria-controls="descriptioncollapse"
+								>
+									Description
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="0 0 24 24"
+										fill="rgba(30,30,30,1)"
+									>
+										<path
+											d="M11.9999 10.8284L7.0502 15.7782L5.63599 14.364L11.9999 8L18.3639 14.364L16.9497 15.7782L11.9999 10.8284Z"
+										></path>
+									</svg>
+								</button>
+							</h2>
+							<div
+								id="descriptioncollapse"
+								class="accordion-collapse collapse show"
+								aria-labelledby="descriptionHeading"
+								data-bs-parent="#descriptionAccordion"
+							>
+								<div class="accordion-body">
+									<div class="product-description">
+										{!! $product->description !!}
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-				</div>
-			</div>
-			<!-- social media -->
-			<div class="container pt-5">
-				<div class="row">
-					<div class="col-12">
-						<div class="social-share-wrap">
-							<h2>Social Share:</h2>
-							<div class="social-share-wrap">						
-								<div class="social-share-icon">
-									<!-- Facebook Share -->
-									<a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->fullUrl()) }}" target="_blank" title="Share on Facebook">
-										<i class="bi bi-facebook fs-4"></i>
-									</a>
+					<div class="accordion" id="reviewAccordion">
+						<div class="accordion-item">
+							<h2
+								class="accordion-header"
+								id="reviewHeading"
+							>
+								<button
+									class="accordion-button"
+									type="button"
+									data-bs-toggle="collapse"
+									data-bs-target="#reviewCollapse"
+									aria-expanded="true"
+									aria-controls="reviewCollapse"
+								>
+									Review ({{ $product->reviewsCount }})
+									<i class="bi bi-chevron-down"></i>
+								</button>
+							</h2>
+							<div
+								id="reviewCollapse"
+								class="accordion-collapse collapse show"
+								aria-labelledby="reviewHeading"
+								data-bs-parent="#reviewAccordion"
+							>
+								<div class="accordion-body">
+									<div class="product-description">
+										<div class="review-analysis">
+											<h2>{{ number_format($product->averageRating, 1) }}</h2>
+											
+											<div class="rating">
+												@for ($i = 0; $i < 5; $i++)
+													@if ($i < floor($product->averageRating))
+														<i class="bi bi-star-fill text-warning"></i>  <!-- Filled star -->
+													@elseif ($i == floor($product->averageRating) && $product->averageRating - floor($product->averageRating) >= 0.5)
+														<i class="bi bi-star-half text-warning"></i>  <!-- Half-filled star -->
+													@else
+														<i class="bi bi-star text-warning"></i>  <!-- Empty star -->
+													@endif
+												@endfor
+											</div>
+										</div>
 
-									<!-- Twitter Share -->
-									<a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->fullUrl()) }}&text={{ urlencode('Check this out!') }}" target="_blank" title="Share on Twitter">
-										<i class="bi bi-twitter fs-4"></i>
-									</a>
+										<div class="review-lists">
+											@foreach ($product->reviews as $review)
+											<div class="list d-flex">
+												<div class="user-wrap">
+													<div class="starts d-flex align-items-center">
+														{{-- Display the filled stars --}}
+														@for ($i = 0; $i < $review->ratingStars['filled']; $i++)
+															<i class="bi bi-star-fill text-warning"></i>
+														@endfor
 
-									<!-- LinkedIn Share -->
-									<a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(request()->fullUrl()) }}" target="_blank" title="Share on LinkedIn">
-										<i class="bi bi-linkedin fs-4"></i>
-									</a>
+														{{-- Display the empty stars --}}
+														@for ($i = 0; $i < $review->ratingStars['empty']; $i++)
+															<i class="bi bi-star text-warning"></i>
+														@endfor
 
-									<!-- Messenger Share -->
-									<a href="https://www.facebook.com/dialog/send?link={{ urlencode(request()->fullUrl()) }}&app_id=YOUR_APP_ID" target="_blank" title="Share on Messenger">
-										<i class="bi bi-messenger fs-4"></i>
-									</a>
-
-									<!-- WhatsApp Share -->
-									<a href="https://api.whatsapp.com/send?text={{ urlencode(request()->fullUrl()) }}" target="_blank" title="Share on WhatsApp">
-										<i class="bi bi-whatsapp fs-4"></i>
-									</a>
-
-									<!-- Copy Link (with JavaScript functionality) -->
-									<button id="clipboardButton" onclick="copyLink()" title="Copy Link" style="border: none; background: none; cursor: pointer;">
-										<i id="clipboardIcon" class="bi bi-copy fs-4"></i>
-									</button>
+													</div>
+													<h3>
+														{{ $review->user->name }}
+													</h3>
+												</div>
+												<div class="review-details">
+													<div class="review-details-top d-flex align-items-center justify-content-between">
+														
+														<p>{{ $review->created_at->format('d F, Y') }}</p>
+													</div>
+													<p>{{ $review->content }}</p>
+												</div>
+											</div>
+											@endforeach
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -244,27 +344,8 @@
 		</div>
 	</div>
 </div>
-
-
 @endsection
 @section('scripts')
-<script>
-	function toggleSection(sectionId, container) {
-        const section = document.getElementById(sectionId);
-        const icon = container.querySelector('.toggle-icon');
-
-        // Toggle expanded class for section and rotate the icon
-        section.classList.toggle('expanded');
-        icon.classList.toggle('rotate');
-    }
-
-		document.getElementById('see-more-btn').addEventListener('click', function () {
-		const hiddenImages = document.querySelectorAll('.image-container.d-none');
-		hiddenImages.forEach(image => image.classList.remove('d-none'));
-		this.style.display = 'none'; // Hide the button after revealing all images
-	});
-
-</script>
 <script>
     function copyLink() {
         // Get the current page URL
