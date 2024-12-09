@@ -2190,10 +2190,13 @@ a {
     font-weight: 600;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: end;
     gap: 20px;
     color: var(--wings-secondary);
     text-decoration: underline;
+}
+.cancel-button {
+    margin-top: 100px;
 }
 .modal-close-icon {
     cursor: pointer;
@@ -2413,15 +2416,18 @@ a {
     background-color: var(--wings-secondary);
     opacity: 1;
 }
+.mobile-close-icon {
+    display: none;
+}
+
+/*---------------------------------
+	 Responsive css start
+  ---------------------------------*/
 @media screen and (max-width: 1300px) {
     .productMainImage {
         width: 400px;
     }
 }
-/*---------------------------------
-	 Responsive css start
-  ---------------------------------*/
-
 @media screen and (max-width: 991px) {
     .offcanvas.offcanvas-end.mobile-device-offcanvas {
         width: 320px;
@@ -2764,6 +2770,40 @@ a {
     }
     .contact-info {
         gap: 15px;
+    }
+    .modal-content-wrap {
+        flex-direction: column;
+        height: auto;
+        padding: 40px 20px;
+    }
+    .modal-left-details {
+        border-right: none;
+    }
+    .modal-left-details ul li a {
+        font-size: 16px;
+    }
+    .modal-left-details h3 {
+        font-size: 17px;
+    }
+    .login-wrap h3 {
+        font-size: 16px;
+    }
+    .modal-middle-details a {
+        justify-content: center;
+    }
+    .cancel-button {
+        margin-top: 30px;
+    }
+    .close-icon-mobile-none {
+        display: none;
+    }
+    .mobile-close-icon {
+        position: absolute;
+        right: 15px;
+        display: block;
+    }
+    .modal-content-wrap {
+        width: 96%;
     }
 }
 @media screen and (max-width: 380px) {

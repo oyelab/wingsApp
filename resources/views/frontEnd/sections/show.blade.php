@@ -36,7 +36,7 @@
 		<div class="col-md-12">
 			<div class="row">
 				@foreach ($products as $product)
-				<div class="col-md-3 mb-4">
+				<div class="col-md-3 col-sm-6 col-6 mb-4">
 					<div class="product-item">
 						<div class="product-img">
 							<img

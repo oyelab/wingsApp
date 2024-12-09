@@ -154,7 +154,7 @@
 				
 				<div class="row">
 				@foreach ($products as $product)
-				<div class="col-md-4">
+				<div class="col-md-4 col-sm-6 col-6">
 					<div class="product-item">
 						<div class="product-img">
 							<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, 'subcategory' => $product->subcategory->slug, $product]) }}">
