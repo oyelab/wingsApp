@@ -139,7 +139,14 @@
                 <div class="h-100">
                     <div class="modal-left-details">
                         <div class="logo-wrap d-flex justify-content-center mb-4">
-                            <img class="w-50" src="{{ asset('build/images/logo-light.svg') }}" alt="Wings Sportswear Logo" />
+							<a href="{{ route('index') }}">
+								<img
+									src="{{ $siteSettings->getImagePath('logo_v2') }}"
+									draggable="false"
+									alt="{{ $siteSettings->title }} Logo"
+									height="75"
+								/>
+							</a>
                         </div>
                     
                         <h3>Make shopping with Wings Sportswear easier and more convenient with these features:</h3>

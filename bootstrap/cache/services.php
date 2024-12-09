@@ -26,6 +26,7 @@
     22 => 'Barryvdh\\DomPDF\\ServiceProvider',
     23 => 'Barryvdh\\Snappy\\ServiceProvider',
     24 => 'Intervention\\Image\\ImageServiceProvider',
+<<<<<<< HEAD
     25 => 'Laravel\\Sail\\SailServiceProvider',
     26 => 'Laravel\\Sanctum\\SanctumServiceProvider',
     27 => 'Laravel\\Tinker\\TinkerServiceProvider',
@@ -40,6 +41,24 @@
     36 => 'App\\Providers\\EventServiceProvider',
     37 => 'App\\Providers\\RouteServiceProvider',
     38 => 'Barryvdh\\Snappy\\ServiceProvider',
+=======
+    25 => 'Jenssegers\\Agent\\AgentServiceProvider',
+    26 => 'Laravel\\Sail\\SailServiceProvider',
+    27 => 'Laravel\\Sanctum\\SanctumServiceProvider',
+    28 => 'Laravel\\Tinker\\TinkerServiceProvider',
+    29 => 'Laravel\\Ui\\UiServiceProvider',
+    30 => 'Carbon\\Laravel\\ServiceProvider',
+    31 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    32 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    33 => 'Spatie\\LaravelIgnition\\IgnitionServiceProvider',
+    34 => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
+    35 => 'App\\Providers\\AppServiceProvider',
+    36 => 'App\\Providers\\AuthServiceProvider',
+    37 => 'App\\Providers\\EventServiceProvider',
+    38 => 'App\\Providers\\RouteServiceProvider',
+    39 => 'Barryvdh\\Snappy\\ServiceProvider',
+    40 => 'App\\Providers\\FileHandlerServiceProvider',
+>>>>>>> 70264c08b7cfb07d70223abb8463a1c151430c10
   ),
   'eager' => 
   array (
@@ -56,6 +75,7 @@
     10 => 'Barryvdh\\DomPDF\\ServiceProvider',
     11 => 'Barryvdh\\Snappy\\ServiceProvider',
     12 => 'Intervention\\Image\\ImageServiceProvider',
+<<<<<<< HEAD
     13 => 'Laravel\\Sanctum\\SanctumServiceProvider',
     14 => 'Laravel\\Ui\\UiServiceProvider',
     15 => 'Carbon\\Laravel\\ServiceProvider',
@@ -68,6 +88,22 @@
     22 => 'App\\Providers\\EventServiceProvider',
     23 => 'App\\Providers\\RouteServiceProvider',
     24 => 'Barryvdh\\Snappy\\ServiceProvider',
+=======
+    13 => 'Jenssegers\\Agent\\AgentServiceProvider',
+    14 => 'Laravel\\Sanctum\\SanctumServiceProvider',
+    15 => 'Laravel\\Ui\\UiServiceProvider',
+    16 => 'Carbon\\Laravel\\ServiceProvider',
+    17 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    18 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    19 => 'Spatie\\LaravelIgnition\\IgnitionServiceProvider',
+    20 => 'Spatie\\MediaLibrary\\MediaLibraryServiceProvider',
+    21 => 'App\\Providers\\AppServiceProvider',
+    22 => 'App\\Providers\\AuthServiceProvider',
+    23 => 'App\\Providers\\EventServiceProvider',
+    24 => 'App\\Providers\\RouteServiceProvider',
+    25 => 'Barryvdh\\Snappy\\ServiceProvider',
+    26 => 'App\\Providers\\FileHandlerServiceProvider',
+>>>>>>> 70264c08b7cfb07d70223abb8463a1c151430c10
   ),
   'deferred' => 
   array (

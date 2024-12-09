@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\SubscriptionController;
 
 
 
@@ -51,6 +52,9 @@ Auth::routes();
 
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
+
+
+
 Route::get('/sections', [SectionController::class, 'sections'])->name('sections');
 Route::get('/sections/{section}', [SectionController::class, 'shopPage'])->name('shop.page');
 Route::get('/collections', [CategoryController::class, 'frontShow'])->name('collections');
@@ -184,3 +188,11 @@ Route::get('/test/new-file-upload', [TestController::class, 'create'])->name('te
 Route::get('/devFImg', [TestController::class, 'devF'])->name('test.devF');
 Route::post('/test/store', [TestController::class, 'store'])->name('test.store');
 Route::get('/invoice', [TestController::class, 'generatePdf'])->name('test.invoice');
+
+
+Route::post('/subscribe', [SubscriptionController::class, 'store'])->name('subscribe');
+Route::middleware(['auth', 'role'])->group(function () {
+    // This route is for authenticated users with role 1
+    Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+    Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show'])->name('subscriptions.show');
+});

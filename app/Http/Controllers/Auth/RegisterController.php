@@ -74,19 +74,22 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
-	protected function create(array $data)
-	{
-		// Step 1: Create the user
-		$user = User::create([
-			'name' => $data['name'],
-			'email' => $data['email'],
-			'password' => Hash::make($data['password']),
-			'role' => 0, // Default role
-		]);
-	
-		// Step 2: Attach the user to the order
-		Order::where('id', $data['order_id'])->update(['user_id' => $user->id]);
-	
-		return $user;
-	}
+    protected function create(array $data)
+    {
+        // Step 1: Create the user
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'role' => 0, // Default role
+        ]);
+    
+        // Step 2: Attach the user to the order, only if order_id is provided
+        if (!empty($data['order_id'])) {
+            Order::where('id', $data['order_id'])->update(['user_id' => $user->id]);
+        }
+    
+        return $user;
+    }
+    
 }

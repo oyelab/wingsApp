@@ -161,6 +161,11 @@
 											<th>LENGTH</th>
 										</tr>
 										<tr>
+											<td>S</td>
+											<td>36</td>
+											<td>27</td>
+										</tr>
+										<tr>
 											<td>M</td>
 											<td>38</td>
 											<td>28</td>

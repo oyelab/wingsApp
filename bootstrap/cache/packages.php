@@ -1,14 +1,14 @@
 <?php return array (
   'barryvdh/laravel-dompdf' => 
   array (
+    'aliases' => 
+    array (
+      'PDF' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
+      'Pdf' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
+    ),
     'providers' => 
     array (
       0 => 'Barryvdh\\DomPDF\\ServiceProvider',
-    ),
-    'aliases' => 
-    array (
-      'Pdf' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
-      'PDF' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
     ),
   ),
   'barryvdh/laravel-snappy' => 
@@ -32,6 +32,17 @@
     'aliases' => 
     array (
       'Image' => 'Intervention\\Image\\Facades\\Image',
+    ),
+  ),
+  'jenssegers/agent' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Jenssegers\\Agent\\AgentServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'Agent' => 'Jenssegers\\Agent\\Facades\\Agent',
     ),
   ),
   'laravel/sail' => 

@@ -19,7 +19,7 @@ class UserController extends Controller
 		$this->fileHandler = $fileHandler;
 
         $this->middleware('auth');
-		$this->middleware('role'); // Only allow role 1 users
+		// $this->middleware('role'); // Only allow role 1 users
     }
 	
 	public function userOrders()

@@ -15,6 +15,7 @@ use App\Models\Category;
 use App\Library\SslCommerz\SslCommerzNotification;
 use Illuminate\Support\Str;
 use Session;
+use Db;
 
 
 
@@ -68,7 +69,17 @@ class PaymentController extends Controller
 	
 		$orderTotal = $cartItems->sum('total_price');
 		$totalQuantity = $cartItems->sum('quantity'); // Calculate total quantity
-		$voucherDiscount = session('voucher', 0); // Default to 0 if no voucher is applied
+
+		// Validate voucher
+		$voucherCode = session('applied_voucher'); // Get voucher code from session
+		$voucher = $voucherCode ? Voucher::where('code', $voucherCode)->first() : null;
+	
+		if ($voucher && $totalQuantity < $voucher->min_quantity) {
+			// Destroy voucher session if quantity condition is not met
+			Session::forget(['voucher_success', 'applied_voucher', 'voucher']);
+		}
+
+		$voucherDiscount = session('voucher', null); // Default to 0 if no voucher is applied
 
 		$startFrom = now()->hour >= 19 ? now()->addDay() : now(); // If after 7 PM, start from the next day
 		$estimateShipping = $startFrom->addDay()->format('l, F j') . ' - ' . $startFrom->addDays(2)->format('l, F j');
