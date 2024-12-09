@@ -1,6 +1,6 @@
 @extends('backEnd.layouts.master')
 @section('title')
-    Products
+    Items
 @endsection
 @section('css')
     <link rel="stylesheet" href="{{ asset('build/libs/gridjs/theme/mermaid.min.css') }}">
@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ asset('build/libs/flatpickr/flatpickr.min.css') }}">
 @endsection
 @section('page-title')
-    All Products
+    Items
 @endsection
 @section('body')
 
@@ -57,41 +57,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-6">
-                                <p class="text-muted text-truncate mb-0 pb-1">Discounted</p>
-                                <h4 class="mb-0 mt-2">{{ $counts['discounted'] }}</h4>
-                            </div>
-                            <div class="col-6">
-                                <div class="overflow-hidden">
-                                    <div id="mini-3"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-6">
-                                <p class="text-muted text-truncate mb-0 pb-1">Quantities</p>
-                                <h4 class="mb-0 mt-2">{{ $counts['quantities'] }}</h4>
-                            </div>
-                            <div class="col-6">
-                                <div class="overflow-hidden">
-                                    <div id="mini-4"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
         </div>
 
 		<div class="row">
@@ -100,9 +66,9 @@
 				<div class="row mb-2">
 					<div class="col-xl-3 col-md-12">
 						<div class="pb-3 pb-xl-0">
-						<form method="GET" action="{{ route('products.index') }}" id="searchForm">
+						<form method="GET" action="{{ route('collections.item') }}" id="searchForm">
 							<div class="form-group">
-								<input type="text" class="form-control" name="search" id="searchInput" value="{{ request()->search }}" placeholder="Search products...">
+								<input type="text" class="form-control" name="search" id="searchInput" value="{{ request()->search }}" placeholder="Search items...">
 							</div>
 						</form>
 
@@ -129,21 +95,18 @@
                                     <th>Thumb</th>
                                     <th>Title</th>
                                     <th>Category</th>
-                                    <th>Availability</th>
-                                    <th>Prices</th>
                                     <th>Status</th>
-                                    <th>Sale %</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-								@foreach($products as $product)
+								@foreach($items as $item)
                                 <tr>
 									<td class="text-center">
 										<div class="avatar-group d-flex justify-content-center align-items-center">
 											<div class="avatar-group-item">
 												<a href="javascript: void(0);" class="d-inline-block">
-													<img src="{{ $product->thumbnail }}" alt="{{ $product->name }}" class="rounded-circle avatar-sm">
+													<img src="{{ $item->thumbnail }}" alt="{{ $item->title }}" class="rounded-circle avatar-sm">
 												</a>
 											</div>
 										</div>
@@ -153,101 +116,35 @@
                                     <td>
                                         <p class="d-inline-block align-middle mb-0">                
 											<a href="{{ route('products.details', [
-												'category' => $product->categories->first()->slug,
-												'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-												'product' => $product->slug
-											]) }}" class="d-inline-block align-middle mb-0 product-name fw-semibold">{{ $product->title }}</a>
+												'category' => $item->categories->first()->slug,
+												'subcategory' => $item->subcategory->slug, // Using the model method to get subcategory slug
+												'product' => $item->slug
+											]) }}" class="d-inline-block align-middle mb-0 product-name fw-semibold">{{ $item->title }}</a>
 											
                                             <br>
                                             <!-- <span class="text-muted font-13 fw-semibold">Size-05 (Model 2021)</span> -->
                                         </p>
                                     </td>
                                     <td class="col">
-										@if ($product->category_display)
-											<span class="badge bg-success-subtle text-success mb-0">{{ $product->category_display }}</span>
+										@if ($item->category_display)
+											<span class="badge bg-success-subtle text-success mb-0">{{ $item->category_display }}</span>
 										@else
 											<span class="badge bg-danger-subtle text-danger mb-0">Category not found</span>
 										@endif
 									</td>
-
-
-                                    <td>{{ $product->total_quantity }}</td>
-                                    <td>
-										<div class="{{ $product->sale !== null ? 'text-decoration-line-through' : '' }}">
-											{{ $product->price }}
-										</div>
-										@if($product->sale !== null)
-											<div class="text-danger">
-												{{ $product->offerPrice }}
-											</div>
-										@endif
-
-									</td>
 									<td>
 										<div class="form-check form-switch">
-											<input class="form-check-input" type="checkbox" id="switch-{{ $product->id }}" name="status" onchange="confirmStatusChange(event, {{ $product->id }})" {{ $product->status ? 'checked' : '' }} />
-											<label for="switch-{{ $product->id }}" data-on-label="Yes" data-off-label="No"></label>
-										</div>
-									</td>
-									<td class="text-center">
-										<!-- Button Section (as provided) -->
-										<div class="d-grid gap-1 col-12 mx-auto">
-											@if(!empty($product->sale))
-												<button type="button" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#offerModal-{{ $product->id }}">
-													<i class="bx bxs-offer"></i> {{ $product->sale }}%
-												</button>
-											@else
-												<button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#offerModal-{{ $product->id }}">
-													<i class="bx bxs-offer"></i> Add!
-												</button>
-											@endif
-										</div>
-
-										<!-- Modal (specific for this product) -->
-										<div class="modal fade" id="offerModal-{{ $product->id }}" tabindex="-1" aria-labelledby="offerModalLabel-{{ $product->id }}" aria-hidden="true">
-											<div class="modal-dialog">
-												<div class="modal-content">
-													<!-- Modal Header -->
-													<div class="modal-header">
-														<h5 class="modal-title" id="offerModalLabel-{{ $product->id }}">Manage Offer for {{ $product->name }}</h5>
-														<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-													</div>
-
-													<!-- Modal Body -->
-													<div class="modal-body">
-														<form action="{{ route('products.updateOffer', $product->id) }}" method="POST">
-															@csrf
-															@method('PUT')
-
-															<!-- Offer Input -->
-															<div class="mb-3">
-																<label for="sale-{{ $product->id }}" class="form-label">Offer Percentage</label>
-																<input type="number" class="form-control" id="sale-{{ $product->id }}" name="sale" step="1" min="0" max="100" placeholder="Enter offer percentage" value="{{ old('sale', $product->sale) }}" required>
-															</div>
-
-															<!-- Modal Footer -->
-															<div class="modal-footer">
-																@if(!empty($product->sale))
-																	<!-- Remove Offer Button -->
-																	<button type="submit" name="remove_offer" value="1" class="btn btn-danger">Remove Offer</button>
-																@endif
-																
-																<!-- Save Button -->
-																<button type="submit" class="btn btn-primary">Save Offer</button>
-															</div>
-														</form>
-													</div>
-												</div>
-											</div>
+											<input class="form-check-input" type="checkbox" id="switch-{{ $item->id }}" name="status" onchange="confirmStatusChange(event, {{ $item->id }})" {{ $item->status ? 'checked' : '' }} />
+											<label for="switch-{{ $item->id }}" data-on-label="Yes" data-off-label="No"></label>
 										</div>
 									</td>
 
                                     <td>
-                                        <a href="{{ route('products.edit', $product->id) }}" class="mr-3"><i class="las la-pen text-secondary font-30"></i></a>
-										<form action="{{ route('products.destroy', $product->id) }}" method="POST" style="display: inline;" id="delete-form-{{ $product->id }}">
+                                        <a href="{{ route('products.edit', $item->id) }}" class="mr-3"><i class="las la-pen text-secondary font-30"></i></a>
+										<form action="{{ route('products.destroy', $item->id) }}" method="POST" style="display: inline;" id="delete-form-{{ $item->id }}">
 											@csrf
 											@method('DELETE')
-											<a href="javascript:void(0);" class="mr-3" onclick="confirmDelete({{ $product->id }})">
+											<a href="javascript:void(0);" class="mr-3" onclick="confirmDelete({{ $item->id }})">
 												<i class="las la-trash-alt text-secondary font-30"></i>
 											</a>
 										</form>
@@ -266,20 +163,20 @@
 							<nav aria-label="...">
 								<ul class="pagination pagination-sm mb-0">
 									{{-- Previous Page Link --}}
-									<li class="page-item {{ $products->onFirstPage() ? 'disabled' : '' }}">
-										<a class="page-link" href="{{ $products->previousPageUrl() }}" tabindex="-1">Previous</a>
+									<li class="page-item {{ $items->onFirstPage() ? 'disabled' : '' }}">
+										<a class="page-link" href="{{ $items->previousPageUrl() }}" tabindex="-1">Previous</a>
 									</li>
 
 									{{-- Pagination Elements --}}
-									@for ($i = 1; $i <= $products->lastPage(); $i++)
-										<li class="page-item {{ $products->currentPage() == $i ? 'active' : '' }}">
-											<a class="page-link" href="{{ $products->url($i) }}">{{ $i }}</a>
+									@for ($i = 1; $i <= $items->lastPage(); $i++)
+										<li class="page-item {{ $items->currentPage() == $i ? 'active' : '' }}">
+											<a class="page-link" href="{{ $items->url($i) }}">{{ $i }}</a>
 										</li>
 									@endfor
 
 									{{-- Next Page Link --}}
-									<li class="page-item {{ $products->hasMorePages() ? '' : 'disabled' }}">
-										<a class="page-link" href="{{ $products->nextPageUrl() }}">Next</a>
+									<li class="page-item {{ $items->hasMorePages() ? '' : 'disabled' }}">
+										<a class="page-link" href="{{ $items->nextPageUrl() }}">Next</a>
 									</li>
 								</ul>
 							</nav>

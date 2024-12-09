@@ -115,6 +115,7 @@ Route::get('/help', [PageController::class, 'help'])->name('help.index');
 // Route::get('help', [PageController::class, 'index'])->name('help.index');
 Route::get('/getInTouch', [PageController::class, 'getInTouch'])->name('getInTouch');
 
+Route::get('/backEnd/collections/items', [ProductController::class, 'items'])->name('collections.item');
 
 Route::resource('backEnd/products', ProductController::class);
 
