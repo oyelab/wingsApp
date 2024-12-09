@@ -4,7 +4,15 @@
 @section('pageDescription', $product->meta_desc)
 @section('pageKeywords', $product->keywordsString)
 @section('pageOgImage', $product->ogImagePath)  <!-- Image specific to this page -->
-
+@section('css')
+<style>
+    .available_sizes.error {
+        border: 1px solid red;
+        padding: 10px;
+        border-radius: 5px;
+    }
+</style>
+@endsection
 @section('content')
 <!-- breadcrumb section -->
 <div class="breadcrumb-section">
@@ -108,7 +116,7 @@
 					</div>
 					<div class="availabel-size">
 						<h2>Select Size</h2>
-						<div class="form-group available_sizes">
+						<div class="form-group available_sizes"  id="sizeSelection">
 							@foreach($product->sizes as $size)
 							<div class="size_item">
 								<input
@@ -127,6 +135,9 @@
 							</div>
 							@endforeach
 						</div>
+						<p id="sizeError" class="error-message" style="display: none; color: red; ">
+							Please select a size.
+						</p>
 					</div>
 
 					<div class="action-button-wrap">
@@ -139,7 +150,6 @@
 						<button class="favorite" data-product-id="{{ $product->id }}">
 							Favorite
 						</button>
-
 					</div>
 					<div class="size-guid-area">
 						<div class="top-part d-flex align-items-center justify-content-between">
@@ -439,53 +449,85 @@
 </script>
 
 <script>
-    // Function to add product to cart
-    function addToCart(productId, sizeId) {
-        return fetch("{{ route('cart.add') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ product_id: productId, size_id: sizeId })
-        });
+// Function to add product to cart
+function addToCart(productId, sizeId) {
+    return fetch("{{ route('cart.add') }}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ product_id: productId, size_id: sizeId })
+    });
+}
+
+function handleSizeError(showError) {
+    const sizeSelectionDiv = document.getElementById('sizeSelection');
+    const errorMessage = document.getElementById('sizeError');
+    if (showError) {
+        sizeSelectionDiv.classList.add('error');
+        errorMessage.style.display = 'block';
+    } else {
+        sizeSelectionDiv.classList.remove('error');
+        errorMessage.style.display = 'none';
+    }
+}
+
+function showToast(message) {
+    const toastContainer = document.querySelector('.toast-container');
+    const toastElement = document.getElementById('wishlist-toast');
+    const toastBody = toastElement.querySelector('.toast-body');
+
+    toastBody.textContent = message;
+
+    // Show the toast using Bootstrap's toast API
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+}
+
+document.getElementById('addToCartBtn').addEventListener('click', function () {
+    const productId = this.getAttribute('data-product-id');
+    const sizeId = document.querySelector('input[name="size"]:checked')?.value;
+
+    if (!sizeId) {
+        handleSizeError(true);
+        return;
     }
 
-    document.getElementById('addToCartBtn').addEventListener('click', function () {
-        const productId = this.getAttribute('data-product-id');
-        const sizeId = document.querySelector('input[name="size"]:checked')?.value;
+    handleSizeError(false);
 
-        if (!sizeId) {
-            alert("Please select a size before adding to cart.");
-            return;
-        }
+    // AJAX request to add the item to the cart
+    addToCart(productId, sizeId)
+        .then(response => response.json())
+        .then(data => {
+            showToast(data.message); // Display the success message in the toast
+        })
+        .catch(error => console.error('Error:', error));
+});
 
-        // AJAX request to add the item to the cart
-        addToCart(productId, sizeId)
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message); // Show success message
-            })
-            .catch(error => console.error('Error:', error));
-    });
+document.getElementById('checkoutBtn').addEventListener('click', function () {
+    const productId = document.getElementById('addToCartBtn').getAttribute('data-product-id');
+    const sizeId = document.querySelector('input[name="size"]:checked')?.value;
 
-    document.getElementById('checkoutBtn').addEventListener('click', function () {
-        const productId = document.getElementById('addToCartBtn').getAttribute('data-product-id');
-        const sizeId = document.querySelector('input[name="size"]:checked')?.value;
+    if (!sizeId) {
+        handleSizeError(true);
+        return;
+    }
 
-        if (!sizeId) {
-            alert("Please select a size before proceeding to checkout.");
-            return;
-        }
+    handleSizeError(false);
 
-        // Add product to cart before redirecting
-        addToCart(productId, sizeId)
-            .then(response => response.json())
-            .then(data => {
-                // Redirect to the checkout page after adding to cart
+    // Add product to cart before redirecting
+    addToCart(productId, sizeId)
+        .then(response => response.json())
+        .then(data => {
+            showToast(data.message); // Display the success message in the toast
+            // Redirect to the checkout page after showing the toast
+            setTimeout(() => {
                 window.location.href = "{{ route('checkout.show') }}";
-            })
-            .catch(error => console.error('Error:', error));
-    });
+            }, 3000); // Wait for the toast to auto-hide before redirecting
+        })
+        .catch(error => console.error('Error:', error));
+});
+
 </script>
 @endsection
