@@ -1301,17 +1301,19 @@ a {
     border-radius: 20px;
 }
 
-.product-details-area .accordion-button svg {
-    width: 24px;
+.product-details-area .accordion-button i {
+    font-size: 24px; /* Adjust to match the size of your icon */
+    transition: all 0.3s ease;
 }
-.product-details-area .accordion-button.collapsed svg {
+
+.product-details-area .accordion-button.collapsed i {
     transform: rotate(0deg);
-    transition: all 0.3s;
 }
-.product-details-area .accordion-button:not(.collapsed) svg {
+
+.product-details-area .accordion-button:not(.collapsed) i {
     transform: rotate(180deg);
-    transition: all 0.3s;
 }
+
 .product-description {
     color: var(--wings-primary);
     font-size: 18px;
@@ -1326,7 +1328,7 @@ a {
     padding-bottom: 20px;
 }
 .review-analysis h2 {
-    font-size: 40px;
+    font-size: 50px;
     font-style: normal;
     font-weight: 800;
     line-height: 50px;
@@ -2469,11 +2471,7 @@ a {
     font-size: 30px;
     font-weight: 700;
 }
-.product-details-area h2 {
-    font-size: 25px;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
+
 .collection-image-see-more {
     display: flex;
     justify-content: center;

@@ -52,22 +52,36 @@ class ReviewController extends Controller
      */
 	public function store(Request $request)
 	{
+		// return $request;
 		// Validate input
 		$validated = $request->validate([
 			'content' => 'required|string|max:1000',
 			'rating' => 'required|integer|min:1|max:5', // Validates the rating value
-			'order_id' => 'nullable|exists:orders,id', // Make sure the order exists if provided
+			'item' => 'required|exists:products,id', // Validate that the product ID exists
+			'order_id' => 'nullable|exists:orders,id', // Validate the order ID if provided
+			'username' => auth()->check() ? 'nullable|string' : 'required|string',
 		]);
-
+	
 		// Create the review
 		$review = new Review();
-		$review->user_id = auth()->id();
+		$review->user_id = auth()->id(); // Set user_id if the user is authenticated
 		$review->content = $validated['content'];
-		$review->rating = number_format($validated['rating'], 1); // Ensure the rating is stored as a decimal with 1 decimal
-		$review->status = true; // Review is active by default
+
+		// Only set username if no user is authenticated
+		if (!$review->user_id) {
+			$review->username = $validated['username'];
+		}
+
+		$review->rating = number_format($validated['rating'], 1); // Ensure the rating is stored as a decimal
+		$review->status = false; // Set review status as inactive by default
 		$review->save();
 
-		// Check if 'order_id' is present in the validated data (it may not be if it's a site review)
+	
+		// Associate the review with the product (directly from the hidden input)
+		$itemId = $validated['item']; // Get the product ID from the form
+		$review->products()->attach($itemId);
+	
+		// If an order ID is provided, handle order-product association
 		if (isset($validated['order_id']) && $validated['order_id']) {
 			// Get the order based on the order_id
 			$order = Order::findOrFail($validated['order_id']);
@@ -78,13 +92,14 @@ class ReviewController extends Controller
 			// Create an array of product IDs to associate with the review
 			$productIds = $products->pluck('id')->toArray();
 	
-			// Use 'sync' to associate the review with the products and ensure uniqueness
-			$review->products()->sync($productIds);
+			// Use 'syncWithoutDetaching' to ensure the current product remains associated
+			$review->products()->syncWithoutDetaching($productIds);
 		}
-
+	
 		// Redirect or return a response
-		return redirect()->back()->with('success', 'Your review has been submitted!');
+		return redirect()->back()->with('success', 'Your review has been submitted for approval!');
 	}
+	
 
     /**
      * Display the specified resource.
