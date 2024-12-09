@@ -70,10 +70,12 @@ class Product extends Model
 	}
 
 	// Define the relationship with the Review model
-    public function reviews()
-    {
-        return $this->belongsToMany(Review::class, 'product_review', 'product_id', 'review_id');
-    }
+	public function reviews()
+	{
+		return $this->belongsToMany(Review::class, 'product_review', 'product_id', 'review_id')
+					->where('status', true); // Filter reviews where status is true
+	}
+	
 
 	// Add this accessor for the review count
 	public function getReviewsCountAttribute()
