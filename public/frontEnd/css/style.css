@@ -1133,6 +1133,7 @@ a {
     display: flex;
     gap: 15px;
     margin-bottom: 15px;
+    z-index: -1;
 }
 .size_item {
     width: 100%;
@@ -2412,10 +2413,15 @@ a {
     background-color: var(--wings-secondary);
     opacity: 1;
 }
-
+@media screen and (max-width: 1300px) {
+    .productMainImage {
+        width: 400px;
+    }
+}
 /*---------------------------------
 	 Responsive css start
   ---------------------------------*/
+
 @media screen and (max-width: 991px) {
     .offcanvas.offcanvas-end.mobile-device-offcanvas {
         width: 320px;
