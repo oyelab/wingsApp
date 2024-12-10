@@ -48,7 +48,7 @@
 
 							/>
 							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
-								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }}"></i>
+								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
 							</a>
 						</div>
 						<div class="product-content d-flex justify-content-between">
@@ -73,7 +73,31 @@
 				@endforeach
 			</div>
 		</div>
+		<div class="pagination-wrapper d-flex align-items-center justify-content-between">
+					<!-- Previous Button -->
+					<a href="{{ $products->previousPageUrl() }}" class="previous" 
+						@if ($products->onFirstPage()) style="pointer-events: none; opacity: 0.5;" @endif>
+						<i class="bi bi-arrow-left"></i> Previous
+					</a>
 
+					<!-- Page Numbers -->
+					<ul class="d-flex align-items-center">
+						@foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
+							<li>
+								<a href="{{ $url }}" class="{{ $page == $products->currentPage() ? 'active' : '' }}" 
+								@if($products->lastPage() === 1) style="pointer-events: none; opacity: 0.5;" @endif>
+								{{ $page }}
+								</a>
+							</li>
+						@endforeach
+					</ul>
+
+					<!-- Next Button -->
+					<a href="{{ $products->nextPageUrl() }}" class="next" 
+						@if ($products->hasMorePages() === false) style="pointer-events: none; opacity: 0.5;" @endif>
+						Next <i class="bi bi-arrow-right"></i>
+					</a>
+				</div>
 	</div>
 </section>
 @endsection

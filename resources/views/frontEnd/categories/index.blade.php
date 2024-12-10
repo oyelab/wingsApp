@@ -125,12 +125,17 @@
 							All Products ({{ $productCount }})
 						@endif
 					</h3>
+
+					@if (!Route::is('wings.edited'))
 					<div class="sort-by">
 						<div class="custom-select-wrapper">
 							<select name="sort" id="sort" onchange="this.form.submit()">
 							<!-- Placeholder option -->
 								<option selected disabled>Sort By</option> 
 
+								<option value="bulks" {{ request()->query('sort') == 'bulks' ? 'selected' : '' }}>
+									Bulk Order
+								</option>
 								<option value="most-popular" {{ request()->query('sort') == 'most-popular' ? 'selected' : '' }}>
 									Most Popular
 								</option>
@@ -149,6 +154,7 @@
 							</span>
 						</div>
 					</div>
+					@endif
 
 				</div>
 				
@@ -163,6 +169,7 @@
 									class="img-fluid"
 									alt="{{ $product->title }}"
 									draggable="false"
+									oncontextmenu="return false;"
 								/>
 							</a>
 							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">

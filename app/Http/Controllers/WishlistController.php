@@ -31,67 +31,31 @@ class WishlistController extends Controller
 		]);
 	}
 
-	
-    // This method handles the addition of products to the wishlist
-	public function addToWishlist(Request $request)
-	{
-		$productId = $request->input('product_id');
-		
-		// Fetch product if needed for validation (optional step)
-		$product = Product::find($productId);
-		
-		if (!$product) {
-			return response()->json([
-				'success' => false,
-				'message' => 'Product not found.'
-			]);
-		}
-	
-		// Get current wishlist from session, or initialize an empty array
-		$wishlist = session()->get('wishlist', []);
-	
-		// Add the product to the wishlist if not already added
-		if (!in_array($productId, $wishlist)) {
-			$wishlist[] = $productId;
-			session()->put('wishlist', $wishlist);
-		}
-	
-		return response()->json([
-			'success' => true,
-			'message' => 'Product added to wishlist!',
-			'wishlist_count' => count(session('wishlist'))
-		]);
-	}
-
-	// Method to remove a product from the wishlist
-    public function removeFromWishlist(Request $request)
-    {
-        $productId = $request->input('product_id');
-        
-        // Get the current wishlist from the session
-        $wishlist = session()->get('wishlist', []);
-
-        // If the product is in the wishlist, remove it
-        if (($key = array_search($productId, $wishlist)) !== false) {
-            unset($wishlist[$key]);
-            session()->put('wishlist', $wishlist);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Product removed from wishlist!',
-            'wishlist_count' => count($wishlist)
-        ]);
-    }
-
-	
 
     // This method displays the wishlist page
     public function index()
     {
         // Fetch all products in the wishlist based on stored IDs in session
         $wishlist = session()->get('wishlist', []);
-        $products = Product::whereIn('id', $wishlist)->get();
+		// Fetch products with their associated categories
+		$products = Product::with('categories')->whereIn('id', $wishlist)->get();
+
+		$categorySlug = null;
+		$subcategorySlug = null;
+
+		foreach ($products as $product) {
+			if ($product->categories->isNotEmpty()) {
+				// Assuming there's only one category per product in this example
+				$pivot = $product->categories[0]->pivot;
+
+				$category = \App\Models\Category::find($pivot->category_id);
+				$subcategory = \App\Models\Category::find($pivot->subcategory_id);
+
+				$categorySlug = $category ? $category->slug : null;
+				$subcategorySlug = $subcategory ? $subcategory->slug : null;
+
+			}
+		}
 
         return view('frontEnd.products.wishlist', compact('products'));
     }

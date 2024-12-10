@@ -3,7 +3,7 @@
         <div class="d-flex">
             <!-- LOGO -->
             <div class="navbar-brand-box">
-                <a href="index" class="logo logo-dark">
+                <a href="{{ route('index') }}" class="logo logo-dark">
                     <span class="logo-sm">
                         <img src="{{ $siteSettings->favicon ?? asset('favicon.ico') }}" alt="" height="26">
                     </span>
@@ -12,7 +12,7 @@
                     </span>
                 </a>
 
-                <a href="index" class="logo logo-light">
+                <a href="{{ route('index') }}" class="logo logo-light">
                     <span class="logo-lg">
                         <img src="{{ $siteSettings->getImagePath('logo_v1') }}" alt="" height="30">
                     </span>

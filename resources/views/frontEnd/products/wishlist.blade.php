@@ -26,23 +26,24 @@
                     <div class="swiper-slide wishlist-item" data-product-id="{{ $product->id }}">
                         <div class="product-item">
                             <div class="product-img">
-                                <a href="{{ route('sections.products.details', [
-                                        'section' => 'latest',
-                                        'slug' => $product->slug, // Using the model method to get subcategory slug
-                                    ]) }}">
-                                    <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
-                                </a>
+								<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, 'subcategory' => $product->subcategory->slug, $product]) }}">
+									<img
+										src="{{ $product->thumbnail }}"
+										class="img-fluid"
+										alt="{{ $product->title }}"
+										draggable="false"
+									/>
+								</a>
                                 <a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
                                     <i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
                                 </a>
                             </div>
                             <div class="product-content d-flex justify-content-between">
-                                <a href="{{ route('sections.products.details', [
-                                        'section' => 'latest',
-                                        'slug' => $product->slug, // Using the model method to get subcategory slug
-                                    ]) }}">
-                                    <h3>{{ $product->title }}</h3>
-                                </a>
+								<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, 'subcategory' => $product->subcategory->slug, 'product' => $product->slug]) }}">
+									<h3>
+										{{ $product->title }}
+									</h3>
+								</a>
                                 <div class="product-price">
                                     @if($product->sale)
                                         <h4>{{ $product->offerPrice }}</h4>

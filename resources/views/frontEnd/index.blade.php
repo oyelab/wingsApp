@@ -53,7 +53,7 @@
 									'section' => 'latest',
 									'slug' => $product->slug, // Using the model method to get subcategory slug
 								]) }}">
-                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
+                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
                             </a>
 							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
 								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
@@ -116,7 +116,7 @@
 									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
 									'product' => $product->slug
 								]) }}">
-                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
+                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
                             </a>
                             <a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
 								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
@@ -153,17 +153,18 @@
 		<div class="row">
 			<div class="col-12">
 				<div class="bulk-banner">
-					<a href="{{ route('collections', ['sort' => 'bulks']) }}">
+					<a href="{{ route('shop.page', ['section' => 'bulks']) }}">
 						Explore More
 						<i class="bi bi-arrow-right"></i>
 					</a>
-					<a href="{{ route('collections', ['sort' => 'bulks']) }}">
+					<a href="{{ route('shop.page', ['section' => 'bulks']) }}">
 					@if (!empty($bulksData->imagePath))
 						<img
 							src="{{ $bulksData->imagePath }}"
 							draggable="false"
 							class="img-fluid"
 							alt="{{ $bulksData->title }}"
+							loading="lazy"
 						/>
 					@else
 						<img
@@ -171,6 +172,7 @@
 							draggable="false"
 							class="img-fluid"
 							alt="Default Bulk Order Image"
+							loading="lazy"
 						/>
 					@endif
 					</a>
@@ -210,7 +212,7 @@
 								'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
 								'product' => $product->slug
 							]) }}">
-							<img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
+							<img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
 						</a>
 						<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
 							<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
@@ -229,7 +231,8 @@
 							src="{{ $wingsEdited->imagePath }}"
 							draggable="false"
 							class="img-fluid"
-							alt="Bulk Order"
+							alt="{{ $wingsEdited->title }}"
+							loading="lazy"
 						/>
 					</a>
 				</div>
@@ -269,7 +272,7 @@
 									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
 									'product' => $product->slug
 								]) }}">
-                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
+                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
                             </a>
 							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
 								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
@@ -333,7 +336,8 @@
 												src="{{ $showcase1->thumbnailImagePath }}"
 												draggable="false"
 												class="img-fluid left-top-border-radius"
-												alt="Wings Showcase"
+												alt="{{ $showcase1->title }}"
+												loading="lazy"
 											/>
 										</a>
 									</div>
@@ -344,6 +348,7 @@
 											draggable="false"
 											class="img-fluid left-top-border-radius"
 											alt="Wings Showcase"
+											loading="lazy"
 										/>
 									</div>
 								@endif
@@ -355,9 +360,9 @@
 										<a href="{{ route('showcase.show', $showcase2->slug) }}">
 											<img
 												src="{{ $showcase2->thumbnailImagePath }}"
-												draggable="false"
 												class="img-fluid"
 												alt="Wings Showcase"
+												loading="lazy"
 											/>
 										</a>
 									</div>
@@ -365,9 +370,9 @@
 									<div class="wings-showcase-item showcase-2">
 										<img
 											src="{{ asset('frontEnd/images/wing-showcase-2.png') }}"
-											draggable="false"
 											class="img-fluid"
 											alt="Wings Showcase"
+											loading="lazy"
 										/>
 									</div>
 								@endif
@@ -380,9 +385,9 @@
 									<a href="{{ route('showcase.show', $showcase3->slug) }}">
 										<img
 											src="{{ $showcase3->thumbnailImagePath }}"
-											draggable="false"
 											class="img-fluid left-bottom-border-radius"
 											alt="Wings Showcase"
+											loading="lazy"
 										/>
 									</a>
 								</div>
@@ -390,9 +395,9 @@
 								<div class="wings-showcase-item showcase-3">
 									<img
 										src="{{ asset('frontEnd/images/wing-showcase-3.png') }}"
-										draggable="false"
 										class="img-fluid left-bottom-border-radius"
 										alt="Wings Showcase"
+										loading="lazy"
 									/>
 								</div>
 							@endif
@@ -406,7 +411,6 @@
 									<a href="{{ route('showcase.show', $showcase4->slug) }}">
 										<img
 											src="{{ $showcase4->thumbnailImagePath }}"
-											draggable="false"
 											class="img-fluid right-top-border-radius"
 											alt="Wings Showcase"
 										/>
@@ -416,9 +420,9 @@
 								<div class="wings-showcase-item showcase-4">
 									<img
 										src="{{ asset('frontEnd/images/wing-showcase-4.png') }}"
-										draggable="false"
 										class="img-fluid right-top-border-radius"
 										alt="Wings Showcase"
+										loading="lazy"
 									/>
 								</div>
 							@endif
@@ -430,9 +434,9 @@
 									<a href="{{ route('showcase.show', $showcase5->slug) }}">
 										<img
 											src="{{ $showcase5->thumbnailImagePath }}"
-											draggable="false"
 											class="img-fluid right-bottom-border-radius"
 											alt="Wings Showcase"
+											loading="lazy"
 										/>
 									</a>
 								</div>
@@ -440,9 +444,9 @@
 								<div class="wings-showcase-item showcase-5">
 									<img
 										src="{{ asset('frontEnd/images/wing-showcase-5.png') }}"
-										draggable="false"
 										class="img-fluid right-bottom-border-radius"
 										alt="Wings Showcase"
+										loading="lazy"
 									/>
 								</div>
 							@endif
@@ -488,7 +492,7 @@
 									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
 									'product' => $product->slug
 								]) }}">
-                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false"/>
+                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
                             </a>
                             <a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
 								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
@@ -618,9 +622,9 @@
 									<div class="wings-behind-tab-image">
 										<img
 											src="{{ $item['imagePath'] }}"
-											draggable="false"
 											class="img-fluid"
 											alt="{{ $item['title'] }}"
+											loading="lazy"
 										/>
 									</div>
 								</div>
@@ -693,8 +697,8 @@
 						<img
 							src="{{ $manufactureLogo->filePath }}"
 							class="img-fluid"
-							alt="Manufacture Logo"
-							draggable="{{ $manufactureLogo->title }}"
+							alt="{{ $manufactureLogo->title }}"
+							loading="lazy"
 						/>
 					@endif
 				</div>
@@ -710,10 +714,10 @@
 							@foreach ($partnerLogos as $partner)
 							<div class="logo_item swiper-slide">
 								<img
-									draggable="false"
 									src="{{ $partner->filePath }}"
 									class="img-fluid"
 									alt="{{ $partner->title }}"
+									loading="lazy"
 								/>
 							</div>
 							@endforeach
@@ -740,9 +744,9 @@
                     <div class="payment-banner">
                         <img
                             src="{{ $paymentBanner->filePath }}"
-                            draggable="false"
                             class="img-fluid"
                             alt="{{ $paymentBanner->title }}"
+							loading="lazy"
                         />
                     </div>
                 @endif
