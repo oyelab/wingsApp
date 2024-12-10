@@ -225,16 +225,19 @@
 									</a>
 								</li>
 
-
-								<!-- Cart Icon with Badge -->
 								<li>
-									<a href="{{ route('cart.show') }}" id="cart-button" class="{{ session('cart') ? '' : 'disabled' }} d-flex align-items-center">
+									<a href="{{ route('cart.show') }}" class="{{ session('cart') ? '' : 'disabled' }} d-flex align-items-center">
 										<i class="fa-solid fa-cart-shopping"></i>
 										<small>
-											<span id="cart-count-badge" class="text-dark" style="display: {{ session('cart') ? 'inline' : 'none' }}">{{ session('cart') ? count(session('cart')) : '' }}</span>
+											<span id="cart-count-badge" class=" text-dark" 
+												style="{{ session('cart') && count(session('cart')) > 0 ? 'display: inline-block;' : 'display: none;' }}">
+												{{ session('cart') ? count(session('cart')) : '' }}
+											</span>
 										</small>
 									</a>
 								</li>
+
+
 								<li class="nav-item custom-dropdown">
 									@if (Auth::check())
 										<!-- User Avatar or First Letter -->
@@ -282,12 +285,6 @@
 				</div>
 			</div>
 		</header>
-		
-		<div class="toast-container">
-			<div class="toast position-fixed bottom-0 end-0 mb-3 bg-dark text-white" id="wishlist-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
-				<div class="toast-body"></div>
-			</div>
-		</div>
 
 
 		<div class="offcanvas offcanvas-end mobile-device-offcanvas" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
@@ -369,6 +366,30 @@
 				</div>
 			</div>
 		</div>
+		<div class="toast-container">
+			<div
+				class="toast position-fixed bottom-0 mb-3 bg-dark text-white"
+				id="wishlist-toast"
+				role="alert"
+				aria-live="assertive"
+				aria-atomic="true"
+				data-bs-autohide="true"
+				data-bs-delay="3000"
+			>
+				<div class="toast-header bg-dark text-white">
+					<strong class="me-auto toast-body"></strong>
+					<button
+						type="button"
+						class="btn-close btn-close-white me-auto "
+						data-bs-dismiss="toast"
+						aria-label="Close"
+					></button>
+				</div>
+			</div>
+		</div>
+
+
+
 		<!-- Footer -->
 		<footer class="footer-area">
 			<div class="container">
@@ -613,95 +634,14 @@
 				});
 			});
 		</script>
-		<script>
-		// Function to add product to cart
-		function addToCart(productId, sizeId) {
-			return fetch("{{ route('cart.add') }}", {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRF-TOKEN': '{{ csrf_token() }}'
-				},
-				body: JSON.stringify({ product_id: productId, size_id: sizeId })
-			});
-		}
-
-		function handleSizeError(showError) {
-			const sizeSelectionDiv = document.getElementById('sizeSelection');
-			const errorMessage = document.getElementById('sizeError');
-			if (showError) {
-				sizeSelectionDiv.classList.add('error');
-				errorMessage.style.display = 'block';
-			} else {
-				sizeSelectionDiv.classList.remove('error');
-				errorMessage.style.display = 'none';
-			}
-		}
-
-		function showToast(message) {
-			const toastContainer = document.querySelector('.toast-container');
-			const toastElement = document.getElementById('wishlist-toast');
-			const toastBody = toastElement.querySelector('.toast-body');
-
-			toastBody.textContent = message;
-
-			// Show the toast using Bootstrap's toast API
-			const toast = new bootstrap.Toast(toastElement);
-			toast.show();
-		}
-
-		document.getElementById('addToCartBtn').addEventListener('click', function () {
-			const productId = this.getAttribute('data-product-id');
-			const sizeId = document.querySelector('input[name="size"]:checked')?.value;
-
-			if (!sizeId) {
-				handleSizeError(true);
-				return;
-			}
-
-			handleSizeError(false);
-
-			// AJAX request to add the item to the cart
-			addToCart(productId, sizeId)
-				.then(response => response.json())
-				.then(data => {
-					showToast(data.message); // Display the success message in the toast
-				})
-				.catch(error => console.error('Error:', error));
-		});
-
-		document.getElementById('checkoutBtn').addEventListener('click', function () {
-			const productId = document.getElementById('addToCartBtn').getAttribute('data-product-id');
-			const sizeId = document.querySelector('input[name="size"]:checked')?.value;
-
-			if (!sizeId) {
-				handleSizeError(true);
-				return;
-			}
-
-			handleSizeError(false);
-
-			// Add product to cart before redirecting
-			addToCart(productId, sizeId)
-				.then(response => response.json())
-				.then(data => {
-					showToast(data.message); // Display the success message in the toast
-					// Redirect to the checkout page after showing the toast
-					setTimeout(() => {
-						window.location.href = "{{ route('checkout.show') }}";
-					}, 3000); // Wait for the toast to auto-hide before redirecting
-				})
-				.catch(error => console.error('Error:', error));
-		});
-
-		</script>
+		
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
 				document.addEventListener('click', function (e) {
-					if (e.target.closest('.wishlist-icon')) {
+					if (e.target.closest('.wishlist-icon') || e.target.closest('.favorite')) {
 						e.preventDefault();
 
-						const button = e.target.closest('.wishlist-icon');
+						const button = e.target.closest('.wishlist-icon') || e.target.closest('.favorite');
 						const productId = button.getAttribute('data-product-id');
 						const wishlistItem = button.closest('.wishlist-item');
 
@@ -714,46 +654,60 @@
 							},
 							body: JSON.stringify({ product_id: productId }),
 						})
-						.then(response => response.json())
-						.then(data => {
-							if (data.success) {
-								const icon = button.querySelector('i');
-								if (data.action === 'added') {
-									icon.classList.remove('bi-heart');
-									icon.classList.add('bi-heart-fill');
-								} else if (data.action === 'removed') {
-									icon.classList.remove('bi-heart-fill');
-									icon.classList.add('bi-heart');
+							.then(response => response.json())
+							.then(data => {
+								if (data.success) {
+									const icon = button.querySelector('i');
 
-									// If we are on the wishlist page, remove the product item from the list
-									if (wishlistItem && document.getElementById('wishlist-page')) {
-										wishlistItem.remove();
+									// Handle wishlist icon toggle
+									if (button.classList.contains('wishlist-icon')) {
+										if (data.action === 'added') {
+											icon.classList.remove('bi-heart');
+											icon.classList.add('bi-heart-fill');
+										} else if (data.action === 'removed') {
+											icon.classList.remove('bi-heart-fill');
+											icon.classList.add('bi-heart');
+											if (wishlistItem && document.getElementById('wishlist-page')) {
+												wishlistItem.remove();
+											}
+										}
 									}
-								}
 
-								// Update the wishlist count
-								const countElement = document.getElementById('wishlist-count');
-								if (data.wishlist_count > 0) {
-									countElement.textContent = data.wishlist_count;
-									countElement.style.display = 'inline-block'; // Show the count
+									// Handle favorite button toggle
+									if (button.classList.contains('favorite')) {
+										if (data.action === 'added') {
+											button.classList.add('selected');
+										} else if (data.action === 'removed') {
+											button.classList.remove('selected');
+											if (wishlistItem && document.getElementById('wishlist-page')) {
+												wishlistItem.remove();
+											}
+										}
+									}
+
+									// Update the wishlist count
+									const countElement = document.getElementById('wishlist-count');
+									if (data.wishlist_count > 0) {
+										countElement.textContent = data.wishlist_count;
+										countElement.style.display = 'inline-block'; // Show the count
+									} else {
+										countElement.textContent = '';
+										countElement.style.display = 'none'; // Hide if wishlist is empty
+									}
+
+									// Show and automatically hide the toast notification
+									const toastElement = document.getElementById('wishlist-toast');
+									const toast = new bootstrap.Toast(toastElement);
+									document.querySelector('.toast-body').textContent =
+										data.action === 'added'
+											? 'Product added to wishlist!'
+											: 'Product removed from wishlist!';
+									toast.show();
 								} else {
-									countElement.textContent = '';
-									countElement.style.display = 'none'; // Hide if wishlist is empty
+									console.error('Error:', data.message || 'Unknown error occurred');
 								}
-
-								// Show and automatically hide the toast notification
-								const toastElement = document.getElementById('wishlist-toast');
-								const toast = new bootstrap.Toast(toastElement);
-								document.querySelector('.toast-body').textContent =
-									data.action === 'added'
-										? 'Product added to wishlist!'
-										: 'Product removed from wishlist!';
-								toast.show();
-							} else {
-								console.error('Error:', data.message || 'Unknown error occurred');
-							}
-						})
-						.catch(error => console.error('Error:', error));
+							})
+							.catch(error => console.error('Error:', error));
 					}
 				});
 			});

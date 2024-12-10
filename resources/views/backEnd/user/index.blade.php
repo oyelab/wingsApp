@@ -15,8 +15,6 @@
                 <div class="card">
                     <div class="card-body p-0">
                         <div class="user-profile-img">
-                            <img src="{{ asset('build/images/pattern-bg.jpg') }}" class="profile-img profile-foreground-img rounded-top"
-                                style="height: 120px;" alt="">
 							<div class="overlay-content rounded-top">
 								<div class="user-nav p-3">
 									<div class="d-flex justify-content-end">
@@ -414,17 +412,12 @@
 				});
 			}
 		</script>
-        <!-- apexcharts -->
-        <script src="{{ asset('build/libs/apexcharts/apexcharts.min.js') }}"></script>
 		
 		<script src="{{ asset('build/libs/rater-js/index.js') }}"></script>
 
-
-        <script src="{{ asset('build/js/pages/profile.init.js') }}"></script>
         <!-- App js -->
         <script src="{{ asset('build/js/app.js') }}"></script>
         <!-- rating init -->
-
 		<script>
 			// Define the initial rating value
 			var initialRating = 4; // You can change this to 5 if needed

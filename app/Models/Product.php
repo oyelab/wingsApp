@@ -185,44 +185,6 @@ class Product extends Model
 
 
 
-	// public function getImagePathsAttribute()
-	// {
-	// 	$collectionId = $this->id; // Get the product ID
-	// 	$storagePath = "public/collections/{$collectionId}";
-		
-	// 	// Filter out the OG image from the images
-	// 	$filteredImages = array_filter($this->images ?? [], function ($filename) use ($storagePath) {
-	// 		$fullPath = Storage::path("{$storagePath}/{$filename}");
-	// 		return $fullPath !== $this->ogImagePath; // Exclude the OG image
-	// 	});
-
-	// 	// Create AVIF thumbnails with a max width of 500px and return URLs
-	// 	return array_map(function ($filename) use ($storagePath) {
-	// 		$originalPath = Storage::path("{$storagePath}/{$filename}");
-	// 		$thumbnailPath = "{$storagePath}/thumbnails/" . pathinfo($filename, PATHINFO_FILENAME) . '.avif';
-
-	// 		// Ensure the thumbnail directory exists
-	// 		Storage::makeDirectory("{$storagePath}/thumbnails");
-
-	// 		if (!Storage::exists($thumbnailPath)) {
-	// 			if (file_exists($originalPath)) {
-	// 				// Generate and save the thumbnail as AVIF
-	// 				$image = Image::make($originalPath)
-	// 					->resize(null, 500, function ($constraint) {
-	// 						$constraint->aspectRatio(); // Maintain aspect ratio
-	// 						$constraint->upsize(); // Prevent upsizing the image
-	// 					})
-	// 					->encode('avif', 80); // Compress the image to AVIF format
-
-	// 				Storage::put($thumbnailPath, $image);
-	// 			}
-	// 		}
-
-	// 		return Storage::url($thumbnailPath);
-	// 	}, $filteredImages);
-	// }
-
-
 	public function getImagePathsAttribute()
 	{
 		$collectionId = $this->id; // Get the product ID
