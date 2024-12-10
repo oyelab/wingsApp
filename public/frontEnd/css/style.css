@@ -568,14 +568,14 @@ a {
 }
 .get-idea a {
     margin-bottom: 0;
-    color: var(--wings-white);
+    color: var(--wings-primary);
     font-size: 18px;
     font-weight: 800;
     line-height: normal;
 }
 .get-in-touch a:hover,
 .get-idea a:hover {
-    color: var(--wings-white);
+    color: var(--wings-alternative);
 }
 /* Category Page */
 .breadcrumb-content {
