@@ -576,7 +576,88 @@
 				});
 			});
 		</script>
+		<script>
+		// Function to add product to cart
+		function addToCart(productId, sizeId) {
+			return fetch("{{ route('cart.add') }}", {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRF-TOKEN': '{{ csrf_token() }}'
+				},
+				body: JSON.stringify({ product_id: productId, size_id: sizeId })
+			});
+		}
 
+		function handleSizeError(showError) {
+			const sizeSelectionDiv = document.getElementById('sizeSelection');
+			const errorMessage = document.getElementById('sizeError');
+			if (showError) {
+				sizeSelectionDiv.classList.add('error');
+				errorMessage.style.display = 'block';
+			} else {
+				sizeSelectionDiv.classList.remove('error');
+				errorMessage.style.display = 'none';
+			}
+		}
+
+		function showToast(message) {
+			const toastContainer = document.querySelector('.toast-container');
+			const toastElement = document.getElementById('wishlist-toast');
+			const toastBody = toastElement.querySelector('.toast-body');
+
+			toastBody.textContent = message;
+
+			// Show the toast using Bootstrap's toast API
+			const toast = new bootstrap.Toast(toastElement);
+			toast.show();
+		}
+
+		document.getElementById('addToCartBtn').addEventListener('click', function () {
+			const productId = this.getAttribute('data-product-id');
+			const sizeId = document.querySelector('input[name="size"]:checked')?.value;
+
+			if (!sizeId) {
+				handleSizeError(true);
+				return;
+			}
+
+			handleSizeError(false);
+
+			// AJAX request to add the item to the cart
+			addToCart(productId, sizeId)
+				.then(response => response.json())
+				.then(data => {
+					showToast(data.message); // Display the success message in the toast
+				})
+				.catch(error => console.error('Error:', error));
+		});
+
+		document.getElementById('checkoutBtn').addEventListener('click', function () {
+			const productId = document.getElementById('addToCartBtn').getAttribute('data-product-id');
+			const sizeId = document.querySelector('input[name="size"]:checked')?.value;
+
+			if (!sizeId) {
+				handleSizeError(true);
+				return;
+			}
+
+			handleSizeError(false);
+
+			// Add product to cart before redirecting
+			addToCart(productId, sizeId)
+				.then(response => response.json())
+				.then(data => {
+					showToast(data.message); // Display the success message in the toast
+					// Redirect to the checkout page after showing the toast
+					setTimeout(() => {
+						window.location.href = "{{ route('checkout.show') }}";
+					}, 3000); // Wait for the toast to auto-hide before redirecting
+				})
+				.catch(error => console.error('Error:', error));
+		});
+
+		</script>
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
 				document.addEventListener('click', function (e) {
