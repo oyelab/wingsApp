@@ -205,11 +205,8 @@
 								<!-- Search Form (Initially Hidden) -->
 								<div id="searchForm" class="d-none">
 									<form id="searchFormContent" action="{{ route('collections') }}" method="GET">
-										<input type="text" id="searchInput" name="query" placeholder="Search..." />
+										<input type="text" id="searchInput" class="bg-transparent rounded" name="query" placeholder="Search..." />
 										<!-- Submit Button (Replaces icon inside the field when it appears) -->
-										<button type="submit" id="submitSearch" class="d-none">
-											<i class="fa-solid fa-search"></i>
-										</button>
 									</form>
 								</div>
 
