@@ -711,10 +711,10 @@ a {
 }
 .custom-select-wrapper select {
     width: 100%;
-    padding-right: 30px;
-    -webkit-appearance: none;
-    appearance: none;
-    -moz-appearance: none;
+    padding: 8px 30px; /* Add padding here (top-bottom and left-right) */
+    -webkit-appearance: none; /* Remove browser default styling */
+    appearance: none; /* Ensure cross-browser compatibility */
+    -moz-appearance: none; /* For Firefox */
     background-color: transparent;
     border: none;
     border-radius: 0px;
@@ -723,9 +723,11 @@ a {
     font-weight: 600;
     line-height: normal;
 }
+
 .custom-select-wrapper select:focus {
-    outline: none;
+    outline: none; /* Prevent focus outlines */
 }
+
 .custom-arrow {
     position: absolute;
     top: 50%;
@@ -1204,6 +1206,11 @@ a {
 }
 .favorite {
     color: var(--wings-primary);
+}
+.favorite.selected {
+    background-color: var(--wings-primary);
+    color: var(--wings-light); /* Text color for the selected state */
+    border-color: var(--wings-primary);
 }
 .product-details-area {
     padding: 50px 0px;

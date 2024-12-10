@@ -148,10 +148,15 @@ class ProductController extends Controller
 			]);
 		}
 
+		// Determine the redirect URL based on the category ID
+		$redirectUrl = $categoryId == 1 
+			? route('collections.item') 
+			: route('products.index'); // Default redirect for other categories
+
 		return response()->json([
 			'success' => true,
 			'message' => 'Product created successfully!',
-			'redirect_url' => route('products.index'), // Redirect to the product page
+			'redirect_url' => $redirectUrl, // Use the determined URL
 		]);
 	}
 
@@ -293,11 +298,16 @@ class ProductController extends Controller
 				['quantity' => $quantity]
 			);
 		}
-		// Return success response
+
+		// Determine the redirect URL based on the category ID
+		$redirectUrl = $request->category == 1 
+			? route('collections.item') 
+			: route('products.index'); // Default redirect for other categories
+
 		return response()->json([
 			'success' => true,
-			'message' => 'Product updated successfully',
-			'redirect_url' => route('products.index'),
+			'message' => 'Product created successfully!',
+			'redirect_url' => $redirectUrl, // Use the determined URL
 		]);
 	}
 	 

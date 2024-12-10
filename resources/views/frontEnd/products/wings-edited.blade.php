@@ -191,32 +191,21 @@
 	</div>
 	<div class="collection-content-area">
 		<div class="category-breadcrumb">
-			<ul class='d-flex align-items-center'>
-				<li>Official Jersey</li>
-				<li>Football</li>
-			</ul>
+			<h4>
+				<span class="badge bg-success-subtle text-success mb-0">{{ $product->category_display }}</span>
+			</h4>
 		</div>
 		<div class="collection-product-rating d-flex align-items-center">
-			<div class="rating">
-				<i class="bi bi-star-fill text-warning"></i>
-				<i class="bi bi-star-fill text-warning"></i>
-				<i class="bi bi-star-fill text-warning"></i>
-				<i class="bi bi-star-fill text-warning"></i>
-				<i class="bi bi-star-fill text-warning"></i>
-			</div>
-			<h3>10</h3>
+			<h6><strong>★ {{ number_format($product->averageRating, 1) }} Rating ({{ $product->reviews->count() }} Reviews)</strong></h6>
 		</div>
-		<h2>ELMHURST FC’s third kit</h2>
+		<h2><span>{{ $product->title }}</span></h2>
 		<div class="product-details-area">
 			<h2>Specifications</h2>
 			<div class="product-description">
 				<ul>
-					<li>✔ Fully Digital Sublimation Printed</li> 
-					<li>✔ High-Grade Double Knit Fabric</li>
-					<li>✔ 145-150 GSM.</li>
-					<li>✔ Twin Needle Topstitch Sewing</li>
-					<li>✔ Drop Shoulder Sleeve</li>
-					<li>✔ Crew Neck</li>
+					@foreach($product->specifications() as $spec)
+						<li>✔ {{ $spec->item }}</li> <!-- Adjust to the appropriate field of the Specification model -->
+					@endforeach
 				</ul>
 			</div>
 		</div>

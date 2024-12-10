@@ -88,12 +88,17 @@
         },
     });
 
+	// Generate a random delay function
+	function getRandomDelay(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
     // Latest Arrival
     var swiper = new Swiper(".latest-arrival", {
         slidesPerView: 4,
         spaceBetween: 38,
         autoplay: {
-            delay: 3000,
+			delay: getRandomDelay(2000, 5000), // Random delay between 2s and 5s
             disableOnInteraction: false,
         },
         loop: true,
@@ -126,7 +131,7 @@
         slidesPerView: 4,
         spaceBetween: 38,
         autoplay: {
-            delay: 3000,
+			delay: getRandomDelay(2000, 5000), // Random delay between 2s and 5s
             disableOnInteraction: false,
         },
         loop: true,
@@ -159,7 +164,7 @@
         slidesPerView: 4,
         spaceBetween: 38,
         autoplay: {
-            delay: 3000,
+			delay: getRandomDelay(2000, 5000), // Random delay between 2s and 5s
             disableOnInteraction: false,
         },
         loop: true,
@@ -192,7 +197,7 @@
         slidesPerView: 4,
         spaceBetween: 38,
         autoplay: {
-            delay: 3000,
+			delay: getRandomDelay(2000, 5000), // Random delay between 2s and 5s
             disableOnInteraction: false,
         },
         loop: true,
@@ -224,6 +229,11 @@
     var swiper = new Swiper(".customer-stories", {
         slidesPerView: 3,
         spaceBetween: 36,
+		autoplay: {
+			delay: getRandomDelay(3000, 5000), // Random delay between 2s and 5s
+            disableOnInteraction: false,
+        },
+        loop: true,
         keyboard: {
             enabled: true,
         },

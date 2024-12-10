@@ -73,9 +73,10 @@ class ProductRepository
 	}
 	
 
-	public function getBulks()
+	public function getBulks($limit = 8)
 	{
-		return Product::bulks()->get();
+		return Product::bulks()
+			->paginate($limit);
 	}
 	
 }

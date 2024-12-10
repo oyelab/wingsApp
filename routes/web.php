@@ -83,8 +83,6 @@ Route::get('/shippingPriceCalculate', function () {
 
 Route::post('/wishlist/toggle', [WishlistController::class, 'toggleWishlist'])->name('wishlist.toggle');
 
-Route::post('/wishlist/add', [WishlistController::class, 'addToWishlist'])->name('wishlist.add');
-Route::post('/wishlist/remove', [WishlistController::class, 'removeFromWishlist'])->name('wishlist.remove');
 Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
 
 Route::get('/cart', [OrderController::class, 'showCart'])->name('cart.show');
