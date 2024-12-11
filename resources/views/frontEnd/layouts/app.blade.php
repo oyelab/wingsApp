@@ -578,6 +578,11 @@
 			</div>
 		</footer>
 
+		<!-- WhatsApp Button -->
+		<a href="https://wa.me/{{ config('app.whatsapp_number') }}" target="_blank" id="whatsappButton" class="whatsapp-button">
+			<i class="fa fa-whatsapp"></i>
+		</a>
+		
 		<!-- Cookie Alert -->
 		<div id="cookieAlert" class="cookie-alert" style="display: none;">
 			<span class="cookie-message">
