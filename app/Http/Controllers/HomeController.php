@@ -44,8 +44,12 @@ class HomeController extends Controller
 		$customOrder = Page::where('slug', 'custom-order')->first();
 		// return $customOrder;
 
-		$siteReviews = Review::with('user', 'products')->where('status', true)->limit(9)->get();
-		// return $siteReviews;
+		// Get reviews ordered by the rating column
+		$siteReviews = Review::with('user', 'products')
+			->where('status', true)
+			->orderBy('rating', 'desc')
+			->limit(9)
+			->get();		// return $siteReviews;
 
 		$showcases = Showcase::where('status', 1)
 			->whereNotNull('order')  // Ensure 'order' is not null

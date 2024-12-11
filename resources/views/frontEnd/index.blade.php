@@ -665,7 +665,7 @@
 							impressive. Can’t wait to shop more!”
 						</p>
 						<div class="author-part">
-							<h4>{{ '@' . str_replace(' ', '', strtolower($review->user->name)) }}</h4>
+							<h4>{{ '@' . str_replace(' ', '', strtolower($review->user->name ?? $review->username )) }}</h4>
 							<div>
 								@for ($i = 0; $i < $review->ratingStars['filled']; $i++)
 									<i class="bi bi-star-fill text-light"></i>

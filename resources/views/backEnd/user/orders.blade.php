@@ -127,12 +127,10 @@
 
 									</td>
 									<td>
-										<a href="javascript:void(0);" onclick="openOrderStatusModal({{ $order->id }})">
-											<i class="bi bi-eye-fill"></i>
-										</>
+										<a href="javascript:void(0);" onclick="openOrderReviewModal({{ $order->id }})">
+											<i class="bi bi-chat-fill"></i>
+										</a>
 
-										<!-- Add a review-related icon (star icon) next to it -->
-										<!-- <a href="javascript:void(0);" onclick="openOrderReviewModal({{ $order->id }})"> -->
 										<a href="{{ route('order.invoice', $order) }}">
 											<i class="bi bi-download"></i>
 										</a>
