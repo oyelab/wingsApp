@@ -18,7 +18,7 @@
 			width: 210mm;
 			height: 297mm;
 			position: relative;
-			background: linear-gradient(to top, #dddddd, rgba(120, 190, 32, 0.5) 90%);
+			background: #fff;
 			margin: 0 auto !important;
 			font-family: 'Manrope', sans-serif; /* Apply Manrope font */
 		}
@@ -93,7 +93,7 @@
 						<td>{{ $index + 1 }}</td>
 						<td>{{ $item['title'] }}</td>
 						<td class="text-center">{{ $item['quantity'] }}</td>
-						<td class="text-end">{{ $item['price'] }}/-</td>
+						<td class="text-end">{{ $item['sale'] }}/-</td>
 						<td class="text-end">{{ $item['fullPrice'] }}/-</td>
 					</tr>
 				@endforeach
@@ -106,8 +106,8 @@
 
 				<tr class="total-row">
 					<td colspan="3"></td>
-					<td class="text-end"><strong>Total</strong></td>
-					<td class="text-end">{{ $order->subtotal }}/-</td>
+					<td class="text-end"><strong>Order Total</strong></td>
+					<td class="text-end">{{ $order->order_total }}/-</td>
 				</tr>
 				<tr>
 					<td colspan="3"></td>
@@ -117,20 +117,27 @@
 				@if ($order->discount)
 					<tr>
 						<td colspan="3"></td>
-						<td class="text-end"><strong>Discount</strong></td>
-						<td class="text-end">{{ $order->discount }}/-</td>
+						<td class="text-end"><strong>Voucher Discount(-)</strong></td>
+						<td class="text-end">{{ $order->voucher }}/-</td>
 					</tr>
 				@endif
 				<tr>
 					<td colspan="3"></td>
-					<td class="text-end"><strong>Paid</strong></td>
+					<td class="text-end"><strong>Paid(-)</strong></td>
 					<td class="text-end">{{ $order->paid }}/-</td>
 				</tr>
 				<tr>
 					<td colspan="3">
-						<small><strong>Taka in Words:</strong>
-							{{ ucwords(\NumberFormatter::create('en', \NumberFormatter::SPELLOUT)->format($order->unpaid_amount ?? 0)) }}
-							Taka Only</small>
+						<small>
+							<strong>Taka in Words:
+								@if ($order->unpaid_amount !== null && $order->unpaid_amount > 0)
+									{{ ucwords(\NumberFormatter::create('en', \NumberFormatter::SPELLOUT)->format($order->unpaid_amount ?? 0)) }}
+									Taka Only
+								@else
+									<span>The order is fully paid</span>
+								@endif
+							</strong>
+						</small>
 					</td>
 					<td class="text-end"><strong>Due</strong></td>
 					<td class="text-end">{{ $order->unpaid_amount !== null ? $order->unpaid_amount . '/-' : 'N/A' }}
@@ -154,7 +161,7 @@
 				<ul class="d-flex list-unstyled">
 					@foreach ($filteredLinks as $link)
 						<li>
-							{{ $link['platform'] }}: 
+							{{ $link['platform'] }}/ 
 							<a href="{{ 'https://' . strtolower($link['platform']) . '.com/' . $link['username'] }}"
 								target="_blank"
 								class="d-inline-flex">

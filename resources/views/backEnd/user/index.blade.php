@@ -252,7 +252,6 @@
 													<th scope="col">Order Ref</th>
 													<th scope="col">Order Address</th>
 													<th scope="col">Status</th>
-													<th scope="col" style="width: 120px;">Action</th>
 												</tr>
 											</thead>
 											<tbody>
@@ -286,13 +285,14 @@
 																@case(5)
 																	Cancelled
 																	@break
+																@case(6)
+																	Failed
+																	@break
+																@case(7)
+																	Refund Request
+																	@break
 															@endswitch
 
-														</td>
-														<td>
-															<i class="fas fa-eye" title="View Order Details"></i>
-															<i class="fas fa-file-invoice ms-2" title="Invoice"></i>
-															<i class="fas fa-dollar-sign ms-2" title="Request Refund"></i>
 														</td>
 
 													</tr>
