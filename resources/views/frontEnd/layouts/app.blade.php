@@ -158,6 +158,58 @@
 				margin: 10px 0;
 			}
 
+			/* Cookie alert styles */
+			.cookie-alert {
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				background-color: var(--wings-black);
+				color: var(--wings-light);
+				padding: 10px 20px;
+				display: none; /* Initially hidden */
+				z-index: 9999;
+				font-size: 14px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+
+			.cookie-message {
+				flex-grow: 1;
+			}
+
+			.cookie-alert a {
+				color: var(--wings-light);
+				text-decoration: underline;
+			}
+
+			.cookie-buttons {
+				display: flex;
+				gap: 10px;
+			}
+
+			.cookie-btn {
+				background-color: var(--wings-alternative);
+				color: var(--wings-primary);
+				border: none;
+				padding: 8px 15px;
+				cursor: pointer;
+				font-size: 14px;
+			}
+
+			.cookie-btn:hover {
+				background-color: var(--wings-light);
+			}
+
+			#closeBtn {
+				background-color: var(--wings-off);
+			}
+
+			#closeBtn:hover {
+				background-color: var(--wings-light);
+			}
+
 		</style>
 	</head>
 	<body>
@@ -525,9 +577,43 @@
 				</div>
 			</div>
 		</footer>
-		
+
+		<!-- Cookie Alert -->
+		<div id="cookieAlert" class="cookie-alert">
+			<span class="cookie-message">
+				Cookies: This site uses cookies. Closing this message or “Allow” you acknowledge and agree to our 
+				<a href="{{ route('help.index') }}#terms-conditions" target="_blank">Privacy Policy</a> and 
+				<a href="{{ route('help.index') }}#terms-conditions" target="_blank">Terms & Conditions</a>.
+			</span>
+			<div class="cookie-buttons">
+				<button id="allowBtn" class="cookie-btn">Allow</button>
+				<button id="closeBtn" class="cookie-btn">X</button>
+			</div>
+		</div>
+
+
 
 		@include('frontEnd.layouts.vendor-scripts')
+		<script>
+			$(document).ready(function() {
+				// Check if the cookie alert has been accepted in localStorage
+				if (!localStorage.getItem('cookieAccepted')) {
+					$('#cookieAlert').fadeIn(); // Show the alert if not accepted
+				}
+
+				// Allow button action
+				$('#allowBtn').on('click', function() {
+					localStorage.setItem('cookieAccepted', 'true'); // Store that the user has accepted in localStorage
+					$('#cookieAlert').fadeOut(); // Hide the alert
+				});
+
+				// Close button action
+				$('#closeBtn').on('click', function() {
+					$('#cookieAlert').fadeOut(); // Hide the alert without accepting cookies
+				});
+			});
+
+		</script>
 		<script>
 			// Optional: This script is to ensure the badge is updated if necessary
 			// Function to update the cart count
