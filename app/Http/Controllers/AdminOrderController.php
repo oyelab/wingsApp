@@ -8,6 +8,7 @@ use App\Models\Delivery;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Size;
+use App\Services\SSLCommerzRefundService;
 
 
 
@@ -18,31 +19,19 @@ class AdminOrderController extends Controller
         $this->middleware('auth');
 		$this->middleware('role'); // Only allow role 1 users
     }
+
 	
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-		$orders = Order::with([
-			'transactions' => function ($query) {
-				$query->where('status', 'VALID');
-			},
-			'products',
-			'delivery'
-		])
-		->latest()
-		->get();
+		// Retrieve only orders where payment_status is 3 (pending refund) or 4 (refund completed)
+		$orders = Order::whereHas('transactions', function($query) {
+			$query->whereIn('payment_status', [0, 1]);
+		})->get();
 		
 		// return $orders;
-
-		// Iterate over each order to perform the calculations for each transaction
-		foreach ($orders as $order) {
-			foreach ($order->transactions as $transaction) {
-				// Calculate the unpaid amount and add it to each transaction instance
-				$transaction->unpaid = ($transaction->order_total + $transaction->shipping_charge) - $transaction->amount;
-			}
-		}
 
 		return view('backEnd.orders.index', [
 			'orders' => $orders,
@@ -138,25 +127,79 @@ class AdminOrderController extends Controller
      */
 	public function update(Request $request, $orderId)
 	{
-		dd($request);
-
-		// return $request;
-		// $productsData = $request->input('products');
-		// return $productsData;
-
-
-
-		// Find the order by ID
+		// Validate the incoming status
+		$request->validate([
+			'status' => 'required|integer',
+		]);
+	
+		// Fetch the order or fail with 404
 		$order = Order::findOrFail($orderId);
-
-		// return $order;
-
-		// Update order status
+	
+		// Update the order status (this happens irrespective of whether it's a refund or not)
 		$order->status = $request->status;
-		$order->save();
-
-		return response()->json(['success' => true, 'order' => $order]);
+	
+		// Handle refund initiation if the status is "Refunded" (e.g., status = 4)
+		if ($request->status == 4) {
+			$refundService = new SSLCommerzRefundService();
+			$transaction = $order->transactions()->where('status', 'VALID')->first();
+			$refundTransaction = $order->transactions()->where('payment_status', 3)->first();
+	
+			// Ensure transaction and refund details are available
+			if (!$transaction || empty($transaction->bank_tran_id) || !$refundTransaction || empty($refundTransaction->error)) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Transaction or refund details are missing or invalid.',
+				], 400);
+			}
+	
+			// Initiate refund
+			$refundResponse = $refundService->initiateRefund(
+				$transaction->bank_tran_id,
+				$transaction->amount,
+				$refundTransaction->error,
+				$order->ref // Optional parameter
+			);
+	
+			// Check refund response and handle accordingly
+			if ($refundResponse['status'] !== 'success') {
+				// If refund fails, set the order status to "Failed"
+				$order->status = 5; // Set status to "Failed"
+				$order->save(); // Save the updated order
+	
+				return response()->json([
+					'success' => false,
+					'message' => 'Refund initiation failed.',
+					'error' => $refundResponse['error'] ?? 'Unknown error occurred.',
+					'order' => $order,
+					'refund_response' => $refundResponse // Include the full refund response
+				], 400);
+			}
+	
+			// If refund is successful, update the refund transaction and set order status as refunded
+			$order->save(); // Save order with updated status (Refunded)
+	
+			// Update refund transaction's payment_status to 4 (Refunded)
+			if ($refundTransaction) {
+				$refundTransaction->payment_status = 4; // Mark as refunded
+				$refundTransaction->save(); // Save the updated refund transaction model
+			}
+		} else {
+			// If the status is not 4 (Refunded), just save the order status
+			$order->save();
+		}
+	
+		// Return success response with updated order details and refund response if applicable
+		return response()->json([
+			'success' => true,
+			'message' => 'Order status updated successfully.',
+			'order' => $order, // Include updated order
+			'refund_response' => isset($refundResponse) ? $refundResponse : null, // Include refund response only if refund was initiated
+		]);
 	}
+	
+
+
+
 
     /**
      * Remove the specified resource from storage.

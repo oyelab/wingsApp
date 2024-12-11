@@ -204,7 +204,7 @@
 					<h2>Summary</h2>
 					<div class="row mb-3">
 						<div class="item total-pricing">
-							<h3>Subtotal <span>(2 items)</span></h3>
+							<h3>Subtotal</h3>
 							<p id="subtotal">৳ {{ number_format($subtotal, 2) }}</p>
 						</div>
 						<div class="item total-pricing">

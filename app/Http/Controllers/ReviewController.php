@@ -55,7 +55,7 @@ class ReviewController extends Controller
 		$validated = $request->validate([
 			'content' => 'required|string|max:1000',
 			'rating' => 'required|integer|min:1|max:5', // Validates the rating value
-			'item' => 'required|exists:products,id', // Validate that the product ID exists
+			'item' => 'nullable|exists:products,id', // Validate that the product ID exists
 			'order_id' => 'nullable|exists:orders,id', // Validate the order ID if provided
 			'username' => auth()->check() ? 'nullable|string' : 'required|string',
 		]);
@@ -75,24 +75,25 @@ class ReviewController extends Controller
 		$review->save();
 
 	
-		// Associate the review with the product (directly from the hidden input)
-		$itemId = $validated['item']; // Get the product ID from the form
-		$review->products()->attach($itemId);
-	
 		// If an order ID is provided, handle order-product association
 		if (isset($validated['order_id']) && $validated['order_id']) {
 			// Get the order based on the order_id
 			$order = Order::findOrFail($validated['order_id']);
-	
+
 			// Get all the products associated with this order
 			$products = $order->products; // Using the 'products' relationship defined in the Order model
-	
+
 			// Create an array of product IDs to associate with the review
 			$productIds = $products->pluck('id')->toArray();
-	
+
 			// Use 'syncWithoutDetaching' to ensure the current product remains associated
 			$review->products()->syncWithoutDetaching($productIds);
+		} else {
+			// If no order ID, associate the review with the product from the form
+			$itemId = $validated['item']; // Get the product ID from the form
+			$review->products()->attach($itemId);
 		}
+
 	
 		// Redirect or return a response
 		return redirect()->back()->with('success', 'Your review has been submitted for approval!');

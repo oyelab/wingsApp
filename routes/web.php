@@ -109,6 +109,9 @@ Route::get('/order/{order:ref}/failed', [OrderController::class, 'orderFailed'])
 
 Route::get('/order/{order}/invoice', [OrderController::class, 'generateInvoice'])->name('order.invoice');
 
+Route::post('/backEnd/order/{order}/refund', [OrderController::class, 'refundStore'])->name('refund.store');
+Route::get('/backEnd/orders/refunds', [OrderController::class, 'refunds'])->name('orders.refunds');
+
 Route::get('/help', [PageController::class, 'help'])->name('help.index');
 // Route::get('help', [PageController::class, 'index'])->name('help.index');
 Route::get('/getInTouch', [PageController::class, 'getInTouch'])->name('getInTouch');
@@ -164,6 +167,7 @@ Route::resource('backEnd/showcases', ShowcaseController::class);
 
 
 Route::post('backEnd/orders/{productId}/{sizeId}/update', [AdminOrderController::class, 'updateOrderProduct'])->name('admin.order.update');
+
 Route::post('backEnd/orders/{productId}/{sizeId}', [AdminOrderController::class, 'deleteOrderProduct'])->name('admin.order.delete');
 
 

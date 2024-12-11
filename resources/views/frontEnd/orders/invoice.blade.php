@@ -93,7 +93,7 @@
 						<td>{{ $index + 1 }}</td>
 						<td>{{ $item['title'] }}</td>
 						<td class="text-center">{{ $item['quantity'] }}</td>
-						<td class="text-end">{{ $item['price'] }}/-</td>
+						<td class="text-end">{{ $item['sale'] }}/-</td>
 						<td class="text-end">{{ $item['fullPrice'] }}/-</td>
 					</tr>
 				@endforeach
@@ -106,8 +106,8 @@
 
 				<tr class="total-row">
 					<td colspan="3"></td>
-					<td class="text-end"><strong>Total</strong></td>
-					<td class="text-end">{{ $order->subtotal }}/-</td>
+					<td class="text-end"><strong>Order Total</strong></td>
+					<td class="text-end">{{ $order->order_total }}/-</td>
 				</tr>
 				<tr>
 					<td colspan="3"></td>
@@ -117,13 +117,13 @@
 				@if ($order->discount)
 					<tr>
 						<td colspan="3"></td>
-						<td class="text-end"><strong>Discount</strong></td>
-						<td class="text-end">{{ $order->discount }}/-</td>
+						<td class="text-end"><strong>Voucher Discount(-)</strong></td>
+						<td class="text-end">{{ $order->voucher }}/-</td>
 					</tr>
 				@endif
 				<tr>
 					<td colspan="3"></td>
-					<td class="text-end"><strong>Paid</strong></td>
+					<td class="text-end"><strong>Paid(-)</strong></td>
 					<td class="text-end">{{ $order->paid }}/-</td>
 				</tr>
 				<tr>

@@ -237,7 +237,7 @@ class PaymentController extends Controller
 			'recipient_city' => $validated['recipient_city'],
 			'recipient_zone' => $validated['recipient_zone'],
 			'recipient_area' => $validated['recipient_area'],
-			'order_status' => "Pending", // Initial status, set as needed (e.g., Pending)
+			'status' => "Pending", // Initial status, set as needed (e.g., Pending)
 		];
 
 		// return $delivery_data;

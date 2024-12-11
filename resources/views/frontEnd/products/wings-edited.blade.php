@@ -196,16 +196,20 @@
 			</h4>
 		</div>
 
-		<h2>
-			<span>{{ $product->title }}</span>
-		</h2>
-		<h6>
-			<strong>
-				★ {{ number_format($product->averageRating, 1) }} Rating ({{ $product->reviews->count() }} Reviews)
-			</strong>
-		</h6>
+		<div class="item-info mb-0">
+			<a href="#reviewAccordion" class="text-decoration-none">
+				<strong>
+					★ {{ number_format($product->averageRating, 1) }} 
+					({{ $product->reviews->count() }} {{ $product->reviews->count() === 1 ? 'Review' : 'Reviews' }})
+				</strong>
+			</a>
+			<h2>
+				<span>{{ $product->title }}</span>
+			</h2>
+		</div>
+
 		<div class="product-details-area">
-			<h2>Specifications</h2>
+			<h3 class="mb-2">Specifications</h3>
 			<div class="product-description">
 				<ul>
 					@foreach($product->specifications() as $spec)

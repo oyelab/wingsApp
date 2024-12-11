@@ -44,7 +44,7 @@
 									<th>Date</th>
 									<th>Customer</th>
 									<th>Product</th>
-									<th>Shipping (Pathao)</th>
+									<th>Shipping Status</th>
 									<th>Payments</th>
 									<th>Status</th>
 									<th>Action</th>
@@ -74,22 +74,32 @@
 										@endforeach
 										</ul>
 									</td>
-									<td>{{ $order->delivery ? $order->delivery->consignment_id : 'Not Shipped Yet' }}</td>
+									<td>
+										@if ($order->status == 0 || $order->status == 2)
+											<a href="{{ route('orders.edit', $order->id) }}" class="badge bg-dark">
+												<i class="bi bi-box-seam me-1"></i> Create Delivery
+											</a>
+										@else
+											{{ $order->delivery ? $order->delivery->status : '' }}
+										@endif
+									</td>
 									<td>
 										<ul class="list-unstyled mb-0">
 										@foreach ($order->transactions as $transaction)
-											<li> Status:
-											@switch($transaction->payment_status)
-												@case(0) Pending @break
-												@case(1) Completed @break
-												@default Unknown Status
-											@endswitch
-											</li>
-											<li>Total: {{ $transaction->order_total }}</li>
-											<li>Shipping: {{ $transaction->shipping_charge }}</li>
-											<li>Paid: {{ $transaction->amount }}</li>
-											<li>Unpaid: {{ $transaction->unpaid }}</li>
-										@endforeach
+												@if ($transaction->payment_status == 0 || $transaction->payment_status == 1)
+													<li>Status:
+														@switch($transaction->payment_status)
+															@case(0) Pending @break
+															@case(1) Completed @break
+															@default Unknown Status
+														@endswitch
+													</li>
+													<li>Total: {{ $transaction->order_total }}</li>
+													<li>Shipping: {{ $transaction->shipping_charge }}</li>
+													<li>Paid: {{ $transaction->amount }}</li>
+													<li>Unpaid: {{ $transaction->unpaid }}</li>
+												@endif
+											@endforeach
 										</ul>
 									</td>
 									<td id="order-status-{{ $order->id }}">
@@ -116,16 +126,18 @@
 											@case(6)
 												Failed
 												@break
+											@case(7)
+												Refund Requested
+												@break
 										@endswitch
 
 									</td>
 									<td>
-										<a href="javascript:void(0);" onclick="openOrderStatusModal({{ $order->id }})">
-											<i class="bi bi-eye-fill"></i>
+										<a href="javascript:void(0);" onclick="openOrderStatusModal({{ $order->id }})" class="badge bg-primary text-white">
+											<i class="bi bi-eye-fill me-1"></i> View Status
 										</a>
-										<a href="{{ route('orders.edit', $order->id) }}">
-											<i class="bi bi-box-seam"></i>
-										</a>
+
+
 									</td>
 								</tr>
 								@endforeach
@@ -141,31 +153,18 @@
 		<div class="modal fade" id="orderStatusModal" tabindex="-1" role="dialog" aria-labelledby="orderStatusModalLabel" aria-hidden="true">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
-					<!-- Modal Header -->
 					<div class="modal-header">
 						<h5 class="modal-title" id="orderStatusModalLabel">Update Order Status</h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
-					
-					<!-- Modal Body: Order Status Update Form -->
-					<form id="updateOrderStatusForm" method="POST"> 
+					<form id="updateOrderStatusForm" method="POST">
 						@csrf
 						@method('PATCH')
 						<div class="modal-body">
 							<p><strong>Order Ref:</strong> <span id="orderRef"></span></p>
 							<p><strong>Current Status:</strong> <span id="currentOrderStatus"></span></p>
-							
-							<hr>
-							
-							<!-- Update Order Status -->
 							<label for="status">Order Status</label>
-							<select name="status" id="orderStatus" class="form-control" required>
-								<option value="0">Pending</option>
-								<option value="1">Completed</option>
-								<option value="2">Processing</option>
-								<option value="3">Cancelled</option>
-								<option value="4">Refunded</option>
-							</select>
+							<select name="status" id="orderStatus" class="form-control" required></select>
 						</div>
 						<div class="modal-footer">
 							<button type="submit" class="btn btn-primary mt-3">Update Status</button>
@@ -174,6 +173,7 @@
 				</div>
 			</div>
 		</div>
+
 
 
     @endsection
@@ -187,48 +187,115 @@
 
 		<script>
 			function openOrderStatusModal(orderId) {
-				$.get(`orders/${orderId}`, function(response) {
+				// Use the correct route for fetching the order by orderId
+				$.get("{{ route('orders.show', ':orderId') }}".replace(':orderId', orderId), function(response) {
 					const order = response.order;
 					
-					// Display the order reference and current status
+					// Set order reference and current status
 					$('#orderRef').text(order.ref);
-					$('#currentOrderStatus').text(order.status); // Display the current status
-					$('#orderStatus').val(order.status); // Set the dropdown to the current status
-					$('#updateOrderStatusForm').attr('action', `orders/${orderId}`);
+					$('#currentOrderStatus').text(order.status);
 
+					// Populate the order status dropdown dynamically based on the current status
+					let statusOptions = '';
+					switch(order.status) {
+						case 0: // Pending
+							statusOptions = `
+								<option value="0">Pending</option>
+								<option value="2">Processing</option>
+								<option value="5">Cancelled</option>
+							`;
+							break;
+						case 1: // Completed
+							statusOptions = `
+								<option value="5">Cancelled</option>
+							`;
+							break;
+						case 2: // Processing
+							statusOptions = `
+								<option value="1">Completed</option>
+								<option value="3">Shipped</option>
+								<option value="5">Cancelled</option>
+							`;
+							break;
+						case 3: // Shipped
+							statusOptions = ''
+							break;
+						case 4: // Refunded
+							statusOptions = ''
+							break;
+						case 5: // Cancelled
+							statusOptions = ''
+							break;
+						case 6: // Failed
+							statusOptions = ''
+							break;
+						case 7: // Request Refund
+							statusOptions = `
+								<option value="4">Refunded</option>
+								<option value="5">Cancelled</option>
+							`;
+							break;
+						default:
+							statusOptions = ''; // Default case
+					}
+					
+					// Update the dropdown with the dynamically created options
+					$('#orderStatus').html(statusOptions);
+
+					// Set the current status value
+					$('#orderStatus').val(order.status);
+
+					// Update form action with the correct orderId for PATCH request
+					$('#updateOrderStatusForm').attr('action', `{{ route('orders.update', ':orderId') }}`.replace(':orderId', orderId));
+
+					// Show the modal
 					$('#orderStatusModal').modal('show');
 				}).fail(function(xhr) {
 					console.log('Error:', xhr.responseText);
 				});
 			}
 
+			// Handle form submission for updating the status
 			$('#updateOrderStatusForm').on('submit', function(event) {
-				event.preventDefault();
-				let formData = $(this).serialize();
-				console.log('Form Data:', formData); // Log the serialized data
+				event.preventDefault(); // Prevent default form submission
+				let formData = $(this).serialize(); // Serialize form data
 
 				$.ajax({
-					url: $(this).attr('action'),
-					type: 'PATCH',
-					data: formData,
+					url: $(this).attr('action'), // Use the form's action attribute as the URL
+					type: 'PATCH', // HTTP method
+					data: formData, // Serialized form data
 					headers: {
-						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // CSRF protection
+						'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Include CSRF token
 					},
 					success: function(response) {
+						console.log('Response:', response); // Debugging: Log the entire response
+
 						if (response.success) {
-							$('#orderStatusModal').modal('hide');
-							// Update the order status display on the page if needed
-							$(`#order-status-${response.order.id}`).text($('#orderStatus option:selected').text());
+							if (response.order && response.order.id) {
+								// Update the DOM with the new order status
+								$(`#order-status-${response.order.id}`).text($('#orderStatus option:selected').text());
+								$('#orderStatusModal').modal('hide');
+							} else {
+								console.error('Order ID is missing in the response.');
+								alert('Order ID is missing in the response. Please check the backend response.');
+							}
+						} else {
+							console.error('Update failed:', response.message);
+							alert('Failed to update the order status: ' + response.message);
 						}
 					},
 					error: function(xhr) {
-						console.log('Error:', xhr.responseText);
+						console.error('Error:', xhr.responseText);
+						alert('An error occurred while updating the order status. Please try again.');
 					}
 				});
 			});
 
 
+
 		</script>
+
+
 
 		<script>
 			$(document).ready(function() {
@@ -263,16 +330,9 @@
 			});
 		</script>
 
-        <!-- apexcharts -->
-        <script src="{{ asset('build/libs/apexcharts/apexcharts.min.js') }}"></script>
-
-        <!-- gridjs js -->
-
         <!-- datepicker js -->
         <script src="{{ asset('build/libs/flatpickr/flatpickr.min.js') }}"></script>
 
-	
-		<script src="{{ asset('build/js/pages/ecommerce-orders.init.js') }}"></script>
 
         <!-- App js -->
         <script src="{{ asset('build/js/app.js') }}"></script>

@@ -2580,6 +2580,12 @@ a {
     gap: 44px;
     align-items: center;
 }
+.item-info{
+	color: var(--wings-primary);
+}
+.item-info a {
+	color: var(--wings-off);
+}
 
 /*---------------------------------
 	 Responsive css start
