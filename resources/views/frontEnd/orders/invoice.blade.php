@@ -18,7 +18,7 @@
 			width: 210mm;
 			height: 297mm;
 			position: relative;
-			background: linear-gradient(to top, #dddddd, rgba(120, 190, 32, 0.5) 90%);
+			background: #fff;
 			margin: 0 auto !important;
 			font-family: 'Manrope', sans-serif; /* Apply Manrope font */
 		}
@@ -128,9 +128,16 @@
 				</tr>
 				<tr>
 					<td colspan="3">
-						<small><strong>Taka in Words:</strong>
-							{{ ucwords(\NumberFormatter::create('en', \NumberFormatter::SPELLOUT)->format($order->unpaid_amount ?? 0)) }}
-							Taka Only</small>
+						<small>
+							<strong>Taka in Words:
+								@if ($order->unpaid_amount !== null && $order->unpaid_amount > 0)
+									{{ ucwords(\NumberFormatter::create('en', \NumberFormatter::SPELLOUT)->format($order->unpaid_amount ?? 0)) }}
+									Taka Only
+								@else
+									<span>The order is fully paid</span>
+								@endif
+							</strong>
+						</small>
 					</td>
 					<td class="text-end"><strong>Due</strong></td>
 					<td class="text-end">{{ $order->unpaid_amount !== null ? $order->unpaid_amount . '/-' : 'N/A' }}
@@ -154,7 +161,7 @@
 				<ul class="d-flex list-unstyled">
 					@foreach ($filteredLinks as $link)
 						<li>
-							{{ $link['platform'] }}: 
+							{{ $link['platform'] }}/ 
 							<a href="{{ 'https://' . strtolower($link['platform']) . '.com/' . $link['username'] }}"
 								target="_blank"
 								class="d-inline-flex">

@@ -30,7 +30,11 @@ class UserController extends Controller
 		// Retrieve all orders for the authenticated user
 		$orders = $user->orders; // Assuming 'orders' is a relationship defined in the User model
 
-		// return $orders;
+		// Loop through the orders and calculate totals
+		foreach ($orders as $order) {
+			// Call the calculateTotals() method to populate order totals
+			$order->calculateTotals();
+		}
 	
 		return view('backEnd.user.orders', compact('orders'));
 	}
@@ -44,7 +48,12 @@ class UserController extends Controller
 		// return $reviews;
 		$user = Auth::user();
 		$orders = $user->orders()->whereIn('status', [2, 3])->get(); // Fetch all orders related to the authenticated user
-		// return $orders;
+		
+		// Loop through the orders and calculate totals
+		foreach ($orders as $order) {
+			// Call the calculateTotals() method to populate order totals
+			$order->calculateTotals();
+		}
 		
 		return view('backEnd.user.index', compact('user', 'orders', 'reviews'));
 	}

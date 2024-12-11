@@ -97,7 +97,7 @@
 													<li>Total: {{ $transaction->order_total }}</li>
 													<li>Shipping: {{ $transaction->shipping_charge }}</li>
 													<li>Paid: {{ $transaction->amount }}</li>
-													<li>Unpaid: {{ $transaction->unpaid }}</li>
+													<li>Unpaid: {{ $order->unpaid_amount }}</li>
 												@endif
 											@endforeach
 										</ul>

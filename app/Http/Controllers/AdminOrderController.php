@@ -30,6 +30,12 @@ class AdminOrderController extends Controller
 		$orders = Order::whereHas('transactions', function($query) {
 			$query->whereIn('payment_status', [0, 1]);
 		})->get();
+
+		// Loop through the orders and calculate totals
+		foreach ($orders as $order) {
+			// Call the calculateTotals() method to populate order totals
+			$order->calculateTotals();
+		}
 		
 		// return $orders;
 

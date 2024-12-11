@@ -86,7 +86,7 @@ class Order extends Model
 		$this->voucher = $validTransaction->voucher ?? 0;
 		$this->order_total = number_format($this->subtotal - $this->discount, 2, '.', '');
 		$this->paid = $validTransaction->amount ?? 0;
-		$this->unpaid_amount = number_format($this->order_total - $this->paid - $this->voucher, 2, '.', '');
+		$this->unpaid_amount = number_format($this->order_total + $this->shipping_charge - $this->paid - $this->voucher, 2, '.', '');
 
 		return $this;
 	}
