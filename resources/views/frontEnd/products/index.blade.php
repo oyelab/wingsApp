@@ -378,7 +378,7 @@
 
 													</div>
 													<h3>
-														{{ $review->user->name }}
+														{{ $review->user->name ?? $review->username }}
 													</h3>
 												</div>
 												<div class="review-details">

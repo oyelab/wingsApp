@@ -84,9 +84,9 @@ class Order extends Model
 		$this->shipping_charge = $validTransaction->shipping_charge ?? 0;
 		$this->discount = $validTransaction->order_discount ?? 0;
 		$this->voucher = $validTransaction->voucher ?? 0;
-		$this->order_total = number_format($this->subtotal - $this->discount - $this->voucher + $this->shipping_charge, 2, '.', '');
+		$this->order_total = number_format($this->subtotal - $this->discount, 2, '.', '');
 		$this->paid = $validTransaction->amount ?? 0;
-		$this->unpaid_amount = number_format($this->order_total - $this->paid, 2, '.', '');
+		$this->unpaid_amount = number_format($this->order_total + $this->shipping_charge - $this->paid - $this->voucher, 2, '.', '');
 
 		return $this;
 	}
@@ -98,15 +98,15 @@ class Order extends Model
 		return $this->products->map(function ($product) {
 			$imagePath = $product->image_paths[0];
 			$sizeName = $product->sizes->firstWhere('id', $product->pivot->size_id)->name ?? 'N/A';
-
+	
 			// Calculate sale price (if applicable)
 			$salePrice = $product->sale 
-			? $product->price * (1 - $product->sale / 100) 
-			: $product->price;
-		
-			// Calculate full price (price x quantity)
-			$fullPrice = $product->price * $product->pivot->quantity;
-			
+				? $product->price * (1 - $product->sale / 100) 
+				: $product->price;
+	
+			// Calculate full price (price x quantity) based on sale price if available
+			$fullPrice = ($salePrice) * $product->pivot->quantity;
+	
 			return [
 				'id' => $product->id,
 				'title' => $product->title,
@@ -120,6 +120,7 @@ class Order extends Model
 			];
 		});
 	}
+	
 
 
 	public function getTranDateAttribute()

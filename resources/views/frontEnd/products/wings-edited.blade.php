@@ -195,12 +195,21 @@
 				<span class="badge bg-success-subtle text-success mb-0">{{ $product->category_display }}</span>
 			</h4>
 		</div>
-		<div class="collection-product-rating d-flex align-items-center">
-			<h6><strong>★ {{ number_format($product->averageRating, 1) }} Rating ({{ $product->reviews->count() }} Reviews)</strong></h6>
+
+		<div class="item-info mb-0">
+			<a href="#reviewAccordion" class="text-decoration-none">
+				<strong>
+					★ {{ number_format($product->averageRating, 1) }} 
+					({{ $product->reviews->count() }} {{ $product->reviews->count() === 1 ? 'Review' : 'Reviews' }})
+				</strong>
+			</a>
+			<h2>
+				<span>{{ $product->title }}</span>
+			</h2>
 		</div>
-		<h2><span>{{ $product->title }}</span></h2>
+
 		<div class="product-details-area">
-			<h2>Specifications</h2>
+			<h3 class="mb-2">Specifications</h3>
 			<div class="product-description">
 				<ul>
 					@foreach($product->specifications() as $spec)
@@ -211,6 +220,19 @@
 		</div>
 		<div class="">
 			<img class="img-fluid" draggable='false' src="{{ $wingsPower->filePath }}" alt="{{ $wingsPower->title }}">
+		</div>
+		<div class="get-in-touch-btn text-center">
+			<p>If you want to get this design for your team</p>
+			<a 
+				href="https://wa.me/{{ config('app.whatsapp_number') }}?text={{ urlencode('Hello, I am interested in this product: ' . route('products.details', ['category' => $product->categories->first()->slug,
+							'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
+							'product' => $product->slug])) }}" 
+				target="_blank" 
+				rel="noopener noreferrer"
+				class="btn btn-success"
+				>
+				GET IN TOUCH
+			</a>
 		</div>
 		<div class="social-share-wrap">
 			<h3>Social Share:</h3>

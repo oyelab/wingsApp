@@ -19,6 +19,64 @@ use Mpdf\Mpdf;
 
 class OrderController extends Controller
 {
+	public function refundStore(Request $request)
+	{
+		// Validate the request
+		$request->validate([
+			'order_id' => 'required|exists:orders,id',
+			'content' => 'required|string|max:1000', // Reason for the refund
+		]);
+
+		// Retrieve the order by ID
+		$order = Order::with('transactions')->findOrFail($request->order_id);
+
+		// Check if any transaction has payment_status of 3 (pending refund) or 4 (refund completed)
+		$existingRefund = $order->transactions->whereIn('payment_status', [3, 4])->first();
+
+		// If a refund request is pending (payment_status = 3)
+		if ($existingRefund && $existingRefund->payment_status == 3) {
+			return redirect()->back()
+							->withErrors(['error' => 'Refund request is already pending for this order.'])
+							->withInput();
+		}
+
+		// If the refund has already been executed (payment_status = 4)
+		if ($existingRefund && $existingRefund->payment_status == 4) {
+			return redirect()->back()
+							->withErrors(['error' => 'Refund has already been executed for this order.'])
+							->withInput();
+		}
+
+		// Update the order status to "Refunded" (status = 2)
+		$order->status = 7;
+		$order->save();
+
+		// Create a new transaction with the 'error' field set to the refund reason
+		$order->transactions()->create([
+			'error' => $request->content,
+			'ref' => $order->ref,
+			'payment_status' => 3, // This could represent a pending refund status
+		]);
+
+		// Redirect or return a success response
+		return redirect()->back()->with('success', 'Refund request submitted successfully.');
+	}
+
+	public function refunds()
+	{
+		$orders = Order::whereHas('transactions', function ($query) {
+			$query->whereIn('payment_status', [3, 4]); // Filter transactions with payment_status 3 or 4
+		})
+		->get();	
+
+		// return $orders;
+	
+		// Pass the filtered orders to the view (assuming you're returning a view)
+		return view('backEnd.orders.index', compact('orders'));
+	}
+
+	
+	
 
 	public function generateInvoice(Order $order)
 	{	
@@ -41,35 +99,6 @@ class OrderController extends Controller
 		// Output the PDF
 		return $mpdf->Output($order->ref . '.pdf', 'D'); // 'I' displays in-browser, 'D' forces download
 	}
-	
-
-	public function invoice(Request $request)
-	{
-		// Validate request data
-		$request->validate([
-			'order_id' => 'required|exists:orders,id',
-		]);
-	
-		// Retrieve the order with transactions
-		$order = Order::with('transactions')->findOrFail($request->order_id);
-	
-		// Prepare data for the invoice
-		$invoiceData = [
-			'order' => $order,  // This contains the order details
-			'transactions' => $order->transactions,
-		];
-	
-		// Dump the order and invoiceData to check before returning
-		dd($order, $invoiceData);
-	
-		// Return the PDF and the order data as a JSON response
-		return response()->json([
-			'order' => $order,  // Sending the order data to JavaScript
-			'invoiceData' => $invoiceData,
-		]);
-	}
-	
-
 	
 	public function addToCart(Request $request)
 	{

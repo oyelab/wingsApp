@@ -43,7 +43,6 @@ class DeliveryController extends Controller
 			'recipient_zone' => $recipientZone,
 		]);
 
-		Log::debug('Shipping Calculation Response:', $response->json());
 	
 		return response()->json($response->json(), $response->status());
 	}

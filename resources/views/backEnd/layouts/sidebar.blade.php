@@ -71,13 +71,16 @@
 					</ul>
 				</li>
 
-
 				<li>
-                    <a href="{{ route('orders.index') }}">
-                        <i class="bx bx-box icon nav-icon"></i>
-                        <span class="menu-item" data-key="t-orders">Orders</span>
-                    </a>
-                </li>
+					<a href="javascript: void(0);" class="has-arrow">
+						<i class="bx bx-box icon nav-icon"></i>
+						<span class="menu-item" data-key="t-orders">Orders</span>
+					</a>
+					<ul class="sub-menu" aria-expanded="true">
+						<li><a href="{{ route('orders.index') }}" data-key="t-orders">Regular</a></li>
+						<li><a href="{{ route('orders.refunds') }}" data-key="t-refunds">Refunds</a></li>
+					</ul>
+				</li>
 				<li>
 					<a href="{{ route('reviews.index') }}">
 						<i class="bx bx-star icon nav-icon"></i>

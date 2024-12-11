@@ -16,7 +16,7 @@ return new class extends Migration
 			$table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->string('consignment_id');
             $table->string('merchant_order_id');
-            $table->string('order_status')->default('Pending');
+            $table->string('status')->default('Pending');
             $table->decimal('delivery_fee', 8, 2);
             $table->timestamps();
         });
