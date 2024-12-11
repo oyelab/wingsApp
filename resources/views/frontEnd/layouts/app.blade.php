@@ -579,41 +579,21 @@
 		</footer>
 
 		<!-- Cookie Alert -->
-		<div id="cookieAlert" class="cookie-alert">
+		<div id="cookieAlert" class="cookie-alert" style="display: none;">
 			<span class="cookie-message">
-				Cookies: This site uses cookies. Closing this message or “Allow” you acknowledge and agree to our 
-				<a href="{{ route('help.index') }}#terms-conditions" target="_blank">Privacy Policy</a> and 
+			We use cookies to enhance your browsing experience. By clicking "Allow," you agree to our
+				<a href="{{ route('help.index') }}#privacy-policy" target="_blank">Privacy Policy</a> and 
 				<a href="{{ route('help.index') }}#terms-conditions" target="_blank">Terms & Conditions</a>.
 			</span>
 			<div class="cookie-buttons">
-				<button id="allowBtn" class="cookie-btn">Allow</button>
-				<button id="closeBtn" class="cookie-btn">X</button>
+				<button id="allowBtn" class="rounded cookie-btn">Allow</button>
+				<button id="closeBtn" class="rounded cookie-btn">X</button>
 			</div>
 		</div>
 
 
 
 		@include('frontEnd.layouts.vendor-scripts')
-		<script>
-			$(document).ready(function() {
-				// Check if the cookie alert has been accepted in localStorage
-				if (!localStorage.getItem('cookieAccepted')) {
-					$('#cookieAlert').fadeIn(); // Show the alert if not accepted
-				}
-
-				// Allow button action
-				$('#allowBtn').on('click', function() {
-					localStorage.setItem('cookieAccepted', 'true'); // Store that the user has accepted in localStorage
-					$('#cookieAlert').fadeOut(); // Hide the alert
-				});
-
-				// Close button action
-				$('#closeBtn').on('click', function() {
-					$('#cookieAlert').fadeOut(); // Hide the alert without accepting cookies
-				});
-			});
-
-		</script>
 		<script>
 			// Optional: This script is to ensure the badge is updated if necessary
 			// Function to update the cart count
