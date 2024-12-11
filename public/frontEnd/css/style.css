@@ -1040,8 +1040,8 @@ a {
     position: fixed;
     bottom: 60px;
     right: 60px;
-    background-color: #25D366;
-    color: #fff;
+    background-color: var(--wings-black);
+    color: var(--wings-light);
     border-radius: 50%;
     width: 60px;
     height: 60px;
@@ -1060,7 +1060,7 @@ a {
 }
 
 .whatsapp-button i {
-    font-size: 35px;
+    font-size: 30px;
 }
 
 @keyframes bounce {
@@ -1071,7 +1071,57 @@ a {
         transform: translateY(-10px);
     }
 }
+/* Cookie alert styles */
+.cookie-alert {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background-color: var(--wings-black);
+	color: var(--wings-light);
+	padding: 10px 20px;
+	display: none; /* Initially hidden */
+	z-index: 9999;
+	font-size: 14px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
 
+.cookie-message {
+	flex-grow: 1;
+}
+
+.cookie-alert a {
+	color: var(--wings-light);
+	text-decoration: underline;
+}
+
+.cookie-buttons {
+	display: flex;
+	gap: 10px;
+}
+
+.cookie-btn {
+	background-color: var(--wings-alternative);
+	color: var(--wings-primary);
+	border: none;
+	padding: 8px 15px;
+	cursor: pointer;
+	font-size: 14px;
+}
+
+.cookie-btn:hover {
+	background-color: var(--wings-light);
+}
+
+#closeBtn {
+	background-color: var(--wings-off);
+}
+
+#closeBtn:hover {
+	background-color: var(--wings-light);
+}
 /* ! Product Details Page */
 .product-top-block-details h4 {
     color: var(--wings-alternative);
