@@ -158,58 +158,6 @@
 				margin: 10px 0;
 			}
 
-			/* Cookie alert styles */
-			.cookie-alert {
-				position: fixed;
-				bottom: 0;
-				left: 0;
-				width: 100%;
-				background-color: var(--wings-black);
-				color: var(--wings-light);
-				padding: 10px 20px;
-				display: none; /* Initially hidden */
-				z-index: 9999;
-				font-size: 14px;
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-			}
-
-			.cookie-message {
-				flex-grow: 1;
-			}
-
-			.cookie-alert a {
-				color: var(--wings-light);
-				text-decoration: underline;
-			}
-
-			.cookie-buttons {
-				display: flex;
-				gap: 10px;
-			}
-
-			.cookie-btn {
-				background-color: var(--wings-alternative);
-				color: var(--wings-primary);
-				border: none;
-				padding: 8px 15px;
-				cursor: pointer;
-				font-size: 14px;
-			}
-
-			.cookie-btn:hover {
-				background-color: var(--wings-light);
-			}
-
-			#closeBtn {
-				background-color: var(--wings-off);
-			}
-
-			#closeBtn:hover {
-				background-color: var(--wings-light);
-			}
-
 		</style>
 	</head>
 	<body>
@@ -580,12 +528,12 @@
 
 		<!-- WhatsApp Button -->
 		<a href="https://wa.me/{{ config('app.whatsapp_number') }}" target="_blank" id="whatsappButton" class="whatsapp-button">
-			<i class="fa fa-whatsapp"></i>
+			<i class="bi bi-whatsapp"></i>
 		</a>
 		
 		<!-- Cookie Alert -->
 		<div id="cookieAlert" class="cookie-alert" style="display: none;">
-			<span class="cookie-message">
+			<span class="cookie-message me-2">
 			We use cookies to enhance your browsing experience. By clicking "Allow," you agree to our
 				<a href="{{ route('help.index') }}#privacy-policy" target="_blank">Privacy Policy</a> and 
 				<a href="{{ route('help.index') }}#terms-conditions" target="_blank">Terms & Conditions</a>.
