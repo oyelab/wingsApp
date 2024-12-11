@@ -350,4 +350,23 @@
             swiper: productImage,
         },
     });
+
+	$(document).ready(function() {
+		// Check if cookie acceptance is already stored in localStorage
+		if (!localStorage.getItem('cookieAccepted')) {
+			$('#cookieAlert').fadeIn(); // Show the alert if not accepted
+		}
+
+		// Allow button action
+		$('#allowBtn').on('click', function() {
+			localStorage.setItem('cookieAccepted', 'true'); // Store acceptance in localStorage
+			$('#cookieAlert').fadeOut(); // Hide the alert
+		});
+
+		// Close button action
+		$('#closeBtn').on('click', function() {
+			$('#cookieAlert').fadeOut(); // Hide the alert without storing acceptance
+		});
+	});
+	
 })(jQuery);

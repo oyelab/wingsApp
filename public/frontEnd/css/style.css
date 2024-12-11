@@ -1035,6 +1035,43 @@ a {
 .gap-style {
     gap: 30px;
 }
+/* WhatsApp Button Styles */
+.whatsapp-button {
+    position: fixed;
+    bottom: 60px;
+    right: 60px;
+    background-color: #25D366;
+    color: #fff;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    animation: bounce 2s infinite;
+    text-decoration: none;
+}
+
+.whatsapp-button:hover {
+    background-color: #1DA851;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.whatsapp-button i {
+    font-size: 35px;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
 /* ! Product Details Page */
 .product-top-block-details h4 {
     color: var(--wings-alternative);
