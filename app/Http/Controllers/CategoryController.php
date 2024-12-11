@@ -114,12 +114,16 @@ class CategoryController extends Controller
 		$productCount = $productsQuery->count(); // Total product count after filters
 
 		// Paginate the products, let's say 6 products per page
-		$products = $productsQuery->paginate(6)->appends([
+		$products = $productsQuery
+		->orderBy('created_at', 'desc') // Ensure the latest products are displayed first
+		->paginate(6) // Paginate the results with 6 products per page
+		->appends([
 			'category' => $mainCategoryId,
 			'subCategory' => $subCategoryId,
 			'sort' => $sortOption,
 			'query' => $searchTerm
 		]);
+	
 
 		// Fetch all categories excluding a specific category ID if needed (e.g., 1)
 		$categories = Category::with(['parents', 'children'])
@@ -195,12 +199,16 @@ class CategoryController extends Controller
 		$productCount = $productsQuery->count(); // Total product count after filters
 
 		// Paginate the products, let's say 6 products per page
-		$products = $productsQuery->paginate(6)->appends([
+		$products = $productsQuery
+		->orderBy('created_at', 'desc') // Ensure the latest products are displayed first
+		->paginate(6) // Paginate the results with 6 products per page
+		->appends([
 			'category' => $mainCategoryId,
 			'subCategory' => $subCategoryId,
 			'sort' => $sortOption,
 			'query' => $searchTerm
 		]);
+	
 
 		// return $products;
 
