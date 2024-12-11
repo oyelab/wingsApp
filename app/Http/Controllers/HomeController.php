@@ -34,10 +34,11 @@ class HomeController extends Controller
 
 		$wingsEdited = Category::with(['products' => function ($query) {
 			$query->where('status', 1) // Only include active products
+				  ->orderBy('created_at', 'desc') // Order by created_at descending
 				  ->take(4); // Limit to 4 products
 		}])
 		->where('slug', 'wings-edited')
-		->first();
+		->first();		
 
 		$behindWings = Page::where('type', 3)->get();
 
