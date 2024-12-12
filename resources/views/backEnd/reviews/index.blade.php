@@ -59,11 +59,17 @@
                     
                     <td>
                         <div class="d-flex gap-2">
-							<button id="approveRejectBtn-{{ $review->id }}" class="btn btn-sm {{ $review->status == 0 ? 'btn-success' : 'btn-danger' }}" onclick="updateReviewStatus({{ $review->id }}, {{ $review->status == 0 ? 1 : 0 }})">
+							<button id="approveRejectBtn-{{ $review->id }}" class="btn btn-sm {{ $review->status == 0 ? 'btn-dark' : 'btn-warning' }}" onclick="updateReviewStatus({{ $review->id }}, {{ $review->status == 0 ? 1 : 0 }})">
 								{{ $review->status == 0 ? 'Approve' : 'Reject' }}
 							</button>
 
                             <button class="btn btn-sm btn-primary" onclick="loadEditModal('{{ route('reviews.edit', $review->id) }}')">Edit</button>
+
+                            <form action="{{ route('reviews.destroy', $review) }}" method="POST">
+								@csrf
+								@method('DELETE')
+								<button type="submit" class="btn btn-sm btn-danger">Delete</button>
+							</form>
                         </div>
                     </td>
                 </tr>
