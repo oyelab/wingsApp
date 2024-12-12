@@ -79,9 +79,11 @@ class SectionController extends Controller
 		// Define an array of available sections
 		$sections = Section::all();
 		$pagetitle = 'Sections';
-		$section = 'Sections';
+		
+		$section = null;
+		$collection = null;
 	
-		return view('frontEnd.sections.index', compact('sections', 'pagetitle', 'section'));
+		return view('frontEnd.sections.index', compact('sections', 'pagetitle', 'section', 'collection'));
 	}
 
 	public function shopPage($section, Category $category)
