@@ -7,8 +7,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Section;
-use Intervention\Image\Facades\Image;
 use App\Services\FileHandlerService;
 
 
@@ -116,7 +114,7 @@ class CategoryController extends Controller
 		// Paginate the products, let's say 6 products per page
 		$products = $productsQuery
 		->orderBy('created_at', 'desc') // Ensure the latest products are displayed first
-		->paginate(6) // Paginate the results with 6 products per page
+		->paginate(9) // Paginate the results with 6 products per page
 		->appends([
 			'category' => $mainCategoryId,
 			'subCategory' => $subCategoryId,
@@ -201,7 +199,7 @@ class CategoryController extends Controller
 		// Paginate the products, let's say 6 products per page
 		$products = $productsQuery
 		->orderBy('created_at', 'desc') // Ensure the latest products are displayed first
-		->paginate(6) // Paginate the results with 6 products per page
+		->paginate(9) // Paginate the results with 6 products per page
 		->appends([
 			'category' => $mainCategoryId,
 			'subCategory' => $subCategoryId,

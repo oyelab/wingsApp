@@ -23,7 +23,7 @@
                           <p class="font-size-16 mx-auto text-muted w-50 mt-4">It will be as simple as Occidental in fact, it will Occidental to an English person</p>
                        </div>
                         <div class="mt-4 text-center">
-                            <a class="btn btn-primary" href="index">Back to Dashboard</a>
+                            <a class="btn btn-primary" href="{{ route('index') }}">Back to Wings Home</a>
                         </div>
                     </div>
                 </div>

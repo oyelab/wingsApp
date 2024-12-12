@@ -53,8 +53,6 @@ Auth::routes();
 
 Route::get('/', [HomeController::class, 'index'])->name('index');
 
-
-
 Route::get('/sections', [SectionController::class, 'sections'])->name('sections');
 Route::get('/sections/{section}', [SectionController::class, 'shopPage'])->name('shop.page');
 Route::get('/collections', [CategoryController::class, 'frontShow'])->name('collections');
@@ -102,7 +100,7 @@ Route::post('/checkout', [PaymentController::class, 'processCheckout'])->name('c
 Route::post('/payment/success', [PaymentController::class, 'paymentSuccess'])->name('payment.success'); // Added POST support
 Route::post('/payment/fail', [PaymentController::class, 'paymentFail'])->name('payment.fail');
 Route::post('/payment/cancel', [PaymentController::class, 'paymentCancel'])->name('payment.cancel');
-Route::post('/payment/ipn', [PaymentController::class, 'paymentIpn'])->name('payment.ipn');  // For IPN (Instant Payment Notification)
+Route::post('/payment/ipn', [PaymentController::class, 'ipn'])->name('payment.ipn');  // For IPN (Instant Payment Notification)
 
 Route::get('/order/{order:ref}/success', [OrderController::class, 'orderPlaced'])->name('order.placed');
 Route::get('/order/{order:ref}/failed', [OrderController::class, 'orderFailed'])->name('order.failed');
