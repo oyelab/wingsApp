@@ -19,10 +19,6 @@ yarn-error.log
 /.vscode
 /wings
 /resources/views/test
-.DS_Store
-/public/.DS_Store
 /storage/*
 /storage/app/
 /storage/app/public/
-storage/app/public/.DS_Store
-storage/app/public/showcases/.DS_Store
