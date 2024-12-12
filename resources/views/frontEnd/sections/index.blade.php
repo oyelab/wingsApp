@@ -10,9 +10,10 @@
 				<div class="row">
 					<div class="col-12">
 						<div class="breadcrumb-content">
-							<x-breadcrub 
-								:pagetitle="$pagetitle" 
-
+							<x-breadcrub
+								:section="$section"
+								:collection="$collection"
+								:pagetitle="$pagetitle"
 							/>
 						</div>
 					</div>
