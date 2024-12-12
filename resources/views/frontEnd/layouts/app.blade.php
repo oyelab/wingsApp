@@ -41,6 +41,15 @@
 		{{-- Other Static Meta Tags --}}
 		<meta property="fb:app_id" content="1081491186574205">
 		<meta name="theme-color" content="#000000">
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZSCBQ6N4C0"></script>
+		<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-ZSCBQ6N4C0');
+		</script>
 		
 		<link rel="icon" href="{{ $siteSettings->favicon ?? asset('favicon.ico') }}" type="image/x-icon">
 
@@ -728,15 +737,6 @@
 				});
 			});
 
-		</script>
-		<!-- Google tag (gtag.js) -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZSCBQ6N4C0"></script>
-		<script>
-		window.dataLayer = window.dataLayer || [];
-		function gtag(){dataLayer.push(arguments);}
-		gtag('js', new Date());
-
-		gtag('config', 'G-ZSCBQ6N4C0');
 		</script>
 		<script>
 			// Save the current scroll position before form submission
