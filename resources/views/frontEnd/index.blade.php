@@ -658,11 +658,8 @@
 				@foreach ($siteReviews as $review)
 				<div class="swiper-slide">
 					<div class="customer-stories-content">
-						<h3>Excellent Product</h3>
 						<p>
-							“Absolutely love the quality and design of
-							Wings products! The attention to detail is
-							impressive. Can’t wait to shop more!”
+							{{ $review->content }}
 						</p>
 						<div class="author-part">
 							<h4>{{ '@' . str_replace(' ', '', strtolower($review->user->name ?? $review->username )) }}</h4>
