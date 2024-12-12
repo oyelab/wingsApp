@@ -576,49 +576,53 @@ class PaymentController extends Controller
 		return redirect()->route('checkout.process')->with('message', $message);
 	}
 
-    public function ipn(Request $request)
-    {
-        #Received all the payement information from the gateway
-        if ($request->input('tran_id')) #Check transation id is posted or not.
-        {
+	public function ipn(Request $request)
+	{
+		Log::info('IPN Request: ', $request->all());
 
-            $tran_id = $request->input('tran_id');
-
-            #Check order status in order tabel against the transaction id or order id.
-            $order_details = DB::table('orders')
-                ->where('transaction_id', $tran_id)
-                ->select('transaction_id', 'status', 'currency', 'amount')->first();
-
-            if ($order_details->status == 'Pending') {
-                $sslc = new SslCommerzNotification();
-                $validation = $sslc->orderValidate($request->all(), $tran_id, $order_details->amount, $order_details->currency);
-                if ($validation == TRUE) {
-                    /*
-                    That means IPN worked. Here you need to update order status
-                    in order table as Processing or Complete.
-                    Here you can also sent sms or email for successful transaction to customer
-                    */
-                    $update_product = DB::table('orders')
-                        ->where('transaction_id', $tran_id)
-                        ->update(['status' => 'Processing']);
-
-                    echo "Transaction is successfully Completed";
-                }
-            } else if ($order_details->status == 'Processing' || $order_details->status == 'Complete') {
-
-                #That means Order status already updated. No need to udate database.
-
-                echo "Transaction is already successfully Completed";
-            } else {
-                #That means something wrong happened. You can redirect customer to your product page.
-
-                echo "Invalid Transaction";
-            }
-        } else {
-            echo "Invalid Data";
-        }
-    }
-
+		if ($request->input('tran_id')) {
+			$tran_id = $request->input('tran_id');
+	
+			// Retrieve the order based on the transaction ID
+			$order_details = Order::with('transactions')
+				->where('ref', $tran_id)
+				->select('ref', 'status', 'currency', 'amount')
+				->first();
+	
+			if (!$order_details) {
+				return response()->json(['message' => 'Order not found'], 404);
+			}
+	
+			if ($order_details->status == 0) { // Pending status
+				$sslc = new SslCommerzNotification();
+	
+				// Validate the transaction
+				$validation = $sslc->orderValidate(
+					$request->all(),
+					$tran_id,
+					$order_details->amount,
+					$order_details->currency
+				);
+	
+				if ($validation) {
+					// Update order status to 'Processing' or 'Completed'
+					$order_details->update(['status' => 2]); // 2 = 'Processing'
+	
+					// Log the transaction or send a confirmation email
+					return response()->json(['message' => 'Transaction is successfully completed']);
+				} else {
+					return response()->json(['message' => 'Transaction validation failed'], 400);
+				}
+			} elseif (in_array($order_details->status, [1, 2])) { // Already completed/processing
+				return response()->json(['message' => 'Transaction already processed']);
+			} else {
+				return response()->json(['message' => 'Invalid transaction status'], 400);
+			}
+		}
+	
+		return response()->json(['message' => 'Invalid data'], 400);
+	}
+	
 	
 }
 
