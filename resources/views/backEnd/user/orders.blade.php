@@ -216,20 +216,18 @@
 			</div>
 		</div>
 
-		<div class="modal fade" id="orderRefundModal" tabindex="-1" role="dialog" aria-labelledby="orderRefundModalLabel" aria-hidden="true">
-			<div class="modal-dialog" role="document">
+		<!-- Refund Modal -->
+		<div class="modal fade" id="orderRefundModal" tabindex="-1" aria-labelledby="orderRefundModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
 				<div class="modal-content">
-					<!-- Modal Header -->
 					<div class="modal-header">
-						<h5 class="modal-title" id="orderRefundModalLabel">Submit Your Refund Request!</h5>
+						<h5 class="modal-title" id="orderRefundModalLabel">Request Refund</h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
-
-					<!-- Modal Body -->
 					<div class="modal-body">
-						<form id="refundForm" action="{{ route('refund.store', $order->id ) }}" method="POST">
+						<form id="refundForm" method="POST">
 							@csrf
-							<input type="hidden" name="order_id" id="refundOrderId" value="{{ old('order_id') }}">
+							<input type="hidden" name="order_id" id="refundOrderId"> <!-- Hidden input for order ID -->
 
 							<!-- Validation Errors -->
 							@if ($errors->any())
@@ -243,13 +241,16 @@
 							<textarea rows="3" class="form-control border-0 resize-none" placeholder="Describe your refund reason..." name="content">{{ old('content') }}</textarea>
 
 							<div class="text-end mt-3">
-								<button type="submit" class="btn btn-success w-100">Submit Refund <i class="bx bx-send ms-2 align-middle"></i></button>
+								<button type="submit" class="btn btn-success w-100">
+									Submit Refund <i class="bx bx-send ms-2 align-middle"></i>
+								</button>
 							</div>
 						</form>
 					</div>
 				</div>
 			</div>
 		</div>
+
 
     @endsection
     @section('scripts')
@@ -343,9 +344,13 @@
 					const refundForm = document.getElementById("refundForm");
 					const refundOrderIdInput = document.getElementById("refundOrderId");
 
-					refundOrderIdInput.value = orderId; // Set order ID for refund
-					refundForm.action = `/backEnd/order/${orderId}/refund`; // Update action dynamically
+					// Set order ID in the hidden input field
+					refundOrderIdInput.value = orderId;
 
+					// Update the form's action dynamically
+					refundForm.action = `/backEnd/order/${orderId}/refund`;
+
+					// Open the modal
 					const refundModal = new bootstrap.Modal(document.getElementById("orderRefundModal"));
 					refundModal.show();
 				}
