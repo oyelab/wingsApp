@@ -423,7 +423,7 @@
 											src="{{ $siteSettings->getImagePath('logo_v2') }}"
 											draggable="false"
 											alt="{{ $siteSettings->title }} Logo"
-											height="50"
+											height="75"
 										/>
 									</a>
 								</div>
