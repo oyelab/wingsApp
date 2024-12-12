@@ -22,7 +22,7 @@ yarn-error.log
 .DS_Store
 /public/.DS_Store
 /storage/*
-!/storage/app/
-!/storage/app/public/
+/storage/app/
+/storage/app/public/
 storage/app/public/.DS_Store
 storage/app/public/showcases/.DS_Store
