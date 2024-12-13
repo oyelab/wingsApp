@@ -2565,24 +2565,55 @@ a {
 .customer-stories {
     padding-bottom: 50px;
 }
+
 .customer-stories-content {
     padding: 30px 20px;
     border: 2px solid var(--wings-secondary);
     border-radius: 30px;
+    height: 230px; /* Adjust the height based on your desired fixed size */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensures content is spaced evenly within the box */
+    overflow: hidden; /* Clips overflowing content */
 }
+
 .customer-stories-content h3 {
     font-size: 18px;
     font-weight: 600;
     color: var(--wings-secondary);
     margin-bottom: 8px;
 }
+
 .customer-stories-content p {
     font-size: 18px;
     font-weight: 400;
     color: var(--wings-secondary);
+    overflow: hidden; /* Ensures long reviews don't overflow */
+    text-overflow: ellipsis; /* Adds an ellipsis when the text overflows */
+    display: -webkit-box;
+    -webkit-line-clamp: 5; /* Limits the number of lines before text is clipped (adjust as needed) */
+    -webkit-box-orient: vertical; /* Ensures that the content is treated as a block */
+    white-space: normal; /* Allow text to wrap within the container */
 }
 .author-part {
-    margin-top: 50px;
+    margin-top: auto; /* Pushes the author info to the bottom */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.author-part h4 {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--wings-secondary);
+}
+
+.author-part div i {
+    font-size: 18px;
+    color: var(--wings-secondary);
+}
+
+.author-part {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -3008,16 +3039,12 @@ a {
     .product-content {
         flex-direction: column;
     }
-    .author-part {
-        margin-top: 20px;
-    }
     .customer-stories-content {
         max-width: 300px;
         width: 100%;
         margin: 0 auto;
     }
     .author-part {
-        margin-top: 20px;
         flex-direction: column;
         align-items: start;
     }
