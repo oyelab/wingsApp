@@ -2570,7 +2570,7 @@ a {
     padding: 30px 20px;
     border: 2px solid var(--wings-secondary);
     border-radius: 30px;
-    height: 230px; /* Adjust the height based on your desired fixed size */
+    height: 180px; /* Adjust the height based on your desired fixed size */
     display: flex;
     flex-direction: column;
     justify-content: space-between; /* Ensures content is spaced evenly within the box */
