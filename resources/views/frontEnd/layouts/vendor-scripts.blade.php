@@ -7,5 +7,4 @@
 <script src="{{ asset('frontEnd/js/swiper-bundle.min.js') }}"></script>
 <script src="{{ asset('frontEnd/js/main.js') }}"></script>
 
-
 @yield('scripts')

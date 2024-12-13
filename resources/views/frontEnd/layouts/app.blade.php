@@ -53,121 +53,8 @@
 		
 		<link rel="icon" href="{{ $siteSettings->favicon ?? asset('favicon.ico') }}" type="image/x-icon">
 
+		
 		@include('frontEnd.layouts.head-css')
-		<style>
-			#searchForm {
-				transition: all 0.3s ease;
-			}
-
-			#searchForm.show {
-				display: block; /* or use a class like "d-block" */
-			}
-
-			#searchInput {
-				padding: 5px 10px;
-			}
-			/* Dropdown Container */
-			.custom-dropdown {
-				position: relative;
-			}
-
-			/* User Icon (Avatar or Placeholder) */
-			.usernav-link {
-				padding: 0;
-				border: none;
-				background: none;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				width: 50px; /* Adjust for desired size */
-				height: 50px;
-				border-radius: 50%;
-				overflow: hidden;
-				transition: transform 0.2s ease;
-			}
-
-			.usernav-link:hover {
-				transform: scale(1.1);
-			}
-
-			/* User Avatar */
-			.user-avatar {
-				width: 35px; /* Smaller size */
-				height: 35px; /* Make it circular */
-				border-radius: 50%; /* Round the edges */
-				border: 2px solid var(--wings-off); /* Pretty border with theme color */
-				object-fit: cover; /* Make sure the image fits well */
-			}
-
-			.user-placeholder {
-				width: 35px;
-				height: 35px;
-				border-radius: 50%;
-				background-color: var(--wings-primary); /* Use theme color for placeholder background */
-				color: white;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				font-weight: bold;
-				font-size: 16px; /* Adjust the font size as needed */
-			}
-
-
-			/* Dropdown Menu */
-			.dropdown-menu-custom {
-				display: none;
-				position: absolute;
-				top: 120%; /* Adjusts vertical spacing */
-				right: -10%; /* Moves dropdown slightly to the right */
-				background-color: var(--wings-primary);
-				border-radius: 8px;
-				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-				z-index: 1000;
-				width: 250px;
-				overflow: hidden;
-				opacity: 0;
-				transform: translateY(10px);
-				transition: opacity 0.3s ease, transform 0.3s ease;
-			}
-
-			/* Show Dropdown Menu (when active) */
-			.custom-dropdown.active .dropdown-menu-custom {
-				display: block;
-				opacity: 1;
-				transform: translateY(0);
-			}
-
-			/* Dropdown Item */
-			.dropdown-item-custom {
-				display: flex;
-				align-items: center;
-				gap: 8px;
-				padding: 12px 15px;
-				color: var(--wings-white);
-				text-decoration: none;
-				font-size: 1rem;
-				transition: background-color 0.3s ease, color 0.3s ease;
-			}
-
-			.dropdown-item-custom i {
-				font-size: 1.2rem;
-				color: var(--wings-alternative);
-			}
-
-			.dropdown-item-custom:hover {
-				background-color: var(--wings-alternative);
-				color: var(--wings-white);
-			}
-
-			/* Divider */
-			.dropdown-divider-custom {
-				border: 0;
-				height: 1px;
-				background-color: var(--wings-light);
-				margin: 10px 0;
-			}
-
-		</style>
 	</head>
 	<body>
 		<!-- Header -->
@@ -372,29 +259,6 @@
 				</div>
 			</div>
 		</div>
-		<div class="toast-container">
-			<div
-				class="toast position-fixed bottom-0 mb-3 bg-dark text-white"
-				id="wishlist-toast"
-				role="alert"
-				aria-live="assertive"
-				aria-atomic="true"
-				data-bs-autohide="true"
-				data-bs-delay="3000"
-			>
-				<div class="toast-header bg-dark text-white">
-					<strong class="me-auto toast-body"></strong>
-					<button
-						type="button"
-						class="btn-close btn-close-white me-auto "
-						data-bs-dismiss="toast"
-						aria-label="Close"
-					></button>
-				</div>
-			</div>
-		</div>
-
-
 
 		<!-- Footer -->
 		<footer class="footer-area">
@@ -534,25 +398,59 @@
 				</div>
 			</div>
 		</footer>
-
-		<!-- WhatsApp Button -->
-		<a href="https://wa.me/{{ config('app.whatsapp_number') }}" target="_blank" id="whatsappButton" class="whatsapp-button">
-			<i class="bi bi-whatsapp"></i>
-		</a>
 		
-		<!-- Cookie Alert -->
-		<div id="cookieAlert" class="cookie-alert" style="display: none;">
-			<span class="cookie-message me-2">
-			We use cookies to enhance your browsing experience. By clicking "Allow," you agree to our
-				<a href="{{ route('help.index') }}#privacy-policy" target="_blank">Privacy Policy</a> and 
-				<a href="{{ route('help.index') }}#terms-conditions" target="_blank">Terms & Conditions</a>.
-			</span>
-			<div class="cookie-buttons">
-				<button id="allowBtn" class="rounded cookie-btn">Allow</button>
-				<button id="closeBtn" class="rounded cookie-btn">X</button>
+		<div class="notification-container position-fixed bottom-0 w-100">
+			<!-- Row 1 -->
+			<div class="d-flex justify-content-between align-items-center mb-2">
+				<!-- Toast Notification (aligned to the left) -->
+				<div class="toast-container mb-2 d-flex align-items-center">
+					<div
+						class="toast bg-dark text-white ms-2"
+						id="wishlist-toast"
+						role="alert"
+						aria-live="assertive"
+						aria-atomic="true"
+						data-bs-autohide="true"
+						data-bs-delay="4000"
+					>
+						<div class="toast-header bg-dark text-white">
+							<strong class="ms-3 me-3 toast-body">Wishlist updated!</strong>
+							<button
+								type="button"
+								class="btn-close btn-close-white"
+								data-bs-dismiss="toast"
+								aria-label="Close"
+							></button>
+						</div>
+					</div>
+				</div>
+
+				<!-- WhatsApp Button (aligned to the right) -->
+				<a
+					href="https://wa.me/1234567890" 
+					target="_blank" 
+					id="whatsappButton" 
+					class="whatsapp-button me-3 mb-2 ms-auto"
+				>
+					<i class="bi bi-whatsapp"></i>
+				</a>
+			</div>
+
+
+
+			<!-- Row 2 -->
+			<div id="cookieAlert" class="cookie-alert">
+				<span class="cookie-message">
+					We use cookies to enhance your experience. By clicking "Accept," you agree to our 
+					<a href="#privacy-policy" target="_blank">Privacy Policy</a> and 
+					<a href="#terms-conditions" target="_blank">Terms & Conditions</a>.
+				</span>
+				<div class="cookie-buttons">
+					<button id="acceptCookies" class="btn btn-outline-light">Accept</button>
+					<button id="dismissCookies" class="btn btn-outline-secondary">Dismiss</button>
+				</div>
 			</div>
 		</div>
-
 
 
 		@include('frontEnd.layouts.vendor-scripts')

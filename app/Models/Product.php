@@ -302,8 +302,7 @@ class Product extends Model
 	// Latest Products (e.g., created within the last 30 days, ordered by creation date)
 	public function scopeLatestProducts($query)
 	{
-		return $query->where('status', 1) // Ensure status is true (active)
-					->orderBy('created_at', 'desc');
+		return $query->orderBy('created_at', 'desc');
 	}
 
 	public function scopeOldestProducts($query)
@@ -332,8 +331,7 @@ class Product extends Model
 	// Offer Products: Products that are active and have a non-null sale field
 	public function scopeOfferProducts($query)
 	{
-		return $query->where('status', 1) // Ensure status is true (active)
-					->whereNotNull('sale') // Ensure the sale field is not null
+		return $query->whereNotNull('sale') // Ensure the sale field is not null
 					->orderBy('sale', 'desc'); // Order by views in descending order
 	}
 
@@ -341,8 +339,7 @@ class Product extends Model
 	// Trending Products (based on custom trend score)
 	public function scopeTrending($query)
 	{
-		return $query->where('status', 1) // Ensure status is true (active)
-					->withCount('orders')
+		return $query->withCount('orders')
 					->orderByRaw('(views * 0.6) + (orders_count * 1.5) DESC');
 	}
 
@@ -351,8 +348,7 @@ class Product extends Model
 
 	public function scopeBulks($query)
 	{
-		return $query->where('status', 1) // Ensure status is true (active)
-					 ->withCount('orders') // Count related orders if needed
+		return $query->withCount('orders') // Count related orders if needed
 					 ->whereDoesntHave('categories', function($q) {
 						 $q->where('categories.id', 1); // Explicitly specify the table for id
 					 })

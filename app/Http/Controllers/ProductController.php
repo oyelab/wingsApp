@@ -540,6 +540,11 @@ class ProductController extends Controller
 	public function show(Category $category, $subcategorySlug, Product $product)
 	{
 	
+		// Ensure the product's status is true (active)
+		if (!$product->status) {
+			abort(404); // If the product is not active, return 404
+		}
+	
 		// Ensure the product belongs to the specified category
 		if (!$product->categories->contains($category)) {
 			abort(404); // If the product is not associated with this category, return 404
