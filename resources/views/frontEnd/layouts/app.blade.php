@@ -436,13 +436,10 @@
 				</a>
 			</div>
 
-
-
-			<!-- Row 2 -->
-			<div id="cookieAlert" class="cookie-alert">
+			<div id="cookieAlert" class="cookie-alert" style="display: none;">
 				<span class="cookie-message">
-					We use cookies to enhance your experience. By clicking "Accept," you agree to our 
-					<a href="#privacy-policy" target="_blank">Privacy Policy</a> and 
+					We use cookies to enhance your experience. By clicking "Accept," you agree to our
+					<a href="#privacy-policy" target="_blank">Privacy Policy</a> and
 					<a href="#terms-conditions" target="_blank">Terms & Conditions</a>.
 				</span>
 				<div class="cookie-buttons">
