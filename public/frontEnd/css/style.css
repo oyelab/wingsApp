@@ -133,6 +133,119 @@ a {
     visibility: visible;
     transform: scale(1);
 }
+/* Search Field */
+#searchForm {
+	transition: all 0.3s ease;
+}
+
+#searchForm.show {
+	display: block; /* or use a class like "d-block" */
+}
+
+#searchInput {
+	padding: 5px 10px;
+}
+/* Dropdown Container */
+.custom-dropdown {
+	position: relative;
+}
+
+/* User Icon (Avatar or Placeholder) */
+.usernav-link {
+	padding: 0;
+	border: none;
+	background: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 50px; /* Adjust for desired size */
+	height: 50px;
+	border-radius: 50%;
+	overflow: hidden;
+	transition: transform 0.2s ease;
+}
+
+.usernav-link:hover {
+	transform: scale(1.1);
+}
+
+/* User Avatar */
+.user-avatar {
+	width: 35px; /* Smaller size */
+	height: 35px; /* Make it circular */
+	border-radius: 50%; /* Round the edges */
+	border: 2px solid var(--wings-off); /* Pretty border with theme color */
+	object-fit: cover; /* Make sure the image fits well */
+}
+
+.user-placeholder {
+	width: 35px;
+	height: 35px;
+	border-radius: 50%;
+	background-color: var(--wings-primary); /* Use theme color for placeholder background */
+	color: white;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-weight: bold;
+	font-size: 16px; /* Adjust the font size as needed */
+}
+
+
+/* Dropdown Menu */
+.dropdown-menu-custom {
+	display: none;
+	position: absolute;
+	top: 120%; /* Adjusts vertical spacing */
+	right: -10%; /* Moves dropdown slightly to the right */
+	background-color: var(--wings-primary);
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	z-index: 1000;
+	width: 250px;
+	overflow: hidden;
+	opacity: 0;
+	transform: translateY(10px);
+	transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Show Dropdown Menu (when active) */
+.custom-dropdown.active .dropdown-menu-custom {
+	display: block;
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/* Dropdown Item */
+.dropdown-item-custom {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 15px;
+	color: var(--wings-white);
+	text-decoration: none;
+	font-size: 1rem;
+	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dropdown-item-custom i {
+	font-size: 1.2rem;
+	color: var(--wings-alternative);
+}
+
+.dropdown-item-custom:hover {
+	background-color: var(--wings-alternative);
+	color: var(--wings-white);
+}
+
+/* Divider */
+.dropdown-divider-custom {
+	border: 0;
+	height: 1px;
+	background-color: var(--wings-light);
+	margin: 10px 0;
+}
+
 /* Section Title */
 .section-title h2 {
     font-size: 30px;
@@ -1035,93 +1148,68 @@ a {
 .gap-style {
     gap: 30px;
 }
-/* WhatsApp Button Styles */
+/* Notification Container */
+.notification-container {
+	z-index: 999999; /* Ensures visibility above other content */
+}
+
 .whatsapp-button {
-    position: fixed;
-    bottom: 60px;
-    right: 60px;
-    background-color: var(--wings-black);
-    color: var(--wings-light);
+    background-color: #25d366;
+    color: white;
     border-radius: 50%;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    animation: bounce 2s infinite;
+    font-size: 24px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+	animation: bounce 2s infinite;
     text-decoration: none;
 }
 
-.whatsapp-button:hover {
-    background-color: #1DA851;
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
-}
-
-.whatsapp-button i {
-    font-size: 30px;
-}
-
+/* Keyframe animation for up and down movement */
 @keyframes bounce {
     0%, 100% {
         transform: translateY(0);
     }
     50% {
-        transform: translateY(-10px);
+        transform: translateY(-10px); /* Moves the button 10px up */
     }
 }
-/* Cookie alert styles */
+.whatsapp-button:hover {
+    background-color: var(--wings-black);
+}
+
 .cookie-alert {
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	background-color: var(--wings-black);
-	color: var(--wings-light);
-	padding: 10px 20px;
-	display: none; /* Initially hidden */
-	z-index: 9999;
-	font-size: 14px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+    background-color: var(--wings-black);
+    color: #fff;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .cookie-message {
-	flex-grow: 1;
+    flex-grow: 1;
+    font-size: 14px;
 }
 
 .cookie-alert a {
-	color: var(--wings-light);
-	text-decoration: underline;
+    color: #4caf50;
+    text-decoration: underline;
 }
 
 .cookie-buttons {
-	display: flex;
-	gap: 10px;
+    display: flex;
+    gap: 10px;
 }
 
-.cookie-btn {
-	background-color: var(--wings-alternative);
-	color: var(--wings-primary);
-	border: none;
-	padding: 8px 15px;
-	cursor: pointer;
-	font-size: 14px;
+.btn:hover {
+    opacity: 0.9;
 }
 
-.cookie-btn:hover {
-	background-color: var(--wings-light);
-}
 
-#closeBtn {
-	background-color: var(--wings-off);
-}
-
-#closeBtn:hover {
-	background-color: var(--wings-light);
-}
 /* ! Product Details Page */
 .product-top-block-details h4 {
     color: var(--wings-alternative);

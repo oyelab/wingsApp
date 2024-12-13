@@ -88,42 +88,45 @@ class SectionController extends Controller
 
 	public function shopPage($section, Category $category)
 	{
-		// return $section;
 		// Fetch the section record from the database
 		$sectionRecord = Section::where('slug', $section)->first();
-		// return $sectionRecord;
-		$sectionTitle = Section::where('slug', $section)->first()->title;
-
-		// return $sectionRecord;
-
+		
+		// If section is not found, use the default section or show a custom message
+		if (!$sectionRecord) {
+			// Optionally, redirect to a default section or show an alternative message.
+			// return redirect()->route('default.section');  // Uncomment this if you want a redirection to a default section
+			abort(404); // If you still want to keep the 404 behavior, you can keep it like this
+		}
 	
-		if (!$sectionRecord || !$sectionRecord->scopeMethod) {
-			abort(404); // Section not found or no method specified
+		$sectionTitle = $sectionRecord->title;
+	
+		// Check if sectionRecord has a scopeMethod
+		if (!$sectionRecord->scopeMethod) {
+			abort(404); // If no method is specified, abort with 404
 		}
 	
 		// Ensure the method exists in the productRepo
 		if (method_exists($this->productRepo, $sectionRecord->scopeMethod)) {
 			// Call the corresponding method dynamically
-			$products = $this->productRepo->{$sectionRecord->scopeMethod}(); // Pass the number of products as needed
+			$products = $this->productRepo->{$sectionRecord->scopeMethod}();
 		} else {
 			abort(404); // Method does not exist in the repository
 		}
-
+	
+		// Page title and section data
 		$pageTitle = $sectionTitle;
 		$title = "Title";
-
-		$section = Section::where('slug', $section)->first();
-
-		// return $section;
 	
+		// Return the view with the necessary data
 		return view('frontEnd.sections.show', [
 			'products' => $products,
 			'title' => $title,
 			'pagetitle' => $pageTitle,
-			'section' => $section ?? null, // Pass section if it exists
-			'collection' => $collection ?? null, // Pass collection if it exists
+			'section' => $sectionRecord ?? null, // Pass section if it exists
+			'collection' => null, // Pass section if it exists
 		]);
 	}
+	
 
 	public function show(Section $section, $slug)
 	{

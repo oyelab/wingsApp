@@ -27,6 +27,7 @@ class ProductRepository
 			->whereHas('categories', function ($query) {
 				$query->where('slug', '!=', 'wings-edited');
 			})
+			->where('status', 1)
 			->latest()
 			->paginate($limit);
 	}
@@ -38,6 +39,7 @@ class ProductRepository
 			->whereHas('categories', function ($query) {
 				$query->where('slug', '!=', 'wings-edited'); // Exclude products from the 'wings-edited' category
 			})
+			->where('status', 1)
 			->topOrders()
 			->paginate($limit);
 	}
@@ -48,6 +50,7 @@ class ProductRepository
 			->whereHas('categories', function ($query) {
 				$query->where('slug', '!=', 'wings-edited');
 			})
+			->where('status', 1)
 			->mostViewed()
 			->paginate($limit);
 	}
@@ -58,6 +61,7 @@ class ProductRepository
 			->whereHas('categories', function ($query) {
 				$query->where('slug', '!=', 'wings-edited');
 			})
+			->where('status', 1)
 			->offerProducts()
 			->paginate($limit);
 	}
@@ -68,6 +72,7 @@ class ProductRepository
 			->whereHas('categories', function ($query) {
 				$query->where('slug', '!=', 'wings-edited');
 			})
+			->where('status', 1)
 			->trending()
 			->paginate($limit);
 	}
@@ -76,6 +81,7 @@ class ProductRepository
 	public function getBulks($limit = 8)
 	{
 		return Product::bulks()
+			->where('status', 1)
 			->paginate($limit);
 	}
 	
