@@ -322,7 +322,7 @@
 									<i class="bx bx-file me-1"></i> Save Product
 								</button>
 
-								<a href="{{ route('products.index') }}" class="btn btn-secondary btn-lg">
+								<a href="javascript:history.back()" class="btn btn-secondary btn-lg">
 									<i class="bx bx-x me-1"></i> Cancel
 								</a>
 							</div>
