@@ -301,9 +301,10 @@
 							<div class="d-grid gap-2">
 								<button type="submit" class="btn btn-success mt-3">Submit</button>
 
-								<a href="{{ route('products.index') }}" class="btn btn-secondary btn-lg">
+								<a href="javascript:history.back()" class="btn btn-secondary btn-lg">
 									<i class="bx bx-x me-1"></i> Cancel
 								</a>
+
 							</div>
 							
 						</div>
