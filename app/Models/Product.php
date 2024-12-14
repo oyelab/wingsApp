@@ -317,10 +317,13 @@ class Product extends Model
 	public function scopeTopOrders($query)
 	{
 		return $query->where('status', 1) // Ensure status is true (active)
-					 ->withCount('orders')
-					 ->having('orders_count', '>=', 1) // Only include products with at least 1 order
+					 ->withCount(['orders' => function($query) {
+						 $query->whereIn('status', [1, 2, 3]); // Only count orders with status 1, 2, or 3
+					 }])
+					 ->having('orders_count', '>=', 1) // Only include products with at least 1 matching order
 					 ->orderBy('orders_count', 'desc');
 	}
+	
 	
 
 	// Most Viewed Products
