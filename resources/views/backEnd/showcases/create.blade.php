@@ -95,6 +95,14 @@
 			</div>
 		</small>
     </div>
+    <!-- OgImage Image -->
+    <div class="mb-3">
+        <label for="og_image" class="form-label">Og Image</label>
+        <input type="file" name="og_image" id="og_image" class="form-control">
+		<small class="form-text text-muted d-block ms-2">
+			<div class="mt-1 mb-0">Ratio Guide: 1:1.91</div>
+		</small>
+    </div>
 
 </form>
 

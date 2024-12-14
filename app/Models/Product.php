@@ -295,9 +295,11 @@ class Product extends Model
 	
 	public function scopePrice($query, $direction = 'asc')
 	{
-		return $query->where('status', 1)
-		->orderBy('price', $direction);
+		return $query->where('status', 1) // Ensure the product is active
+			->whereNotNull('price') // Only include products with a non-null price
+			->orderBy('price', $direction); // Order by price
 	}
+	
 
 	// Latest Products (e.g., created within the last 30 days, ordered by creation date)
 	public function scopeLatestProducts($query)
