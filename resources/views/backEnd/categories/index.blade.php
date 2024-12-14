@@ -119,13 +119,7 @@
 											</td>
 											<td>
 												<a href="{{ route('categories.edit', $child->slug) }}" class="mr-3"><i class="las la-pen text-secondary font-30"></i></a>
-												<form action="{{ route('categories.destroy', $child->slug) }}" method="POST" style="display: inline;">
-													@csrf
-													@method('DELETE')
-													<a href="javascript:void(0);" class="mr-3" onclick="confirmDelete(this)">
-														<i class="las la-trash-alt text-secondary font-30"></i>
-													</a>
-												</form>
+												
 											</td>
 										</tr>
 									@endforeach

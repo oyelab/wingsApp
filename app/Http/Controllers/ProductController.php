@@ -414,19 +414,17 @@ class ProductController extends Controller
 	public function index(Request $request)
 	{
 		$search = $request->input('search'); // Get the search term from the request
-
-		// Retrieve products with their related quantities and categories, excluding those with category_slug = 'wings-edited'
 		$products = Product::with('quantities', 'categories')
 			->whereHas('categories', function ($query) {
 				$query->where('slug', '!=', 'wings-edited'); // Exclude products with category_slug = 'wings-edited'
 			})
+			->orWhereDoesntHave('categories') // Include products with no categories
 			->when($search, function ($query, $search) {
 				return $query->where('title', 'like', "%{$search}%"); // Search in the title column
 			})
 			->latest()
 			->paginate(10); // Adjust pagination as needed (e.g., 10 per page)
-
-		// return $products;
+	
 	
 		foreach ($products as $product) {
 			// Calculate the total quantity for each product
@@ -501,9 +499,11 @@ class ProductController extends Controller
 		->whereHas('categories', function ($query) {
 			$query->where('slug', 'wings-edited'); // Filter by category_id = 1
 		})
+		->orWhereDoesntHave('categories') // Include products with no categories
 		->when($search, function ($query, $search) {
 			return $query->where('title', 'like', "%{$search}%"); // Search in the title column
 		})
+		->latest()
 		->paginate(10); // Adjust pagination as needed (e.g., 10 per page)
 	
 	

@@ -201,8 +201,10 @@ class CategoryController extends Controller
 		}
 
 		// Base query for fetching products with their categories
-		$productsQuery = Product::with('categories')->mostViewed();
-
+		$productsQuery = Product::with('categories')
+			->whereHas('categories') // Ensures the product has at least one category
+			->mostViewed();
+	
 
 		// Apply filters based on main category and subcategory
 		if ($mainCategoryId) {
