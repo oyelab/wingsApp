@@ -186,7 +186,7 @@ Route::put('/profile/update', [UserController::class, 'update'])->name('profile.
 
 Route::get('/test', [TestController::class, 'test'])->name('test');
 Route::get('/test/new-file-upload', [TestController::class, 'create'])->name('test.create');
-Route::get('/devFImg', [TestController::class, 'devF'])->name('test.devF');
+// Route::get('/devFImg', [TestController::class, 'devF'])->name('test.devF');
 Route::post('/test/store', [TestController::class, 'store'])->name('test.store');
 Route::get('/invoice', [TestController::class, 'generatePdf'])->name('test.invoice');
 
