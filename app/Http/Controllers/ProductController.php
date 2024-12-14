@@ -537,7 +537,7 @@ class ProductController extends Controller
 		]);
 	}
 	
-	public function show(Category $category, $subcategorySlug, Product $product)
+	public function show(Category $category, Product $product)
 	{
 	
 		// Ensure the product's status is true (active)
@@ -551,11 +551,6 @@ class ProductController extends Controller
 		}
 
 	
-		// Ensure the product's subcategory matches the provided slug
-		$subcategory = $product->subcategory;
-		if ($subcategory && $subcategory->slug !== $subcategorySlug) {
-			abort(404); // If the subcategory slug does not match, return 404
-		}
 
 
 	

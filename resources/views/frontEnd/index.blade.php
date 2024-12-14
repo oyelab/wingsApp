@@ -51,8 +51,7 @@
                         <div class="product-img">
 							<a href="{{ route('sections.products.details', [
 									'section' => 'latest',
-									'slug' => $product->slug, // Using the model method to get subcategory slug
-								]) }}">
+									$product]) }}">
                                 <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
                             </a>
 							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
@@ -111,11 +110,9 @@
 				<div class="swiper-slide">
 					<div class="product-item">
 						<div class="product-img">
-							<a href="{{ route('products.details', [
-									'category' => $product->categories->first()->slug,
-									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-									'product' => $product->slug
-								]) }}">
+							<a href="{{ route('sections.products.details', [
+									'section' => 'topPicks',
+									$product]) }}">
                                 <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
                             </a>
                             <a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
@@ -123,11 +120,9 @@
 							</a>
                         </div>
                         <div class="product-content d-flex justify-content-between">
-							<a href="{{ route('products.details', [
-									'category' => $product->categories->first()->slug,
-									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-									'product' => $product->slug
-								]) }}">
+							<a href="{{ route('sections.products.details', [
+									'section' => 'topPicks',
+									$product]) }}">
                                 <h3>{{ $product->title }}</h3>
                             </a>
                             <div class="product-price">
@@ -208,10 +203,7 @@
 				<div class="col-lg-3 col-md-6">
 					<div class="wings-edited-item">
 						<a href="{{ route('products.details', [
-								'category' => $product->categories->first()->slug,
-								'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-								'product' => $product->slug
-							]) }}">
+								'category' => $product->categories->first()->slug, $product]) }}">
 							<img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
 						</a>
 						<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
@@ -267,11 +259,9 @@
 				<div class="swiper-slide">
 					<div class="product-item">
 						<div class="product-img">
-							<a href="{{ route('products.details', [
-									'category' => $product->categories->first()->slug,
-									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-									'product' => $product->slug
-								]) }}">
+							<a href="{{ route('sections.products.details', [
+									'section' => 'trending',
+									$product]) }}">
                                 <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
                             </a>
 							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
@@ -279,11 +269,9 @@
 							</a>
                         </div>
                         <div class="product-content d-flex justify-content-between">
-							<a href="{{ route('products.details', [
-									'category' => $product->categories->first()->slug,
-									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-									'product' => $product->slug
-								]) }}">
+							<a href="{{ route('sections.products.details', [
+									'section' => 'trending',
+									$product]) }}">
                                 <h3>{{ $product->title }}</h3>
                             </a>
                             <div class="product-price">
@@ -487,11 +475,9 @@
 				<div class="swiper-slide">
 					<div class="product-item">
 						<div class="product-img">
-							<a href="{{ route('products.details', [
-									'category' => $product->categories->first()->slug,
-									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-									'product' => $product->slug
-								]) }}">
+							<a href="{{ route('sections.products.details', [
+									'section' => 'hotDeals',
+									$product]) }}">
                                 <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
                             </a>
                             <a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
@@ -499,11 +485,9 @@
 							</a>
                         </div>
                         <div class="product-content d-flex justify-content-between">
-							<a href="{{ route('products.details', [
-									'category' => $product->categories->first()->slug,
-									'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-									'product' => $product->slug
-								]) }}">
+							<a href="{{ route('sections.products.details', [
+									'section' => 'hotDeals',
+									$product]) }}">
                                 <h3>{{ $product->title }}</h3>
                             </a>
                             <div class="product-price">

@@ -42,6 +42,7 @@ class UserController extends Controller
     public function profile()
 	{
 		$reviews = Review::where('user_id', auth()->id())
+			->where('status', true) // Only fetch reviews with status = true
 			->orderBy('created_at', 'desc')
 			->get();
 

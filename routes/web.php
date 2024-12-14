@@ -58,11 +58,11 @@ Route::get('/sections/{section}', [SectionController::class, 'shopPage'])->name(
 Route::get('/collections', [CategoryController::class, 'frontShow'])->name('collections');
 Route::get('/wings-edited', [CategoryController::class, 'wingsEdited'])->name('wings.edited');
 
-Route::get('/collections/{category:slug}/{subcategory:slug}/{product:slug}', [ProductController::class, 'show'])->name('products.details');
+Route::get('/collections/{category:slug}/{product:slug}', [ProductController::class, 'show'])->name('products.details');
 Route::get('/sections/{section:slug}/{slug}', [SectionController::class, 'show'])->name('sections.products.details');
 
-Route::get('/collections/{category:slug}', [CategoryController::class, 'mainCategory'])->name('category');
-Route::get('/collections/{category:slug}/{subcategory:slug}', [CategoryController::class, 'subCategory'])->name('subcategory');
+Route::get('/collections/{category:slug}', [CategoryController::class, 'categoryPage'])->name('category');
+// Route::get('/collections/{category:slug}/{subcategory:slug}', [CategoryController::class, 'subCategory'])->name('subcategory');
 Route::get('/get-subcategories/{mainCategoryId}', [CategoryController::class, 'getSubcategories']);
 
 Route::get('/delivery/create', [DeliveryController::class, 'show'])->name('showissueToken');

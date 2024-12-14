@@ -15,13 +15,11 @@
                 <div class="card">
                     <div class="card-body p-0">
                         <div class="user-profile-img">
+							<img src="{{ asset('build/images/pattern-bg.jpg') }}" class="profile-img profile-foreground-img rounded-top"
+							style="height: 120px;" alt="">
 							<div class="overlay-content rounded-top">
 								<div class="user-nav p-3">
-									<div class="d-flex justify-content-end">
-										<a href="#" class="text-muted font-size-16" data-bs-toggle="modal" data-bs-target="#editModal" title="Edit">
-											<i class="bx bx-edit text-white font-size-20"></i>
-										</a>
-									</div>
+									
 								</div>
 							</div>
                         </div>
@@ -40,72 +38,82 @@
 										<form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
 											@csrf
 											@method('PUT')
-											<div class="modal-body">
-												<div class="mb-3">
+
+											<!-- Row 1: Name and Email -->
+											<div class="row mb-3">
+												<div class="col-md-6">
 													<label for="name" class="form-label">Name</label>
 													<input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', auth()->user()->name) }}">
 													@error('name')
 														<div class="invalid-feedback">{{ $message }}</div>
 													@enderror
 												</div>
-
-												<div class="mb-3">
+												<div class="col-md-6">
 													<label for="email" class="form-label">Email</label>
 													<input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', auth()->user()->email) }}">
 													@error('email')
 														<div class="invalid-feedback">{{ $message }}</div>
 													@enderror
 												</div>
+											</div>
 
-												<div class="mb-3">
+											<!-- Row 2: Phone and City -->
+											<div class="row mb-3">
+												<div class="col-md-6">
 													<label for="phone" class="form-label">Phone</label>
 													<input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone', auth()->user()->phone) }}">
 													@error('phone')
 														<div class="invalid-feedback">{{ $message }}</div>
 													@enderror
 												</div>
-
-												<div class="mb-3">
+												<div class="col-md-6">
 													<label for="city" class="form-label">City</label>
 													<input type="text" class="form-control @error('city') is-invalid @enderror" id="city" name="city" value="{{ old('city', auth()->user()->city) }}">
 													@error('city')
 														<div class="invalid-feedback">{{ $message }}</div>
 													@enderror
 												</div>
+											</div>
 
-												<div class="mb-3">
+											<!-- Row 3: Zone and Area -->
+											<div class="row mb-3">
+												<div class="col-md-6">
 													<label for="zone" class="form-label">Zone</label>
 													<input type="text" class="form-control @error('zone') is-invalid @enderror" id="zone" name="zone" value="{{ old('zone', auth()->user()->zone) }}">
 													@error('zone')
 														<div class="invalid-feedback">{{ $message }}</div>
 													@enderror
 												</div>
-
-												<div class="mb-3">
+												<div class="col-md-6">
 													<label for="area" class="form-label">Area</label>
 													<input type="text" class="form-control @error('area') is-invalid @enderror" id="area" name="area" value="{{ old('area', auth()->user()->area) }}">
 													@error('area')
 														<div class="invalid-feedback">{{ $message }}</div>
 													@enderror
 												</div>
+											</div>
 
-												<div class="mb-3">
+											<!-- Row 4: Country and Zip -->
+											<div class="row mb-3">
+												<div class="col-md-6">
 													<label for="country" class="form-label">Country</label>
 													<input type="text" class="form-control @error('country') is-invalid @enderror" id="country" name="country" value="{{ old('country', auth()->user()->country) }}">
 													@error('country')
 														<div class="invalid-feedback">{{ $message }}</div>
 													@enderror
 												</div>
-
-												<div class="mb-3">
+												<div class="col-md-6">
 													<label for="zip" class="form-label">Zip Code</label>
 													<input type="text" class="form-control @error('zip') is-invalid @enderror" id="zip" name="zip" value="{{ old('zip', auth()->user()->zip) }}">
 													@error('zip')
 														<div class="invalid-feedback">{{ $message }}</div>
 													@enderror
 												</div>
+											</div>
 
-												<div class="mb-3">
+											<!-- Row 5: Avatar -->
+											<div class="row mb-3">
+												<div class="col-12">
 													<label for="avatar" class="form-label">Avatar</label>
 													<input type="file" class="form-control @error('avatar') is-invalid @enderror" id="avatar" name="avatar">
 													@error('avatar')
@@ -119,7 +127,6 @@
 												<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
 											</div>
 										</form>
-
 									</div>
 								</div>
 							</div>
@@ -127,21 +134,21 @@
 
 
 
+
                         <div class="p-4 pt-0">
 
                             <div class="mt-n5 position-relative text-center border-bottom pb-3">
-                                <img src="{{ $user->avatarPath }}" alt=""
-                                    class="avatar-xl rounded-circle img-thumbnail">
+                                <img src="{{ $user->avatarPath }}" alt="{{ $user->name }}"
+                                    class="avatar-xl img-fluid rounded-circle img-thumbnail">
 
                                 <div class="mt-3">
                                     <h5 class="mb-1">{{ $user->name }}</h5>
-                                    <p class="text-muted mb-0">
-                                        <i class="bx bxs-star text-warning font-size-14"></i>
-                                        <i class="bx bxs-star text-warning font-size-14"></i>
-                                        <i class="bx bxs-star text-warning font-size-14"></i>
-                                        <i class="bx bxs-star text-warning font-size-14"></i>
-                                        <i class="bx bxs-star-half text-warning font-size-14"></i>
-                                    </p>
+                                    <div class="d-flex align-items-center justify-content-center">
+										<a href="#" class="text-muted font-size-16" data-bs-toggle="modal" data-bs-target="#editModal" title="Edit">
+											<i class="bx bx-edit "></i>
+											Edit Profile
+										</a>
+									</div>
                                 </div>
 
                             </div>
