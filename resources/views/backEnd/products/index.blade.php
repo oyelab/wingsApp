@@ -153,10 +153,7 @@
                                     <td>
                                         <p class="d-inline-block align-middle mb-0">                
 											<a href="{{ route('products.details', [
-												'category' => $product->categories->first()->slug,
-												'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-												'product' => $product->slug
-											]) }}" class="d-inline-block align-middle mb-0 product-name fw-semibold">{{ $product->title }}</a>
+												'category' => $product->categories->first()->slug, $product]) }}" class="d-inline-block align-middle mb-0 product-name fw-semibold">{{ $product->title }}</a>
 											
                                             <br>
                                             <!-- <span class="text-muted font-13 fw-semibold">Size-05 (Model 2021)</span> -->

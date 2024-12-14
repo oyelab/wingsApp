@@ -163,7 +163,7 @@
 				<div class="col-md-4 col-sm-6 col-6">
 					<div class="product-item">
 						<div class="product-img">
-							<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, 'subcategory' => $product->subcategory->slug, $product]) }}">
+							<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, $product]) }}">
 								<img
 									src="{{ $product->thumbnail }}"
 									class="img-fluid"
@@ -179,7 +179,7 @@
 						<div
 							class="product-content d-flex justify-content-between"
 						>
-							<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, 'subcategory' => $product->subcategory->slug, 'product' => $product->slug]) }}">
+							<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, $product]) }}">
 								<h3>
 									{{ $product->title }}
 								</h3>

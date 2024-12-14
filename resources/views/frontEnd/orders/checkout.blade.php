@@ -123,10 +123,8 @@
 						<div class="cart-products">
 						@foreach($cartItems as $item)
 							<a href="{{ route('products.details', [
-									'category' => $item['categorySlug'], 
-									'subcategory' => $item['subcategory'], 
-									'product' => $item['slug'] 
-								]) }}" class="cart-product">
+									'category' => $item['categorySlug'], $item['slug']]) }}" 
+									class="cart-product">
 								<div class="product-image">
 									<img src="{{ $item['imagePath'] }}" alt="Product" draggable="false"
 										class="img-fluid w-25 h-auto" />

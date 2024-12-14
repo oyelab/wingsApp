@@ -439,8 +439,8 @@
 			<div id="cookieAlert" class="cookie-alert" style="display: none;">
 				<span class="cookie-message">
 					We use cookies to enhance your experience. By clicking "Accept," you agree to our
-					<a href="#privacy-policy" target="_blank">Privacy Policy</a> and
-					<a href="#terms-conditions" target="_blank">Terms & Conditions</a>.
+					<a href="{{ route('help.index')}}#privacy-policy" target="_blank">Privacy Policy</a> and
+					<a href="{{ route('help.index')}}#terms-conditions" target="_blank">Terms & Conditions</a>.
 				</span>
 				<div class="cookie-buttons">
 					<button id="acceptCookies" class="btn btn-outline-light">Accept</button>

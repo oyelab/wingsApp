@@ -134,7 +134,7 @@ class SubscriptionController extends Controller
 			'browser' => $browser,
 		]);
 
-		return redirect()->back()->with('error', 'Unable to fetch geolocation data, but subscription was successful.');
+		return redirect()->back()->with('success', 'Thanks for your subscription!!!');
 	}
 
 }

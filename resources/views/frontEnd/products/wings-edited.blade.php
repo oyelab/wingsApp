@@ -224,9 +224,7 @@
 		<div class="get-in-touch-btn text-center">
 			<p>If you want to get this design for your team</p>
 			<a 
-				href="https://wa.me/{{ config('app.whatsapp_number') }}?text={{ urlencode('Hello, I am interested in this product: ' . route('products.details', ['category' => $product->categories->first()->slug,
-							'subcategory' => $product->subcategory->slug, // Using the model method to get subcategory slug
-							'product' => $product->slug])) }}" 
+				href="https://wa.me/{{ config('app.whatsapp_number') }}?text={{ urlencode('Hello, I am interested in this product: ' . route('products.details', ['category' => $product->categories->first()->slug, $product ])) }}" 
 				target="_blank" 
 				rel="noopener noreferrer"
 				class="btn btn-success"

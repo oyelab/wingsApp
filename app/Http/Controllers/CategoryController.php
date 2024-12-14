@@ -25,10 +25,35 @@ class CategoryController extends Controller
 		
     }
 
-	public function mainCategory(Category $category)
+	// public function mainCategory(Category $category)
+	// {
+	// 	return $category->products;
+	// }
+
+	public function categoryPage(Category $category)
 	{
-		return $category->products;
+		// Fetch the products associated with the category
+		$products = $category->products()->paginate(8);
+	
+		// Check if no products exist and abort with a 404 error if true
+		if ($products->isEmpty()) {
+			abort(404, 'No products found in this category.');
+		}
+	
+		// Page title and section data
+		$pageTitle = $category->title;
+		$categoryRecord = Category::find($category->id);
+	
+		// Return the view with the necessary data
+		return view('frontEnd.collections.show', [
+			'products' => $products,
+			'title' => null,
+			'pagetitle' => $pageTitle,
+			'category' => $categoryRecord ?? null, // Pass section if it exists
+			'collection' => "Collections", // Pass section if it exists
+		]);
 	}
+	
 
 	// In your CategoryController
 
@@ -176,7 +201,7 @@ class CategoryController extends Controller
 		}
 
 		// Base query for fetching products with their categories
-		$productsQuery = Product::with('categories')->where('status', 1);
+		$productsQuery = Product::with('categories')->mostViewed();
 
 
 		// Apply filters based on main category and subcategory
@@ -198,7 +223,6 @@ class CategoryController extends Controller
 
 		// Paginate the products, let's say 6 products per page
 		$products = $productsQuery
-		->orderBy('created_at', 'desc') // Ensure the latest products are displayed first
 		->paginate(9) // Paginate the results with 6 products per page
 		->appends([
 			'category' => $mainCategoryId,

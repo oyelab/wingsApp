@@ -50,7 +50,6 @@ class ReviewController extends Controller
      */
 	public function store(Request $request)
 	{
-		// return $request;
 		// Validate input
 		$validated = $request->validate([
 			'content' => 'required|string|max:1000',
@@ -59,7 +58,7 @@ class ReviewController extends Controller
 			'order_id' => 'nullable|exists:orders,id', // Validate the order ID if provided
 			'username' => auth()->check() ? 'nullable|string' : 'required|string',
 		]);
-	
+
 		// Create the review
 		$review = new Review();
 		$review->user_id = auth()->id(); // Set user_id if the user is authenticated
@@ -74,9 +73,8 @@ class ReviewController extends Controller
 		$review->status = false; // Set review status as inactive by default
 		$review->save();
 
-	
-		// If an order ID is provided, handle order-product association
-		if (isset($validated['order_id']) && $validated['order_id']) {
+		// Handle order or product association if applicable
+		if (!empty($validated['order_id'])) {
 			// Get the order based on the order_id
 			$order = Order::findOrFail($validated['order_id']);
 
@@ -88,13 +86,12 @@ class ReviewController extends Controller
 
 			// Use 'syncWithoutDetaching' to ensure the current product remains associated
 			$review->products()->syncWithoutDetaching($productIds);
-		} else {
+		} elseif (!empty($validated['item'])) {
 			// If no order ID, associate the review with the product from the form
 			$itemId = $validated['item']; // Get the product ID from the form
 			$review->products()->attach($itemId);
 		}
 
-	
 		// Redirect or return a response
 		return redirect()->back()->with('success', 'Your review has been submitted for approval!');
 	}
