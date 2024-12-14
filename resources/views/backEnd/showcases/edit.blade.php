@@ -110,6 +110,19 @@
         @endif
     </div>
 
+    <!-- Og Image Image -->
+    <div class="mb-3">
+        <label for="og_image" class="form-label">Og Image Image</label>
+        <input type="file" name="og_image" id="og_image" class="form-control">
+        <small class="form-text text-muted">Leave blank to keep the existing og image.</small>
+        <div class="mt-1 mb-0">Ratio Guide: 1:1.91</div>
+			@if ($showcase->og_image)
+            <div class="mt-3">
+				<img src="{{ $showcase->ogImagePath }}" alt="Og Image" class="img-thumbnail" style="width: 150px; height: auto;">
+            </div>
+        @endif
+    </div>
+
 </form>
 
 

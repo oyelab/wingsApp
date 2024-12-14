@@ -19,8 +19,8 @@ class CategoryController extends Controller
     {
 		$this->fileHandler = $fileHandler;
 
-        $this->middleware('auth')->except('mainCategory', 'wingsEdited', 'subCategory', 'frontShow', 'search');
-		$this->middleware('role')->except('mainCategory', 'wingsEdited', 'subCategory', 'frontShow', 'search'); // Only allow role 1 users
+        $this->middleware('auth')->except('categoryPage', 'wingsEdited', 'subCategory', 'frontShow', 'search');
+		$this->middleware('role')->except('categoryPage', 'wingsEdited', 'subCategory', 'frontShow', 'search'); // Only allow role 1 users
 
 		
     }

@@ -11,7 +11,7 @@ class Showcase extends Model
 
     use HasFactory;
 
-	protected $fillable = ['title', 'slug', 'banners', 'thumbnail', 'short_description', 'status', 'order'];
+	protected $fillable = ['title', 'slug', 'banners', 'thumbnail', 'og_image', 'short_description', 'status', 'order'];
 
 	// Showcase Model (Showcase.php)
 
@@ -34,11 +34,21 @@ class Showcase extends Model
 	
 	public function getThumbnailImagePathAttribute()
 	{
-		// return asset("storage/showcases/{$this->id}/{$this->thumbnail}");
 
 		if ($this->thumbnail) {
 			// Get the absolute path of the image
 			return Storage::disk('public')->url("showcases/{$this->id}/{$this->thumbnail}");
+		}
+
+		return null;
+	}
+
+	public function getOgImagePathAttribute()
+	{
+
+		if ($this->og_image) {
+			// Get the absolute path of the image
+			return Storage::disk('public')->url("showcases/{$this->id}/{$this->og_image}");
 		}
 
 		return null;

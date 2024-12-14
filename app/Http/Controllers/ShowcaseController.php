@@ -75,8 +75,9 @@ class ShowcaseController extends Controller
 			 'title' => 'required|string|max:255',
 			 'short_description' => 'nullable|string|max:500',
 			 'banners' => 'required|array|min:1',
-			 'banners.*' => 'image|mimes:jpg,jpeg,png,gif|max:20480',
-			 'thumbnail' => 'required|image|mimes:jpg,jpeg,png,gif|max:20480',
+			 'banners.*' => 'image|mimes:jpg,jpeg,png,gif',
+			 'thumbnail' => 'required|image|mimes:jpg,jpeg,png,gif',
+			 'og_image' => 'nullable|image|mimes:jpg,jpeg,png,webp',
 			 'status' => 'required|boolean',
 			 'order' => 'nullable|integer|between:1,5',
 		 ]);
@@ -120,10 +121,12 @@ class ShowcaseController extends Controller
 	 
 		 // Save the thumbnail
 		 $thumbnailName = $this->storeImage($request->file('thumbnail'), $id, 'thumbnail');
+		 $ogImageName = $this->storeImage($request->file('og_image'), $id, 'og_image');
 	 
 		 // Update the showcase with the banners and thumbnail
 		 $showcase->update([
 			 'thumbnail' => $thumbnailName,
+			 'og_image' => $ogImageName,
 			 'banners' => json_encode($banners), // Save banners as JSON
 		 ]);
 	 
@@ -185,32 +188,8 @@ class ShowcaseController extends Controller
 			 'short_description' => 'nullable|string|max:500',
 			 'banners' => 'nullable|array|min:1', // Banners are optional
 			 'banners.*' => 'image|mimes:jpg,jpeg,png,gif', // Validate each file in the banners array
-			 'thumbnail' => [
-				 'nullable', // Thumbnail is optional
-				 'image',
-				 'mimes:jpg,jpeg,png,gif',
-				 function ($attribute, $value, $fail) use ($request) {
-					 $order = $request->input('order');
-					 $allowedRatios = [
-						 1 => [3.76, 5],
-						 2 => [3.76, 5],
-						 3 => [7.82, 4.7],
-						 4 => [5, 6.2],
-						 5 => [5, 3.5],
-					 ];
-	 
-					 if (isset($allowedRatios[$order])) {
-						 [$width, $height] = $allowedRatios[$order];
-						 $image = Image::make($value);
-						 $actualRatio = $image->width() / $image->height();
-						 $expectedRatio = $width / $height;
-	 
-						 if (abs($actualRatio - $expectedRatio) > 0.01) {
-							 $fail("The {$attribute} must have a ratio of {$width}x{$height} for order {$order}.");
-						 }
-					 }
-				 },
-			 ],
+			 'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,gif',
+			 'og_image' => 'nullable|image|mimes:jpg,jpeg,png,gif',
 			 'status' => 'required|boolean',
 			 'order' => 'nullable|integer|between:1,5',
 		 ]);
@@ -266,6 +245,18 @@ class ShowcaseController extends Controller
 			 }
 			 $thumbnailName = $this->storeImage($request->file('thumbnail'), $showcase->id, 'thumbnail');
 			 $validated['thumbnail'] = $thumbnailName;
+		 }
+		 // Handle og_image upload and delete the old one if necessary
+		 if ($request->hasFile('og_image')) {
+			 $oldOgImage = $showcase->og_image;
+			 if ($oldOgImage) {
+				 $oldPath = storage_path("app/public/showcases/{$showcase->id}/{$oldOgImage}");
+				 if (file_exists($oldPath)) {
+					 unlink($oldPath);
+				 }
+			 }
+			 $ogImageName = $this->storeImage($request->file('og_image'), $showcase->id, 'og_image');
+			 $validated['og_image'] = $ogImageName;
 		 }
 	 
 		 // Update the showcase

@@ -212,7 +212,7 @@
 		@yield('content')
 		
 		<!-- Call to action -->
-		@if(Route::currentRouteName() !== 'getInTouch')
+		@if(!in_array(Route::currentRouteName(), ['getInTouch', 'showcase.show']))
 			<div class="call-to-action-area text-center">
 				<div class="container">
 					<div class="row">
