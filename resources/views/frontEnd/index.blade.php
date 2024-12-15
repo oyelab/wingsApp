@@ -9,13 +9,15 @@
 			@foreach ($sliders as $slider)
 			<div class="swiper-slide">
 				<a href="#">
-					<img
-						draggable="false"
-						src="{{ $slider->sliderPath }}"
-						class="img-fluid"
-						alt=""
-						loading="lazy"
-					/>
+					<div class="product_img">
+						<img
+							draggable="false"
+							src="{{ $slider->sliderPath }}"
+							class="img-fluid"
+							alt=""
+							loading="lazy"
+						/>
+					</div>
 				</a>
 			</div>
 			@endforeach
@@ -48,7 +50,7 @@
 				@foreach($data['latest'] as $product)
                 <div class="swiper-slide">
                     <div class="product-item">
-                        <div class="product-img">
+                        <div class="product-img product_img">
 							<a href="{{ route('sections.products.details', [
 									'section' => 'latest',
 									$product]) }}">
@@ -57,7 +59,6 @@
 							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
 								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
 							</a>
-
                         </div>
                         <div class="product-content d-flex justify-content-between">
 							<a href="{{ route('sections.products.details', [
@@ -109,7 +110,7 @@
 				@foreach($data['topPicks'] as $product)
 				<div class="swiper-slide">
 					<div class="product-item">
-						<div class="product-img">
+						<div class="product-img product_img">
 							<a href="{{ route('sections.products.details', [
 									'section' => 'topPicks',
 									$product]) }}">
@@ -200,8 +201,8 @@
 					</div>
 				</div>
 				@foreach ($wingsEdited->products as $product)
-				<div class="col-lg-3 col-md-6">
-					<div class="wings-edited-item">
+				<div class="col-lg-3 col-md-6 col-6">
+					<div class="wings-edited-item product_img">
 						<a href="{{ route('products.details', [
 								'category' => $product->categories->first()->slug, $product]) }}">
 							<img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
@@ -217,7 +218,6 @@
 		<div class="row">
 			<div class="col-12">
 				<div class="comfort-royalty">
-					
 					<a href="{{ route('wings.edited') }}">
 						<img
 							src="{{ $wingsEdited->imagePath }}"
@@ -258,7 +258,7 @@
 				@foreach($data['trending'] as $product)
 				<div class="swiper-slide">
 					<div class="product-item">
-						<div class="product-img">
+						<div class="product-img product_img">
 							<a href="{{ route('sections.products.details', [
 									'section' => 'trending',
 									$product]) }}">
@@ -318,7 +318,7 @@
 							<div class="wings-showcase-gap">
 								<!-- Showcase 1 -->
 								@if ($showcase1 = $showcases->where('order', 1)->first())
-									<div class="wings-showcase-item showcase-1">
+									<div class="wings-showcase-item showcase-1 product_img">
 										<a href="{{ route('showcase.show', $showcase1->slug) }}">
 											<img
 												src="{{ $showcase1->thumbnailImagePath }}"
@@ -330,7 +330,7 @@
 										</a>
 									</div>
 								@else
-									<div class="wings-showcase-item showcase-1">
+									<div class="wings-showcase-item showcase-1 product_img">
 										<img
 											src="{{ asset('frontEnd/images/wing-showcase-1.png') }}"
 											draggable="false"
@@ -344,7 +344,7 @@
 
 								<!-- Showcase 2 -->
 								@if ($showcase2 = $showcases->where('order', 2)->first())
-									<div class="wings-showcase-item showcase-2">
+									<div class="wings-showcase-item showcase-2 product_img">
 										<a href="{{ route('showcase.show', $showcase2->slug) }}">
 											<img
 												src="{{ $showcase2->thumbnailImagePath }}"
@@ -355,7 +355,7 @@
 										</a>
 									</div>
 								@else
-									<div class="wings-showcase-item showcase-2">
+									<div class="wings-showcase-item showcase-2 product_img">
 										<img
 											src="{{ asset('frontEnd/images/wing-showcase-2.png') }}"
 											class="img-fluid"
@@ -369,7 +369,7 @@
 
 							<!-- Showcase 3 -->
 							@if ($showcase3 = $showcases->where('order', 3)->first())
-								<div class="wings-showcase-item showcase-3">
+								<div class="wings-showcase-item showcase-3 product_img">
 									<a href="{{ route('showcase.show', $showcase3->slug) }}">
 										<img
 											src="{{ $showcase3->thumbnailImagePath }}"
@@ -395,7 +395,7 @@
 						<div class="flex-column wings-showcase-gap">
 							<!-- Showcase 4 -->
 							@if ($showcase4 = $showcases->where('order', 4)->first())
-								<div class="wings-showcase-item showcase-4">
+								<div class="wings-showcase-item showcase-4 product_img">
 									<a href="{{ route('showcase.show', $showcase4->slug) }}">
 										<img
 											src="{{ $showcase4->thumbnailImagePath }}"
@@ -405,7 +405,7 @@
 									</a>
 								</div>
 							@else
-								<div class="wings-showcase-item showcase-4">
+								<div class="wings-showcase-item showcase-4 product_img">
 									<img
 										src="{{ asset('frontEnd/images/wing-showcase-4.png') }}"
 										class="img-fluid right-top-border-radius"
@@ -418,7 +418,7 @@
 
 							<!-- Showcase 5 -->
 							@if ($showcase5 = $showcases->where('order', 5)->first())
-								<div class="wings-showcase-item showcase-5">
+								<div class="wings-showcase-item showcase-5 product_img">
 									<a href="{{ route('showcase.show', $showcase5->slug) }}">
 										<img
 											src="{{ $showcase5->thumbnailImagePath }}"
@@ -429,7 +429,7 @@
 									</a>
 								</div>
 							@else
-								<div class="wings-showcase-item showcase-5">
+								<div class="wings-showcase-item showcase-5 product_img">
 									<img
 										src="{{ asset('frontEnd/images/wing-showcase-5.png') }}"
 										class="img-fluid right-bottom-border-radius"
@@ -474,7 +474,7 @@
 				@foreach($data['hotDeals'] as $product)
 				<div class="swiper-slide">
 					<div class="product-item">
-						<div class="product-img">
+						<div class="product-img product_img">
 							<a href="{{ route('sections.products.details', [
 									'section' => 'hotDeals',
 									$product]) }}">
@@ -717,8 +717,8 @@
     <div class="container">
         <div class="row justify-content-center align-items-center">
             <div class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
-                <h2 class="mb-0">
-                    We Accept <br />
+                <h2 class="mb-0 payment-title">
+                    We Accept
                     Payments
                 </h2>
                 @if($paymentBanner && $paymentBanner->filePath)
