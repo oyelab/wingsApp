@@ -269,6 +269,16 @@
 							class="footer-wrapper d-flex align-items-end justify-content-between"
 						>
 							<div class="footer-left">
+								<div class="footer-logo">
+									<a href="{{ route('index') }}">
+										<img
+											src="{{ $siteSettings->getImagePath('logo_v2') }}"
+											draggable="false"
+											alt="{{ $siteSettings->title }} Logo"
+											height="75"
+										/>
+									</a>
+								</div>
 								<div class="social-logo">
 									<ul class="d-flex align-items-center">
 										@foreach ($socialLinks as $link)
@@ -279,17 +289,6 @@
 											</li>
 										@endforeach
 									</ul>
-								</div>
-
-								<div class="footer-logo">
-									<a href="{{ route('index') }}">
-										<img
-											src="{{ $siteSettings->getImagePath('logo_v2') }}"
-											draggable="false"
-											alt="{{ $siteSettings->title }} Logo"
-											height="75"
-										/>
-									</a>
 								</div>
 								<p>
 									{{ $siteSettings->description ?? 'Innovative sportswear that blends

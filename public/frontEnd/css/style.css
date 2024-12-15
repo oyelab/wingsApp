@@ -135,115 +135,116 @@ a {
 }
 /* Search Field */
 #searchForm {
-	transition: all 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 #searchForm.show {
-	display: block; /* or use a class like "d-block" */
+    display: block; /* or use a class like "d-block" */
 }
 
 #searchInput {
-	padding: 5px 10px;
+    padding: 5px 10px;
 }
 /* Dropdown Container */
 .custom-dropdown {
-	position: relative;
+    position: relative;
 }
 
 /* User Icon (Avatar or Placeholder) */
 .usernav-link {
-	padding: 0;
-	border: none;
-	background: none;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 50px; /* Adjust for desired size */
-	height: 50px;
-	border-radius: 50%;
-	overflow: hidden;
-	transition: transform 0.2s ease;
+    padding: 0;
+    border: none;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px; /* Adjust for desired size */
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    transition: transform 0.2s ease;
 }
 
 .usernav-link:hover {
-	transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 /* User Avatar */
 .user-avatar {
-	width: 35px; /* Smaller size */
-	height: 35px; /* Make it circular */
-	border-radius: 50%; /* Round the edges */
-	border: 2px solid var(--wings-off); /* Pretty border with theme color */
-	object-fit: cover; /* Make sure the image fits well */
+    width: 35px; /* Smaller size */
+    height: 35px; /* Make it circular */
+    border-radius: 50%; /* Round the edges */
+    border: 2px solid var(--wings-off); /* Pretty border with theme color */
+    object-fit: cover; /* Make sure the image fits well */
 }
 
 .user-placeholder {
-	width: 35px;
-	height: 35px;
-	border-radius: 50%;
-	background-color: var(--wings-primary); /* Use theme color for placeholder background */
-	color: white;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-weight: bold;
-	font-size: 16px; /* Adjust the font size as needed */
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: var(
+        --wings-primary
+    ); /* Use theme color for placeholder background */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 16px; /* Adjust the font size as needed */
 }
-
 
 /* Dropdown Menu */
 .dropdown-menu-custom {
-	display: none;
-	position: absolute;
-	top: 120%; /* Adjusts vertical spacing */
-	right: -10%; /* Moves dropdown slightly to the right */
-	background-color: var(--wings-primary);
-	border-radius: 8px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-	z-index: 1000;
-	width: 250px;
-	overflow: hidden;
-	opacity: 0;
-	transform: translateY(10px);
-	transition: opacity 0.3s ease, transform 0.3s ease;
+    display: none;
+    position: absolute;
+    top: 120%; /* Adjusts vertical spacing */
+    right: -10%; /* Moves dropdown slightly to the right */
+    background-color: var(--wings-primary);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    width: 250px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* Show Dropdown Menu (when active) */
 .custom-dropdown.active .dropdown-menu-custom {
-	display: block;
-	opacity: 1;
-	transform: translateY(0);
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Dropdown Item */
 .dropdown-item-custom {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-	padding: 12px 15px;
-	color: var(--wings-white);
-	text-decoration: none;
-	font-size: 1rem;
-	transition: background-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 15px;
+    color: var(--wings-white);
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .dropdown-item-custom i {
-	font-size: 1.2rem;
-	color: var(--wings-alternative);
+    font-size: 1.2rem;
+    color: var(--wings-alternative);
 }
 
 .dropdown-item-custom:hover {
-	background-color: var(--wings-alternative);
-	color: var(--wings-white);
+    background-color: var(--wings-alternative);
+    color: var(--wings-white);
 }
 
 /* Divider */
 .dropdown-divider-custom {
-	border: 0;
-	height: 1px;
-	background-color: var(--wings-light);
-	margin: 10px 0;
+    border: 0;
+    height: 1px;
+    background-color: var(--wings-light);
+    margin: 10px 0;
 }
 
 /* Section Title */
@@ -1011,6 +1012,7 @@ a {
 }
 .social-logo ul li a {
     color: var(--wings-secondary);
+    font-size: 25px;
 }
 .footer-logo {
     margin-bottom: 10px;
@@ -1150,7 +1152,7 @@ a {
 }
 /* Notification Container */
 .notification-container {
-	z-index: 999999; /* Ensures visibility above other content */
+    z-index: 999999; /* Ensures visibility above other content */
 }
 
 .whatsapp-button {
@@ -1164,13 +1166,14 @@ a {
     align-items: center;
     font-size: 24px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-	animation: bounce 2s infinite;
+    animation: bounce 2s infinite;
     text-decoration: none;
 }
 
 /* Keyframe animation for up and down movement */
 @keyframes bounce {
-    0%, 100% {
+    0%,
+    100% {
         transform: translateY(0);
     }
     50% {
@@ -1208,7 +1211,6 @@ a {
 .btn:hover {
     opacity: 0.9;
 }
-
 
 /* ! Product Details Page */
 .product-top-block-details h4 {
@@ -2699,11 +2701,11 @@ a {
     gap: 44px;
     align-items: center;
 }
-.item-info{
-	color: var(--wings-primary);
+.item-info {
+    color: var(--wings-primary);
 }
 .item-info a {
-	color: var(--wings-off);
+    color: var(--wings-off);
 }
 
 /*---------------------------------
