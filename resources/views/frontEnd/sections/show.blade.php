@@ -30,7 +30,7 @@
 				@foreach ($products as $product)
 					<div class="col-md-3 col-sm-6 col-6 mb-4">
 						<div class="product-item">
-							<div class="product-img">
+							<div class="product-img product_img">
 								<a href="{{ route('sections.products.details', ['section' => $section, $product]) }}">
 									<img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}"
 										draggable="false" oncontextmenu="return false;" />
