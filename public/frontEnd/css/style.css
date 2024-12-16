@@ -3223,4 +3223,7 @@ a {
         padding: 0px 13px;
         padding-bottom: 15px;
     }
+    .search-box input {
+        width: 250px;
+    }
 }
