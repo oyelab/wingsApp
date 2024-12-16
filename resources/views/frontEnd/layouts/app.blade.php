@@ -90,22 +90,16 @@
 						</div>
 						<div class="right-area">
 							<ul class="d-flex align-items-center">
-							<!-- Search Button (Magnifying Glass Icon) -->
-								<!-- Search Button (Magnifying Glass Icon) -->
-								<li>
-									<a href="#" id="searchIcon">
-										<i class="fa-solid fa-magnifying-glass"></i>
-									</a>
+								<li class="search-product d-flex align-items-center">
+									<i class="fa-solid fa-magnifying-glass search-icon" id="searchIcon"></i>
+
+									<!-- Search Form (Initially Hidden) -->
+									<!-- <div id="searchForm" class="d-none">
+										<form id="searchFormContent" action="{{ route('collections') }}" method="GET">
+											<input type="text" id="searchInput" class="bg-transparent rounded" name="query" placeholder="Search..." />
+										</form>
+									</div> -->
 								</li>
-
-								<!-- Search Form (Initially Hidden) -->
-								<div id="searchForm" class="d-none">
-									<form id="searchFormContent" action="{{ route('collections') }}" method="GET">
-										<input type="text" id="searchInput" class="bg-transparent rounded" name="query" placeholder="Search..." />
-										<!-- Submit Button (Replaces icon inside the field when it appears) -->
-									</form>
-								</div>
-
 								<li>
 									<a href="{{ route('wishlist') }}" class="d-flex align-items-center">
 										<i class="fa-solid fa-heart"></i>
@@ -173,6 +167,12 @@
 								</button>
 								</li>
 							</ul>
+							<div class="search-box" id="searchBox">
+								<form action="{{ route('collections') }}" method="GET">
+									<input type="text" name="query" placeholder="Search..." />
+								</form>
+								<i class="fa-solid fa-xmark search-icon"></i>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -451,6 +451,19 @@
 
 		@include('frontEnd.layouts.vendor-scripts')
 		<script>
+			// Show the search box when the search icon is clicked
+			document.getElementById('searchIcon').addEventListener('click', () => {
+				const searchBox = document.getElementById('searchBox');
+				const closeIcon = searchBox.querySelector('.fa-xmark');
+			
+				// Add classes
+				searchBox.classList.add('search-box', 'show');
+				// remove show class
+				closeIcon.addEventListener('click', () => {
+					searchBox.classList.remove('show');
+				});
+			});
+
 			// Optional: This script is to ensure the badge is updated if necessary
 			// Function to update the cart count
 			function updateCartCount() {
