@@ -518,8 +518,8 @@ a {
     transform: skewX(-25deg);
 }
 .product_img:hover::before {
-    -webkit-animation: shine 0.8s;
-    animation: shine 0.8s;
+    -webkit-animation: shine 1.2s;
+    animation: shine 1.2s;
 }
 @-webkit-keyframes shine {
     100% {
