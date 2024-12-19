@@ -102,11 +102,6 @@
 								</select>
 							</div>
 						</div>
-						<div class="form-check mt-2">
-							<input type="checkbox" id="exampleCheck1" class="form-check-input" name="terms" required>
-							<label class="form-check-label" for="exampleCheck1">I have read and agree to the
-								<a href="{{ route('help.index') }}#terms-conditions">Terms and Conditions.</a></label>
-						</div>
 					</div>
 				</div>
 
@@ -160,13 +155,13 @@
 						
 						<div class="payment-methods">
 							<label class="payment-option">
-								<input type="radio" id="cod" name="payment_method" value="COD" !required
-									onclick="updatePayable()" {{ old('payment_method') == 'COD' ? 'checked' : '' }}>
+								<input type="radio" id="cod" name="payment_method" value="COD"
+									onclick="updatePayable()" {{ old('payment_method') == 'COD' ? 'checked' : '' }} !required>
 								<span>Cash on Delivery</span>
 							</label>
 							<label class="payment-option">
-								<input type="radio" id="online" name="payment_method" value="Full Payment" !required
-									onclick="updatePayable()" {{ old('payment_method') == 'Full Payment' ? 'checked' : '' }}>
+								<input type="radio" id="online" name="payment_method" value="Full Payment"
+									onclick="updatePayable()" {{ old('payment_method') == 'Full Payment' ? 'checked' : '' }} !required>
 								<span>Online Payment</span>
 							</label>
 						</div>
@@ -217,7 +212,14 @@
 							</div>
 						</div>
 
-
+						<div class="form-check mb-2">
+							<input type="checkbox" id="exampleCheck1" class="form-check-input" name="terms" required>
+							<label class="form-check-label" for="exampleCheck1">I agree to the
+								<strong>
+									<a href="{{ route('help.index') }}#terms-conditions">Terms and Conditions.</a>
+								</strong>
+							</label>
+						</div>
 						<div class="checkout-btn">
 							<button type="submit" class="btn btn-primary w-100">Pay Now</button>
 						</div>
