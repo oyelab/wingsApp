@@ -224,9 +224,9 @@ class PaymentController extends Controller
 			]);
 		
 			// Decrement quantity in the quantities table
-			Quantity::where('product_id', $productId)
-				->where('size_id', $sizeId)
-				->decrement('quantity', $quantityToOrder);
+			// Quantity::where('product_id', $productId)
+			// 	->where('size_id', $sizeId)
+			// 	->decrement('quantity', $quantityToOrder);
 		}
 		
 		// Prepare delivery data
@@ -293,96 +293,89 @@ class PaymentController extends Controller
 
 	public function paymentSuccess(Request $request)
 	{
-		
-		// return $request;
-
 		$sslc = new SslCommerzNotification();
-	
-		// Retrieve order details with related transactions using Eloquent
-		$order_details = Order::with('transactions') // Replace 'transactions' with the actual relationship name
+		$order_details = Order::with('products', 'transactions') // Assuming 'products' is the relationship name
 			->where('ref', $request->tran_id)
 			->first();
-	
-		// Initialize a message variable
-		$message = '';
-	
-		// Check if the order exists
-		if ($order_details) {
-			// Check the order status
-			if ($order_details->status == 0) { // 0 means 'Pending'
-				$validation = $sslc->orderValidate($request->all(), $request->tran_id, $request->amount);
-	
-				if ($validation) {
-					// Check for existing transaction
-					$existingTransaction = $order_details->transactions()->where('ref', $request->tran_id)->first();
-	
-					// Prepare transaction data
-					$transaction_data = [
-						'ref' => $request->tran_id,
-						'order_id' => $order_details->id,
-						'val_id' => $request->val_id,
-						'amount' => $request->amount,
-						'card_type' => $request->card_type,
-						'store_amount' => $request->store_amount,
-						'card_no' => $request->card_no,
-						'bank_tran_id' => $request->bank_tran_id,
-						'status' => $request->status,
-						'tran_date' => $request->tran_date,
-						'error' => $request->error,
-						'currency' => $request->currency,
-						'card_issuer' => $request->card_issuer,
-						'card_brand' => $request->card_brand,
-						'card_sub_brand' => $request->card_sub_brand,
-						'card_issuer_country' => $request->card_issuer_country,
-						'card_issuer_country_code' => $request->card_issuer_country_code,
-						'store_id' => $request->store_id,
-						'verify_sign' => $request->verify_sign,
-						'verify_key' => $request->verify_key,
-						'verify_sign_sha2' => $request->verify_sign_sha2,
-						'currency_type' => $request->currency_type,
-						'currency_amount' => $request->currency_amount,
-						'currency_rate' => $request->currency_rate,
-						'base_fair' => $request->base_fair,
-						'value_a' => $request->value_a,
-						'value_b' => $request->value_b,
-						'value_c' => $request->value_c,
-						'value_d' => $request->value_d,
-						'subscription_id' => $request->subscription_id,
-						'risk_level' => $request->risk_level,
-						'risk_title' => $request->risk_title,
-					];
-	
-					if ($existingTransaction) {
-						// Update existing transaction
-						$existingTransaction->update($transaction_data);
-						$message = 'Transaction is successfully updated.';
-					} else {
-						// Create a new transaction
-						$order_details->transactions()->create($transaction_data);
-						$message = 'Transaction is successfully completed.';
-					}
-	
-					// Update order status to 'Processing' if it was pending
-					if ($order_details->status == 0) {
-						$order_details->update(['status' => 2]); // 2 means 'Processing'
-					}
-				}
-			} elseif ($order_details->status == 2 || $order_details->status == 1) { // 2 = 'Processing', 1 = 'Completed'
-				// The order status was already updated
-				$message = 'Transaction is successfully completed.';
-			} else {
-				// If something went wrong, show an invalid transaction message
-				$message = 'Invalid transaction.';
-			}
-		} else {
-			// If order doesn't exist
-			$message = 'Order not found.';
+
+		if (!$order_details) {
+			return redirect()->route('cart')->withErrors(['order' => 'Order not found.']);
 		}
 
-		// Clear the cart session
-		session()->forget('cart'); // Replace 'cart' with the actual name of your cart session if it's different
-		session()->forget(['voucher_success', 'applied_voucher', 'voucher']);
+		$message = '';
 
+		if ($order_details->status == 0) { // Pending
+			$validation = $sslc->orderValidate($request->all(), $request->tran_id, $request->amount);
+
+			if ($validation) {
+				// Check for existing transaction
+				$existingTransaction = $order_details->transactions()->where('ref', $request->tran_id)->first();
+
+				$transaction_data = [
+					'ref' => $request->tran_id,
+					'order_id' => $order_details->id,
+					'val_id' => $request->val_id,
+					'amount' => $request->amount,
+					'card_type' => $request->card_type,
+					'store_amount' => $request->store_amount,
+					'card_no' => $request->card_no,
+					'bank_tran_id' => $request->bank_tran_id,
+					'status' => $request->status,
+					'tran_date' => $request->tran_date,
+					'error' => $request->error,
+					'currency' => $request->currency,
+					'card_issuer' => $request->card_issuer,
+					'card_brand' => $request->card_brand,
+					'card_sub_brand' => $request->card_sub_brand,
+					'card_issuer_country' => $request->card_issuer_country,
+					'card_issuer_country_code' => $request->card_issuer_country_code,
+					'store_id' => $request->store_id,
+					'verify_sign' => $request->verify_sign,
+					'verify_key' => $request->verify_key,
+					'verify_sign_sha2' => $request->verify_sign_sha2,
+					'currency_type' => $request->currency_type,
+					'currency_amount' => $request->currency_amount,
+					'currency_rate' => $request->currency_rate,
+					'base_fair' => $request->base_fair,
+					'value_a' => $request->value_a,
+					'value_b' => $request->value_b,
+					'value_c' => $request->value_c,
+					'value_d' => $request->value_d,
+					'subscription_id' => $request->subscription_id,
+					'risk_level' => $request->risk_level,
+					'risk_title' => $request->risk_title,
+				];
+
+				if ($existingTransaction) {
+					$existingTransaction->update($transaction_data);
+					$message = 'Transaction is successfully updated.';
+				} else {
+					$order_details->transactions()->create($transaction_data);
+					$message = 'Transaction is successfully completed.';
+				}
+
+				if ($order_details->status == 0) {
+					$order_details->update(['status' => 2]); // Processing
+
+					// Decrement stock for each product in the order
+					foreach ($order_details->products as $product) {
+						$productId = $product->id;
+						$sizeId = $product->pivot->size_id; // Assuming size_id is stored in the pivot table
+						$quantityToOrder = $product->pivot->quantity; // Assuming quantity is stored in the pivot table
+
+						Quantity::where('product_id', $productId)
+							->where('size_id', $sizeId)
+							->decrement('quantity', $quantityToOrder);
+					}
+				}
+			}
+		} elseif (in_array($order_details->status, [1, 2])) { // Completed or Processing
+			$message = 'Transaction is successfully completed.';
+		} else {
+			$message = 'Invalid transaction.';
+		}
+
+		session()->forget(['cart', 'voucher_success', 'applied_voucher', 'voucher']);
 		session(['order_ref' => $order_details->ref]);
 
 		return redirect()->route('order.placed', ['order' => $order_details->ref])->with('message', $message);
@@ -461,11 +454,11 @@ class PaymentController extends Controller
 				$order_details->update(['status' => 6]);
 	
 				// Restore product quantities
-				foreach ($order_details->products as $product) {
-					Quantity::where('product_id', $product->id)
-						->where('size_id', $product->pivot->size_id)
-						->increment('quantity', $product->pivot->quantity);
-				}
+				// foreach ($order_details->products as $product) {
+				// 	Quantity::where('product_id', $product->id)
+				// 		->where('size_id', $product->pivot->size_id)
+				// 		->increment('quantity', $product->pivot->quantity);
+				// }
 			} else {
 				// If the order is already completed or processing
 				$message = 'Transaction is already completed or in processing.';
@@ -555,11 +548,11 @@ class PaymentController extends Controller
 				$order_details->update(['status' => 5]);
 
 				// Restore product quantities
-				foreach ($order_details->products as $product) {
-					Quantity::where('product_id', $product->id)
-						->where('size_id', $product->pivot->size_id)
-						->increment('quantity', $product->pivot->quantity);
-				}
+				// foreach ($order_details->products as $product) {
+				// 	Quantity::where('product_id', $product->id)
+				// 		->where('size_id', $product->pivot->size_id)
+				// 		->increment('quantity', $product->pivot->quantity);
+				// }
 			} else {
 				// If the order is already completed or processing
 				$message = 'Transaction is already completed or in processing.';

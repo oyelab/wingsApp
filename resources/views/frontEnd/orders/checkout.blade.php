@@ -78,18 +78,21 @@
 							<label for="address">House/Road/Post
 								<span class="text-danger">*</span>
 							</label>
-							<input type="text" class="form-control" id="address" name="address" placeholder="Enter detail address" />
+							<input type="text" class="form-control" id="address" name="address" placeholder="Enter detail address" 
+								value="{{ old('address') }}" required />
 						</div>
 						<div class="dristic-wrap">
 							<div class="form-group mb-3">
-								<label for="city">City </label>
+								<label for="city">City <span class="text-danger">*</span>
+								</label>
 								<select class="form-control" id="recipient_city" name="recipient_city" required
 									onchange="fetchZones()">
 									<option value="">Select City</option>
 								</select>
 							</div>
 							<div class="form-group mb-3">
-								<label for="zone">Zone </label>
+								<label for="city">Zone <span class="text-danger">*</span>
+								</label>
 								<select class="form-select" id="recipient_zone" name="recipient_zone" required
 									onchange="fetchAreas()">
 									<option value="">Select Zone</option>
@@ -97,7 +100,7 @@
 							</div>
 							<div class="form-group mb-3">
 								<label for="area">Area </label>
-								<select class="form-select" id="recipient_area" name="recipient_area" required>
+								<select class="form-select" id="recipient_area" name="recipient_area">
 									<option value="">Select Area</option>
 								</select>
 							</div>
@@ -109,7 +112,7 @@
 					<div class="review-your-cart-wrap">
 						<div class="review-your-cart-top">
 							<h3>Review your cart</h3>
-							<a href="{{ route('cart.show') }}">
+							<a href="{{ route('cart.show') }}" class="btn btn-outline-dark">
 								<i class="bi bi-pencil-square"></i> Update
 							</a>
 						</div>
@@ -165,7 +168,7 @@
 								<span>Online Payment</span>
 							</label>
 						</div>
-						<div class="mb-5a">
+						<div class="mb-5">
 							<small><strong><i class="bi bi-clock-history"></i> Estimated delivery by {{ $estimateShipping }}</strong></small>
 						</div>
 
