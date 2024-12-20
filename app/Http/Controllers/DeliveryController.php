@@ -18,12 +18,12 @@ class DeliveryController extends Controller
     public function __construct(OrderService $orderService)
     {
         $this->orderService = $orderService;
+		$this->middleware('auth')->except('calculateShipping', 'fetchCities', 'fetchZones', 'fetchAreas', 'fetchStores');
+		$this->middleware('role')->except('calculateShipping', 'fetchCities', 'fetchZones', 'fetchAreas', 'fetchStores');
     }
 
 	public function calculateShipping(Request $request)
 	{
-		// return $request;
-		// 
 		$recipientCity = $request->input('recipient_city');
 		$recipientZone = $request->input('recipient_zone');
 		$quantity = $request->input('quantity');
@@ -47,6 +47,65 @@ class DeliveryController extends Controller
 		return response()->json($response->json(), $response->status());
 	}
 
+	public function fetchCities()
+	{
+		try {
+			$cities = $this->orderService->fetchFromApi('aladdin/api/v1/city-list');
+			return response()->json($cities);
+		} catch (\Exception $e) {
+			return response()->json(['error' => $e->getMessage()], 500);
+		}
+	}
+
+	public function fetchZones($cityId)
+	{
+		try {
+			$zones = $this->orderService->fetchFromApi("aladdin/api/v1/cities/{$cityId}/zone-list");
+			return response()->json($zones);
+		} catch (\Exception $e) {
+			return response()->json(['error' => $e->getMessage()], 500);
+		}
+	}
+
+	public function fetchAreas($zoneId)
+	{
+		try {
+			$areas = $this->orderService->fetchFromApi("aladdin/api/v1/zones/{$zoneId}/area-list");
+			return response()->json($areas);
+		} catch (\Exception $e) {
+			return response()->json(['error' => $e->getMessage()], 500);
+		}
+	}
+
+	public function fetchStores(Request $request)
+	{
+		try {
+			$stores = $this->orderService->fetchFromApi('aladdin/api/v1/stores');
+			return response()->json($stores);
+		} catch (\Exception $e) {
+			return response()->json(['error' => $e->getMessage()], 500);
+		}
+	}
+
+
+	public function createStores(Request $request)
+	{
+		$accessToken = env('PATHAO_ACCESS_TOKEN_TEST'); // Get the access token from the .env file
+		$baseUrl = env('PATHAO_BASE_URL_TEST'); // Make sure you set this in your .env file
+
+		try {
+			$response = Http::withHeaders([
+				'Authorization' => "Bearer {$accessToken}",
+				'Content-Type' => 'application/json',
+				'Accept' => 'application/json',
+			])->get("{$baseUrl}/aladdin/api/v1/stores");
+
+			// Return the response in JSON format
+			return response()->json($response->json());
+		} catch (\Exception $e) {
+			return response()->json(['message' => 'Failed to fetch stores.'], 500);
+		}
+	}
 	
 
 	public function createOrder(Request $request)
@@ -135,72 +194,7 @@ class DeliveryController extends Controller
 		
 	}
 	
-	public function fetchCities()
-	{
-		try {
-			$cities = $this->orderService->fetchFromApi('aladdin/api/v1/city-list');
-			return response()->json($cities);
-		} catch (\Exception $e) {
-			return response()->json(['error' => $e->getMessage()], 500);
-		}
-	}
-
-	public function fetchZones($cityId)
-	{
-		try {
-			$zones = $this->orderService->fetchFromApi("aladdin/api/v1/cities/{$cityId}/zone-list");
-			return response()->json($zones);
-		} catch (\Exception $e) {
-			return response()->json(['error' => $e->getMessage()], 500);
-		}
-	}
-
-	public function fetchAreas($zoneId)
-	{
-		try {
-			$areas = $this->orderService->fetchFromApi("aladdin/api/v1/zones/{$zoneId}/area-list");
-			return response()->json($areas);
-		} catch (\Exception $e) {
-			return response()->json(['error' => $e->getMessage()], 500);
-		}
-	}
-
-	public function fetchStores(Request $request)
-	{
-		try {
-			$stores = $this->orderService->fetchFromApi('aladdin/api/v1/stores');
-			return response()->json($stores);
-		} catch (\Exception $e) {
-			return response()->json(['error' => $e->getMessage()], 500);
-		}
-	}
-
-
-	public function createStores(Request $request)
-	{
-		$accessToken = env('PATHAO_ACCESS_TOKEN_TEST'); // Get the access token from the .env file
-		$baseUrl = env('PATHAO_BASE_URL_TEST'); // Make sure you set this in your .env file
-
-		try {
-			$response = Http::withHeaders([
-				'Authorization' => "Bearer {$accessToken}",
-				'Content-Type' => 'application/json',
-				'Accept' => 'application/json',
-			])->get("{$baseUrl}/aladdin/api/v1/stores");
-
-			// Return the response in JSON format
-			return response()->json($response->json());
-		} catch (\Exception $e) {
-			return response()->json(['message' => 'Failed to fetch stores.'], 500);
-		}
-	}
 	
-
-
-	public function show()
-	{
-		return view('test.create_order');
-	}
 
 	public function issueTokenGenerate()
 	{

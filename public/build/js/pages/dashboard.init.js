@@ -27,7 +27,7 @@ function getChartColorsArray(chartId) {
 
 document.addEventListener('DOMContentLoaded', function () {
 	// Fetch sales and orders data from backend
-	fetch('/monthly-data')
+	fetch('/dashboard/monthly-data')
 		.then(response => response.json())
 		.then(data => {
 			const salesData = data.sales; // Monthly sales data
@@ -251,7 +251,7 @@ var sparklineoptions1 = {
   
   document.addEventListener('DOMContentLoaded', function () {
     // Fetch data from the updated route
-    axios.get('/monthly-data')
+    axios.get('/dashboard/monthly-data')
         .then(function (response) {
             // Extract sales data from the response
             const salesData = response.data.sales; // Access "sales" data from the response

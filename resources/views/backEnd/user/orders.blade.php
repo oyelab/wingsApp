@@ -348,7 +348,7 @@
 					refundOrderIdInput.value = orderId;
 
 					// Update the form's action dynamically
-					refundForm.action = `/backEnd/order/${orderId}/refund`;
+					refundForm.action = `/dashboard/order/${orderId}/refund`;
 
 					// Open the modal
 					const refundModal = new bootstrap.Modal(document.getElementById("orderRefundModal"));

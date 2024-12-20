@@ -18,6 +18,9 @@ class AssetController extends Controller
     public function __construct(FileHandlerService $fileHandler)
     {
         $this->fileHandler = $fileHandler;
+
+		$this->middleware('auth');
+		$this->middleware('role');
     }
 
 

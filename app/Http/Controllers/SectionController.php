@@ -155,7 +155,7 @@ class SectionController extends Controller
 		
 		// return $slug;
 		// Return the view with necessary data
-		return view('frontEnd.products.index', [
+		return view('frontEnd.products.show', [
 			'slug' => $slug,
 			'section' => $section,
 			'product' => $product,

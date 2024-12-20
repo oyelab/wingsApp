@@ -121,7 +121,7 @@
         }
 
         // Make the POST request to update the review status
-        fetch(`/backEnd/reviews/${reviewId}/update-status`, {
+        fetch(`/dashboard/reviews/${reviewId}/update-status`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

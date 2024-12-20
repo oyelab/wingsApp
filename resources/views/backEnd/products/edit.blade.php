@@ -354,7 +354,7 @@
 
             if (mainCategoryId) {
                 // Fetch subcategories for the selected main category
-                fetch(`/get-subcategories/${mainCategoryId}`)
+                fetch(`/dashboard/get-subcategories/${mainCategoryId}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.length > 0) {

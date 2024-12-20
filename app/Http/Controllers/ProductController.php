@@ -578,7 +578,7 @@ class ProductController extends Controller
 		// Determine the view based on the category slug
 		$view = $category->slug === 'wings-edited' 
 			? 'frontEnd.products.wings-edited' 
-			: 'frontEnd.products.index';
+			: 'frontEnd.products.show';
 	
 		// Return the view with the necessary data
 		return view($view, [

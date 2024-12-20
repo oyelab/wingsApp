@@ -1,147 +1,523 @@
 @extends('frontEnd.layouts.app')
 
+@section('pageTitle', $product->title . ' | ')
+@section('pageDescription', $product->meta_desc)
+@section('pageKeywords', $product->keywordsString)
+@section('pageOgImage', $product->ogImagePath)  <!-- Image specific to this page -->
+@section('css')
+<style>
+    .available_sizes.error {
+        border: 1px solid red;
+        padding: 10px;
+        border-radius: 5px;
+    }
+</style>
+@endsection
 @section('content')
-@if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
-
-@if(session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
-@endif
-
-<div class="container my-5">
-    <div class="row">
-        <!-- Product Images Carousel -->
-		<div class="col-md-6">
-			<div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
-				<div class="carousel-inner">
-					@foreach($product->imagePaths as $index => $imagePath)
-						<div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-							<img src="{{ $imagePath }}" class="d-block w-100" alt="Product Image {{ $index + 1 }}">
-						</div>
-					@endforeach
+<!-- breadcrumb section -->
+<div class="breadcrumb-section">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="breadcrumb-content">
+					<x-breadcrub
+						:section="$section"
+						:collection="$collection"
+						:pagetitle="$product->slug"
+					/>
 				</div>
-				<button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-					<span class="visually-hidden">Previous</span>
-				</button>
-				<button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-					<span class="carousel-control-next-icon" aria-hidden="true"></span>
-					<span class="visually-hidden">Next</span>
-				</button>
 			</div>
 		</div>
-
-
-        <!-- Product Details -->
-        <div class="col-md-6">
-            <!-- Displaying product categories -->
-			<p class="text-muted mb-1">Categories: 
-				<span class="fw-bold">
-					{{ $product->categories->pluck('title')->implode(', ') }}
-				</span>
-			</p>
-
-
-            <!-- Title -->
-            <h2 class="mb-3">{{ $product->title }}</h2>
-
-            <!-- Price and Offer Price -->
-            <div class="mb-3">
-				@if ($product->salePrice)
-					<span class="text-muted text-decoration-line-through">৳ {{ $product->price }}</span>
-					<span class="fw-bold ms-2 text-success">৳ {{ $product->offer_price }}</span>
-				@else
-					<span class="fw-bold">৳ {{ $product->price }}</span>
-				@endif
-			</div>
-
-
-            <!-- Select Sizes -->
-			<div class="mb-4">
-				<label class="form-label">Select Size:</label>
-				<div class="btn-group" role="group" aria-label="Size options">
-					@foreach($product->availableSizes as $size)
-						<input type="radio" class="btn-check" name="size" id="size{{ $size->id }}" autocomplete="off" value="{{ $size->id }}">
-						<label class="btn btn-outline-primary" for="size{{ $size->id }}">{{ $size->name }}</label>
-					@endforeach
+	</div>
+</div>
+<div class="product-details-top-block">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="product-image">
+					<div class="product-thumb-slider">
+						<div class="custom-navigation">
+							<div class="prev-slider main-p-prev">
+								<i class="bi bi-chevron-up"></i>
+							</div>
+						</div>
+						<div class="swiper productGalleryThumb">
+							<div class="swiper-wrapper">
+								@foreach($product->imagePaths as $index => $imagePath)
+								<div class="swiper-slide">
+									<div class="thumb-image">
+										<img
+											src="{{ $imagePath }}"
+											draggable="false"
+											class="img-fluid"
+											alt="{{ $product->title . '-' .  $index + 1 }}"
+											oncontextmenu="return false;"
+											/>
+									</div>
+								</div>
+								@endforeach
+							</div>
+						</div>
+						<div class="custom-navigation">
+							<div class="next-slider main-p-next">
+								<i class="bi bi-chevron-down"></i>
+							</div>
+						</div>
+					</div>
+					<div class="product-main-slider">
+						<div class="swiper productMainImage">
+							<div class="swiper-wrapper">
+								@foreach($product->imagePaths as $index => $imagePath)
+								<div class="swiper-slide">
+									<div class="product-slider-img">
+										<img
+											src="{{ $imagePath }}"
+											draggable="false"
+											class="img-fluid"
+											alt="{{ $product->title . '-' .  $index + 1 }}"
+											oncontextmenu="return false;"
+										/>
+									</div>
+								</div>
+								@endforeach
+							</div>
+						</div>
+						<div class="navigation-area">
+							<div class="navigation-item main-p-prev d-flex align-items-center justify-content-center">
+								<i class="bi bi-chevron-left"></i>
+							</div>
+							<div class="navigation-item main-p-next d-flex align-items-center justify-content-center">
+								<i class="bi bi-chevron-right"></i>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
+			<div class="col-md-6">
+				<div class="product-top-block-details">
+					<h4>
+						<span class="badge bg-success-subtle text-success mb-0">{{ $product->category_display }}</span>
+					</h4>
+					<strong class="text-warning">★ {{ number_format($product->averageRating, 1) }} Rating ({{ $product->reviews->count() }} Reviews)</strong>
 
-			<!-- Buttons -->
-			<div class="d-flex gap-2 mb-4">
-				<button id="addToCartBtn" class="btn btn-primary w-50" data-product-id="{{ $product->id }}">Add to Cart</button>
-				<button id="checkoutBtn" class="btn btn-success w-50">Checkout</button>
+					<h1>
+						<span>{{ $product->title }}</span>
+						<p class="card-text">
+							<span class="badge {{ $product->isAvailable() ? 'bg-success' : 'bg-danger' }}">
+								{{ $product->isAvailable() ? 'Available' : 'Stock Out' }}
+							</span>
+						</p>
+					</h1>
+
+					<div class="pricing-block">
+					@if ($product->sale)
+						<div class="discount-price">৳{{ $product->offerPrice }}</div>
+						<div class="current-price text-muted text-decoration-line-through">৳{{ $product->price }}</div>
+					@else
+						<div class="current-price">৳{{ $product->price }}</div>
+					@endif
+						
+					</div>
+					<div class="availabel-size">
+						<h2>Select Size</h2>
+						<div class="form-group available_sizes"  id="sizeSelection">
+							@foreach($product->sizes as $size)
+							<div class="size_item">
+								<input
+									type="radio"
+									name="size"
+									id="size{{ $size->id }}"
+									autocomplete="off"
+									value="{{ $size->id }}"
+									class="form-check-input"
+									{{ $size->pivot->quantity <= 0 ? 'disabled' : '' }}
+								/>
+								<label for="size{{ $size->id }}"
+									class="form-check-label {{ $size->pivot->quantity <= 0 ? 'text-muted' : '' }}">
+									{{ $size->name }}
+								</label>
+							</div>
+							@endforeach
+						</div>
+						<p id="sizeError" class="error-message" style="display: none; color: red; ">
+							Please select a size.
+						</p>
+					</div>
+
+					<div class="action-button-wrap">
+						<button id="addToCartBtn" class="add-to-cart" data-product-id="{{ $product->id }}">
+							Add to Cart
+						</button>
+						<button id="checkoutBtn" class="buy-now">
+							Checkout
+						</button>
+						<button class="favorite {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'selected' : '' }}" 
+								data-product-id="{{ $product->id }}">
+							Favorite
+						</button>
+
+					</div>
+					<div class="size-guid-area">
+						<div class="top-part d-flex align-items-center justify-content-between">
+							<h2>Size Guide(Inchies)</h2>
+						</div>
+						<div class="size-chart-wrap">
+							<div class="tab-content" id="myTabContent">
+								<div
+									class="tab-pane fade show active"
+									id="in-pane"
+									role="tabpanel"
+									aria-labelledby="in"
+									tabindex="0"
+								>
+									<table class="size-table">
+										<tr>
+											<th>SIZE</th>
+											<th>CHEST</th>
+											<th>LENGTH</th>
+										</tr>
+										<tr>
+											<td>S</td>
+											<td>36</td>
+											<td>27</td>
+										</tr>
+										<tr>
+											<td>M</td>
+											<td>38</td>
+											<td>28</td>
+										</tr>
+										<tr>
+											<td>L</td>
+											<td>40</td>
+											<td>29</td>
+										</tr>
+										<tr>
+											<td>XL</td>
+											<td>42</td>
+											<td>30</td>
+										</tr>
+										<tr>
+											<td>XXL</td>
+											<td>44</td>
+											<td>31</td>
+										</tr>
+										<tr>
+											<td>XXXL</td>
+											<td>46</td>
+											<td>32</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="social-share-wrap">
+						
+						<h2>Social Share:</h2>
+						
+						<div class="social-share-icon">
+							<!-- Facebook Share -->
+							<a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->fullUrl()) }}" target="_blank" title="Share on Facebook">
+								<i class="bi bi-facebook fs-4"></i>
+							</a>
+
+							<!-- Twitter Share -->
+							<a href="https://twitter.com/intent/tweet?url={{ urlencode(request()->fullUrl()) }}&text={{ urlencode('Check this out!') }}" target="_blank" title="Share on Twitter">
+								<i class="bi bi-twitter fs-4"></i>
+							</a>
+
+							<!-- LinkedIn Share -->
+							<a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(request()->fullUrl()) }}" target="_blank" title="Share on LinkedIn">
+								<i class="bi bi-linkedin fs-4"></i>
+							</a>
+
+							<!-- Messenger Share -->
+							<a href="https://www.facebook.com/dialog/send?link={{ urlencode(request()->fullUrl()) }}&app_id=YOUR_APP_ID" target="_blank" title="Share on Messenger">
+								<i class="bi bi-messenger fs-4"></i>
+							</a>
+
+							<!-- WhatsApp Share -->
+							<a href="https://api.whatsapp.com/send?text={{ urlencode(request()->fullUrl()) }}" target="_blank" title="Share on WhatsApp">
+								<i class="bi bi-whatsapp fs-4"></i>
+							</a>
+
+							<!-- Copy Link (with JavaScript functionality) -->
+							<button id="clipboardButton" onclick="copyLink()" title="Copy Link" style="border: none; background: none; cursor: pointer;">
+								<i id="clipboardIcon" class="bi bi-copy fs-4"></i>
+							</button>
+						</div>
+
+
+					</div>
+				</div>
 			</div>
-            <!-- Description -->
-            <div>
-				<h5>Description</h5>
-				<p class="">{!! $product->description !!}</p>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="product-details-area">
+					<div class="accordion" id="descriptionAccordion">
+						<div class="accordion-item">
+							<h2
+								class="accordion-header"
+								id="descriptionHeading"
+							>
+								<button
+									class="accordion-button"
+									type="button"
+									data-bs-toggle="collapse"
+									data-bs-target="#descriptioncollapse"
+									aria-expanded="true"
+									aria-controls="descriptioncollapse"
+								>
+									Description
+									<i class="bi bi-chevron-down"></i>
+								</button>
+							</h2>
+							<div
+								id="descriptioncollapse"
+								class="accordion-collapse collapse show"
+								aria-labelledby="descriptionHeading"
+								data-bs-parent="#descriptionAccordion"
+							>
+								<div class="accordion-body">
+									<div class="product-description">
+										{!! $product->description !!}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="accordion" id="productDetailsAccordion">
+						<div class="accordion-item">
+							<h2
+								class="accordion-header"
+								id="productDetailsHeading"
+							>
+								<button
+									class="accordion-button"
+									type="button"
+									data-bs-toggle="collapse"
+									data-bs-target="#productDetailsCollapse"
+									aria-expanded="true"
+									aria-controls="productDetailsCollapse"
+								>
+									Product Details
+									<i class="bi bi-chevron-down"></i>
+								</button>
+							</h2>
+							<div
+								id="productDetailsCollapse"
+								class="accordion-collapse collapse show"
+								aria-labelledby="productDetailsHeading"
+								data-bs-parent="#productDetailsAccordion"
+							>
+								<div class="accordion-body">
+									<div class="product-description">
+										<ul>
+											@foreach($product->specifications() as $spec)
+												<li>✔ {{ $spec->item }}</li> <!-- Adjust to the appropriate field of the Specification model -->
+											@endforeach
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="accordion" id="reviewAccordion">
+						<div class="accordion-item">
+							<h2
+								class="accordion-header"
+								id="reviewHeading"
+							>
+								<button
+									class="accordion-button"
+									type="button"
+									data-bs-toggle="collapse"
+									data-bs-target="#reviewCollapse"
+									aria-expanded="true"
+									aria-controls="reviewCollapse"
+								>
+									Review ({{ $product->reviewsCount }})
+									<i class="bi bi-chevron-down"></i>
+								</button>
+							</h2>
+							<div
+								id="reviewCollapse"
+								class="accordion-collapse collapse show"
+								aria-labelledby="reviewHeading"
+								data-bs-parent="#reviewAccordion"
+							>
+								<div class="accordion-body">
+									<div class="product-description">
+										<div class="review-analysis">
+											<h2>{{ number_format($product->averageRating, 1) }}</h2>
+											
+											<div class="rating">
+												@for ($i = 0; $i < 5; $i++)
+													@if ($i < floor($product->averageRating))
+														<i class="bi bi-star-fill text-warning"></i>  <!-- Filled star -->
+													@elseif ($i == floor($product->averageRating) && $product->averageRating - floor($product->averageRating) >= 0.5)
+														<i class="bi bi-star-half text-warning"></i>  <!-- Half-filled star -->
+													@else
+														<i class="bi bi-star text-warning"></i>  <!-- Empty star -->
+													@endif
+												@endfor
+											</div>
+										</div>
+
+										<div class="review-lists">
+											@foreach ($product->reviews as $review)
+											<div class="list d-flex">
+												<div class="user-wrap">
+													<div class="starts d-flex align-items-center">
+														{{-- Display the filled stars --}}
+														@for ($i = 0; $i < $review->ratingStars['filled']; $i++)
+															<i class="bi bi-star-fill text-warning"></i>
+														@endfor
+
+														{{-- Display the empty stars --}}
+														@for ($i = 0; $i < $review->ratingStars['empty']; $i++)
+															<i class="bi bi-star text-warning"></i>
+														@endfor
+
+													</div>
+													<h3>
+														{{ $review->user->name ?? $review->username }}
+													</h3>
+												</div>
+												<div class="review-details">
+													<div class="review-details-top d-flex align-items-center justify-content-between">
+														
+														<p>{{ $review->created_at->format('d F, Y') }}</p>
+													</div>
+													<p>{{ $review->content }}</p>
+												</div>
+											</div>
+											@endforeach
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
-        </div>
-    </div>
+		</div>
+	</div>
 </div>
+
+@include('frontEnd.components.related')
 @endsection
+
 @section('scripts')
-
 <script>
-    // Function to add product to cart
-    function addToCart(productId, sizeId) {
-        return fetch("{{ route('cart.add') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ product_id: productId, size_id: sizeId })
-        });
+    function copyLink() {
+        // Get the current page URL
+        const url = window.location.href;
+        
+        // Create a temporary input element to copy the URL to the clipboard
+        const tempInput = document.createElement("input");
+        tempInput.value = url;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+
+        // Change the icon and show the "Copied!" text
+        const clipboardButton = document.getElementById("clipboardButton");
+        const clipboardIcon = document.getElementById("clipboardIcon");
+        clipboardIcon.className = "bi bi-check-lg fs-5"; // Change to tick mark icon
+        clipboardButton.innerHTML += " <span style='font-size: 1rem;'>Copied!</span>";
+
+        // Revert back to the original icon after a delay
+        setTimeout(() => {
+            clipboardIcon.className = "bi bi-copy fs-4"; // Change back to clipboard icon
+            clipboardButton.innerHTML = ''; // Clear the "Copied!" text
+            clipboardButton.appendChild(clipboardIcon); // Re-attach the icon
+        }, 1500); // 1.5 seconds delay
     }
-
-    document.getElementById('addToCartBtn').addEventListener('click', function () {
-        const productId = this.getAttribute('data-product-id');
-        const sizeId = document.querySelector('input[name="size"]:checked')?.value;
-
-        if (!sizeId) {
-            alert("Please select a size before adding to cart.");
-            return;
-        }
-
-        // AJAX request to add the item to the cart
-        addToCart(productId, sizeId)
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message); // Show success message
-            })
-            .catch(error => console.error('Error:', error));
-    });
-
-    document.getElementById('checkoutBtn').addEventListener('click', function () {
-        const productId = document.getElementById('addToCartBtn').getAttribute('data-product-id');
-        const sizeId = document.querySelector('input[name="size"]:checked')?.value;
-
-        if (!sizeId) {
-            alert("Please select a size before proceeding to checkout.");
-            return;
-        }
-
-        // Add product to cart before redirecting
-        addToCart(productId, sizeId)
-            .then(response => response.json())
-            .then(data => {
-                // Redirect to the checkout page after adding to cart
-                window.location.href = "{{ route('checkout.show') }}";
-            })
-            .catch(error => console.error('Error:', error));
-    });
 </script>
 
+<script>
+	// Function to add product to cart
+	function addToCart(productId, sizeId) {
+		return fetch("{{ route('cart.add') }}", {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRF-TOKEN': '{{ csrf_token() }}'
+			},
+			body: JSON.stringify({ product_id: productId, size_id: sizeId })
+		});
+	}
 
-<!-- Bootstrap 5 JavaScript Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	function handleSizeError(showError) {
+		const sizeSelectionDiv = document.getElementById('sizeSelection');
+		const errorMessage = document.getElementById('sizeError');
+		if (showError) {
+			sizeSelectionDiv.classList.add('error');
+			errorMessage.style.display = 'block';
+		} else {
+			sizeSelectionDiv.classList.remove('error');
+			errorMessage.style.display = 'none';
+		}
+	}
 
+	function showToast(message) {
+		const toastContainer = document.querySelector('.toast-container');
+		const toastElement = document.getElementById('wishlist-toast');
+		const toastBody = toastElement.querySelector('.toast-body');
 
+		toastBody.textContent = message;
+
+		// Show the toast using Bootstrap's toast API
+		const toast = new bootstrap.Toast(toastElement);
+		toast.show();
+	}
+
+	document.getElementById('addToCartBtn').addEventListener('click', function () {
+		const productId = this.getAttribute('data-product-id');
+		const sizeId = document.querySelector('input[name="size"]:checked')?.value;
+
+		if (!sizeId) {
+			handleSizeError(true);
+			return;
+		}
+
+		handleSizeError(false);
+
+		// AJAX request to add the item to the cart
+		addToCart(productId, sizeId)
+			.then(response => response.json())
+			.then(data => {
+				showToast(data.message); // Display the success message in the toast
+			})
+			.catch(error => console.error('Error:', error));
+	});
+
+	document.getElementById('checkoutBtn').addEventListener('click', function () {
+		const productId = document.getElementById('addToCartBtn').getAttribute('data-product-id');
+		const sizeId = document.querySelector('input[name="size"]:checked')?.value;
+
+		if (!sizeId) {
+			handleSizeError(true);
+			return;
+		}
+
+		handleSizeError(false);
+
+		// Add product to cart before redirecting
+		addToCart(productId, sizeId)
+			.then(response => response.json())
+			.then(data => {
+				showToast(data.message); // Display the success message in the toast
+				// Redirect to the checkout page after showing the toast
+				setTimeout(() => {
+					window.location.href = "{{ route('checkout.show') }}";
+				}, 3000); // Wait for the toast to auto-hide before redirecting
+			})
+			.catch(error => console.error('Error:', error));
+	});
+
+</script>
 @endsection

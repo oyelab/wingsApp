@@ -19,6 +19,12 @@ use Mpdf\Mpdf;
 
 class OrderController extends Controller
 {
+	public function __construct()
+    {
+        $this->middleware('auth')->only('refunds');
+		$this->middleware('role')->only('refunds');
+    }
+
 	public function refundStore(Request $request)
 	{
 		// Validate the request
@@ -69,7 +75,6 @@ class OrderController extends Controller
 		})
 		->get();	
 
-		// return $orders;
 	
 		// Pass the filtered orders to the view (assuming you're returning a view)
 		return view('backEnd.orders.index', compact('orders'));

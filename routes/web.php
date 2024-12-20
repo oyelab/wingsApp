@@ -13,7 +13,7 @@ use App\Http\Controllers\SslCommerzPaymentController;
 use App\Http\Controllers\PathaoWebhookController;
 use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VoucherController;
@@ -50,34 +50,26 @@ use App\Http\Controllers\SubscriptionController;
 
 Auth::routes();
 
-
+/* FrontEnd */
 Route::get('/', [HomeController::class, 'index'])->name('index');
 
 Route::get('/sections', [SectionController::class, 'sections'])->name('sections');
 Route::get('/sections/{section}', [SectionController::class, 'shopPage'])->name('shop.page');
-Route::get('/collections', [CategoryController::class, 'frontShow'])->name('collections');
-Route::get('/wings-edited', [CategoryController::class, 'wingsEdited'])->name('wings.edited');
-
-Route::get('/collections/{category:slug}/{product:slug}', [ProductController::class, 'show'])->name('products.details');
 Route::get('/sections/{section:slug}/{slug}', [SectionController::class, 'show'])->name('sections.products.details');
-
+Route::get('/collections', [CategoryController::class, 'frontShow'])->name('collections');
 Route::get('/collections/{category:slug}', [CategoryController::class, 'categoryPage'])->name('category');
 // Route::get('/collections/{category:slug}/{subcategory:slug}', [CategoryController::class, 'subCategory'])->name('subcategory');
-Route::get('/get-subcategories/{mainCategoryId}', [CategoryController::class, 'getSubcategories']);
+Route::get('/collections/{category:slug}/{product:slug}', [ProductController::class, 'show'])->name('products.details');
+Route::get('/wings-edited', [CategoryController::class, 'wingsEdited'])->name('wings.edited');
 
-Route::get('/delivery/create', [DeliveryController::class, 'show'])->name('showissueToken');
-Route::get('/delivery/issue-token', [DeliveryController::class, 'issueTokenGenerate'])->name('generate.token');
-Route::post('/delivery/issue-token', [DeliveryController::class, 'issueToken'])->name('issue.token');
+Route::get('/showcases/{slug}', [ShowcaseController::class, 'show'])->name('showcase.show');
 
-Route::post('/delivery/create-order', [DeliveryController::class, 'createOrder'])->name('create.order');
 Route::get('/cities', [DeliveryController::class, 'fetchCities']);
 Route::get('/zones/{cityId}', [DeliveryController::class, 'fetchZones']);
 Route::get('/areas/{zoneId}', [DeliveryController::class, 'fetchAreas']);
 Route::get('/stores', [DeliveryController::class, 'fetchStores']);
 Route::post('/calculate-shipping', [DeliveryController::class, 'calculateShipping'])->name('calculate.shipping');
-Route::get('/shippingPriceCalculate', function () {
-    return view('test.priceCalculate');
-});
+
 
 Route::post('/wishlist/toggle', [WishlistController::class, 'toggleWishlist'])->name('wishlist.toggle');
 
@@ -107,82 +99,66 @@ Route::get('/order/{order:ref}/failed', [OrderController::class, 'orderFailed'])
 
 Route::get('/order/{order}/invoice', [OrderController::class, 'generateInvoice'])->name('order.invoice');
 
-Route::post('/backEnd/order/{order}/refund', [OrderController::class, 'refundStore'])->name('refund.store');
-Route::get('/backEnd/orders/refunds', [OrderController::class, 'refunds'])->name('orders.refunds');
+Route::post('/subscribe', [SubscriptionController::class, 'store'])->name('subscribe');
 
 Route::get('/help', [PageController::class, 'help'])->name('help.index');
-// Route::get('help', [PageController::class, 'index'])->name('help.index');
 Route::get('/getInTouch', [PageController::class, 'getInTouch'])->name('getInTouch');
 
-Route::get('/backEnd/collections/items', [ProductController::class, 'items'])->name('collections.item');
+/* dashboard */
+Route::prefix('dashboard')->middleware(['auth'])->group(function() {
+	Route::get('/', [DashboardController::class, 'root'])->name('dashboard');
+	Route::get('/monthly-data', [DashboardController::class, 'getMonthlyData'])->name('monthly.data');
 
-Route::resource('backEnd/products', ProductController::class);
+	Route::get('specifications', [SpecificationController::class, 'index'])->name('specifications.index');
+	Route::post('specifications', [SpecificationController::class, 'store'])->name('specifications.store');
+	Route::post('specifications/update', [SpecificationController::class, 'update'])->name('specifications.update');
+	Route::delete('specifications/destroy', [SpecificationController::class, 'destroy'])->name('specifications.destroy');
+	Route::get('sections', [SectionController::class, 'index'])->name('sections.index');
+	Route::get('sections/create', [SectionController::class, 'create'])->name('sections.create');
+	Route::post('sections', [SectionController::class, 'store'])->name('sections.store');
+	Route::get('sections/{section}/edit', [SectionController::class, 'edit'])->name('sections.edit');
+	Route::put('sections/{section}/update', [SectionController::class, 'update'])->name('sections.update');
+	Route::delete('sections/{section}', [SectionController::class, 'destroy'])->name('sections.destroy'); // New delete route
+	Route::get('siteSettings', [SiteSettingController::class, 'index'])->name('settings.index');
+	Route::put('siteSettings', [SiteSettingController::class, 'update'])->name('settings.update');
 
-Route::get('/backEnd/sections', [SectionController::class, 'index'])->name('sections.index');
-Route::get('/backEnd/sections/create', [SectionController::class, 'create'])->name('sections.create');
-Route::post('/backEnd/sections', [SectionController::class, 'store'])->name('sections.store');
-Route::get('/backEnd/sections/{section}/edit', [SectionController::class, 'edit'])->name('sections.edit');
-Route::put('/backEnd/sections/{section}/update', [SectionController::class, 'update'])->name('sections.update');
-Route::delete('/backEnd/sections/{section}', [SectionController::class, 'destroy'])->name('sections.destroy'); // New delete route
+	Route::post('/order/{order}/refund', [OrderController::class, 'refundStore'])->name('refund.store');
+	Route::get('/orders/refunds', [OrderController::class, 'refunds'])->name('orders.refunds');
 
+	Route::get('/collections/items', [ProductController::class, 'items'])->name('collections.item');
 
-Route::put('/backEnd/products/{product}/status', [ProductController::class, 'updateStatus'])->name('products.updateStatus');
-Route::put('/backEnd/products/{product}/sale', [ProductController::class, 'updateOffer'])->name('products.updateOffer');
+	Route::put('/products/{product}/status', [ProductController::class, 'updateStatus'])->name('products.updateStatus');
+	Route::put('/products/{product}/sale', [ProductController::class, 'updateOffer'])->name('products.updateOffer');
 
-Route::resource('backEnd/reviews', ReviewController::class);
-Route::post('backEnd/reviews/{id}/update-status', [ReviewController::class, 'updateStatus'])->name('reviews.updateStatus');
+	Route::post('/reviews/{id}/update-status', [ReviewController::class, 'updateStatus'])->name('reviews.updateStatus');
 
+	Route::get('/profile', [UserController::class, 'profile'])->name('profile');
+	Route::get('/userOrders', [UserController::class, 'userOrders'])->name('user.orders');
+	Route::put('/profile/update', [UserController::class, 'update'])->name('profile.update');
 
+	Route::post('/orders/{productId}/{sizeId}/update', [AdminOrderController::class, 'updateOrderProduct'])->name('admin.order.update');
 
-Route::resource('backEnd/categories', CategoryController::class);
+	Route::put('pages/{page}/update-type', [PageController::class, 'updateType'])->name('pages.update-type');
+	Route::put('pages/update-order', [PageController::class, 'updateOrder'])->name('pages.update-order');
+	Route::get('/get-subcategories/{mainCategoryId}', [CategoryController::class, 'getSubcategories']);
 
-Route::resource('backEnd/sliders', SliderController::class);
-
-Route::resource('backEnd/orders', AdminOrderController::class);
-
-Route::resource('backEnd/vouchers', VoucherController::class);
-
-Route::resource('backEnd/pages', PageController::class)->except(['help']);
-Route::put('pages/{page}/update-type', [PageController::class, 'updateType'])->name('pages.update-type');
-Route::put('pages/update-order', [PageController::class, 'updateOrder'])->name('pages.update-order');
-
-
-
-Route::prefix('backEnd')->middleware(['auth'])->group(function() {
-    Route::resource('assets', AssetController::class);
+	Route::resource('assets', AssetController::class);
+	Route::resource('showcases', ShowcaseController::class);
+	Route::resource('categories', CategoryController::class);
+	Route::resource('sliders', SliderController::class);
+	Route::resource('orders', AdminOrderController::class);
+	Route::resource('vouchers', VoucherController::class);
+	Route::resource('reviews', ReviewController::class);
+	Route::resource('products', ProductController::class);
+	Route::resource('pages', PageController::class)->except(['help']);
 });
 
-Route::get('/backEnd/specifications', [SpecificationController::class, 'index'])->name('specifications.index');
-Route::post('/backEnd/specifications', [SpecificationController::class, 'store'])->name('specifications.store');
-Route::post('/backEnd/specifications/update', [SpecificationController::class, 'update'])->name('specifications.update');
-Route::delete('/backEnd/specifications/destroy', [SpecificationController::class, 'destroy'])->name('specifications.destroy');
 
-
-// Route::get('/showcases', [ShowcaseController::class, 'showcases'])->name('showcases');
-Route::get('/showcases/{slug}', [ShowcaseController::class, 'show'])->name('showcase.show');
-
-Route::resource('backEnd/showcases', ShowcaseController::class);
-
-
-Route::post('backEnd/orders/{productId}/{sizeId}/update', [AdminOrderController::class, 'updateOrderProduct'])->name('admin.order.update');
-
-Route::post('backEnd/orders/{productId}/{sizeId}', [AdminOrderController::class, 'deleteOrderProduct'])->name('admin.order.delete');
-
-
-Route::get('backEnd/siteSettings', [SiteSettingController::class, 'index'])->name('settings.index');
-Route::put('backEnd/siteSettings', [SiteSettingController::class, 'update'])->name('settings.update');
-
-
-Route::get('/backEnd', [App\Http\Controllers\DashboardController::class, 'root'])->name('dashboard');
-Route::get('/monthly-data', [App\Http\Controllers\DashboardController::class, 'getMonthlyData'])->name('monthly.data');
-
-// Route::get('/backEnd/x/{any}', [App\Http\Controllers\DashboardController::class, 'index'])->name('back.index');
-
-Route::get('/backEnd/profile', [UserController::class, 'profile'])->name('profile');
-Route::get('/backEnd/userOrders', [UserController::class, 'userOrders'])->name('user.orders');
-Route::put('/profile/update', [UserController::class, 'update'])->name('profile.update');
-
-
+Route::middleware(['auth', 'role'])->group(function () {
+    // This route is for authenticated users with role 1
+    Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+    Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show'])->name('subscriptions.show');
+});
 
 Route::get('/test', [TestController::class, 'test'])->name('test');
 Route::get('/test/new-file-upload', [TestController::class, 'create'])->name('test.create');
@@ -191,9 +167,10 @@ Route::post('/test/store', [TestController::class, 'store'])->name('test.store')
 Route::get('/invoice', [TestController::class, 'generatePdf'])->name('test.invoice');
 
 
-Route::post('/subscribe', [SubscriptionController::class, 'store'])->name('subscribe');
-Route::middleware(['auth', 'role'])->group(function () {
-    // This route is for authenticated users with role 1
-    Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
-    Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show'])->name('subscriptions.show');
-});
+/* For Developer */
+Route::get('/delivery/issue-token', [DeliveryController::class, 'issueTokenGenerate'])->name('generate.token');
+Route::post('/delivery/issue-token', [DeliveryController::class, 'issueToken'])->name('issue.token');
+
+Route::post('/delivery/create-order', [DeliveryController::class, 'createOrder'])->name('create.order');
+
+// Route::post('dashboard/orders/{productId}/{sizeId}', [AdminOrderController::class, 'deleteOrderProduct'])->name('admin.order.delete');

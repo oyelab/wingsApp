@@ -11,6 +11,11 @@ use Illuminate\Pagination\Paginator;
 
 class ReviewController extends Controller
 {
+	public function __construct()
+    {
+        $this->middleware('auth')->except('store');
+		$this->middleware('role')->except('store');
+    }
 
 	public function updateStatus(Request $request, $id)
 	{

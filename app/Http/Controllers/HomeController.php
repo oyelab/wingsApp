@@ -106,7 +106,7 @@ class HomeController extends Controller
 	// 	$product->load('categories');
 		
 	// 	// Return the view with the category, subcategory, and product
-	// 	return view('frontEnd.products.index', compact('category',  'product', 'relatedProducts', 'breadcrumbSection', 'mainCategory',));
+	// 	return view('frontEnd.products.show', compact('category',  'product', 'relatedProducts', 'breadcrumbSection', 'mainCategory',));
 	// }
 	
 }
