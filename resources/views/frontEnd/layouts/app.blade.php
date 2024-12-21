@@ -263,6 +263,19 @@
 		<!-- Footer -->
 		<footer class="footer-area">
 			<div class="container">
+				<div class="row justify-content-center mb-5">
+					<div class="d-flex justify-content-center social-logo">
+						<ul class="d-flex align-items-center">
+							@foreach ($socialLinks as $link)
+								<li>
+									<a href="{{ 'https://' . strtolower($link['platform']) . '.com/' . $link['username'] }}" target="_blank">
+										<i class="social-icon {{ $iconMapping[strtolower($link['platform'])] }}"></i>
+									</a>
+								</li>
+							@endforeach
+						</ul>
+					</div>
+    			</div>
 				<div class="row">
 					<div class="col-12">
 						<div
@@ -279,17 +292,7 @@
 										/>
 									</a>
 								</div>
-								<div class="social-logo">
-									<ul class="d-flex align-items-center">
-										@foreach ($socialLinks as $link)
-											<li>
-												<a href="{{ 'https://' . strtolower($link['platform']) . '.com/' . $link['username'] }}" target="_blank">
-													<i class="social-icon {{ $iconMapping[strtolower($link['platform'])] }}"></i> 
-												</a>
-											</li>
-										@endforeach
-									</ul>
-								</div>
+								
 								<p>
 									{{ $siteSettings->description ?? 'Innovative sportswear that blends
 									cutting-edge technology with sleek design.
