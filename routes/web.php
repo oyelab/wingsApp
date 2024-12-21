@@ -160,13 +160,6 @@ Route::middleware(['auth', 'role'])->group(function () {
     Route::get('/subscriptions/{id}', [SubscriptionController::class, 'show'])->name('subscriptions.show');
 });
 
-Route::get('/test', [TestController::class, 'test'])->name('test');
-Route::get('/test/new-file-upload', [TestController::class, 'create'])->name('test.create');
-// Route::get('/devFImg', [TestController::class, 'devF'])->name('test.devF');
-Route::post('/test/store', [TestController::class, 'store'])->name('test.store');
-Route::get('/invoice', [TestController::class, 'generatePdf'])->name('test.invoice');
-
-
 /* For Developer */
 Route::get('/delivery/issue-token', [DeliveryController::class, 'issueTokenGenerate'])->name('generate.token');
 Route::post('/delivery/issue-token', [DeliveryController::class, 'issueToken'])->name('issue.token');
@@ -174,3 +167,9 @@ Route::post('/delivery/issue-token', [DeliveryController::class, 'issueToken'])-
 Route::post('/delivery/create-order', [DeliveryController::class, 'createOrder'])->name('create.order');
 
 // Route::post('dashboard/orders/{productId}/{sizeId}', [AdminOrderController::class, 'deleteOrderProduct'])->name('admin.order.delete');
+
+Route::get('/test', [TestController::class, 'test'])->name('test');
+Route::get('/test/new-file-upload', [TestController::class, 'create'])->name('test.create');
+// Route::get('/devFImg', [TestController::class, 'devF'])->name('test.devF');
+Route::post('/test/store', [TestController::class, 'store'])->name('test.store');
+Route::get('/invoice', [TestController::class, 'generatePdf'])->name('test.invoice');
