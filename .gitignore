@@ -21,4 +21,5 @@ yarn-error.log
 /resources/views/test
 /storage/*
 /storage/app/
-/storage/app/public/.DS_Store
+/storage/app/public/
+.DS_Store
