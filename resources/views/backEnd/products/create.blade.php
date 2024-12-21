@@ -156,8 +156,9 @@
 
 									<div class="mb-3">
 										<label class="form-label" for="productname">Product Title <span class="text-danger">*</span></label>
-										<input id="productname" name="title" placeholder="Enter Product Name" type="text" class="form-control" value="{{ old('title') }}">
+										<textarea id="productname" name="title" placeholder="Enter Product Name" class="form-control">{{ old('title') }}</textarea>
 									</div>
+
 										
 
 									<div class="mb-0">

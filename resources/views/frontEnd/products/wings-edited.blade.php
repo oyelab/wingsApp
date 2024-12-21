@@ -204,7 +204,7 @@
 				</strong>
 			</a>
 			<h2>
-				<span>{{ $product->title }}</span>
+				<span>{!! nl2br(e($product->title)) !!}</span>
 			</h2>
 		</div>
 

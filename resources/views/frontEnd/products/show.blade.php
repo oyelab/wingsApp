@@ -101,7 +101,7 @@
 					<strong class="text-warning">★ {{ number_format($product->averageRating, 1) }} Rating ({{ $product->reviews->count() }} Reviews)</strong>
 
 					<h1>
-						<span>{{ $product->title }}</span>
+						<span>{!! nl2br(e($product->title)) !!}</span>
 						<p class="card-text">
 							<span class="badge {{ $product->isAvailable() ? 'bg-success' : 'bg-danger' }}">
 								{{ $product->isAvailable() ? 'Available' : 'Stock Out' }}

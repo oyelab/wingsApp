@@ -174,7 +174,7 @@
 
 									<div class="mb-3">
 										<label class="form-label" for="productname">Collection Title <span class="text-danger">*</span></label>
-										<input id="productname" name="title" placeholder="Enter Collection Name" type="text" class="form-control" value="{{ $product->title }}">
+										<textarea id="productname" name="title" placeholder="Enter Collection Name" class="form-control">{{ $product->title }}</textarea>
 									</div>
 
 									<div class="mb-0">

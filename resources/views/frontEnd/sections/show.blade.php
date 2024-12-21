@@ -42,7 +42,7 @@
 							</div>
 							<div class="product-content d-flex justify-content-between">
 								<a href="{{ route('sections.products.details', ['section' => $section, $product]) }}">
-									<h3>{{ $product->title }}</h3>
+									<h3>{!! nl2br(e($product->title)) !!}</h3>
 								</a>
 								<div class="product-price">
 									@if($product->sale)

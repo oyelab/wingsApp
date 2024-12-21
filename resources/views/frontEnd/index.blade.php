@@ -65,7 +65,7 @@
 									'section' => 'latest',
 									'slug' => $product->slug, // Using the model method to get subcategory slug
 								]) }}">
-                                <h3>{{ $product->title }}</h3>
+                                <h3>{!! nl2br(e($product->title)) !!}</h3>
                             </a>
                             <div class="product-price">
 								@if($product->sale)
@@ -124,7 +124,7 @@
 							<a href="{{ route('sections.products.details', [
 									'section' => 'topPicks',
 									$product]) }}">
-                                <h3>{{ $product->title }}</h3>
+                                <h3>{!! nl2br(e($product->title)) !!}</h3>
                             </a>
                             <div class="product-price">
 								@if($product->sale)
@@ -272,7 +272,7 @@
 							<a href="{{ route('sections.products.details', [
 									'section' => 'trending',
 									$product]) }}">
-                                <h3>{{ $product->title }}</h3>
+                                <h3>{!! nl2br(e($product->title)) !!}</h3>
                             </a>
                             <div class="product-price">
 								@if($product->sale)
@@ -488,7 +488,7 @@
 							<a href="{{ route('sections.products.details', [
 									'section' => 'hotDeals',
 									$product]) }}">
-                                <h3>{{ $product->title }}</h3>
+                                <h3>{!! nl2br(e($product->title)) !!}</h3>
                             </a>
                             <div class="product-price">
 								@if($product->sale)
