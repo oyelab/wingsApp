@@ -564,8 +564,8 @@ class ProductController extends Controller
 	
 		// Breadcrumb section
 		$breadcrumbSection = Section::find($product->section_id); // Adjust as needed
-		$mainCategory = $product->mainCategory; // Assuming there's a method or relation
-	
+		// $mainCategory = $product->mainCategory; // Assuming there's a method or relation
+		// return $mainCategory;
 		
 		// Eager load the sizes relation (only available sizes) and categories
 		$product->load('availableSizes', 'categories');
@@ -586,7 +586,7 @@ class ProductController extends Controller
 			'product' => $product, 
 			'relatedProducts' => $relatedProducts, 
 			'breadcrumbSection' => $breadcrumbSection, 
-			'mainCategory' => $mainCategory,
+			// 'mainCategory' => $mainCategory,
 			'section' => null,
 			'collection' => $category,
 			'wingsPower' => $wingsPower,

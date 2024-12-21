@@ -151,7 +151,7 @@ class SectionController extends Controller
 		$relatedProducts = Product::relatedProducts($product)->get();
 	
 		// Get the categories associated with the product
-		$categories = $product->categories;
+		// $categories = $product->categories;
 		
 		// return $slug;
 		// Return the view with necessary data
@@ -160,7 +160,7 @@ class SectionController extends Controller
 			'section' => $section,
 			'product' => $product,
 			'relatedProducts' => $relatedProducts,
-			'categories' => $categories,
+			// 'categories' => $categories,
 			'collection' => null,
 		]);
 	}

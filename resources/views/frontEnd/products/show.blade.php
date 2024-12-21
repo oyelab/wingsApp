@@ -4,15 +4,7 @@
 @section('pageDescription', $product->meta_desc)
 @section('pageKeywords', $product->keywordsString)
 @section('pageOgImage', $product->ogImagePath)  <!-- Image specific to this page -->
-@section('css')
-<style>
-    .available_sizes.error {
-        border: 1px solid red;
-        padding: 10px;
-        border-radius: 5px;
-    }
-</style>
-@endsection
+
 @section('content')
 <!-- breadcrumb section -->
 <div class="breadcrumb-section">
@@ -95,10 +87,26 @@
 			</div>
 			<div class="col-md-6">
 				<div class="product-top-block-details">
-					<h4>
-						<span class="badge bg-success-subtle text-success mb-0">{{ $product->category_display }}</span>
-					</h4>
-					<strong class="text-warning">★ {{ number_format($product->averageRating, 1) }} Rating ({{ $product->reviews->count() }} Reviews)</strong>
+					<div class="d-flex justify-content-between review-with-category">
+						<!-- Left: Category and Subcategory -->
+						<h4 class="mb-0 category-subcategory">
+							<span>{{ $product->subcategory->category->title }} > {{ $product->subcategory->title }}</span>
+						</h4>
+
+						<!-- Right: Rating -->
+						<div class="rating d-flex align-items-center review">
+							@for ($i = 0; $i < 5; $i++)
+								@if ($i < floor($product->averageRating))
+									<i class="bi bi-star-fill text-warning"></i> <!-- Filled star -->
+								@elseif ($i == floor($product->averageRating) && $product->averageRating - floor($product->averageRating) >= 0.5)
+									<i class="bi bi-star-half text-warning"></i> <!-- Half-filled star -->
+								@else
+									<i class="bi bi-star text-warning"></i> <!-- Empty star -->
+								@endif
+							@endfor
+							<strong class="ms-2">({{ $product->reviews->count() }} {{ $product->reviews->count() === 1 ? 'Review' : 'Reviews' }})</strong>
+						</div>
+					</div>
 
 					<h1>
 						<span>{!! nl2br(e($product->title)) !!}</span>
@@ -129,7 +137,7 @@
 									id="size{{ $size->id }}"
 									autocomplete="off"
 									value="{{ $size->id }}"
-									class="form-check-input"
+									class="bg-transparent"
 									{{ $size->pivot->quantity <= 0 ? 'disabled' : '' }}
 								/>
 								<label for="size{{ $size->id }}"
@@ -157,65 +165,12 @@
 						</button>
 
 					</div>
-					<div class="size-guid-area">
-						<div class="top-part d-flex align-items-center justify-content-between">
-							<h2>Size Guide(Inchies)</h2>
-						</div>
-						<div class="size-chart-wrap">
-							<div class="tab-content" id="myTabContent">
-								<div
-									class="tab-pane fade show active"
-									id="in-pane"
-									role="tabpanel"
-									aria-labelledby="in"
-									tabindex="0"
-								>
-									<table class="size-table">
-										<tr>
-											<th>SIZE</th>
-											<th>CHEST</th>
-											<th>LENGTH</th>
-										</tr>
-										<tr>
-											<td>S</td>
-											<td>36</td>
-											<td>27</td>
-										</tr>
-										<tr>
-											<td>M</td>
-											<td>38</td>
-											<td>28</td>
-										</tr>
-										<tr>
-											<td>L</td>
-											<td>40</td>
-											<td>29</td>
-										</tr>
-										<tr>
-											<td>XL</td>
-											<td>42</td>
-											<td>30</td>
-										</tr>
-										<tr>
-											<td>XXL</td>
-											<td>44</td>
-											<td>31</td>
-										</tr>
-										<tr>
-											<td>XXXL</td>
-											<td>46</td>
-											<td>32</td>
-										</tr>
-									</table>
-								</div>
-							</div>
-						</div>
-					</div>
+					<x-size-guide />
 					<div class="social-share-wrap">
 						
-						<h2>Social Share:</h2>
 						
 						<div class="social-share-icon">
+							<h2 class="mb-1">Share:</h2>
 							<!-- Facebook Share -->
 							<a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(request()->fullUrl()) }}" target="_blank" title="Share on Facebook">
 								<i class="bi bi-facebook fs-4"></i>

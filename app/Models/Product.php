@@ -92,21 +92,28 @@ class Product extends Model
 	public function getSubcategoryAttribute()
 	{
 		// Get the first category related to the product
-		$category = $this->categories->first(); 
-
-		// Check if the category has a subcategory and get the subcategory
+		$category = $this->categories->first();
+	
+		// Check if the category exists and has a pivot table
 		if ($category && $category->pivot) {
+			// Get subcategory_id from the pivot table
 			$subcategoryId = $category->pivot->subcategory_id;
-			
+	
 			// Retrieve the subcategory using the subcategory_id
 			$subcategory = Category::find($subcategoryId);
-
-			// Return the subcategory instance if it exists, or null if not
-			return $subcategory ? $subcategory : null;
+	
+			if ($subcategory) {
+				// Attach the parent category to the subcategory dynamically
+				$subcategory->setAttribute('category', $category);
+			}
+	
+			// Return the subcategory instance (with category attached) or null
+			return $subcategory;
 		}
-
-		return null; // Return null if no subcategory found
+	
+		return null; // Return null if no category or subcategory is found
 	}
+	
 
 	public function getCategoryDisplayAttribute()
 	{

@@ -23,8 +23,10 @@
                         @endif
                         
                         <li>
-                            {{ $pagetitle }}
-                        </li>
+							<span class="breadcrumb-item breadcrumb-title">
+								{{ $pagetitle }}
+							</span>
+						</li>
                     </ul>
                 </div>
             </div>
