@@ -219,10 +219,10 @@
 
                     </div>
                     
-                    <a class="cancel-button" href="#">
-                        Cancel & go to order page
-                        <i class="bi bi-arrow-right"></i>
-                    </a>
+                    <a class="cancel-button" href="#" data-bs-dismiss="modal" aria-label="Close">
+						Cancel & go to order page
+						<i class="bi bi-arrow-right"></i>
+					</a>					
                 </div>
                 
                 <!-- Close icon -->

@@ -12,6 +12,7 @@ use App\Models\TypeList;
 class AssetController extends Controller
 {
 
+	protected string $dir = "backEnd.assets";
 	protected $fileHandler;
 
     // Inject the FileHandlerService
@@ -30,7 +31,7 @@ class AssetController extends Controller
     public function index()
     {
         $assets = Asset::all();  // Or paginate for large datasets
-        return view('backEnd.assets.index', compact('assets'));
+        return view("{$this->dir}.index", compact('assets'));
     }
 
     /**

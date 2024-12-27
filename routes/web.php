@@ -142,6 +142,8 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function() {
 	Route::put('pages/update-order', [PageController::class, 'updateOrder'])->name('pages.update-order');
 	Route::get('/get-subcategories/{mainCategoryId}', [CategoryController::class, 'getSubcategories']);
 
+
+
 	Route::resource('assets', AssetController::class);
 	Route::resource('showcases', ShowcaseController::class);
 	Route::resource('categories', CategoryController::class);
