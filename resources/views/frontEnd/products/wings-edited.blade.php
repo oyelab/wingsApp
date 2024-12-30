@@ -14,7 +14,7 @@
 		<div class="collection-image-area collage">
 			@foreach($product->imagePaths as $key => $imagePath)
 				<div class="collection-image-item d-none" data-index="{{ $key }}">
-					<img src="{{ $imagePath }}" alt="{{ $product->title }} Gallery Image {{ $key }} ">
+					<img src="{{ $imagePath }}" alt="{{ $product->title }} Gallery Image {{ $key }}" oncontextmenu="return false;">
 				</div>
 			@endforeach
 		</div>
