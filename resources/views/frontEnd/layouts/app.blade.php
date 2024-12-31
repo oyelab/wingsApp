@@ -429,7 +429,7 @@
 
 				<!-- WhatsApp Button (aligned to the right) -->
 				<a
-					href="https://wa.me/1234567890" 
+					href="https://wa.me/{{ config('app.whatsapp_number') }}?text={{ 'Lets Discuss About Wings Sportswear!' }}"
 					target="_blank" 
 					id="whatsappButton" 
 					class="whatsapp-button me-3 mb-2 ms-auto"

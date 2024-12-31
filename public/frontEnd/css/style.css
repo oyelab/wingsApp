@@ -1184,6 +1184,9 @@ a {
 .design-by {
     gap: 10px;
 }
+.design-by a {
+    z-index: 9999999; /* Ensures visibility above other content */
+}
 .design-by a img {
     height: 25px;
 }
