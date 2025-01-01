@@ -120,7 +120,7 @@ class AdminOrderController extends Controller
 		// return $totalQuantity;
 
 		return view('backEnd.orders.delivery', [
-			'order' => $order,
+			'order' => $order->calculateTotals(),
 			'totalQuantity' => $totalQuantity, // Pass the total quantity to the view
 			'transaction' => $transaction, // Pass the total quantity to the view
 			'delivery' => $delivery, // Pass the total quantity to the view

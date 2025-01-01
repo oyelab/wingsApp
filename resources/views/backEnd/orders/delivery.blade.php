@@ -39,7 +39,6 @@
 						<form action="{{ route('create.order', $order) }}" method="POST">
 							@csrf
 							<input type="hidden" name="item_type" value="2">
-							<input type="hidden" name="item_weight" value="0.5">
 
 							<table class="table align-middle mb-0">
 								<thead class="table-light">
@@ -53,8 +52,8 @@
 											<label for="store_id">Store ID:</label>
 										</th>
 										<th>
-											<label for="store_id">130776</label>
-											<input type="hidden" name="store_id" value="130776">
+											<label for="store_id">133730</label>
+											<input type="hidden" name="store_id" value="133730">
 										</th>
 										<td>
 											<label for="order_ref">Order Ref:</label>
@@ -77,8 +76,7 @@
 											<input type="hidden" name="recipient_phone" value="{{ $order->phone }}">
 										</td>
 										<td>
-											<label for="recipient_address">{{ $order->address }}</label>
-											<input type="hidden" name="recipient_address" value="{{ $order->address }}">
+											<input type="text" class="form-control form-control-sm w-sm" name="recipient_address" value="{{ $order->address }}">
 										</td>
 									</tr>
 									<tr>
@@ -112,8 +110,8 @@
 											<select class="form-select form-select-sm w-sm" id="delivery_type"
 												name="delivery_type" required>
 												<option value="">Select Delivery Type</option>
+												<option value="48" selected>Regular</option>
 												<option value="12">On Demand</option>
-												<option value="48" selected>Normal</option>
 											</select>
 										</td>
 										<td>
@@ -190,25 +188,25 @@
 								<tbody>
 									<tr>
 										<td>Sub Total :</td>
-										<td class="text-end">$ 780</td>
+										<td class="text-end">{{ $order->subtotal }}</td>
 									</tr>
 									<tr>
 										<td>Discount : </td>
-										<td class="text-end">- $ 78</td>
+										<td class="text-end">{{ $order->discount }}</td>
+									</tr>
+									<tr>
+										<td>Voucher : </td>
+										<td class="text-end">{{ $order->voucher }}</td>
 									</tr>
 									<tr>
 										<td>Shipping Charge :</td>
-										<td class="text-end">{{ $delivery->delivery_fee }}</td>
-									</tr>
-									<tr>
-										<td>Estimated Tax : </td>
-										<td class="text-end">$ 18.20</td>
+										<td class="text-end">{{ $order->shipping_charge }}</td>
 									</tr>
 									<tr class="bg-light">
 										<th>Total :</th>
 										<td class="text-end">
 											<span class="fw-bold">
-												$ 745.2
+												{{ $order->order_total }}
 											</span>
 										</td>
 									</tr>

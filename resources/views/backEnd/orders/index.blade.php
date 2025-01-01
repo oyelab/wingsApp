@@ -79,8 +79,35 @@
 											<a href="{{ route('orders.edit', $order->id) }}" class="badge bg-dark">
 												<i class="bi bi-box-seam me-1"></i> Create Delivery
 											</a>
+										@elseif ($order->status == 3)
+											{{$order->delivery->consignment_id }}
 										@else
-											{{ $order->delivery ? $order->delivery->status : '' }}
+											@switch($order->status)
+												@case(0)
+													Pending
+													@break
+												@case(1)
+													Completed
+													@break
+												@case(2)
+													Processing
+													@break
+												@case(3)
+													Shipped
+													@break
+												@case(4)
+													Refunded
+													@break
+												@case(5)
+													Cancelled
+													@break
+												@case(6)
+													Failed
+													@break
+												@case(7)
+													Refund Requested
+													@break
+											@endswitch
 										@endif
 									</td>
 									<td>

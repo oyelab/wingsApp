@@ -35,7 +35,7 @@ class DeliveryController extends Controller
 		])->post(env('PATHAO_BASE_URL') . '/aladdin/api/v1/merchant/price-plan',
 
 		[
-			'store_id' => '133730',
+			'store_id' => config('pathao.store_id'),
 			'item_type' => 2,
 			'delivery_type' => 48,
 			'item_weight' => 0.250 * $quantity,
@@ -87,25 +87,6 @@ class DeliveryController extends Controller
 		}
 	}
 
-
-	public function createStores(Request $request)
-	{
-		$accessToken = env('PATHAO_ACCESS_TOKEN_TEST'); // Get the access token from the .env file
-		$baseUrl = env('PATHAO_BASE_URL_TEST'); // Make sure you set this in your .env file
-
-		try {
-			$response = Http::withHeaders([
-				'Authorization' => "Bearer {$accessToken}",
-				'Content-Type' => 'application/json',
-				'Accept' => 'application/json',
-			])->get("{$baseUrl}/aladdin/api/v1/stores");
-
-			// Return the response in JSON format
-			return response()->json($response->json());
-		} catch (\Exception $e) {
-			return response()->json(['message' => 'Failed to fetch stores.'], 500);
-		}
-	}
 	
 
 	public function createOrder(Request $request)
@@ -120,15 +101,17 @@ class DeliveryController extends Controller
 			'recipient_zone' => 'required|string',
 			'recipient_area' => 'nullable|string',
 			'item_quantity' => 'required|integer',
-			'item_weight' => 'required|numeric',
 			'amount_to_collect' => 'required|numeric',
 			'special_instruction' => 'nullable|string',
 			'item_description' => 'nullable|string',
 		]);
+
+		$item_weight = $request->item_quantity * 0.250;
+		// return $item_weight;
 	
 		// Prepare the request body for the API call
 		$requestBody = [
-			'store_id' => '147848',
+			'store_id' => config('pathao.store_id'),
 			'merchant_order_id' => $request->order_ref,
 			'recipient_name' => $request->recipient_name,
 			'recipient_phone' => $request->recipient_phone,
@@ -140,7 +123,7 @@ class DeliveryController extends Controller
 			'item_type' => 2,
 			'special_instruction' => $request->special_instruction,
 			'item_quantity' => $request->item_quantity,
-			'item_weight' => $request->item_weight,
+			'item_weight' => $item_weight,
 			'amount_to_collect' => $request->amount_to_collect,
 			'item_description' => $request->item_description,
 		];
