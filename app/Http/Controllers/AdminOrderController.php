@@ -27,8 +27,8 @@ class AdminOrderController extends Controller
     public function index()
     {
 		// Retrieve only orders where payment_status is 3 (pending refund) or 4 (refund completed)
-		$orders = Order::whereHas('transactions', function($query) {
-			$query->whereIn('payment_status', [0, 1]);
+		$orders = Order::where('status', 2)->whereHas('transactions', function($query) {
+			$query->where('status', 'VALID');
 		})->get();
 
 		// Loop through the orders and calculate totals

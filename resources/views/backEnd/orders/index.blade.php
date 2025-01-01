@@ -75,7 +75,7 @@
 										</ul>
 									</td>
 									<td>
-										@if ($order->status == 0 || $order->status == 2)
+										@if ($order->status == 2)
 											<a href="{{ route('orders.edit', $order->id) }}" class="badge bg-dark">
 												<i class="bi bi-box-seam me-1"></i> Create Delivery
 											</a>
@@ -87,7 +87,7 @@
 									</td>
 									<td>
 										<ul class="list-unstyled mb-0">
-										@foreach ($order->transactions as $transaction)
+											@foreach ($order->transactions as $transaction)
 												@if ($transaction->payment_status == 0 || $transaction->payment_status == 1)
 													<li>Status:
 														@switch($transaction->payment_status)
@@ -98,7 +98,7 @@
 													</li>
 													<li>Total: {{ $transaction->order_total }}</li>
 													<li>Shipping: {{ $transaction->shipping_charge }}</li>
-													<li>Paid: {{ $transaction->amount }}</li>
+													<li>Paid: {{ $order->paid }}</li>
 													<li>Unpaid: {{ $order->unpaid_amount }}</li>
 												@endif
 											@endforeach

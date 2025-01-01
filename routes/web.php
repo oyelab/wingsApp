@@ -124,6 +124,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function() {
 
 	Route::post('/order/{order}/refund', [OrderController::class, 'refundStore'])->name('refund.store');
 	Route::get('/orders/refunds', [OrderController::class, 'refunds'])->name('orders.refunds');
+	Route::get('/orders/cancelled', [OrderController::class, 'cancelled'])->name('orders.cancelled');
 
 	Route::get('/collections/items', [ProductController::class, 'items'])->name('collections.item');
 

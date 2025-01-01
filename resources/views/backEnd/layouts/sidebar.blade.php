@@ -77,7 +77,8 @@
 						<span class="menu-item" data-key="t-orders">Orders</span>
 					</a>
 					<ul class="sub-menu" aria-expanded="true">
-						<li><a href="{{ route('orders.index') }}" data-key="t-orders">Regular</a></li>
+						<li><a href="{{ route('orders.index') }}" data-key="t-processing">Processing</a></li>
+						<li><a href="{{ route('orders.cancelled') }}" data-key="t-cancelled">Cancelled/Failed</a></li>
 						<li><a href="{{ route('orders.refunds') }}" data-key="t-refunds">Refunds</a></li>
 					</ul>
 				</li>

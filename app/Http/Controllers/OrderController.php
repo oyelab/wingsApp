@@ -70,11 +70,20 @@ class OrderController extends Controller
 
 	public function refunds()
 	{
-		$orders = Order::whereHas('transactions', function ($query) {
+		$orders = Order::where('status', [4, 7])->whereHas('transactions', function ($query) {
 			$query->whereIn('payment_status', [3, 4]); // Filter transactions with payment_status 3 or 4
 		})
 		->get();	
 
+	
+		// Pass the filtered orders to the view (assuming you're returning a view)
+		return view('backEnd.orders.index', compact('orders'));
+	}
+
+	public function cancelled()
+	{
+		$orders = Order::where('status', [0, 5, 6])
+		->get();	
 	
 		// Pass the filtered orders to the view (assuming you're returning a view)
 		return view('backEnd.orders.index', compact('orders'));
