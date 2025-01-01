@@ -50,7 +50,7 @@ class AdminOrderController extends Controller
      */
     public function create()
     {
-        return view('frontEnd.orders.create');
+        // return view('frontEnd.orders.create');
     }
 
     /**

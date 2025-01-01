@@ -70,7 +70,7 @@
 									<td>
 										<ul class="list-unstyled mb-0">
 										@foreach ($order->products as $product) <!-- Access products for each order -->
-											<li><b>{{ $product->title }}</b> (Size: {{ $product->pivot->size_id }}, Quantity: {{ $product->pivot->quantity }})</li>
+											<li><b>{{ $product->title }}</b> (Size: {{ $product->sizes->firstWhere('id', $product->pivot->size_id)->name ?? 'N/A' }}, Quantity: {{ $product->pivot->quantity }})</li>
 										@endforeach
 										</ul>
 									</td>
@@ -82,32 +82,7 @@
 										@elseif ($order->status == 3)
 											{{$order->delivery->consignment_id }}
 										@else
-											@switch($order->status)
-												@case(0)
-													Pending
-													@break
-												@case(1)
-													Completed
-													@break
-												@case(2)
-													Processing
-													@break
-												@case(3)
-													Shipped
-													@break
-												@case(4)
-													Refunded
-													@break
-												@case(5)
-													Cancelled
-													@break
-												@case(6)
-													Failed
-													@break
-												@case(7)
-													Refund Requested
-													@break
-											@endswitch
+											<x-order-status :status="$order->status" />
 										@endif
 									</td>
 									<td>
@@ -130,41 +105,12 @@
 										</ul>
 									</td>
 									<td id="order-status-{{ $order->id }}">
-									
-										@switch($order->status)
-											@case(0)
-												Pending
-												@break
-											@case(1)
-												Completed
-												@break
-											@case(2)
-												Processing
-												@break
-											@case(3)
-												Shipped
-												@break
-											@case(4)
-												Refunded
-												@break
-											@case(5)
-												Cancelled
-												@break
-											@case(6)
-												Failed
-												@break
-											@case(7)
-												Refund Requested
-												@break
-										@endswitch
-
+										<x-order-status :status="$order->status" />
 									</td>
 									<td>
 										<a href="javascript:void(0);" onclick="openOrderStatusModal({{ $order->id }})" class="badge bg-primary text-white">
 											<i class="bi bi-eye-fill me-1"></i> View Status
 										</a>
-
-
 									</td>
 								</tr>
 								@endforeach
