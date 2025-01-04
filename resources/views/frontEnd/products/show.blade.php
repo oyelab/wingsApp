@@ -395,17 +395,85 @@
 
 <script>
 	// Function to add product to cart
-	function addToCart(productId, sizeId) {
+	function addToCart(productId, sizeId, quantityToAdd) {
 		return fetch("{{ route('cart.add') }}", {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				'X-CSRF-TOKEN': '{{ csrf_token() }}'
 			},
-			body: JSON.stringify({ product_id: productId, size_id: sizeId })
+			body: JSON.stringify({ product_id: productId, size_id: sizeId, quantity: quantityToAdd })
 		});
 	}
 
+	// Function to update the cart count in the UI from session data
+	function updateCartCount() {
+		const cart = @json(session('cart', [])); // Access cart data from the session in PHP
+
+		let totalQuantity = 0;
+		cart.forEach(item => {
+			totalQuantity += item.quantity; // Sum up the quantities of each item
+		});
+
+		const cartCountBadge = document.getElementById('cart-count-badge');
+		if (totalQuantity > 0) {
+			cartCountBadge.textContent = totalQuantity;
+			cartCountBadge.style.display = 'inline-block';
+		} else {
+			cartCountBadge.style.display = 'none';
+		}
+	}
+
+	// Function to handle size selection and quantity addition
+	document.getElementById('addToCartBtn').addEventListener('click', function () {
+		const productId = this.getAttribute('data-product-id');
+		const sizeId = document.querySelector('input[name="size"]:checked')?.value;
+		const quantityToAdd = 1;  // Default quantity is 1. Adjust as needed.
+
+		if (!sizeId) {
+			handleSizeError(true);
+			return;
+		}
+
+		handleSizeError(false);
+
+		// AJAX request to add the item to the cart
+		addToCart(productId, sizeId, quantityToAdd)
+			.then(response => response.json())
+			.then(data => {
+				showToast(data.message); // Display the success message in the toast
+				updateCartCount(); // Update the cart count after adding the product
+			})
+			.catch(error => console.error('Error:', error));
+	});
+
+	// Function to handle checkout
+	document.getElementById('checkoutBtn').addEventListener('click', function () {
+		const productId = document.getElementById('addToCartBtn').getAttribute('data-product-id');
+		const sizeId = document.querySelector('input[name="size"]:checked')?.value;
+		const quantityToAdd = 1;  // Default quantity is 1.
+
+		if (!sizeId) {
+			handleSizeError(true);
+			return;
+		}
+
+		handleSizeError(false);
+
+		// Add product to cart before redirecting
+		addToCart(productId, sizeId, quantityToAdd)
+			.then(response => response.json())
+			.then(data => {
+				showToast(data.message); // Display the success message in the toast
+				// Redirect to the checkout page after showing the toast
+				setTimeout(() => {
+					window.location.href = "{{ route('checkout.show') }}";
+				}, 3000); // Wait for the toast to auto-hide before redirecting
+			})
+			.catch(error => console.error('Error:', error));
+	});
+
+	// Function to handle size error
 	function handleSizeError(showError) {
 		const sizeSelectionDiv = document.getElementById('sizeSelection');
 		const errorMessage = document.getElementById('sizeError');
@@ -418,6 +486,7 @@
 		}
 	}
 
+	// Function to show toast
 	function showToast(message) {
 		const toastContainer = document.querySelector('.toast-container');
 		const toastElement = document.getElementById('wishlist-toast');
@@ -430,49 +499,6 @@
 		toast.show();
 	}
 
-	document.getElementById('addToCartBtn').addEventListener('click', function () {
-		const productId = this.getAttribute('data-product-id');
-		const sizeId = document.querySelector('input[name="size"]:checked')?.value;
-
-		if (!sizeId) {
-			handleSizeError(true);
-			return;
-		}
-
-		handleSizeError(false);
-
-		// AJAX request to add the item to the cart
-		addToCart(productId, sizeId)
-			.then(response => response.json())
-			.then(data => {
-				showToast(data.message); // Display the success message in the toast
-			})
-			.catch(error => console.error('Error:', error));
-	});
-
-	document.getElementById('checkoutBtn').addEventListener('click', function () {
-		const productId = document.getElementById('addToCartBtn').getAttribute('data-product-id');
-		const sizeId = document.querySelector('input[name="size"]:checked')?.value;
-
-		if (!sizeId) {
-			handleSizeError(true);
-			return;
-		}
-
-		handleSizeError(false);
-
-		// Add product to cart before redirecting
-		addToCart(productId, sizeId)
-			.then(response => response.json())
-			.then(data => {
-				showToast(data.message); // Display the success message in the toast
-				// Redirect to the checkout page after showing the toast
-				setTimeout(() => {
-					window.location.href = "{{ route('checkout.show') }}";
-				}, 3000); // Wait for the toast to auto-hide before redirecting
-			})
-			.catch(error => console.error('Error:', error));
-	});
-
 </script>
+
 @endsection

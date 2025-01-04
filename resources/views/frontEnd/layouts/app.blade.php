@@ -92,13 +92,6 @@
 							<ul class="d-flex align-items-center">
 								<li class="search-product d-flex align-items-center">
 									<i class="fa-solid fa-magnifying-glass search-icon" id="searchIcon"></i>
-
-									<!-- Search Form (Initially Hidden) -->
-									<!-- <div id="searchForm" class="d-none">
-										<form id="searchFormContent" action="{{ route('collections') }}" method="GET">
-											<input type="text" id="searchInput" class="bg-transparent rounded" name="query" placeholder="Search..." />
-										</form>
-									</div> -->
 								</li>
 								<li>
 									<a href="{{ route('wishlist') }}" class="d-flex align-items-center">

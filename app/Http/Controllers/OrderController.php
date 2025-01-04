@@ -117,7 +117,7 @@ class OrderController extends Controller
 	{
 		$productId = $request->input('product_id');
 		$sizeId = $request->input('size_id');
-		$quantityToAdd = $request->input('quantity', 1); // Default to 1 if quantity is not specified
+		$quantityToAdd = $request->input('quantity'); // Default to 1 if quantity is not specified
 
 		// Get the product along with its quantities
 		$product = Product::with('quantities')->find($productId);
@@ -167,10 +167,6 @@ class OrderController extends Controller
 
 		return response()->json(['message' => 'Product added to cart successfully']);
 	}
-
-
-	
-
 
 	public function showCart()
 	{
