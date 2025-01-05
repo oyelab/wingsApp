@@ -88,6 +88,14 @@ class OrderController extends Controller
 		return view('backEnd.orders.index', compact('orders'));
 	}
 
+	public function completed()
+	{
+		$orders = Order::where('status', 1)->get();
+	
+		// Pass the filtered orders to the view (assuming you're returning a view)
+		return view('backEnd.orders.index', compact('orders'));
+	}
+
 	
 	
 

@@ -80,6 +80,7 @@
 						<li><a href="{{ route('orders.index') }}" data-key="t-processing">Processing</a></li>
 						<li><a href="{{ route('orders.cancelled') }}" data-key="t-cancelled">Cancelled/Failed</a></li>
 						<li><a href="{{ route('orders.refunds') }}" data-key="t-refunds">Refunds</a></li>
+						<li><a href="{{ route('orders.completed') }}" data-key="t-completed">Completed</a></li>
 					</ul>
 				</li>
 				<li>
