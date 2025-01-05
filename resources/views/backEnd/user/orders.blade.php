@@ -117,37 +117,12 @@
 
 									<td id="order-status-{{ $order->id }}">
 									
-										@switch($order->status)
-											@case(0)
-												Pending
-												@break
-											@case(1)
-												Completed
-												@break
-											@case(2)
-												Processing
-												@break
-											@case(3)
-												Shipped
-												@break
-											@case(4)
-												Refunded
-												@break
-											@case(5)
-												Cancelled
-												@break
-											@case(6)
-												Failed
-												@break
-											@case(7)
-												Refund Requested
-												@break
-										@endswitch
+										<x-order-status :status="$order->status" />
 
 									</td>
 									<td>
 										<!-- Check if the order status is 0 (Pending) or 2 (Shipped) -->
-										@if ($order->status == 0 || $order->status == 2)
+										@if ($order->status == 2)
 											<!-- Trigger Review Modal -->
 											<a href="javascript:void(0);" onclick="openOrderReviewModal({{ $order->id }})" class="badge bg-primary text-white mb-2 p-2">
 												<i class="bi bi-chat-fill"></i> Review

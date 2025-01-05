@@ -191,7 +191,9 @@
 							`;
 							break;
 						case 3: // Shipped
-							statusOptions = ''
+							statusOptions = `
+								<option value="1">Completed</option>
+							`;
 							break;
 						case 4: // Refunded
 							statusOptions = ''
