@@ -77,11 +77,19 @@
 						{ data: 'ordersCount', name: 'ordersCount' }, // Add the new column for order count
 						{ data: 'reviewsCount', name: 'reviewsCount' }, // Add the new column for reviews count
 					],
+					columnDefs: [
+						{ 
+							targets: 0,  // The "Name" column index (0)
+							width: '15%', // Set the width to 10%
+							className: 'dt-center' // Optionally, center the text in this column
+						},
+					],
 					paging: true,
 					searching: true,
+					autoWidth: false, // Set to false to allow manual control of column widths
+					lengthChange: true,
 				});
 			});
-
 		</script>
 
 		<script src="{{ asset('build/js/app.js') }}"></script>

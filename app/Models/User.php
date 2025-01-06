@@ -63,7 +63,7 @@ class User extends Authenticatable
 
 	public function getOrdersCountAttribute()
 	{
-		return $this->orders()->count(); // Count the number of reviews for this user
+		return $this->orders()->whereIn('status', [1, 2, 3])->count();
 	}
 
 	public function getAvatarPathAttribute()
