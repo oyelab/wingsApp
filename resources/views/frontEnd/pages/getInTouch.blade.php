@@ -20,20 +20,26 @@
 			</div>
 
 			<div class="col-md-6">
-				<div class="">
+				<div class="row">
+					@if(session('success'))
+						<div class="alert alert-success">
+							{{ session('success') }}
+						</div>
+					@endif
 					<div class="shadow-sm p-4">
-						<form>
+						<form action="{{ route('postInTouch') }}" method="POST">
+						@csrf
 							<div class="mb-3 shadow-sm">
-								<input type="text" class="form-control bg-transparent border-0" placeholder="Name" required>
+								<input type="text" name="name" class="form-control bg-transparent border-0" placeholder="Name" required>
 							</div>
 							<div class="mb-3 shadow-sm">
-								<input type="email" class="form-control bg-transparent border-0" placeholder="Email" required>
+								<input type="email" name="email" class="form-control bg-transparent border-0" placeholder="Email" required>
 							</div>
 							<div class="mb-3 shadow-sm">
-								<input type="text" class="form-control bg-transparent border-0" placeholder="Subject" required>
+								<input type="text" name="subject" class="form-control bg-transparent border-0" placeholder="Subject" required>
 							</div>
 							<div class="mb-3 shadow-sm">
-								<textarea class="form-control bg-transparent border-0" placeholder="Message" rows="5" required></textarea>
+								<textarea class="form-control bg-transparent border-0" name="message" placeholder="Message" rows="5" required></textarea>
 							</div>
 							<div class="d-grid">
 								<button type="submit" class="btn btn-dark btn-lg">Send Message</button>

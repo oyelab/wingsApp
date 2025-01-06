@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Page;
+use App\Models\Git;
 use App\Models\TypeList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Storage;
 use App\Services\FileHandlerService;
+use App\Mail\ContactFormMail;
+use Illuminate\Support\Facades\Mail;
 
 class PageController extends Controller
 {
@@ -20,14 +23,45 @@ class PageController extends Controller
 
 		$this->fileHandler = $fileHandler;
 
-        $this->middleware('auth')->except('getInTouch', 'help');
-		$this->middleware('role')->except('getInTouch', 'help');
+        $this->middleware('auth')->except('getInTouch', 'postInTouch', 'help');
+		$this->middleware('role')->except('getInTouch', 'postInTouch', 'help');
     }
 
 	public function getInTouch()
 	{
 		return view('frontEnd.pages.getInTouch');
 	}
+
+	public function postInTouch(Request $request)
+	{
+		// Validate the form data
+		$validated = $request->validate([
+			'name' => 'required|string|max:255',
+			'email' => 'required|email|max:255',
+			'subject' => 'required|string|max:255',
+			'message' => 'required|string',
+		]);
+	
+		// Get the user's IP address
+		$ipAddress = $request->ip();
+	
+		// Get the user agent from the request
+		$userAgent = $request->header('User-Agent');
+	
+		// Store the validated data, IP address, and user agent in the database
+		Git::create([
+			'name' => $validated['name'],
+			'email' => $validated['email'],
+			'subject' => $validated['subject'],
+			'message' => $validated['message'],
+			'user_agent' => $userAgent,
+			'ip_address' => $ipAddress, // Store IP address
+		]);
+	
+		// Redirect to a page (for example, to a confirmation page or the dashboard)
+		return back()->with('success', 'Thank you for contacting us! You will be replied soon.');
+	}
+
     /**
      * Display a listing of the resource.
      */
@@ -60,9 +94,10 @@ class PageController extends Controller
     {
         // Fetch a single page by ID
         $page = Page::findOrFail($page);
+		return $page;
 
         // Return the individual page view
-        return view('frontEnd.page.show', compact('page'));
+        // return view('frontEnd.page.show', compact('page'));
     }
 
     /**

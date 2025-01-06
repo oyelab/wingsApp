@@ -83,6 +83,14 @@
 						<li><a href="{{ route('orders.completed') }}" data-key="t-completed">Completed</a></li>
 					</ul>
 				</li>
+
+				<li>
+					<a href="{{ route('customer.list') }}">
+						<i class="bx bx-user icon nav-icon"></i>
+						<span class="menu-item" data-key="t-customers">Customers</span>
+					</a>
+				</li>
+				
 				<li>
 					<a href="{{ route('reviews.index') }}">
 						<i class="bx bx-star icon nav-icon"></i>
@@ -162,6 +170,13 @@
 						<li><a href="{{ route('pages.index') }}" data-key="t-all-pages">All Pages</a></li>
 						<li><a href="{{ route('pages.create') }}" data-key="t-create-page">Create New</a></li>
 					</ul>
+				</li>
+
+				<li>
+					<a href="{{ route('gits.index') }}">
+						<i class="bx bx-mail-send icon nav-icon"></i>
+						<span class="menu-item" data-key="t-emails">Emails</span>
+					</a>
 				</li>
 
 				<li>

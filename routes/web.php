@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Session;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\GitController;
 use App\Http\Controllers\SubscriptionController;
 
 
@@ -103,6 +104,7 @@ Route::post('/subscribe', [SubscriptionController::class, 'store'])->name('subsc
 
 Route::get('/help', [PageController::class, 'help'])->name('help.index');
 Route::get('/getInTouch', [PageController::class, 'getInTouch'])->name('getInTouch');
+Route::post('/getInTouch', [PageController::class, 'postInTouch'])->name('postInTouch');
 
 /* dashboard */
 Route::prefix('dashboard')->middleware(['auth'])->group(function() {
@@ -122,6 +124,8 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function() {
 	Route::get('siteSettings', [SiteSettingController::class, 'index'])->name('settings.index');
 	Route::put('siteSettings', [SiteSettingController::class, 'update'])->name('settings.update');
 
+	Route::get('/emails', [GitController::class, 'gits'])->name('gits.index');
+
 	Route::post('/order/{order}/refund', [OrderController::class, 'refundStore'])->name('refund.store');
 	Route::get('/orders/refunds', [OrderController::class, 'refunds'])->name('orders.refunds');
 	Route::get('/orders/cancelled', [OrderController::class, 'cancelled'])->name('orders.cancelled');
@@ -137,6 +141,8 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function() {
 	Route::get('/profile', [UserController::class, 'profile'])->name('profile');
 	Route::get('/userOrders', [UserController::class, 'userOrders'])->name('user.orders');
 	Route::put('/profile/update', [UserController::class, 'update'])->name('profile.update');
+
+	Route::get('/customers', [UserController::class, 'customerList'])->name('customer.list');
 
 	Route::post('/orders/{productId}/{sizeId}/update', [AdminOrderController::class, 'updateOrderProduct'])->name('admin.order.update');
 

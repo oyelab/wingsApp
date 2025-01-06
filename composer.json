@@ -17,7 +17,8 @@
         "laravel/ui": "^4.2",
         "mpdf/mpdf": "^8.2",
         "spatie/laravel-medialibrary": "^11.10",
-        "twbs/bootstrap-icons": "^1.11"
+        "twbs/bootstrap-icons": "^1.11",
+        "yajra/laravel-datatables-oracle": "^10.11"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

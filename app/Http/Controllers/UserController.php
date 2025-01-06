@@ -8,6 +8,8 @@ use App\Models\User;
 use Storage;
 use Auth;
 use App\Services\FileHandlerService;
+use Yajra\DataTables\Facades\DataTables;
+
 
 class UserController extends Controller
 {
@@ -21,6 +23,27 @@ class UserController extends Controller
         $this->middleware('auth');
 		// $this->middleware('role'); // Only allow role 1 users
     }
+
+	public function customerList(Request $request)
+	{
+		if ($request->ajax()) {
+			// Fetch customers with order count and review count, and order by orders_count
+			$customers = User::withCount(['orders', 'reviews']) // Fetch both orders and reviews counts
+				->orderByDesc('orders_count') // Sort by orders_count in descending order
+				->get();
+	
+			return DataTables::of($customers)
+				->addColumn('ordersCount', function($row) {
+					return $row->orders_count; // Add the orders_count to the column
+				})
+				->addColumn('reviewsCount', function($row) {
+					return $row->reviews_count; // Add the reviews_count to the column
+				})
+				->make(true);
+		}
+	
+		return view('backEnd.user.customers');
+	}
 	
 	public function userOrders()
 	{
