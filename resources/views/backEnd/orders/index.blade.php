@@ -180,6 +180,7 @@
 							break;
 						case 1: // Completed
 							statusOptions = `
+								<option value="2">Processing</option>
 								<option value="5">Cancelled</option>
 							`;
 							break;

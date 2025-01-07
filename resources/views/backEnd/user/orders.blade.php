@@ -134,10 +134,12 @@
 											</a>
 										@endif
 
-										<!-- Invoice Link -->
-										<a href="{{ route('order.invoice', $order) }}" class="badge bg-success text-white mb-2 p-2">
-											<i class="bi bi-download"></i> Invoice
-										</a>
+										@if ($order->status == 1 || $order->status == 2 || $order->status == 3)
+											<!-- Invoice Link -->
+											<a href="{{ route('order.invoice', $order) }}" class="badge bg-success text-white mb-2 p-2">
+												<i class="bi bi-download"></i> Invoice
+											</a>
+										@endif
 									</td>
 
 								</tr>

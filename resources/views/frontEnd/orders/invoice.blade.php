@@ -18,7 +18,7 @@
 			width: 210mm;
 			height: 297mm;
 			position: relative;
-			background: #fff;
+			background: #dddddd;
 			margin: 0 auto !important;
 			font-family: 'Manrope', sans-serif; /* Apply Manrope font */
 		}
@@ -44,7 +44,7 @@
 		<div class="row d-flex align-items-center">
 			<!-- Logo in col-4 -->
 			<div class="col-md-4 mb-5">
-				<img src="https://wingssportsapparel.com/storage/settings/logo-dark.svg" alt="Logo" class="w-25">
+				<img src="https://wingssportswear.shop/storage/settings/logo-dark.svg" alt="Logo" class="w-25">
 			</div>
 			<!-- Phone & Email in col-8 -->
 			<div class="col-md-8 d-flex">
@@ -182,7 +182,7 @@
 
 			<div class="col-md-4">
 				<div class="mb-0">
-					<img class="signature mb-0" src="https://wingssportsapparel.com/images/invoice-signature.png" alt="">
+					<img class="signature mb-0" src="https://wingssportswear.shop/images/invoice-signature.png" alt="">
 				</div>
 				<div>
 					<p>Authorized Signature</p>
