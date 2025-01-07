@@ -111,6 +111,12 @@
 										<a href="javascript:void(0);" onclick="openOrderStatusModal({{ $order->id }})" class="badge bg-primary text-white">
 											<i class="bi bi-eye-fill me-1"></i> View Status
 										</a>
+										@if ($order->status == 1 || $order->status == 2 || $order->status == 3)
+											<!-- Invoice Link -->
+											<a href="{{ route('order.invoice', $order) }}" class="badge bg-success text-white">
+												<i class="bi bi-download"></i> Invoice
+											</a>
+										@endif
 									</td>
 								</tr>
 								@endforeach
