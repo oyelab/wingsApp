@@ -73,8 +73,13 @@ class OrderController extends Controller
 		$orders = Order::whereIn('status', [4, 7])->whereHas('transactions', function ($query) {
 			$query->whereIn('payment_status', [3, 4]); // Filter transactions with payment_status 3 or 4
 		})
-		->get();	
-
+		->get();
+		
+		// Loop through the orders and calculate totals
+		foreach ($orders as $order) {
+			// Call the calculateTotals() method to populate order totals
+			$order->calculateTotals();
+		}
 	
 		// Pass the filtered orders to the view (assuming you're returning a view)
 		return view('backEnd.orders.index', compact('orders'));
@@ -82,7 +87,16 @@ class OrderController extends Controller
 
 	public function cancelled()
 	{
-		$orders = Order::whereIn('status', [0, 5, 6])->get();
+		$orders = Order::whereIn('status', [0, 5, 6])->whereHas('transactions', function($query) {
+			$query->whereIn('status', ['CANCELLED', 'FAILED']);
+		})->get();
+
+		// Loop through the orders and calculate totals
+		foreach ($orders as $order) {
+			// Call the calculateTotals() method to populate order totals
+			$order->calculateTotals();
+		}
+		
 	
 		// Pass the filtered orders to the view (assuming you're returning a view)
 		return view('backEnd.orders.index', compact('orders'));
@@ -90,8 +104,16 @@ class OrderController extends Controller
 
 	public function completed()
 	{
-		$orders = Order::where('status', 1)->get();
+		$orders = Order::where('status', 1)->whereHas('transactions', function($query) {
+			$query->where('status', 'VALID');
+		})->get();
 	
+		// Loop through the orders and calculate totals
+		foreach ($orders as $order) {
+			// Call the calculateTotals() method to populate order totals
+			$order->calculateTotals();
+		}
+
 		// Pass the filtered orders to the view (assuming you're returning a view)
 		return view('backEnd.orders.index', compact('orders'));
 	}
