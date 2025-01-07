@@ -98,7 +98,9 @@
 				<div class="cost-labels">
 					<p>Order Total</p>
 					<p>Shipping Fee</p>
-					<p>Voucher Discount(-)</p>
+					@if($order_details->voucher && $order_details->voucher > 0)
+						<p>Voucher Discount(-)</p>
+					@endif
 					<p>Paid(-)</p>
 					@if ($order_details->unpaid_amount > 0)
 						<p>Unpaid</p>
@@ -107,7 +109,9 @@
 				<div class="cost-values">
 					<p>Tk. {{ $order_details->order_total }}</p>
 					<p>Tk. {{ $order_details->shipping_charge }}</p>
-					<p>{{ $order_details->voucher ? '৳' . $order_details->voucher : 'N/A' }}</p>
+					@if($order_details->voucher && $order_details->voucher > 0)
+						<p>{{ $order_details->voucher ? '৳' . $order_details->voucher : 'N/A' }}</p>
+					@endif
 					<p>Tk. {{ $order_details->paid }}</p>
 					@if ($order_details->unpaid_amount > 0)
 						<p>Tk. {{ $order_details->unpaid_amount }}</p>
