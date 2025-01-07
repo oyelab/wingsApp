@@ -10,12 +10,9 @@
 		integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
-
 
 	<style>
-		/* @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap"); */
+		@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
 
 		html, body {
 			width: 210mm;
@@ -24,10 +21,6 @@
 			background: #dddddd;
 			margin: 0 auto !important;
 			font-family: 'Manrope', sans-serif; /* Apply Manrope font */
-		}
-
-		.bengali-text {
-			font-family: 'Noto Sans Bengali', sans-serif;
 		}
 
 		.fs-5 {
@@ -70,17 +63,13 @@
 		<table class="table table-responsive table-bordered mt-5">
 			<tr>
 				<td><strong>Name:</strong></td>
-				<td style="{{ preg_match('/[^\x00-\x7F]/', $order->name) ? 'font-family: Noto Sans Bengali, sans-serif;' : '' }}">
-					{{ $order->name }}
-				</td>
+				<td>{{ $order->name }}</td>
 				<td><strong>Bill No:</strong></td>
 				<td>#{{ $order->ref }}</td>
 			</tr>
 			<tr>
 				<td><strong>Address:</strong></td>
-				<td style="{{ preg_match('/[^\x00-\x7F]/', $order->address) ? 'font-family: Noto Sans Bengali, sans-serif;' : '' }}">
-					<td>{{ $order->address }}</td>
-				</td>
+				<td>{{ $order->address }}</td>
 				<td><strong>Date:</strong></td>
 				<td>{{ \Carbon\Carbon::parse($order->tran_date)->format('d/m/Y') }}</td>
 			</tr>
