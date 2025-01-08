@@ -103,7 +103,11 @@ class PaymentController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'phone' => 'required|string|max:15',
+			'phone' => [
+					'required',
+					'string',
+					'regex:/^01[3-9]\d{8}$/', // Matches Bangladeshi phone numbers
+				],
 			'address' => 'required|string|min:10|max:255',
             'payment_method' => 'required|in:COD,Full Payment', // Ensure it matches your form values
 			'terms' => 'accepted',

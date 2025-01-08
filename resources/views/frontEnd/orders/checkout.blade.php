@@ -64,7 +64,7 @@
 							<label for="phone">Phone Number
 								<span class="text-danger">*</span>
 							</label>
-							<input type="text" class="form-control" name="phone" id="phone" placeholder="Enter phone number"
+							<input type="text" class="form-control" name="phone" id="phone" placeholder="Enter 11 digit phone"
 								value="{{ old('phone') }}" required />
 						</div>
 						<div class="form-group mb-3">
