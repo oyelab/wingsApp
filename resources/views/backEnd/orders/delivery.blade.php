@@ -1,9 +1,9 @@
 @extends('backEnd.layouts.master')
 @section('title')
-	Delivery
+	Shipping
 @endsection
 @section('page-title')
-	Manage Shipping
+	Process Shipping
 @endsection
 @section('body')
 
@@ -48,15 +48,8 @@
 								</thead>
 								<tbody>
 									<tr>
-										<th>
-											<label for="store_id">Store ID:</label>
-										</th>
-										<th>
-											<label for="store_id">133730</label>
-											<input type="hidden" name="store_id" value="133730">
-										</th>
 										<td>
-											<label for="order_ref">Order Ref:</label>
+											<label for="product">Order Ref:</label>
 										</td>
 										<td>
 											<label for="order_ref">{{ $order->ref }}</label>
@@ -68,12 +61,10 @@
 											<label for="recipient_name">Customer Details:</label>
 										</td>
 										<td>
-											<label for="recipient_name">{{ $order->name }}</label>
-											<input type="hidden" name="recipient_name" value="{{ $order->name }}">
+											<input type="text" class="form-control form-control-sm w-sm" name="recipient_name" value="{{ $order->name }}">
 										</td>
 										<td>
-											<label for="recipient_phone">{{ $order->phone }}</label>
-											<input type="hidden" name="recipient_phone" value="{{ $order->phone }}">
+											<input type="number" class="form-control form-control-sm w-sm" name="recipient_phone" value="{{ $order->phone }}">
 										</td>
 										<td>
 											<input type="text" class="form-control form-control-sm w-sm" name="recipient_address" value="{{ $order->address }}">
@@ -127,17 +118,14 @@
 											<label for="item_quantity">Item Quantity:</label>
 										</td>
 										<td>
-											<label for="item_quantity">{{ $totalQuantity }}</label>
-											<input type="hidden" name="item_quantity" id="item_quantity"
+											<input type="number" class="form-control form-control-sm w-sm" name="item_quantity" id="item_quantity"
 												value="{{ $totalQuantity }}">
 										</td>
 										<td>
 											<label for="amount_to_collect">Amount to Collect:</label>
 										</td>
 										<td>
-											<label for="amount_to_collect">{{ $transaction->unpaid }}</label>
-											<input type="hidden" name="amount_to_collect" id="amount_to_collect"
-												value="{{ $transaction->unpaid }}">
+											<input type="number"class="form-control form-control-sm w-sm" name="amount_to_collect" id="amount_to_collect" value="{{ $transaction->unpaid }}">
 										</td>
 									</tr>
 									<tr>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AdminOrder;
 use App\Models\Order;
+use App\Models\Quantity;
 use App\Models\Delivery;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -80,6 +81,21 @@ class AdminOrderController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit($orderId)
+	{
+		// Fetch the order with related transactions and products
+		$order = Order::with(['transactions', 'products' => function ($query) {
+			$query->withPivot('size_id', 'quantity'); // Include pivot data
+		}])->findOrFail($orderId);
+
+		$delivery = Delivery::where('order_id', $orderId)->first();
+		
+
+		return view('backEnd.orders.edit', [
+			'order' => $order->calculateTotals(),
+		]);
+	}
+
+    public function delivery($orderId)
 	{
 		// Fetch the order with related transactions and products
 		$order = Order::with(['transactions', 'products' => function ($query) {
@@ -202,9 +218,102 @@ class AdminOrderController extends Controller
 			'refund_response' => isset($refundResponse) ? $refundResponse : null, // Include refund response only if refund was initiated
 		]);
 	}
-	
 
+	public function orderUpdate(Request $request, Order $order)
+	{
+		// Validate the incoming request data for Order fields
+		$request->validate([
+			'name' => 'required|string|max:255',
+			'email' => 'required|email|max:255',
+			'phone' => 'required|string|max:20',
+			'address' => 'required|string|max:500',
+			'products' => 'required|array', // Ensure products are passed in
+			'products.*.quantity' => 'required|integer|min:1', // Validate product quantities
+			'products.*.size_id' => 'required|integer', // Validate size selection
+		]);
 
+		// Load the existing products with their pivot data
+		$order->load(['products']);
+		
+		foreach ($order->products as $product) {
+			$productId = $product->id;
+			$currentSizeId = $product->pivot->size_id; // Existing size in the pivot
+			$currentQuantity = $product->pivot->quantity; // Existing quantity in the pivot
+
+			// New data from the request
+			$newSizeId = $request->input("products.$productId.size_id");
+			$newQuantity = $request->input("products.$productId.quantity");
+
+			if ($currentSizeId != $newSizeId || $currentQuantity != $newQuantity) {
+				// If the size has changed
+				if ($currentSizeId != $newSizeId) {
+					// Check if new size has sufficient stock
+					$availableQuantity = Quantity::where('product_id', $productId)
+						->where('size_id', $newSizeId)
+						->value('quantity');
+
+					if ($availableQuantity === null || $availableQuantity < $newQuantity) {
+						return redirect()->back()->withErrors([
+							"products.$productId.size_id" => "Not enough stock available for the selected size."
+						]);
+					}
+
+					// Increment the old size back
+					Quantity::where('product_id', $productId)
+						->where('size_id', $currentSizeId)
+						->increment('quantity', $currentQuantity);
+
+					// Decrement the new size
+					Quantity::where('product_id', $productId)
+						->where('size_id', $newSizeId)
+						->decrement('quantity', $newQuantity);
+				} 
+				// If only the quantity has changed
+				elseif ($currentQuantity != $newQuantity) {
+					$difference = $newQuantity - $currentQuantity;
+
+					if ($difference > 0) {
+						// Check if sufficient stock is available for the additional quantity
+						$availableQuantity = Quantity::where('product_id', $productId)
+							->where('size_id', $currentSizeId)
+							->value('quantity');
+
+						if ($availableQuantity === null || $availableQuantity < $difference) {
+							return redirect()->back()->withErrors([
+								"products.$productId.quantity" => "Not enough stock available to increase the quantity."
+							]);
+						}
+
+						// Decrement stock for the additional quantity
+						Quantity::where('product_id', $productId)
+							->where('size_id', $currentSizeId)
+							->decrement('quantity', $difference);
+					} elseif ($difference < 0) {
+						// Increment stock for the released quantity
+						Quantity::where('product_id', $productId)
+							->where('size_id', $currentSizeId)
+							->increment('quantity', abs($difference));
+					}
+				}
+
+				// Update the pivot table with the new size and quantity
+				$order->products()->updateExistingPivot($productId, [
+					'size_id' => $newSizeId,
+					'quantity' => $newQuantity,
+				]);
+			}
+		}
+
+		// Save the order attributes
+		$order->update([
+			'name' => $request->input('name'),
+			'email' => $request->input('email'),
+			'phone' => $request->input('phone'),
+			'address' => $request->input('address'),
+		]);
+
+		return redirect()->route('orders.index')->with('success', 'Order updated successfully.');
+	}
 
 
     /**

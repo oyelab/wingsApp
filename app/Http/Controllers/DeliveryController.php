@@ -144,6 +144,14 @@ class DeliveryController extends Controller
 	
 			if ($order) {
 				$order->status = 3; // Set status to 3
+				// Check for changes and update the fields
+				$order->fill([
+					'name' => $request->recipient_name,
+					'phone' => $request->recipient_phone,
+					'address' => $request->recipient_address,
+				]);
+	
+				// Save the updated order
 				$order->save();
 			}
 	

@@ -76,7 +76,7 @@
 									</td>
 									<td>
 										@if ($order->status == 2)
-											<a href="{{ route('orders.edit', $order->id) }}" class="badge bg-dark">
+											<a href="{{ route('orders.delivery', $order->id) }}" class="badge bg-dark">
 												<i class="bi bi-box-seam me-1"></i> Create Delivery
 											</a>
 										@elseif ($order->status == 3)
@@ -107,7 +107,13 @@
 									<td id="order-status-{{ $order->id }}">
 										<x-order-status :status="$order->status" />
 									</td>
-									<td>
+									<td class="text-center">
+										{{-- @if ($order->status == 2)
+											<!-- Invoice Link -->
+											<a href="{{ route('orders.edit', $order) }}" class="badge bg-success text-white">
+												<i class="bi bi-pencil-square"></i> Edit
+											</a>
+										@endif --}}
 										<a href="javascript:void(0);" onclick="openOrderStatusModal({{ $order->id }})" class="badge bg-primary text-white">
 											<i class="bi bi-eye-fill me-1"></i> View Status
 										</a>

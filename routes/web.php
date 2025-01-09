@@ -145,6 +145,10 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function() {
 	Route::get('/customers', [UserController::class, 'customerList'])->name('customer.list');
 
 	Route::post('/orders/{productId}/{sizeId}/update', [AdminOrderController::class, 'updateOrderProduct'])->name('admin.order.update');
+	
+	Route::get('/orders/{orderId}/delivery', [AdminOrderController::class, 'delivery'])->name('orders.delivery');
+	
+	Route::post('/orders/{order}/update', [AdminOrderController::class, 'orderUpdate'])->name('order.update');
 
 	Route::put('pages/{page}/update-type', [PageController::class, 'updateType'])->name('pages.update-type');
 	Route::put('pages/update-order', [PageController::class, 'updateOrder'])->name('pages.update-order');
