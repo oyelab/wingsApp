@@ -4,8 +4,6 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,maximum-scale=2.0,minimum-scale=1.0">
 
-		{{-- Page-specific Title --}}
-		<!-- <title>{{ isset($pageTitle) ? $pageTitle . ' | ' : '' }}{{ $siteSettings->title ?? 'Wings Sportswear' }}</title> -->
 		<title>@yield('pageTitle'){{ $siteSettings->title ?? 'Wings Sportswear' }}</title>
 
 		{{-- Page-specific Description --}}

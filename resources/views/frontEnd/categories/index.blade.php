@@ -1,4 +1,9 @@
 @extends('frontEnd.layouts.app')
+
+@section('pageTitle', $pageTitle . ' | ')
+{{-- @section('pageDescription', $showcase->description)
+@section('pageOgImage', $showcase->ogImagePath)  <!-- Image specific to this page --> --}}
+
 @section('css')
 <style>
 	.product-title {
