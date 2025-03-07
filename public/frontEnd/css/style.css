@@ -2846,11 +2846,23 @@ a {
         margin-bottom: 24px;
     }
     .behind-wings-tabs .nav-tabs .nav-link,
-    .need-assistance-content p {
+    .need-assistance-content p,
+    .collection-content-area h2,
+    .product-details-area h3 {
         font-size: 22px;
     }
     .need-assistance-content {
         padding: 40px;
+    }
+    .review-analysis h2 {
+        font-size: 30px;
+    }
+    .checkout-form {
+        max-width: 100%;
+    }
+    .need-assistance-content {
+        flex-direction: column;
+        gap: 30px;
     }
 }
 @media screen and (max-width: 576px) {

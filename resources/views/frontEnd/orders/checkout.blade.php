@@ -14,9 +14,9 @@
 						<!-- Display Item or Items based on total quantity -->
 						<p>
 							@if($totalQuantity == 1)
-								({{ $totalQuantity }} Item)
+							({{ $totalQuantity }} Item)
 							@else
-								({{ $totalQuantity }} Items)
+							({{ $totalQuantity }} Items)
 							@endif
 						</p>
 
@@ -30,26 +30,26 @@
 			@csrf
 			<!-- Customer Information -->
 			@if ($errors->any())
-				<div class="alert alert-danger">
-					<ul>
-						@foreach ($errors->all() as $error)
-							<li>{{ $error }}</li>
-						@endforeach
-					</ul>
-				</div>
+			<div class="alert alert-danger">
+				<ul>
+					@foreach ($errors->all() as $error)
+					<li>{{ $error }}</li>
+					@endforeach
+				</ul>
+			</div>
 			@endif
-			
+
 			@if(session('message'))
-				<div class="alert alert-info">
-					{{ session('message') }}
-				</div>
+			<div class="alert alert-info">
+				{{ session('message') }}
+			</div>
 			@endif
 
 			<input type="hidden" name="totalQuantity" value="{{ $totalQuantity }}">
 
 			<div class="row">
-				
-				<div class="col-md-8">
+
+				<div class="col-lg-8">
 					<div class="checkout-form mb-3">
 						<h2>Delivery Address</h2>
 
@@ -78,7 +78,7 @@
 							<label for="address">House/Road/Post
 								<span class="text-danger">*</span>
 							</label>
-							<input type="text" class="form-control" id="address" name="address" placeholder="Enter detail address" 
+							<input type="text" class="form-control" id="address" name="address" placeholder="Enter detail address"
 								value="{{ old('address') }}" required />
 						</div>
 						<div class="dristic-wrap">
@@ -108,7 +108,7 @@
 					</div>
 				</div>
 
-				<div class="col-md-4">
+				<div class="col-lg-4">
 					<div class="review-your-cart-wrap">
 						<div class="review-your-cart-top">
 							<h3>Review your cart</h3>
@@ -119,10 +119,10 @@
 
 
 						<div class="cart-products">
-						@foreach($cartItems as $item)
+							@foreach($cartItems as $item)
 							<a href="{{ route('products.details', [
-									'category' => $item['categorySlug'], $item['slug']]) }}" 
-									class="cart-product">
+									'category' => $item['categorySlug'], $item['slug']]) }}"
+								class="cart-product">
 								<div class="product-image">
 									<img src="{{ $item['imagePath'] }}" alt="Product" draggable="false"
 										class="img-fluid w-25 h-auto" />
@@ -140,10 +140,10 @@
 										<!-- Display Price and Sale Price conditionally -->
 										<p>
 											@if($item['offerPrice'] && $item['offerPrice'] > 0)
-												<span class="text-decoration-line-through text-muted">{{ $item['price'] }}</span>
-												<span class="text-success fw-bold">{{ $item['offerPrice'] }}</span>
+											<span class="text-decoration-line-through text-muted">{{ $item['price'] }}</span>
+											<span class="text-success fw-bold">{{ $item['offerPrice'] }}</span>
 											@else
-												<span class="text-success fw-bold">{{ $item['price'] }}</span>
+											<span class="text-success fw-bold">{{ $item['price'] }}</span>
 											@endif
 										</p>
 
@@ -153,9 +153,9 @@
 							<input type="hidden" name="products[{{ $loop->index }}][id]" value="{{ $item['product_id'] }}"> <!-- Adjust key if necessary -->
 							<input type="hidden" name="products[{{ $loop->index }}][size_id]" value="{{ $item['size_id'] }}">
 							<input type="hidden" name="products[{{ $loop->index }}][quantity]" value="{{ $item['quantity'] }}">
-						@endforeach
+							@endforeach
 						</div>
-						
+
 						<div class="payment-methods">
 							<label class="payment-option">
 								<input type="radio" id="cod" name="payment_method" value="COD"
@@ -180,7 +180,7 @@
 									<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
 									Calculating...
 								</p>
-								
+
 								<input type="hidden" id="hidden_shipping_charge" name="shipping_charge" value="0.00">
 							</div>
 
@@ -228,10 +228,10 @@
 						</div>
 						<div class="payment-accept text-center">
 							@foreach($assets->filter(fn($asset) => $asset->type === 5) as $asset)
-								<img src="{{ $asset->filePath }}" draggable="false" class="img-fluid"
+							<img src="{{ $asset->filePath }}" draggable="false" class="img-fluid"
 								alt="{{ $asset->title }}" />
 							@endforeach
-							
+
 						</div>
 						<div class="message-info">
 							<div class="message-info-top">
@@ -247,7 +247,7 @@
 						</div>
 					</div>
 				</div>
-				
+
 			</div>
 		</form>
 	</div>
@@ -258,89 +258,86 @@
 <!-- Add this script to handle the payment selection -->
 <script>
 	const oldCity = "{{ old('recipient_city') }}";
-const oldZone = "{{ old('recipient_zone') }}";
-const oldArea = "{{ old('recipient_area') }}";
+	const oldZone = "{{ old('recipient_zone') }}";
+	const oldArea = "{{ old('recipient_area') }}";
 
-// Fetch and set cities with old selection, if available
-async function fetchCities() {
-    const citySelect = document.getElementById("recipient_city");
+	// Fetch and set cities with old selection, if available
+	async function fetchCities() {
+		const citySelect = document.getElementById("recipient_city");
 
-    try {
-        const response = await fetch("/cities");
-        const result = await response.json();
+		try {
+			const response = await fetch("/cities");
+			const result = await response.json();
 
-        if (Array.isArray(result.data)) {
-            result.data.forEach((city) => {
-                const selected = city.city_id == oldCity ? "selected" : "";
-                citySelect.innerHTML += `<option value="${city.city_id}" ${selected}>${city.city_name}</option>`;
-            });
+			if (Array.isArray(result.data)) {
+				result.data.forEach((city) => {
+					const selected = city.city_id == oldCity ? "selected" : "";
+					citySelect.innerHTML += `<option value="${city.city_id}" ${selected}>${city.city_name}</option>`;
+				});
 
-            // Fetch zones if an old city is set
-            if (oldCity) fetchZones();
-        }
-    } catch (error) {
-        console.error("Error fetching cities:", error);
-    }
-}
+				// Fetch zones if an old city is set
+				if (oldCity) fetchZones();
+			}
+		} catch (error) {
+			console.error("Error fetching cities:", error);
+		}
+	}
 
-// Fetch and set zones with old selection, if available
-async function fetchZones() {
-    const cityId = document.getElementById("recipient_city").value;
-    const zoneSelect = document.getElementById("recipient_zone");
-    const areaSelect = document.getElementById("recipient_area");
+	// Fetch and set zones with old selection, if available
+	async function fetchZones() {
+		const cityId = document.getElementById("recipient_city").value;
+		const zoneSelect = document.getElementById("recipient_zone");
+		const areaSelect = document.getElementById("recipient_area");
 
-    zoneSelect.innerHTML = '<option value="">Select Zone</option>';
-    areaSelect.innerHTML = '<option value="">Select Area</option>';
+		zoneSelect.innerHTML = '<option value="">Select Zone</option>';
+		areaSelect.innerHTML = '<option value="">Select Area</option>';
 
-    if (!cityId) return;
+		if (!cityId) return;
 
-    try {
-        const response = await fetch(`/zones/${cityId}`);
-        const data = await response.json();
+		try {
+			const response = await fetch(`/zones/${cityId}`);
+			const data = await response.json();
 
-        if (data && data.data) {
-            data.data.forEach((zone) => {
-                const selected = zone.zone_id == oldZone ? "selected" : "";
-                zoneSelect.innerHTML += `<option value="${zone.zone_id}" ${selected}>${zone.zone_name}</option>`;
-            });
+			if (data && data.data) {
+				data.data.forEach((zone) => {
+					const selected = zone.zone_id == oldZone ? "selected" : "";
+					zoneSelect.innerHTML += `<option value="${zone.zone_id}" ${selected}>${zone.zone_name}</option>`;
+				});
 
-            // Fetch areas if an old zone is set
-            if (oldZone) fetchAreas();
-        }
-    } catch (error) {
-        console.error("Error fetching zones:", error);
-    }
-}
+				// Fetch areas if an old zone is set
+				if (oldZone) fetchAreas();
+			}
+		} catch (error) {
+			console.error("Error fetching zones:", error);
+		}
+	}
 
-// Fetch and set areas with old selection, if available
-async function fetchAreas() {
-    const zoneId = document.getElementById("recipient_zone").value;
-    const areaSelect = document.getElementById("recipient_area");
+	// Fetch and set areas with old selection, if available
+	async function fetchAreas() {
+		const zoneId = document.getElementById("recipient_zone").value;
+		const areaSelect = document.getElementById("recipient_area");
 
-    areaSelect.innerHTML = '<option value="">Select Area</option>';
+		areaSelect.innerHTML = '<option value="">Select Area</option>';
 
-    if (!zoneId) return;
+		if (!zoneId) return;
 
-    try {
-        const response = await fetch(`/areas/${zoneId}`);
-        const data = await response.json();
+		try {
+			const response = await fetch(`/areas/${zoneId}`);
+			const data = await response.json();
 
-        if (data && data.data) {
-            data.data.forEach((area) => {
-                const selected = area.area_id == oldArea ? "selected" : "";
-                areaSelect.innerHTML += `<option value="${area.area_id}" ${selected}>${area.area_name}</option>`;
-            });
-        }
-    } catch (error) {
-        console.error("Error fetching areas:", error);
-    }
-}
+			if (data && data.data) {
+				data.data.forEach((area) => {
+					const selected = area.area_id == oldArea ? "selected" : "";
+					areaSelect.innerHTML += `<option value="${area.area_id}" ${selected}>${area.area_name}</option>`;
+				});
+			}
+		} catch (error) {
+			console.error("Error fetching areas:", error);
+		}
+	}
 
-// Call fetchCities when the page loads
-window.onload = fetchCities;
-
-
-
+	// Call fetchCities when the page loads
+	window.onload = fetchCities;
 </script>
 
 <script>
@@ -350,163 +347,162 @@ window.onload = fetchCities;
 </script>
 
 <script>
-// Get totalQuantity from PHP into JavaScript
-const totalQuantity = @json($totalQuantity);
+	// Get totalQuantity from PHP into JavaScript
+	const totalQuantity = @json($totalQuantity);
 
-async function calculateShippingPrice() {
-    const recipientCity = document.getElementById('recipient_city').value;
-    const recipientZone = document.getElementById('recipient_zone').value;
+	async function calculateShippingPrice() {
+		const recipientCity = document.getElementById('recipient_city').value;
+		const recipientZone = document.getElementById('recipient_zone').value;
 
-    const shippingElement = document.getElementById('shipping');
-    const shippingChargeElement = document.getElementById('hidden_shipping_charge');
-    
-    // Show calculating effect (loading spinner or text)
-    shippingElement.textContent = "Calculating...";
-    shippingChargeElement.value = 0; // Optional: Set the shipping charge to 0 during calculation
+		const shippingElement = document.getElementById('shipping');
+		const shippingChargeElement = document.getElementById('hidden_shipping_charge');
 
-    if (recipientCity && recipientZone) {
-        try {
-            const response = await fetch('/calculate-shipping', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    recipient_city: recipientCity,
-                    recipient_zone: recipientZone,
-                    quantity: totalQuantity // Add totalQuantity to the request payload
-                })
-            });
+		// Show calculating effect (loading spinner or text)
+		shippingElement.textContent = "Calculating...";
+		shippingChargeElement.value = 0; // Optional: Set the shipping charge to 0 during calculation
 
-            const data = await response.json();
+		if (recipientCity && recipientZone) {
+			try {
+				const response = await fetch('/calculate-shipping', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-CSRF-TOKEN': '{{ csrf_token() }}'
+					},
+					body: JSON.stringify({
+						recipient_city: recipientCity,
+						recipient_zone: recipientZone,
+						quantity: totalQuantity // Add totalQuantity to the request payload
+					})
+				});
 
-            if (response.ok) {
-                const shipping = data.data.final_price || 0;
+				const data = await response.json();
 
-                // Update UI with calculated shipping price
-                shippingElement.textContent = `৳ ${shipping.toFixed(2)}`;
-                shippingChargeElement.value = shipping.toFixed(2);
-                calculateCartSummary(shipping); // Calculate cart summary after shipping is updated
-            } else {
-                console.error('Shipping calculation error:', data.message);
-                shippingElement.textContent = "Error calculating shipping.";
-            }
-        } catch (error) {
-            console.error("Error calculating shipping price:", error);
-            shippingElement.textContent = "Error calculating shipping.";
-        }
-    } else {
-        const defaultShipping = 60;
+				if (response.ok) {
+					const shipping = data.data.final_price || 0;
 
-        // Display default shipping if cities/zones are not selected
-        shippingElement.textContent = `৳ ${defaultShipping.toFixed(2)}`;
-        shippingChargeElement.value = defaultShipping.toFixed(2);
-        calculateCartSummary(defaultShipping); // Calculate cart summary after shipping is updated
-    }
-}
+					// Update UI with calculated shipping price
+					shippingElement.textContent = `৳ ${shipping.toFixed(2)}`;
+					shippingChargeElement.value = shipping.toFixed(2);
+					calculateCartSummary(shipping); // Calculate cart summary after shipping is updated
+				} else {
+					console.error('Shipping calculation error:', data.message);
+					shippingElement.textContent = "Error calculating shipping.";
+				}
+			} catch (error) {
+				console.error("Error calculating shipping price:", error);
+				shippingElement.textContent = "Error calculating shipping.";
+			}
+		} else {
+			const defaultShipping = 60;
 
-
-// Function to calculate cart summary including shipping
-function calculateCartSummary(shipping) {
-    let subtotal = 0;
-    let discount = 0;
-    const voucherDiscountPercentage = @json($voucherDiscount);
-    let voucherDiscountAmount = 0;
-
-    const cartItems = @json($cartItems); // Ensure cartItems is a valid array of cart items
-
-    cartItems.forEach(item => {
-        const quantity = item.quantity;
-        const price = item.price;
-        const offerPrice = item.offerPrice || price;
-
-        subtotal += price * quantity;
-        discount += (price - offerPrice) * quantity;
-    });
-
-    const totalBeforeVoucher = subtotal - discount;
-    voucherDiscountAmount = (totalBeforeVoucher * voucherDiscountPercentage) / 100;
-    voucherDiscountAmount = parseFloat(voucherDiscountAmount.toFixed(2));
-
-    const total = totalBeforeVoucher - voucherDiscountAmount + shipping;
-
-    // Update the DOM
-    document.getElementById('subtotal').textContent = `৳ ${subtotal.toFixed(2)}`;
-    document.getElementById('total').textContent = `৳ ${total.toFixed(2)}`;
-
-    // Update discount field visibility
-    const discountRow = document.getElementById('discountRow');
-    const discountElement = document.getElementById('discount');
-    if (discount > 0) {
-        discountElement.textContent = `৳ ${discount.toFixed(2)}`;
-        discountRow.style.display = ''; // Show discount row if there's a discount
-    } else {
-        discountElement.textContent = 'N/A';
-        discountRow.style.display = 'none'; // Hide discount row if no discount
-    }
-
-    // Update voucher field visibility
-    const voucherRow = document.getElementById('voucherRow');
-    const voucherElement = document.getElementById('voucher');
-    if (voucherDiscountAmount > 0) {
-        voucherElement.textContent = `৳ ${voucherDiscountAmount.toFixed(2)}`;
-        document.getElementById('voucherInput').value = voucherDiscountAmount; // Update hidden input value
-        voucherRow.style.display = ''; // Show voucher row if there's a voucher discount
-    } else {
-        voucherElement.textContent = 'N/A';
-        document.getElementById('voucherInput').value = ''; // Clear hidden input value
-        voucherRow.style.display = 'none'; // Hide voucher row if no voucher
-    }
-
-    // Update payable
-    updatePayable(total, shipping);
-}
-
-function updatePayable(total = 0, shipping = 0) {
-    // Get the payable element
-    const payableElement = document.getElementById('payable');
-
-    // Show calculating effect (loading spinner or text)
-    payableElement.textContent = "Calculating..."; // Show calculating text
-    payableElement.classList.add('loading'); // Optional: Add a loading class for styling (you can add CSS for animation/spinner)
-
-    // Ensure total and shipping are valid numbers before attempting to call toFixed
-    if (isNaN(total) || isNaN(shipping)) {
-        total = 0;
-        shipping = 0;
-    }
-
-    // Simulate a delay (e.g., if calculation is async, like fetching data)
-    setTimeout(() => {
-        const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value;
-        let payable;
-
-        if (paymentMethod === 'COD') {
-            payable = shipping; // Only shipping for COD
-        } else {
-            payable = total; // Total for other payment methods
-        }
-
-        // Update payable amount
-        payableElement.textContent = `৳ ${payable.toFixed(2)}`;
-        payableElement.classList.remove('loading'); // Remove the loading class once done
-    }, 500); // Optional: Add a small delay for a smoother transition (500ms)
-}
+			// Display default shipping if cities/zones are not selected
+			shippingElement.textContent = `৳ ${defaultShipping.toFixed(2)}`;
+			shippingChargeElement.value = defaultShipping.toFixed(2);
+			calculateCartSummary(defaultShipping); // Calculate cart summary after shipping is updated
+		}
+	}
 
 
-// Event listeners for dynamic updates
-document.getElementById('recipient_zone').addEventListener('change', calculateShippingPrice);
-document.querySelectorAll('input[name="payment_method"]').forEach(el =>
-    el.addEventListener('click', () => {
-        const total = parseFloat(document.getElementById('total').textContent.replace('৳ ', ''));
-        const shipping = parseFloat(document.getElementById('hidden_shipping_charge').value);
-        updatePayable(total, shipping);
-    })
-);
+	// Function to calculate cart summary including shipping
+	function calculateCartSummary(shipping) {
+		let subtotal = 0;
+		let discount = 0;
+		const voucherDiscountPercentage = @json($voucherDiscount);
+		let voucherDiscountAmount = 0;
 
-// Initial calculation on page load
-document.addEventListener("DOMContentLoaded", () => calculateShippingPrice());
+		const cartItems = @json($cartItems); // Ensure cartItems is a valid array of cart items
 
+		cartItems.forEach(item => {
+			const quantity = item.quantity;
+			const price = item.price;
+			const offerPrice = item.offerPrice || price;
+
+			subtotal += price * quantity;
+			discount += (price - offerPrice) * quantity;
+		});
+
+		const totalBeforeVoucher = subtotal - discount;
+		voucherDiscountAmount = (totalBeforeVoucher * voucherDiscountPercentage) / 100;
+		voucherDiscountAmount = parseFloat(voucherDiscountAmount.toFixed(2));
+
+		const total = totalBeforeVoucher - voucherDiscountAmount + shipping;
+
+		// Update the DOM
+		document.getElementById('subtotal').textContent = `৳ ${subtotal.toFixed(2)}`;
+		document.getElementById('total').textContent = `৳ ${total.toFixed(2)}`;
+
+		// Update discount field visibility
+		const discountRow = document.getElementById('discountRow');
+		const discountElement = document.getElementById('discount');
+		if (discount > 0) {
+			discountElement.textContent = `৳ ${discount.toFixed(2)}`;
+			discountRow.style.display = ''; // Show discount row if there's a discount
+		} else {
+			discountElement.textContent = 'N/A';
+			discountRow.style.display = 'none'; // Hide discount row if no discount
+		}
+
+		// Update voucher field visibility
+		const voucherRow = document.getElementById('voucherRow');
+		const voucherElement = document.getElementById('voucher');
+		if (voucherDiscountAmount > 0) {
+			voucherElement.textContent = `৳ ${voucherDiscountAmount.toFixed(2)}`;
+			document.getElementById('voucherInput').value = voucherDiscountAmount; // Update hidden input value
+			voucherRow.style.display = ''; // Show voucher row if there's a voucher discount
+		} else {
+			voucherElement.textContent = 'N/A';
+			document.getElementById('voucherInput').value = ''; // Clear hidden input value
+			voucherRow.style.display = 'none'; // Hide voucher row if no voucher
+		}
+
+		// Update payable
+		updatePayable(total, shipping);
+	}
+
+	function updatePayable(total = 0, shipping = 0) {
+		// Get the payable element
+		const payableElement = document.getElementById('payable');
+
+		// Show calculating effect (loading spinner or text)
+		payableElement.textContent = "Calculating..."; // Show calculating text
+		payableElement.classList.add('loading'); // Optional: Add a loading class for styling (you can add CSS for animation/spinner)
+
+		// Ensure total and shipping are valid numbers before attempting to call toFixed
+		if (isNaN(total) || isNaN(shipping)) {
+			total = 0;
+			shipping = 0;
+		}
+
+		// Simulate a delay (e.g., if calculation is async, like fetching data)
+		setTimeout(() => {
+			const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value;
+			let payable;
+
+			if (paymentMethod === 'COD') {
+				payable = shipping; // Only shipping for COD
+			} else {
+				payable = total; // Total for other payment methods
+			}
+
+			// Update payable amount
+			payableElement.textContent = `৳ ${payable.toFixed(2)}`;
+			payableElement.classList.remove('loading'); // Remove the loading class once done
+		}, 500); // Optional: Add a small delay for a smoother transition (500ms)
+	}
+
+
+	// Event listeners for dynamic updates
+	document.getElementById('recipient_zone').addEventListener('change', calculateShippingPrice);
+	document.querySelectorAll('input[name="payment_method"]').forEach(el =>
+		el.addEventListener('click', () => {
+			const total = parseFloat(document.getElementById('total').textContent.replace('৳ ', ''));
+			const shipping = parseFloat(document.getElementById('hidden_shipping_charge').value);
+			updatePayable(total, shipping);
+		})
+	);
+
+	// Initial calculation on page load
+	document.addEventListener("DOMContentLoaded", () => calculateShippingPrice());
 </script>
 @endsection
