@@ -802,13 +802,13 @@ a {
     color: var(--wings-off);
 }
 .breadcrumb-title {
-    display: -webkit-box;              /* Make the span behave like a box */
-    -webkit-box-orient: vertical;      /* Set box orientation to vertical */
-    overflow: hidden;                  /* Hide overflowing content */
-    text-overflow: ellipsis;           /* Add ellipsis when content overflows */
-    -webkit-line-clamp: 1;             /* Limit the text to 1 line */
-    white-space: normal;               /* Allow text to wrap */
-    width: 100%;                        /* Ensure the span takes full width */
+    display: -webkit-box; /* Make the span behave like a box */
+    -webkit-box-orient: vertical; /* Set box orientation to vertical */
+    overflow: hidden; /* Hide overflowing content */
+    text-overflow: ellipsis; /* Add ellipsis when content overflows */
+    -webkit-line-clamp: 1; /* Limit the text to 1 line */
+    white-space: normal; /* Allow text to wrap */
+    width: 100%; /* Ensure the span takes full width */
 }
 
 .filters-area {
@@ -1472,14 +1472,14 @@ a {
 }
 .available_sizes.error {
     border: 1px solid var(--wings-error);
-	padding: 10px;
-	border-radius: 5px;
+    padding: 10px;
+    border-radius: 5px;
 }
 .action-button-wrap {
     display: flex;
     gap: 30px;
     padding: 20px 0px;
-	justify-content: space-between; /* Justify buttons within the parent div */
+    justify-content: space-between; /* Justify buttons within the parent div */
 }
 .add-to-cart,
 .buy-now,
@@ -1493,8 +1493,8 @@ a {
     border: 2px solid var(--wings-primary);
     color: var(--wings-secondary);
     border-radius: 10px;
-	flex-grow: 1; /* Ensures the buttons take equal space */
-	text-align: center;
+    flex-grow: 1; /* Ensures the buttons take equal space */
+    text-align: center;
 }
 .add-to-cart {
     background-color: var(--wings-primary);
@@ -2841,6 +2841,17 @@ a {
     .offcanvas.offcanvas-end.mobile-device-offcanvas {
         width: 320px;
     }
+    /* mobile desktop view */
+    .wings-edited-item {
+        margin-bottom: 24px;
+    }
+    .behind-wings-tabs .nav-tabs .nav-link,
+    .need-assistance-content p {
+        font-size: 22px;
+    }
+    .need-assistance-content {
+        padding: 40px;
+    }
 }
 @media screen and (max-width: 576px) {
     h4 {
@@ -2863,7 +2874,7 @@ a {
     .product-top-block-details h1 {
         font-size: 18px;
     }
-	.review-with-category {
+    .review-with-category {
         flex-direction: column; /* Stack items vertically on mobile */
         align-items: flex-start; /* Align all items to the left */
     }

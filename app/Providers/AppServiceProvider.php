@@ -19,23 +19,23 @@ use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
-    public function register(): void
-    {
-        $this->app->singleton(OrderService::class, function ($app) {
-            return new OrderService(config('pathao.base_url'), $app['config']['pathao.access_token']);
-        });
-    }
+	/**
+	 * Register any application services.
+	 */
+	public function register(): void
+	{
+		$this->app->singleton(OrderService::class, function ($app) {
+			return new OrderService(config('pathao.base_url'), $app['config']['pathao.access_token']);
+		});
+	}
 
-    /**
-     * Bootstrap any application services.
-     */
-    // public function boot(): void
-    // {
-    //     Schema::defaultStringLength(191);
-    // }
+	/**
+	 * Bootstrap any application services.
+	 */
+	// public function boot(): void
+	// {
+	//     Schema::defaultStringLength(191);
+	// }
 
 	public function boot()
 	{
@@ -44,7 +44,7 @@ class AppServiceProvider extends ServiceProvider
 		$assets = Asset::all();
 
 		// Share global data with all views
-		$settings = SiteSetting::first(); 
+		$settings = SiteSetting::first();
 		$footerLinks = Page::where('type', 1)->orderBy('order', 'asc')->get();
 		$quickLinks = Page::where('type', 2)->orderBy('order', 'asc')->get();
 
@@ -72,6 +72,4 @@ class AppServiceProvider extends ServiceProvider
 			'assets' => $assets,
 		]);
 	}
-
-
 }
