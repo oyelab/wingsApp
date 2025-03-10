@@ -729,6 +729,9 @@ a {
 .custom-order-wrap {
     padding: 100px 0px 100px 141px;
     border-radius: 30px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 .custom-order-content {
     max-width: 521px;
@@ -2865,6 +2868,9 @@ a {
     .proud-kit-partner-content {
         height: auto;
     }
+    .custom-order-wrap {
+        padding: 30px;
+    }
 }
 @media screen and (max-width: 576px) {
     h4 {
@@ -2941,9 +2947,6 @@ a {
     .showcase-4 img,
     .showcase-5 img {
         border-radius: 30px;
-    }
-    .custom-order-wrap {
-        padding: 30px;
     }
     .custom-order-content h3 {
         font-size: 20px;
