@@ -306,11 +306,11 @@
         keyboard: true,
         breakpoints: {
             640: {
-                slidesPerView: 4,
+                slidesPerView: 2,
                 spaceBetween: 20,
             },
             768: {
-                slidesPerView: 5,
+                slidesPerView: 2,
                 spaceBetween: 24,
             },
             1024: {

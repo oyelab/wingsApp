@@ -648,7 +648,7 @@
 <!-- Official Manufacturer / Proud Kit Partners -->
 <div class="official-manufacture section-padding">
 	<div class="container">
-		<div class="row align-items-center">
+		<div class="row">
 			<div class="col-md-4">
 				<div class="official-manufacture-content">
 					<h3>Official Manufacturer</h3>
