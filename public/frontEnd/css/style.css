@@ -2725,12 +2725,6 @@ a {
     align-items: center;
 }
 
-.author-part h4 {
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--wings-secondary);
-}
-
 .author-part div i {
     font-size: 18px;
     color: var(--wings-secondary);
@@ -2863,6 +2857,13 @@ a {
     .need-assistance-content {
         flex-direction: column;
         gap: 30px;
+    }
+    .author-part h4 {
+        font-size: 16px;
+    }
+    .official-manufacture-content,
+    .proud-kit-partner-content {
+        height: auto;
     }
 }
 @media screen and (max-width: 576px) {
