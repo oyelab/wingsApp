@@ -440,8 +440,10 @@
 				</div>
 
 				<!-- WhatsApp Button (aligned to the right) -->
-				<a
-					href="https://wa.me/{{ config('app.whatsapp_number') }}?text={{ 'Lets Discuss About Wings Sportswear!' }}"
+
+			</div>
+			<div class="floating-button">
+				<a href="https://wa.me/{{ config('app.whatsapp_number') }}?text={{ 'Lets Discuss About Wings Sportswear!' }}"
 					target="_blank" 
 					id="whatsappButton" 
 					class="whatsapp-button me-3 mb-2 ms-auto"
@@ -450,7 +452,7 @@
 				</a>
 			</div>
 
-			<div id="cookieAlert" class="cookie-alert" style="display: none;">
+			<!-- <div id="cookieAlert" class="cookie-alert" style="display: none;">
 				<span class="cookie-message">
 					We use cookies to enhance your experience. By clicking "Accept," you agree to our
 					<a href="{{ route('help.index')}}#privacy-policy" target="_blank">Privacy Policy</a> and
@@ -460,7 +462,7 @@
 					<button id="acceptCookies" class="btn btn-outline-light">Accept</button>
 					<button id="dismissCookies" class="btn btn-outline-secondary">Dismiss</button>
 				</div>
-			</div>
+			</div> -->
 		</div>
 
 

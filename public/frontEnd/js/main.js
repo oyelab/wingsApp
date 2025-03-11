@@ -351,39 +351,39 @@
         },
     });
 
-    document.addEventListener("DOMContentLoaded", function () {
-        // Get the cookie alert element
-        const cookieAlert = document.getElementById("cookieAlert");
+    // document.addEventListener("DOMContentLoaded", function () {
+    //     // Get the cookie alert element
+    //     const cookieAlert = document.getElementById("cookieAlert");
 
-        // Check if cookies are accepted by looking for the "cookiesAccepted" cookie
-        const cookiesAccepted = document.cookie
-            .split(";")
-            .some((item) => item.trim().startsWith("cookiesAccepted="));
+    //     // Check if cookies are accepted by looking for the "cookiesAccepted" cookie
+    //     const cookiesAccepted = document.cookie
+    //         .split(";")
+    //         .some((item) => item.trim().startsWith("cookiesAccepted="));
 
-        // If cookies are accepted, hide the alert immediately without any flicker
-        if (cookiesAccepted) {
-            cookieAlert.style.display = "none"; // Hide the alert if already accepted
-            return; // No need to show the alert or add any listeners if accepted
-        }
+    //     // If cookies are accepted, hide the alert immediately without any flicker
+    //     if (cookiesAccepted) {
+    //         cookieAlert.style.display = "none"; // Hide the alert if already accepted
+    //         return; // No need to show the alert or add any listeners if accepted
+    //     }
 
-        // If cookies are not accepted, show the cookie alert immediately after the page loads
-        cookieAlert.style.display = "flex";
+    //     // If cookies are not accepted, show the cookie alert immediately after the page loads
+    //     cookieAlert.style.display = "flex";
 
-        // Get the Accept and Dismiss buttons
-        const acceptButton = document.getElementById("acceptCookies");
-        const dismissButton = document.getElementById("dismissCookies");
+    //     // Get the Accept and Dismiss buttons
+    //     const acceptButton = document.getElementById("acceptCookies");
+    //     const dismissButton = document.getElementById("dismissCookies");
 
-        // Accept button action - Store in cookies and hide the alert
-        acceptButton.addEventListener("click", function () {
-            // Set a cookie to indicate cookies are accepted
-            document.cookie =
-                "cookiesAccepted=true; path=/; max-age=" + 60 * 60 * 24 * 365; // Set cookie for 1 year
-            cookieAlert.style.display = "none"; // Hide the alert immediately after accepting
-        });
+    //     // Accept button action - Store in cookies and hide the alert
+    //     acceptButton.addEventListener("click", function () {
+    //         // Set a cookie to indicate cookies are accepted
+    //         document.cookie =
+    //             "cookiesAccepted=true; path=/; max-age=" + 60 * 60 * 24 * 365; // Set cookie for 1 year
+    //         cookieAlert.style.display = "none"; // Hide the alert immediately after accepting
+    //     });
 
-        // Dismiss button action - Hide the alert without storing acceptance
-        dismissButton.addEventListener("click", function () {
-            cookieAlert.style.display = "none";
-        });
-    });
+    //     // Dismiss button action - Hide the alert without storing acceptance
+    //     dismissButton.addEventListener("click", function () {
+    //         cookieAlert.style.display = "none";
+    //     });
+    // });
 })(jQuery);

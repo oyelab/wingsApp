@@ -592,7 +592,7 @@ a {
     position: absolute;
     top: 10px;
     right: 20px;
-    color: #f2f1ed;
+    color: var(--wings-primary);
     transition: all 0.3s;
 }
 .wishlist-icon:hover {
@@ -1258,7 +1258,14 @@ a {
 .notification-container {
     z-index: 999999; /* Ensures visibility above other content */
 }
-
+.floating-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 20px; /* Increase the clickable area */
+    z-index: 1000; /* Ensure it’s on top */
+    pointer-events: auto; /* Ensure events go through */
+}
 .whatsapp-button {
     background-color: #25d366;
     color: white;
