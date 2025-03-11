@@ -729,6 +729,9 @@ a {
 .custom-order-wrap {
     padding: 100px 0px 100px 141px;
     border-radius: 30px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 .custom-order-content {
     max-width: 521px;
@@ -2725,12 +2728,6 @@ a {
     align-items: center;
 }
 
-.author-part h4 {
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--wings-secondary);
-}
-
 .author-part div i {
     font-size: 18px;
     color: var(--wings-secondary);
@@ -2864,6 +2861,12 @@ a {
         flex-direction: column;
         gap: 30px;
     }
+    .author-part h4 {
+        font-size: 16px;
+    }
+    .custom-order-wrap {
+        padding: 30px;
+    }
 }
 @media screen and (max-width: 576px) {
     h4 {
@@ -2940,9 +2943,6 @@ a {
     .showcase-4 img,
     .showcase-5 img {
         border-radius: 30px;
-    }
-    .custom-order-wrap {
-        padding: 30px;
     }
     .custom-order-content h3 {
         font-size: 20px;

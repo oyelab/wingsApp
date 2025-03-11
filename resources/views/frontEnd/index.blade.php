@@ -15,8 +15,7 @@
 							src="{{ $slider->sliderPath }}"
 							class="img-fluid"
 							alt=""
-							loading="lazy"
-						/>
+							loading="lazy" />
 					</div>
 				</a>
 			</div>
@@ -28,60 +27,60 @@
 
 <!-- Latest Arrivals -->
 <section class="latest-arrivals-area section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="d-flex align-items-center justify-content-between mb-30">
-                <div class="section-title">
-                    <h3>{{ $titles['latest'] }}</h3> <!-- Adjusted title -->
-                </div>
-                <div class="navigation-items d-flex align-items-center">
-                    <h3><a href="{{ route('shop.page', ['section' => 'latest']) }}">Shop</a></h3> <!-- Update this route if necessary -->
-                    <div class="navigation-item la-prev d-flex align-items-center justify-content-center">
+	<div class="container">
+		<div class="row">
+			<div class="d-flex align-items-center justify-content-between mb-30">
+				<div class="section-title">
+					<h3>{{ $titles['latest'] }}</h3> <!-- Adjusted title -->
+				</div>
+				<div class="navigation-items d-flex align-items-center">
+					<h3><a href="{{ route('shop.page', ['section' => 'latest']) }}">Shop</a></h3> <!-- Update this route if necessary -->
+					<div class="navigation-item la-prev d-flex align-items-center justify-content-center">
 						<i class="bi bi-chevron-left"></i>
-                    </div>
-                    <div class="navigation-item la-next d-flex align-items-center justify-content-center">
-                        <i class="bi bi-chevron-right"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="swiper latest-arrival">
-            <div class="swiper-wrapper">
+					</div>
+					<div class="navigation-item la-next d-flex align-items-center justify-content-center">
+						<i class="bi bi-chevron-right"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="swiper latest-arrival">
+			<div class="swiper-wrapper">
 				@foreach($data['latest'] as $product)
-                <div class="swiper-slide">
-                    <div class="product-item">
-                        <div class="product-img product_img">
+				<div class="swiper-slide">
+					<div class="product-item">
+						<div class="product-img product_img">
 							<a href="{{ route('sections.products.details', [
 									'section' => 'latest',
 									$product]) }}">
-                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
-                            </a>
+								<img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;" />
+							</a>
 							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
 								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
 							</a>
-                        </div>
-                        <div class="product-content d-flex justify-content-between">
+						</div>
+						<div class="product-content d-flex justify-content-between">
 							<a href="{{ route('sections.products.details', [
 									'section' => 'latest',
 									'slug' => $product->slug, // Using the model method to get subcategory slug
 								]) }}">
-                                <h3>{!! nl2br(e($product->title)) !!}</h3>
-                            </a>
-                            <div class="product-price">
+								<h3>{!! nl2br(e($product->title)) !!}</h3>
+							</a>
+							<div class="product-price">
 								@if($product->sale)
-                                    <h4>৳{{ $product->offerPrice }}</h4>
-                                    <h5>৳{{ $product->price }}</h5>
-                                @else
-                                    <h4>৳{{ $product->price }}</h4>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            	@endforeach
-            </div>
-        </div>
-    </div>
+								<h4>৳{{ $product->offerPrice }}</h4>
+								<h5>৳{{ $product->price }}</h5>
+								@else
+								<h4>৳{{ $product->price }}</h4>
+								@endif
+							</div>
+						</div>
+					</div>
+				</div>
+				@endforeach
+			</div>
+		</div>
+	</div>
 </section>
 
 <!-- Top Picks -->
@@ -89,8 +88,7 @@
 	<div class="container">
 		<div class="row">
 			<div
-				class="d-flex align-items-center justify-content-between mb-30"
-			>
+				class="d-flex align-items-center justify-content-between mb-30">
 				<div class="section-title">
 					<h2>{{ $titles['topPicks'] }}</h2>
 				</div>
@@ -98,10 +96,10 @@
 					<h3><a href="{{ route('shop.page', ['section' => 'topPicks']) }}">Shop</a></h3>
 					<div class="navigation-item tp-prev d-flex align-items-center justify-content-center">
 						<i class="bi bi-chevron-left"></i>
-                    </div>
-                    <div class="navigation-item tp-next d-flex align-items-center justify-content-center">
-                        <i class="bi bi-chevron-right"></i>
-                    </div>
+					</div>
+					<div class="navigation-item tp-next d-flex align-items-center justify-content-center">
+						<i class="bi bi-chevron-right"></i>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -114,27 +112,27 @@
 							<a href="{{ route('sections.products.details', [
 									'section' => 'topPicks',
 									$product]) }}">
-                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
-                            </a>
-                            <a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
+								<img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;" />
+							</a>
+							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
 								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
 							</a>
-                        </div>
-                        <div class="product-content d-flex justify-content-between">
+						</div>
+						<div class="product-content d-flex justify-content-between">
 							<a href="{{ route('sections.products.details', [
 									'section' => 'topPicks',
 									$product]) }}">
-                                <h3>{!! nl2br(e($product->title)) !!}</h3>
-                            </a>
-                            <div class="product-price">
+								<h3>{!! nl2br(e($product->title)) !!}</h3>
+							</a>
+							<div class="product-price">
 								@if($product->sale)
-                                    <h4>৳{{ $product->offerPrice }}</h4>
-                                    <h5>৳{{ $product->price }}</h5>
-                                @else
-                                    <h4>৳{{ $product->price }}</h4>
-                                @endif
-                            </div>
-                        </div>
+								<h4>৳{{ $product->offerPrice }}</h4>
+								<h5>৳{{ $product->price }}</h5>
+								@else
+								<h4>৳{{ $product->price }}</h4>
+								@endif
+							</div>
+						</div>
 					</div>
 				</div>
 				@endforeach
@@ -154,23 +152,21 @@
 						<i class="bi bi-arrow-right"></i>
 					</a>
 					<a href="{{ route('shop.page', ['section' => 'bulks']) }}">
-					@if (!empty($bulksData->imagePath))
+						@if (!empty($bulksData->imagePath))
 						<img
 							src="{{ $bulksData->imagePath }}"
 							draggable="false"
 							class="img-fluid"
 							alt="{{ $bulksData->title }}"
-							loading="lazy"
-						/>
-					@else
+							loading="lazy" />
+						@else
 						<img
 							src="{{ asset('frontEnd/images/bulk-order.png') }}"
 							draggable="false"
 							class="img-fluid"
 							alt="Default Bulk Order Image"
-							loading="lazy"
-						/>
-					@endif
+							loading="lazy" />
+						@endif
 					</a>
 				</div>
 			</div>
@@ -205,7 +201,7 @@
 					<div class="wings-edited-item product_img">
 						<a href="{{ route('products.details', [
 								'category' => $product->categories->first()->slug, $product]) }}">
-							<img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
+							<img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;" />
 						</a>
 						<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
 							<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
@@ -224,8 +220,7 @@
 							draggable="false"
 							class="img-fluid"
 							alt="{{ $wingsEdited->title }}"
-							loading="lazy"
-						/>
+							loading="lazy" />
 					</a>
 				</div>
 			</div>
@@ -237,8 +232,7 @@
 	<div class="container">
 		<div class="row">
 			<div
-				class="d-flex align-items-center justify-content-between mb-30"
-			>
+				class="d-flex align-items-center justify-content-between mb-30">
 				<div class="section-title">
 					<h2>{{ $titles['trending'] }}</h2>
 				</div>
@@ -246,10 +240,10 @@
 					<h3><a href="{{ route('shop.page', ['section' => 'trending']) }}">Shop</a></h3>
 					<div class="navigation-item ot-prev d-flex align-items-center justify-content-center">
 						<i class="bi bi-chevron-left"></i>
-                    </div>
-                    <div class="navigation-item ot-next d-flex align-items-center justify-content-center">
-                        <i class="bi bi-chevron-right"></i>
-                    </div>
+					</div>
+					<div class="navigation-item ot-next d-flex align-items-center justify-content-center">
+						<i class="bi bi-chevron-right"></i>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -262,27 +256,27 @@
 							<a href="{{ route('sections.products.details', [
 									'section' => 'trending',
 									$product]) }}">
-                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
-                            </a>
+								<img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;" />
+							</a>
 							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
 								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
 							</a>
-                        </div>
-                        <div class="product-content d-flex justify-content-between">
+						</div>
+						<div class="product-content d-flex justify-content-between">
 							<a href="{{ route('sections.products.details', [
 									'section' => 'trending',
 									$product]) }}">
-                                <h3>{!! nl2br(e($product->title)) !!}</h3>
-                            </a>
-                            <div class="product-price">
+								<h3>{!! nl2br(e($product->title)) !!}</h3>
+							</a>
+							<div class="product-price">
 								@if($product->sale)
-                                    <h4>৳{{ $product->offerPrice }}</h4>
-                                    <h5>৳{{ $product->price }}</h5>
-                                @else
-                                    <h4>৳{{ $product->price }}</h4>
-                                @endif
-                            </div>
-                        </div>
+								<h4>৳{{ $product->offerPrice }}</h4>
+								<h5>৳{{ $product->price }}</h5>
+								@else
+								<h4>৳{{ $product->price }}</h4>
+								@endif
+							</div>
+						</div>
 					</div>
 				</div>
 				@endforeach
@@ -296,8 +290,7 @@
 		<div class="row">
 			<div class="col-12">
 				<div
-					class="wings-edited-heading wings-showcase-heading"
-				>
+					class="wings-edited-heading wings-showcase-heading">
 					<h2>Wings Showcase</h2>
 					<p>
 						Step into the world of Wings creations. From
@@ -318,76 +311,70 @@
 							<div class="wings-showcase-gap">
 								<!-- Showcase 1 -->
 								@if ($showcase1 = $showcases->where('order', 1)->first())
-									<div class="wings-showcase-item showcase-1 product_img">
-										<a href="{{ route('showcase.show', $showcase1->slug) }}">
-											<img
-												src="{{ $showcase1->thumbnailImagePath }}"
-												draggable="false"
-												class="img-fluid left-top-border-radius"
-												alt="{{ $showcase1->title }}"
-												loading="lazy"
-											/>
-										</a>
-									</div>
-								@else
-									<div class="wings-showcase-item showcase-1 product_img">
+								<div class="wings-showcase-item showcase-1 product_img">
+									<a href="{{ route('showcase.show', $showcase1->slug) }}">
 										<img
-											src="{{ asset('frontEnd/images/wing-showcase-1.png') }}"
+											src="{{ $showcase1->thumbnailImagePath }}"
 											draggable="false"
 											class="img-fluid left-top-border-radius"
-											alt="Wings Showcase"
-											loading="lazy"
-										/>
-									</div>
+											alt="{{ $showcase1->title }}"
+											loading="lazy" />
+									</a>
+								</div>
+								@else
+								<div class="wings-showcase-item showcase-1 product_img">
+									<img
+										src="{{ asset('frontEnd/images/wing-showcase-1.png') }}"
+										draggable="false"
+										class="img-fluid left-top-border-radius"
+										alt="Wings Showcase"
+										loading="lazy" />
+								</div>
 								@endif
 								<!-- Showcase 1 End -->
 
 								<!-- Showcase 2 -->
 								@if ($showcase2 = $showcases->where('order', 2)->first())
-									<div class="wings-showcase-item showcase-2 product_img">
-										<a href="{{ route('showcase.show', $showcase2->slug) }}">
-											<img
-												src="{{ $showcase2->thumbnailImagePath }}"
-												class="img-fluid"
-												alt="Wings Showcase"
-												loading="lazy"
-											/>
-										</a>
-									</div>
-								@else
-									<div class="wings-showcase-item showcase-2 product_img">
+								<div class="wings-showcase-item showcase-2 product_img">
+									<a href="{{ route('showcase.show', $showcase2->slug) }}">
 										<img
-											src="{{ asset('frontEnd/images/wing-showcase-2.png') }}"
+											src="{{ $showcase2->thumbnailImagePath }}"
 											class="img-fluid"
 											alt="Wings Showcase"
-											loading="lazy"
-										/>
-									</div>
+											loading="lazy" />
+									</a>
+								</div>
+								@else
+								<div class="wings-showcase-item showcase-2 product_img">
+									<img
+										src="{{ asset('frontEnd/images/wing-showcase-2.png') }}"
+										class="img-fluid"
+										alt="Wings Showcase"
+										loading="lazy" />
+								</div>
 								@endif
 								<!-- Showcase 2 End -->
 							</div>
 
 							<!-- Showcase 3 -->
 							@if ($showcase3 = $showcases->where('order', 3)->first())
-								<div class="wings-showcase-item showcase-3 product_img">
-									<a href="{{ route('showcase.show', $showcase3->slug) }}">
-										<img
-											src="{{ $showcase3->thumbnailImagePath }}"
-											class="img-fluid left-bottom-border-radius"
-											alt="Wings Showcase"
-											loading="lazy"
-										/>
-									</a>
-								</div>
-							@else
-								<div class="wings-showcase-item showcase-3">
+							<div class="wings-showcase-item showcase-3 product_img">
+								<a href="{{ route('showcase.show', $showcase3->slug) }}">
 									<img
-										src="{{ asset('frontEnd/images/wing-showcase-3.png') }}"
+										src="{{ $showcase3->thumbnailImagePath }}"
 										class="img-fluid left-bottom-border-radius"
 										alt="Wings Showcase"
-										loading="lazy"
-									/>
-								</div>
+										loading="lazy" />
+								</a>
+							</div>
+							@else
+							<div class="wings-showcase-item showcase-3">
+								<img
+									src="{{ asset('frontEnd/images/wing-showcase-3.png') }}"
+									class="img-fluid left-bottom-border-radius"
+									alt="Wings Showcase"
+									loading="lazy" />
+							</div>
 							@endif
 							<!-- Showcase 3 End -->
 						</div>
@@ -395,48 +382,44 @@
 						<div class="flex-column wings-showcase-gap">
 							<!-- Showcase 4 -->
 							@if ($showcase4 = $showcases->where('order', 4)->first())
-								<div class="wings-showcase-item showcase-4 product_img">
-									<a href="{{ route('showcase.show', $showcase4->slug) }}">
-										<img
-											src="{{ $showcase4->thumbnailImagePath }}"
-											class="img-fluid right-top-border-radius"
-											alt="Wings Showcase"
-										/>
-									</a>
-								</div>
-							@else
-								<div class="wings-showcase-item showcase-4 product_img">
+							<div class="wings-showcase-item showcase-4 product_img">
+								<a href="{{ route('showcase.show', $showcase4->slug) }}">
 									<img
-										src="{{ asset('frontEnd/images/wing-showcase-4.png') }}"
+										src="{{ $showcase4->thumbnailImagePath }}"
 										class="img-fluid right-top-border-radius"
-										alt="Wings Showcase"
-										loading="lazy"
-									/>
-								</div>
+										alt="Wings Showcase" />
+								</a>
+							</div>
+							@else
+							<div class="wings-showcase-item showcase-4 product_img">
+								<img
+									src="{{ asset('frontEnd/images/wing-showcase-4.png') }}"
+									class="img-fluid right-top-border-radius"
+									alt="Wings Showcase"
+									loading="lazy" />
+							</div>
 							@endif
 							<!-- Showcase 4 End -->
 
 							<!-- Showcase 5 -->
 							@if ($showcase5 = $showcases->where('order', 5)->first())
-								<div class="wings-showcase-item showcase-5 product_img">
-									<a href="{{ route('showcase.show', $showcase5->slug) }}">
-										<img
-											src="{{ $showcase5->thumbnailImagePath }}"
-											class="img-fluid right-bottom-border-radius"
-											alt="Wings Showcase"
-											loading="lazy"
-										/>
-									</a>
-								</div>
-							@else
-								<div class="wings-showcase-item showcase-5 product_img">
+							<div class="wings-showcase-item showcase-5 product_img">
+								<a href="{{ route('showcase.show', $showcase5->slug) }}">
 									<img
-										src="{{ asset('frontEnd/images/wing-showcase-5.png') }}"
+										src="{{ $showcase5->thumbnailImagePath }}"
 										class="img-fluid right-bottom-border-radius"
 										alt="Wings Showcase"
-										loading="lazy"
-									/>
-								</div>
+										loading="lazy" />
+								</a>
+							</div>
+							@else
+							<div class="wings-showcase-item showcase-5 product_img">
+								<img
+									src="{{ asset('frontEnd/images/wing-showcase-5.png') }}"
+									class="img-fluid right-bottom-border-radius"
+									alt="Wings Showcase"
+									loading="lazy" />
+							</div>
 							@endif
 							<!-- Showcase 5 End -->
 						</div>
@@ -453,8 +436,7 @@
 	<div class="container">
 		<div class="row">
 			<div
-				class="d-flex align-items-center justify-content-between mb-30"
-			>
+				class="d-flex align-items-center justify-content-between mb-30">
 				<div class="section-title">
 					<h2>{{ $titles['hotDeals'] }}</h2>
 				</div>
@@ -462,10 +444,10 @@
 					<h3><a href="{{ route('shop.page', ['section' => 'hotDeals']) }}">Shop</a></h3>
 					<div class="navigation-item hd-prev d-flex align-items-center justify-content-center">
 						<i class="bi bi-chevron-left"></i>
-                    </div>
-                    <div class="navigation-item hd-next d-flex align-items-center justify-content-center">
-                        <i class="bi bi-chevron-right"></i>
-                    </div>
+					</div>
+					<div class="navigation-item hd-next d-flex align-items-center justify-content-center">
+						<i class="bi bi-chevron-right"></i>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -478,27 +460,27 @@
 							<a href="{{ route('sections.products.details', [
 									'section' => 'hotDeals',
 									$product]) }}">
-                                <img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;"/>
-                            </a>
-                            <a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
+								<img src="{{ $product->thumbnail }}" class="img-fluid" alt="{{ $product->title }}" draggable="false" loading="lazy" oncontextmenu="return false;" />
+							</a>
+							<a href="#" class="wishlist-icon" data-product-id="{{ $product->id }}">
 								<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
 							</a>
-                        </div>
-                        <div class="product-content d-flex justify-content-between">
+						</div>
+						<div class="product-content d-flex justify-content-between">
 							<a href="{{ route('sections.products.details', [
 									'section' => 'hotDeals',
 									$product]) }}">
-                                <h3>{!! nl2br(e($product->title)) !!}</h3>
-                            </a>
-                            <div class="product-price">
+								<h3>{!! nl2br(e($product->title)) !!}</h3>
+							</a>
+							<div class="product-price">
 								@if($product->sale)
-                                    <h4>৳{{ $product->offerPrice }}</h4>
-                                    <h5>৳{{ $product->price }}</h5>
-                                @else
-                                    <h4>৳{{ $product->price }}</h4>
-                                @endif
-                            </div>
-                        </div>
+								<h4>৳{{ $product->offerPrice }}</h4>
+								<h5>৳{{ $product->price }}</h5>
+								@else
+								<h4>৳{{ $product->price }}</h4>
+								@endif
+							</div>
+						</div>
 					</div>
 				</div>
 				@endforeach
@@ -515,26 +497,23 @@
 				<div class="bulk-banner">
 					<div
 						class="custom-order-wrap"
-						style="background-image: url('{{ $customOrder->imagePath }}');"
-					>
+						style="background-image: url('{{ $customOrder->imagePath }}');">
 						<div class="custom-order-content">
 							<p>
 								{!! $customOrder->content !!}
 							</p>
 							<div class="custom-order-button-group">
 								<div class="get-in-touch">
-									<a 
-										href="https://wa.me/{{ config('app.whatsapp_number') }}?text={{ 'Hello, Help me to get custom order!' }}" 
-										target="_blank" 
+									<a
+										href="https://wa.me/{{ config('app.whatsapp_number') }}?text={{ 'Hello, Help me to get custom order!' }}"
+										target="_blank"
 										rel="noopener noreferrer"
-										class="btn btn-success"
-										>
+										class="btn btn-success">
 										GET IN TOUCH
 									</a>
 								</div>
 								<div class="get-idea">
-									<a href="{{ route('help.index') }}#get-idea"
-										>Get Idea
+									<a href="{{ route('help.index') }}#get-idea">Get Idea
 										<i class="bi bi-arrow-up-right"></i>
 									</a>
 								</div>
@@ -571,48 +550,45 @@
 					<ul class="nav nav-tabs" id="myTab" role="tablist">
 						<!-- Loop through the tabs -->
 						@foreach ($behindWings as $index => $item)
-							<li class="nav-item" role="presentation">
-								<button
-									class="nav-link {{ $index == 0 ? 'active' : '' }}"
-									id="{{ $item['slug'] }}-tab"
-									data-bs-toggle="tab"
-									data-bs-target="#{{ $item['slug'] }}-tab-pane"
-									type="button"
-									role="tab"
-									aria-controls="{{ $item['slug'] }}-tab-pane"
-									aria-selected="{{ $index == 0 ? 'true' : 'false' }}"
-								>
-									{{ $item['title'] }}
-								</button>
-							</li>
+						<li class="nav-item" role="presentation">
+							<button
+								class="nav-link {{ $index == 0 ? 'active' : '' }}"
+								id="{{ $item['slug'] }}-tab"
+								data-bs-toggle="tab"
+								data-bs-target="#{{ $item['slug'] }}-tab-pane"
+								type="button"
+								role="tab"
+								aria-controls="{{ $item['slug'] }}-tab-pane"
+								aria-selected="{{ $index == 0 ? 'true' : 'false' }}">
+								{{ $item['title'] }}
+							</button>
+						</li>
 						@endforeach
 					</ul>
 
 					<div class="tab-content" id="myTabContent">
 						<!-- Loop through the content panes -->
 						@foreach ($behindWings as $index => $item)
-							<div
-								class="tab-pane fade {{ $index == 0 ? 'show active' : '' }}"
-								id="{{ $item['slug'] }}-tab-pane"
-								role="tabpanel"
-								aria-labelledby="{{ $item['slug'] }}-tab"
-								tabindex="0"
-							>
-								<div class="wings-behind-tab-content-wrap">
-									<div class="wings-behind-tab-content">
-										<h2>{{ $item['title'] }}</h2>
-										<p>{!! $item['content'] !!}</p>
-									</div>
-									<div class="wings-behind-tab-image">
-										<img
-											src="{{ $item['imagePath'] }}"
-											class="img-fluid"
-											alt="{{ $item['title'] }}"
-											loading="lazy"
-										/>
-									</div>
+						<div
+							class="tab-pane fade {{ $index == 0 ? 'show active' : '' }}"
+							id="{{ $item['slug'] }}-tab-pane"
+							role="tabpanel"
+							aria-labelledby="{{ $item['slug'] }}-tab"
+							tabindex="0">
+							<div class="wings-behind-tab-content-wrap">
+								<div class="wings-behind-tab-content">
+									<h2>{{ $item['title'] }}</h2>
+									<p>{!! $item['content'] !!}</p>
+								</div>
+								<div class="wings-behind-tab-image">
+									<img
+										src="{{ $item['imagePath'] }}"
+										class="img-fluid"
+										alt="{{ $item['title'] }}"
+										loading="lazy" />
 								</div>
 							</div>
+						</div>
 						@endforeach
 					</div>
 				</div>
@@ -626,8 +602,7 @@
 		<div class="row">
 			<div class="col-12">
 				<div
-					class="wings-edited-heading wings-showcase-heading behind-wings-heading"
-				>
+					class="wings-edited-heading wings-showcase-heading behind-wings-heading">
 					<h2>Customer Stories</h2>
 					<p>
 						Real stories, real satisfaction. Hear why our
@@ -646,19 +621,22 @@
 							{{ $review->content }}
 						</p>
 						<div class="author-part">
-							<h4>{{ '@' . str_replace(' ', '', strtolower($review->user->name ?? $review->username )) }}</h4>
+							<!-- <h4>{{ '@' . str_replace(' ', '', strtolower($review->user->name ?? $review->username )) }}</h4> -->
+							<h4>{{ '@' . (strlen(str_replace(' ', '', strtolower($review->user->name ?? $review->username))) > 21 ? 
+        substr(str_replace(' ', '', strtolower($review->user->name ?? $review->username)), 0, 21) . '...' : 
+        str_replace(' ', '', strtolower($review->user->name ?? $review->username))) }}</h4>
 							<div>
 								@for ($i = 0; $i < $review->ratingStars['filled']; $i++)
 									<i class="bi bi-star-fill text-light"></i>
-								@endfor
-								
-								@for ($i = 0; $i < $review->ratingStars['empty']; $i++)
-									<i class="bi bi-star text-light"></i>
-								@endfor
+									@endfor
+
+									@for ($i = 0; $i < $review->ratingStars['empty']; $i++)
+										<i class="bi bi-star text-light"></i>
+										@endfor
 							</div>
 						</div>
 					</div>
-				</div>				
+				</div>
 				@endforeach
 			</div>
 			<!-- custom pagination -->
@@ -675,12 +653,11 @@
 				<div class="official-manufacture-content">
 					<h3>Official Manufacturer</h3>
 					@if($manufactureLogo && $manufactureLogo->filePath)
-						<img
-							src="{{ $manufactureLogo->filePath }}"
-							class="img-fluid"
-							alt="{{ $manufactureLogo->title }}"
-							loading="lazy"
-						/>
+					<img
+						src="{{ $manufactureLogo->filePath }}"
+						class="img-fluid"
+						alt="{{ $manufactureLogo->title }}"
+						loading="lazy" />
 					@endif
 				</div>
 			</div>
@@ -689,8 +666,7 @@
 				<div class="proud-kit-partner-content">
 					<h3>Proud Kit Partners</h3>
 					<div
-						class="partner_logo_wrap swiper proudKitPartner"
-					>
+						class="partner_logo_wrap swiper proudKitPartner">
 						<div class="swiper-wrapper">
 							@foreach ($partnerLogos as $partner)
 							<div class="logo_item swiper-slide">
@@ -698,11 +674,10 @@
 									src="{{ $partner->filePath }}"
 									class="img-fluid"
 									alt="{{ $partner->title }}"
-									loading="lazy"
-								/>
+									loading="lazy" />
 							</div>
 							@endforeach
-							
+
 						</div>
 						<div class="swiper-button-next"></div>
 						<div class="swiper-button-prev"></div>
@@ -714,26 +689,25 @@
 </div>
 <!-- Payment banner -->
 <div class="we-accept-payments-wrap">
-    <div class="container">
-        <div class="row justify-content-center align-items-center">
-            <div class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
-                <h2 class="mb-0 payment-title">
-                    We Accept
-                    Payments
-                </h2>
-                @if($paymentBanner && $paymentBanner->filePath)
-                    <div class="payment-banner">
-                        <img
-                            src="{{ $paymentBanner->filePath }}"
-                            class="img-fluid"
-                            alt="{{ $paymentBanner->title }}"
-							loading="lazy"
-                        />
-                    </div>
-                @endif
-            </div>
-        </div>
-    </div>
+	<div class="container">
+		<div class="row justify-content-center align-items-center">
+			<div class="col-12 d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
+				<h2 class="mb-0 payment-title">
+					We Accept
+					Payments
+				</h2>
+				@if($paymentBanner && $paymentBanner->filePath)
+				<div class="payment-banner">
+					<img
+						src="{{ $paymentBanner->filePath }}"
+						class="img-fluid"
+						alt="{{ $paymentBanner->title }}"
+						loading="lazy" />
+				</div>
+				@endif
+			</div>
+		</div>
+	</div>
 </div>
 
 @endsection
