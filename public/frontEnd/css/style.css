@@ -20,7 +20,7 @@
 }
 
 /*---------------------------------
-	  typography css start 
+	  typography css start
   ---------------------------------*/
 body {
     font-family: var(--wings-font);
@@ -2832,6 +2832,10 @@ a {
 .item-info a {
     color: var(--wings-off);
 }
+.product-top-block-details {
+    position: sticky;
+    top: 110px;
+}
 
 /*---------------------------------
 	 Responsive css start
@@ -2842,6 +2846,10 @@ a {
     }
 }
 @media screen and (max-width: 991px) {
+    .product-top-block-details {
+        position: static;
+        top: 0;
+    }
     .offcanvas.offcanvas-end.mobile-device-offcanvas {
         width: 320px;
     }

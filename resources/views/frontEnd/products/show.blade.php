@@ -25,62 +25,200 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-6">
-				<div class="product-image">
-					<div class="product-thumb-slider">
-						<div class="custom-navigation">
-							<div class="prev-slider main-p-prev">
-								<i class="bi bi-chevron-up"></i>
-							</div>
-						</div>
-						<div class="swiper productGalleryThumb">
-							<div class="swiper-wrapper">
-								@foreach($product->imagePaths as $index => $imagePath)
-								<div class="swiper-slide">
-									<div class="thumb-image">
-										<img
-											src="{{ $imagePath }}"
-											draggable="false"
-											class="img-fluid"
-											alt="{{ $product->title . '-' .  $index + 1 }}"
-											oncontextmenu="return false;" />
-									</div>
-								</div>
-								@endforeach
-							</div>
-						</div>
-						<div class="custom-navigation">
-							<div class="next-slider main-p-next">
-								<i class="bi bi-chevron-down"></i>
-							</div>
-						</div>
-					</div>
-					<div class="product-main-slider">
-						<div class="swiper productMainImage">
-							<div class="swiper-wrapper">
-								@foreach($product->imagePaths as $index => $imagePath)
-								<div class="swiper-slide">
-									<div class="product-slider-img">
-										<img
-											src="{{ $imagePath }}"
-											draggable="false"
-											class="img-fluid"
-											alt="{{ $product->title . '-' .  $index + 1 }}"
-											oncontextmenu="return false;" />
-									</div>
-								</div>
-								@endforeach
-							</div>
-						</div>
-						<div class="navigation-area">
-							<div class="navigation-item main-p-prev d-flex align-items-center justify-content-center">
-								<i class="bi bi-chevron-left"></i>
-							</div>
-							<div class="navigation-item main-p-next d-flex align-items-center justify-content-center">
-								<i class="bi bi-chevron-right"></i>
-							</div>
-						</div>
-					</div>
-				</div>
+                <div class="product-image mb-5">
+                    <div class="product-thumb-slider">
+                        <div class="custom-navigation">
+                            <div class="prev-slider main-p-prev">
+                                <i class="bi bi-chevron-up"></i>
+                            </div>
+                        </div>
+                        <div class="swiper productGalleryThumb">
+                            <div class="swiper-wrapper">
+                                @foreach($product->imagePaths as $index => $imagePath)
+                                <div class="swiper-slide">
+                                    <div class="thumb-image">
+                                        <img
+                                            src="{{ $imagePath }}"
+                                            draggable="false"
+                                            class="img-fluid"
+                                            alt="{{ $product->title . '-' .  $index + 1 }}"
+                                            oncontextmenu="return false;" />
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="custom-navigation">
+                            <div class="next-slider main-p-next">
+                                <i class="bi bi-chevron-down"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-main-slider">
+                        <div class="swiper productMainImage">
+                            <div class="swiper-wrapper">
+                                @foreach($product->imagePaths as $index => $imagePath)
+                                <div class="swiper-slide">
+                                    <div class="product-slider-img">
+                                        <img
+                                            src="{{ $imagePath }}"
+                                            draggable="false"
+                                            class="img-fluid"
+                                            alt="{{ $product->title . '-' .  $index + 1 }}"
+                                            oncontextmenu="return false;" />
+                                    </div>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div class="navigation-area">
+                            <div class="navigation-item main-p-prev d-flex align-items-center justify-content-center">
+                                <i class="bi bi-chevron-left"></i>
+                            </div>
+                            <div class="navigation-item main-p-next d-flex align-items-center justify-content-center">
+                                <i class="bi bi-chevron-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-details-area d-none d-lg-block">
+                    <div class="accordion" id="descriptionAccordion">
+                        <div class="accordion-item">
+                            <h2
+                                class="accordion-header"
+                                id="descriptionHeading">
+                                <button
+                                    class="accordion-button"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#descriptioncollapse"
+                                    aria-expanded="true"
+                                    aria-controls="descriptioncollapse">
+                                    Description
+                                    <i class="bi bi-chevron-down"></i>
+                                </button>
+                            </h2>
+                            <div
+                                id="descriptioncollapse"
+                                class="accordion-collapse collapse show"
+                                aria-labelledby="descriptionHeading"
+                                data-bs-parent="#descriptionAccordion">
+                                <div class="accordion-body">
+                                    <div class="product-description">
+                                        {!! $product->description !!}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion" id="productDetailsAccordion">
+                        <div class="accordion-item">
+                            <h2
+                                class="accordion-header"
+                                id="productDetailsHeading">
+                                <button
+                                    class="accordion-button"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#productDetailsCollapse"
+                                    aria-expanded="true"
+                                    aria-controls="productDetailsCollapse">
+                                    Product Details
+                                    <i class="bi bi-chevron-down"></i>
+                                </button>
+                            </h2>
+                            <div
+                                id="productDetailsCollapse"
+                                class="accordion-collapse collapse show"
+                                aria-labelledby="productDetailsHeading"
+                                data-bs-parent="#productDetailsAccordion">
+                                <div class="accordion-body">
+                                    <div class="product-description">
+                                        <ul>
+                                            @foreach($product->specifications() as $spec)
+                                            <li>✔ {{ $spec->item }}</li> <!-- Adjust to the appropriate field of the Specification model -->
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion" id="reviewAccordion">
+                        <div class="accordion-item">
+                            <h2
+                                class="accordion-header"
+                                id="reviewHeading">
+                                <button
+                                    class="accordion-button"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#reviewCollapse"
+                                    aria-expanded="true"
+                                    aria-controls="reviewCollapse">
+                                    Review ({{ $product->reviewsCount }})
+                                    <i class="bi bi-chevron-down"></i>
+                                </button>
+                            </h2>
+                            <div
+                                id="reviewCollapse"
+                                class="accordion-collapse collapse show"
+                                aria-labelledby="reviewHeading"
+                                data-bs-parent="#reviewAccordion">
+                                <div class="accordion-body">
+                                    <div class="product-description">
+                                        <div class="review-analysis">
+                                            <h2>{{ number_format($product->averageRating, 1) }}</h2>
+
+                                            <div class="rating">
+                                                @for ($i = 0; $i < 5; $i++)
+                                                    @if ($i < floor($product->averageRating))
+                                                    <i class="bi bi-star-fill text-warning"></i> <!-- Filled star -->
+                                                    @elseif ($i == floor($product->averageRating) && $product->averageRating - floor($product->averageRating) >= 0.5)
+                                                    <i class="bi bi-star-half text-warning"></i> <!-- Half-filled star -->
+                                                    @else
+                                                    <i class="bi bi-star text-warning"></i> <!-- Empty star -->
+                                                    @endif
+                                                    @endfor
+                                            </div>
+                                        </div>
+
+                                        <div class="review-lists">
+                                            @foreach ($product->reviews as $review)
+                                            <div class="list d-flex">
+                                                <div class="user-wrap">
+                                                    <div class="starts d-flex align-items-center">
+                                                        {{-- Display the filled stars --}}
+                                                        @for ($i = 0; $i < $review->ratingStars['filled']; $i++)
+                                                            <i class="bi bi-star-fill text-warning"></i>
+                                                            @endfor
+
+                                                            {{-- Display the empty stars --}}
+                                                            @for ($i = 0; $i < $review->ratingStars['empty']; $i++)
+                                                                <i class="bi bi-star text-warning"></i>
+                                                                @endfor
+
+                                                    </div>
+                                                    <h3>
+                                                        {{ $review->user->name ?? $review->username }}
+                                                    </h3>
+                                                </div>
+                                                <div class="review-details">
+                                                    <div class="review-details-top d-flex align-items-center justify-content-between">
+
+                                                        <p>{{ $review->created_at->format('d F, Y') }}</p>
+                                                    </div>
+                                                    <p>{{ $review->content }}</p>
+                                                </div>
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 			</div>
 			<div class="col-lg-6">
 				<div class="product-top-block-details">
@@ -203,7 +341,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="row">
+		<div class="row d-block d-lg-none">
 			<div class="col-lg-6">
 				<div class="product-details-area">
 					<div class="accordion" id="descriptionAccordion">
