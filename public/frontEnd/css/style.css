@@ -1260,7 +1260,7 @@ a {
 }
 .floating-button {
     position: fixed;
-    bottom: 20px;
+    bottom: 50px;
     right: 20px;
     padding: 20px; /* Increase the clickable area */
     z-index: 1000; /* Ensure it’s on top */
