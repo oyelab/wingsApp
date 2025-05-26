@@ -2763,7 +2763,6 @@ a {
 }
 /* Collection new page */
 .collection-new-section-area {
-    display: flex;
     margin-bottom: 50px;
 }
 .collection-image-area {
@@ -2775,12 +2774,10 @@ a {
     width: 100%;
 }
 .collection-content-area {
-    max-width: 500px;
-    width: 100%;
-    padding: 50px;
+    padding: 30px;
     display: flex;
     flex-direction: column;
-    gap: 50px;
+    gap: 30px;
 }
 .collection-content-area .product-details-area {
     padding: 0px;
@@ -2807,7 +2804,7 @@ a {
     font-size: 16px;
 }
 .collection-content-area h2 {
-    font-size: 30px;
+    font-size: 24px;
     font-weight: 700;
 }
 
