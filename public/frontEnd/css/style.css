@@ -2832,7 +2832,7 @@ a {
 .item-info a {
     color: var(--wings-off);
 }
-.product-top-block-details {
+.product-top-block-details, .collection-content-area {
     position: sticky;
     top: 110px;
 }
@@ -2846,7 +2846,7 @@ a {
     }
 }
 @media screen and (max-width: 991px) {
-    .product-top-block-details {
+    .product-top-block-details, .collection-content-area {
         position: static;
         top: 0;
     }
