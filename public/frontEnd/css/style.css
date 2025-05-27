@@ -93,7 +93,7 @@ a {
 /*---------------------------------
 	  devF_Custom
   ---------------------------------*/
-.swiper {
+.swiper:not(.heroSlider) {
 	padding: 15px !important;
 }
 .swiper-pagination{
@@ -745,8 +745,8 @@ a {
     position: relative;
     aspect-ratio: 4/5;
     overflow: hidden;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* border-radius: 12px; */
+	border: 2px solid var(--wings-off);
     transition: all 0.3s ease;
     background: transparent;
 }
@@ -2895,8 +2895,63 @@ a {
     .productMainImage {
         width: 400px;
     }
+    .custom-order-content {
+        max-width: 425px;
+        overflow-y: auto;
+    }
+    .custom-order-button-group {
+        flex-direction: row;
+        gap: 10px;
+        justify-content: space-between;
+        white-space: nowrap;
+		margin-top: 10px;
+    }
+    .custom-order-button-group .get-in-touch,
+    .custom-order-button-group .get-idea {
+        display: flex;
+        justify-content: center;
+
 }
 @media screen and (max-width: 991px) {
+	.custom-order-content h3 {
+        font-size: 20px;
+    }
+	.custom-order-wrap {
+		padding: 10px;
+		display: flex;
+		flex-direction: column;
+	}
+	.custom-order-wrap img {
+		margin-left: 30px;
+	}
+    .custom-order-content {
+        max-width: 350px;
+        overflow-y: auto;
+    }
+    .custom-order-button-group {
+        flex-direction: row;
+        gap: 10px;
+        justify-content: space-between;
+        white-space: nowrap;
+		margin-top: 10px;
+    }
+    .custom-order-button-group .get-in-touch,
+    .custom-order-button-group .get-idea {
+        display: flex;
+        justify-content: center;
+
+    }
+    .custom-order-button-group .get-in-touch a,
+    .custom-order-button-group .get-idea a {
+        width: 100%;
+        text-align: center;
+        white-space: nowrap;
+    }
+	button#who-we-are-tab,
+	button#how-we-operate-tab,
+	button#why-choose-us-tab {
+		min-height: 90px;
+	}
     .product-top-block-details, .collection-content-area {
         position: static;
         top: 0;
@@ -2936,9 +2991,6 @@ a {
     }
     .author-part h4 {
         font-size: 16px;
-    }
-    .custom-order-wrap {
-        padding: 30px;
     }
 }
 @media screen and (max-width: 576px) {
