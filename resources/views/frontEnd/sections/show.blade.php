@@ -28,7 +28,7 @@
 		<div class="col-md-12">
 			<div class="row">
 				@foreach ($products as $product)
-				<div class="col-lg-4 col-md-6 col-6 mb-4">
+				<div class="col-lg-3 col-md-6 col-6 mb-4">
 					<div class="product-item">
 						<div class="product-img product_img">
 							<a href="{{ route('sections.products.details', ['section' => $section, $product]) }}">
@@ -42,7 +42,9 @@
 						</div>
 						<div class="product-content d-flex justify-content-between">
 							<a href="{{ route('sections.products.details', ['section' => $section, $product]) }}">
-								<h3>{!! nl2br(e($product->title)) !!}</h3>
+								<h3 class="product-title" title="{{ $product->title }}">
+									{!! nl2br(e($product->title)) !!}
+								</h3>
 							</a>
 							<div class="product-price">
 								@if($product->sale)

@@ -3,46 +3,6 @@
 {{-- @section('pageDescription', $showcase->description)
 @section('pageOgImage', $showcase->ogImagePath)  <!-- Image specific to this page --> --}}
 
-@section('css')
-<style>
-	.product-title {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		/* Truncate after 2 lines */
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		/* Adds '...' at the end if the title exceeds two lines */
-	}
-
-	.breadcrumb-content .disabled {
-		color: #6c757d;
-		/* Change the color to a muted tone */
-		pointer-events: none;
-		/* Prevent clicking */
-		cursor: default;
-		/* Change cursor to show it's not clickable */
-	}
-
-	.category-item {
-		cursor: pointer;
-		/* Change the cursor to a pointer */
-		padding: 5px;
-		/* Optional: adds spacing for better UX */
-		display: block;
-		/* Optional: makes the element behave like a block link */
-		text-decoration: none;
-		/* Optional: removes underline if needed */
-		color: inherit;
-		/* Ensures the text color remains consistent */
-	}
-
-	.category-item.active {
-		text-decoration: underline;
-		font-weight: bold;
-	}
-</style>
-@endsection
 @section('content')
 <!-- breadcrumb section -->
 <div class="breadcrumb-section">
@@ -172,7 +132,7 @@
 
 				<div class="row">
 					@foreach ($products as $product)
-					<div class="col-lg-4 col-md-6 col-sm-6 col-6">
+					<div class="col-lg-4 col-md-6 col-sm-6 col-6 mb-3">
 						<div class="product-item">
 							<div class="product-img product_img">
 								<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, $product]) }}">
@@ -187,10 +147,9 @@
 									<i class="bi {{ session('wishlist') && in_array($product->id, session('wishlist')) ? 'bi-heart-fill' : 'bi-heart' }} fs-4"></i>
 								</a>
 							</div>
-							<div
-								class="product-content d-flex justify-content-between">
+							<div class="product-content d-flex justify-content-between">
 								<a href="{{ route('products.details', ['category' => $product->categories->first()->slug, $product]) }}">
-									<h3>
+									<h3 class="product-title" title="{{ $product->title }}">
 										{!! nl2br(e($product->title)) !!}
 									</h3>
 								</a>

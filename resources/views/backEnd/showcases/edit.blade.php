@@ -52,7 +52,7 @@
         <div class="col-md-6">
             <label for="order" class="form-label">Order</label>
             <select name="order" id="order" class="form-select">
-                @for ($i = null; $i <= 5; $i++)
+                @for ($i = null; $i <= 6; $i++)
                     <option value="{{ $i }}" {{ old('order', $showcase->order) == $i ? 'selected' : '' }}>{{ $i }}</option>
                 @endfor
             </select>
@@ -88,21 +88,6 @@
         <label for="thumbnail" class="form-label">Thumbnail Image</label>
         <input type="file" name="thumbnail" id="thumbnail" class="form-control">
         <small class="form-text text-muted">Leave blank to keep the existing thumbnail image.</small>
-        <div class="mt-1 mb-0">
-			Ratio Guide:
-				@php
-					$ratios = [
-						1 => [3.76, 5],
-						2 => [3.76, 5],
-						3 => [7.82, 4.7],
-						4 => [5, 6.2],
-						5 => [5, 3.5],
-					];
-				@endphp
-				@foreach ($ratios as $order => $ratio)
-					<span class="me-3">Order {{ $order }} => {{ $ratio[0] }} : {{ $ratio[1] }}</span>
-				@endforeach
-			</div>
 			@if ($showcase->thumbnail)
             <div class="mt-3">
 				<img src="{{ $showcase->thumbnailImagePath }}" alt="Thumbnail" class="img-thumbnail" style="width: 150px; height: auto;">

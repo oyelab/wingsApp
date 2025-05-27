@@ -79,7 +79,7 @@ class ShowcaseController extends Controller
 			 'thumbnail' => 'required|image|mimes:jpg,jpeg,png,gif',
 			 'og_image' => 'nullable|image|mimes:jpg,jpeg,png,webp',
 			 'status' => 'required|boolean',
-			 'order' => 'nullable|integer|between:1,5',
+			 'order' => 'nullable|integer|between:1,6',
 		 ]);
 	 
 		 // Check if a showcase with the same order already exists
@@ -191,7 +191,7 @@ class ShowcaseController extends Controller
 			 'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,gif',
 			 'og_image' => 'nullable|image|mimes:jpg,jpeg,png,gif',
 			 'status' => 'required|boolean',
-			 'order' => 'nullable|integer|between:1,5',
+			 'order' => 'nullable|integer|between:1,6',
 		 ]);
 	 
 		 // Check if the order needs to be detached from another showcase

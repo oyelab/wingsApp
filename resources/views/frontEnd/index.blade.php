@@ -64,7 +64,9 @@
 									'section' => 'latest',
 									'slug' => $product->slug, // Using the model method to get subcategory slug
 								]) }}">
-								<h3>{!! nl2br(e($product->title)) !!}</h3>
+								<h3 class="product-title" title="{{ $product->title }}">
+									{!! nl2br(e($product->title)) !!}
+								</h3>
 							</a>
 							<div class="product-price">
 								@if($product->sale)
@@ -122,7 +124,9 @@
 							<a href="{{ route('sections.products.details', [
 									'section' => 'topPicks',
 									$product]) }}">
-								<h3>{!! nl2br(e($product->title)) !!}</h3>
+								<h3 class="product-title" title="{{ $product->title }}">
+									{!! nl2br(e($product->title)) !!}
+								</h3>
 							</a>
 							<div class="product-price">
 								@if($product->sale)
@@ -266,7 +270,9 @@
 							<a href="{{ route('sections.products.details', [
 									'section' => 'trending',
 									$product]) }}">
-								<h3>{!! nl2br(e($product->title)) !!}</h3>
+								<h3 class="product-title" title="{{ $product->title }}">
+									{!! nl2br(e($product->title)) !!}
+								</h3>
 							</a>
 							<div class="product-price">
 								@if($product->sale)
@@ -307,122 +313,31 @@
 			<div class="row">
 				<div class="col-12">
 					<div class="wings-showcase-items">
-						<div>
-							<div class="wings-showcase-gap">
-								<!-- Showcase 1 -->
-								@if ($showcase1 = $showcases->where('order', 1)->first())
-								<div class="wings-showcase-item showcase-1 product_img">
-									<a href="{{ route('showcase.show', $showcase1->slug) }}">
-										<img
-											src="{{ $showcase1->thumbnailImagePath }}"
-											draggable="false"
-											class="img-fluid left-top-border-radius"
-											alt="{{ $showcase1->title }}"
-											loading="lazy" />
-									</a>
-								</div>
-								@else
-								<div class="wings-showcase-item showcase-1 product_img">
-									<img
-										src="{{ asset('frontEnd/images/wing-showcase-1.png') }}"
-										draggable="false"
-										class="img-fluid left-top-border-radius"
-										alt="Wings Showcase"
-										loading="lazy" />
-								</div>
-								@endif
-								<!-- Showcase 1 End -->
-
-								<!-- Showcase 2 -->
-								@if ($showcase2 = $showcases->where('order', 2)->first())
-								<div class="wings-showcase-item showcase-2 product_img">
-									<a href="{{ route('showcase.show', $showcase2->slug) }}">
-										<img
-											src="{{ $showcase2->thumbnailImagePath }}"
-											class="img-fluid"
-											alt="Wings Showcase"
-											loading="lazy" />
-									</a>
-								</div>
-								@else
-								<div class="wings-showcase-item showcase-2 product_img">
-									<img
-										src="{{ asset('frontEnd/images/wing-showcase-2.png') }}"
-										class="img-fluid"
-										alt="Wings Showcase"
-										loading="lazy" />
-								</div>
-								@endif
-								<!-- Showcase 2 End -->
-							</div>
-
-							<!-- Showcase 3 -->
-							@if ($showcase3 = $showcases->where('order', 3)->first())
-							<div class="wings-showcase-item showcase-3 product_img">
-								<a href="{{ route('showcase.show', $showcase3->slug) }}">
-									<img
-										src="{{ $showcase3->thumbnailImagePath }}"
-										class="img-fluid left-bottom-border-radius"
-										alt="Wings Showcase"
-										loading="lazy" />
-								</a>
-							</div>
-							@else
-							<div class="wings-showcase-item showcase-3">
+						@foreach($showcases->take(6) as $index => $showcase)
+						<div class="wings-showcase-item product_img">
+							<a href="{{ route('showcase.show', $showcase->slug) }}">
 								<img
-									src="{{ asset('frontEnd/images/wing-showcase-3.png') }}"
-									class="img-fluid left-bottom-border-radius"
-									alt="Wings Showcase"
+									src="{{ $showcase->thumbnailImagePath }}"
+									draggable="false"
+									class="img-fluid"
+									alt="{{ $showcase->title }}"
 									loading="lazy" />
-							</div>
-							@endif
-							<!-- Showcase 3 End -->
+							</a>
 						</div>
-
-						<div class="flex-column wings-showcase-gap">
-							<!-- Showcase 4 -->
-							@if ($showcase4 = $showcases->where('order', 4)->first())
-							<div class="wings-showcase-item showcase-4 product_img">
-								<a href="{{ route('showcase.show', $showcase4->slug) }}">
-									<img
-										src="{{ $showcase4->thumbnailImagePath }}"
-										class="img-fluid right-top-border-radius"
-										alt="Wings Showcase" />
-								</a>
-							</div>
-							@else
-							<div class="wings-showcase-item showcase-4 product_img">
+						@endforeach
+						
+						@if($showcases->count() < 6)
+							@for($i = $showcases->count(); $i < 6; $i++)
+							<div class="wings-showcase-item product_img">
 								<img
-									src="{{ asset('frontEnd/images/wing-showcase-4.png') }}"
-									class="img-fluid right-top-border-radius"
+									src="{{ asset('frontEnd/images/wing-showcase-' . ($i % 5 + 1) . '.png') }}"
+									draggable="false"
+									class="img-fluid"
 									alt="Wings Showcase"
 									loading="lazy" />
 							</div>
-							@endif
-							<!-- Showcase 4 End -->
-
-							<!-- Showcase 5 -->
-							@if ($showcase5 = $showcases->where('order', 5)->first())
-							<div class="wings-showcase-item showcase-5 product_img">
-								<a href="{{ route('showcase.show', $showcase5->slug) }}">
-									<img
-										src="{{ $showcase5->thumbnailImagePath }}"
-										class="img-fluid right-bottom-border-radius"
-										alt="Wings Showcase"
-										loading="lazy" />
-								</a>
-							</div>
-							@else
-							<div class="wings-showcase-item showcase-5 product_img">
-								<img
-									src="{{ asset('frontEnd/images/wing-showcase-5.png') }}"
-									class="img-fluid right-bottom-border-radius"
-									alt="Wings Showcase"
-									loading="lazy" />
-							</div>
-							@endif
-							<!-- Showcase 5 End -->
-						</div>
+							@endfor
+						@endif
 					</div>
 				</div>
 			</div>
@@ -470,7 +385,9 @@
 							<a href="{{ route('sections.products.details', [
 									'section' => 'hotDeals',
 									$product]) }}">
-								<h3>{!! nl2br(e($product->title)) !!}</h3>
+								<h3 class="product-title" title="{{ $product->title }}">
+									{!! nl2br(e($product->title)) !!}
+								</h3>
 							</a>
 							<div class="product-price">
 								@if($product->sale)
@@ -512,11 +429,11 @@
 										GET IN TOUCH
 									</a>
 								</div>
-								<div class="get-idea">
+								<!-- <div class="get-idea">
 									<a href="{{ route('help.index') }}#get-idea">Get Idea
 										<i class="bi bi-arrow-up-right"></i>
 									</a>
-								</div>
+								</div> -->
 							</div>
 						</div>
 					</div>

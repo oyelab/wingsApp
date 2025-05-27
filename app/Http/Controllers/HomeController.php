@@ -55,7 +55,7 @@ class HomeController extends Controller
 		$showcases = Showcase::where('status', 1)
 			->whereNotNull('order')  // Ensure 'order' is not null
 			->orderBy('order', 'asc') // Order by the 'order' field
-			->limit(5)                // Limit to 5 items
+			->limit(6)                // Limit to 5 items
 			->get();
 
 
