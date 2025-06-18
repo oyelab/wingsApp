@@ -117,6 +117,7 @@ class PageController extends Controller
 		// Validate the form data
 		$request->validate([
 			'title' => 'required|string|max:255|unique:pages,title',
+			'second_title' => 'nullable|string|max:255',
 			'image' => 'nullable|mimes:jpeg,png,jpg,gif,webp|max:2048',
 			'content' => 'nullable|string',
 		]);
@@ -130,6 +131,7 @@ class PageController extends Controller
 		// Create a new page entry in the database
 		Page::create([
 			'title' => $request->title,
+			'second_title' => $request->second_title,
 			'image' => $filename,  // Store the unique path to the image
 			'content' => $request->content,
 			'slug' => $slug,
@@ -161,9 +163,11 @@ class PageController extends Controller
      */
     public function update(Request $request, $id)
 	{
+		// dd($id);
 		// Validate the form data
 		$request->validate([
 			'title' => 'required|string|max:255|unique:pages,title,' . $id, // Exclude the current page from unique check
+			'second_title' => 'nullable|string|max:255',
 			'image' => 'nullable|mimes:jpeg,png,jpg,gif,webp|max:2048',
 			'content' => 'nullable|string',
 		]);
@@ -175,7 +179,7 @@ class PageController extends Controller
 		$slug = Str::slug($request->title);
 
 			// Update the slider fields
-		$page->fill($request->only(['title', 'slug', 'content']));
+		$page->fill($request->only(['title', 'second_title', 'slug', 'content']));
 
 		// If a new file is uploaded, handle it
 		if ($request->hasFile('image')) {

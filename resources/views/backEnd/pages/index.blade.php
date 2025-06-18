@@ -72,6 +72,7 @@ Pages
 					<tr>
 						<th>#</th>
 						<th>Title</th>
+						<th>Second Title</th>
 						<th>Slug</th>
 						<th>Updated At</th>
 						<th>Actions</th>
@@ -82,6 +83,7 @@ Pages
 						<tr data-id="{{ $page->id }}">
 							<td>{{ $index + 1 }}</td>
 							<td>{{ $page->title }}</td>
+							<td>{{ $page->second_title }}</td>
 							<td>
 								<div class="rounded-circle avatar-sm d-flex justify-content-center align-items-center text-uppercase bg-secondary text-white" style="width: 25; height: 25; object-fit: cover; overflow: hidden;">
 									@if($page->imagePath)

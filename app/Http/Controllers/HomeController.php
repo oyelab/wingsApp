@@ -12,6 +12,7 @@ use App\Models\Size;
 use App\Models\Asset;
 use App\Models\Page;
 use Illuminate\Support\Facades\Storage;
+use App\Repositories\ProductRepository;
 
 use App\Services\HomePageService;
 
@@ -22,10 +23,12 @@ use Illuminate\Http\Request;
 class HomeController extends Controller
 {
 	protected $homePageService;
+	protected $productRepo;
 
-    public function __construct(HomePageService $homePageService)
+    public function __construct(HomePageService $homePageService, ProductRepository $productRepo)
     {
         $this->homePageService = $homePageService;
+		$this->productRepo = $productRepo;
     }
 
 	public function index()
@@ -40,7 +43,8 @@ class HomeController extends Controller
 		->where('slug', 'wings-edited')
 		->first();		
 
-		$behindWings = Page::where('type', 3)->get();
+		$behindWings = Page::where('type', 3)->orderBy('order', 'asc')->get();
+		// return $behindWings;
 
 		$customOrder = Page::where('slug', 'custom-order')->first();
 		// return $customOrder;
@@ -72,6 +76,7 @@ class HomeController extends Controller
 		$sliders = Slider::where('status', 1)->orderBy('order', 'asc')->get();
        
 		$data = $this->homePageService->getHomePageData();
+		$latestProducts = $this->productRepo->getLatestProducts();
 		// return $data;
 
 		// Fetch titles dynamically from the database
@@ -84,7 +89,7 @@ class HomeController extends Controller
 		// return $titles;
         
 
-        return view('frontEnd.index', compact('data', 'titles', 'bulksData', 'sliders', 'wingsEdited', 'showcases', 'manufactureLogo', 'partnerLogos', 'paymentBanner', 'siteReviews', 'behindWings', 'customOrder'));
+        return view('frontEnd.index', compact('data', 'latestProducts', 'titles', 'bulksData', 'sliders', 'wingsEdited', 'showcases', 'manufactureLogo', 'partnerLogos', 'paymentBanner', 'siteReviews', 'behindWings', 'customOrder'));
     }
 
 	// public function show(Category $category, $subcategorySlug, Product $product)

@@ -21,16 +21,33 @@ Update Page
 		<div class="mb-3">
 			<label for="title" class="form-label">Title</label>
 			<input type="text" class="form-control" id="title" name="title" value="{{ old('title', $page->title) }}" required>
+			@error('title')
+			<div class="text-danger">{{ $message }}</div>
+			@enderror
+		</div>
+		
+		<div class="mb-3">
+			<label for="second_title" class="form-label">Second Title</label>
+			<input type="text" class="form-control" id="second_title" name="second_title" value="{{ old('second_title', $page->second_title) }}">
+			@error('second_title')
+			<div class="text-danger">{{ $message }}</div>
+			@enderror
 		</div>
 
 		<div class="mb-3">
 			<label for="image" class="form-label">Image</label>
             <input type="file" class="form-control" id="image" name="image" value="{{ old('image') }}">
+			@error('image')
+			<div class="text-danger">{{ $message }}</div>
+			@enderror
 		</div>
 
 		<div class="mb-3">
 			<label for="content" class="form-label">Content</label>
 			<textarea id="summernote" name="content">{!! old('content', $page->content) !!}</textarea>
+			@error('content')
+			<div class="text-danger">{{ $message }}</div>
+			@enderror
 		</div>
 
 		<button type="submit" class="btn btn-primary">Save</button>

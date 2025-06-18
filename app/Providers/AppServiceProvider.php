@@ -41,6 +41,11 @@ class AppServiceProvider extends ServiceProvider
 	{
 		Paginator::useBootstrapFive();
 
+		// Skip database queries if tables don't exist (during migrations)
+		if (!$this->tablesExist()) {
+			return;
+		}
+
 		$assets = Asset::all();
 
 		// Share global data with all views
@@ -71,5 +76,17 @@ class AppServiceProvider extends ServiceProvider
 			'siteUrl' => $baseUrl,
 			'assets' => $assets,
 		]);
+	}
+
+	/**
+	 * Check if required tables exist in the database
+	 */
+	private function tablesExist(): bool
+	{
+		try {
+			return Schema::hasTable('pages') && Schema::hasTable('site_settings') && Schema::hasTable('assets');
+		} catch (\Exception $e) {
+			return false;
+		}
 	}
 }

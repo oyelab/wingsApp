@@ -24,6 +24,14 @@ Create Page
             <div class="text-danger">{{ $message }}</div>
             @enderror
         </div>
+        
+        <div class="mb-3">
+            <label for="second_title" class="form-label">Second Title</label>
+            <input type="text" class="form-control" id="second_title" name="second_title" value="{{ old('second_title') }}">
+            @error('second_title')
+            <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
 
         <div class="mb-3">
             <label for="image" class="form-label">Image</label>

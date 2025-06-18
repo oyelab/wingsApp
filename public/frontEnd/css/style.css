@@ -737,7 +737,7 @@ a {
 .wings-showcase-items {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
+    gap: 40px;
     padding: 0;
 }
 
@@ -745,8 +745,8 @@ a {
     position: relative;
     aspect-ratio: 4/5;
     overflow: hidden;
-    /* border-radius: 12px; */
-	border: 2px solid var(--wings-off);
+    border-radius: 20px;
+	border: 4px solid var(--wings-off);
     transition: all 0.3s ease;
     background: transparent;
 }
@@ -2764,6 +2764,14 @@ a {
     overflow: hidden; /* Clips overflowing content */
 }
 
+.review-content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0; /* Allow flex child to shrink */
+}
+
 .customer-stories-content h3 {
     font-size: 18px;
     font-weight: 600;
@@ -2778,9 +2786,49 @@ a {
     overflow: hidden; /* Ensures long reviews don't overflow */
     text-overflow: ellipsis; /* Adds an ellipsis when the text overflows */
     display: -webkit-box;
-    -webkit-line-clamp: 5; /* Limits the number of lines before text is clipped (adjust as needed) */
+    -webkit-line-clamp: 3; /* Show at least 3 lines before truncation */
+    line-clamp: 3;
     -webkit-box-orient: vertical; /* Ensures that the content is treated as a block */
     white-space: normal; /* Allow text to wrap within the container */
+    transition: all 0.3s ease;
+    flex: 1; /* Allow text to take available space */
+}
+
+.customer-stories-content p.expanded {
+    display: block;
+    -webkit-line-clamp: none;
+    line-clamp: none;
+    overflow: visible;
+    text-overflow: initial;
+}
+
+.customer-stories-content.expanded {
+    height: auto;
+    min-height: 210px;
+    transition: all 0.3s ease;
+}
+
+.see-more-btn {
+    background: none;
+    border: none;
+    color: var(--wings-alternative);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 5px 0;
+    margin-top: 8px;
+    text-decoration: underline;
+    align-self: flex-start;
+    transition: color 0.3s ease;
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+.see-more-btn:hover {
+    color: var(--wings-secondary);
+}
+
+.see-more-btn:focus {
+    outline: none;
 }
 .author-part {
     margin-top: auto; /* Pushes the author info to the bottom */
@@ -2910,7 +2958,7 @@ a {
     .custom-order-button-group .get-idea {
         display: flex;
         justify-content: center;
-
+    }
 }
 @media screen and (max-width: 991px) {
 	.custom-order-content h3 {
@@ -2963,7 +3011,7 @@ a {
     /* Wings Showcase Tablet Layout */
     .wings-showcase-items {
         grid-template-columns: repeat(2, 1fr);
-        gap: 14px;
+        gap: 18px;
     }
     
     /* mobile desktop view */
@@ -3444,12 +3492,125 @@ a {
         width: 300px;
     }
 }
-@media screen and (max-width: 380px) {
-    .behind-wings-tabs .nav-tabs .nav-link {
-        padding: 0px 13px;
-        padding-bottom: 15px;
+
+/* Who We Are Section */
+.who-we-are-area {
+    background-color: var(--wings-secondary);
+    position: relative;
+    overflow: hidden;
+}
+
+.who-we-are-image {
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.who-we-are-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 15px;
+    filter: grayscale(100%);
+    transition: all 0.3s ease;
+}
+
+.who-we-are-image:hover img {
+    filter: grayscale(0%);
+    transform: scale(1.05);
+}
+
+
+
+/* Title Styling */
+.who-we-are-title {
+    padding-left: 2rem;
+    margin-bottom: 1rem; /* Add some space from the very bottom */
+}
+
+.who-we-are-title .title-light {
+    font-size: 4.5rem;
+    font-weight: 300;
+    color: var(--wings-off);
+    margin-bottom: -10px;
+    letter-spacing: 2px;
+    line-height: 1;
+}
+
+.who-we-are-title .title-bold {
+    font-size: 5.5rem;
+    font-weight: 800;
+    color: var(--wings-primary);
+    margin-bottom: 0;
+    letter-spacing: 1px;
+    line-height: 0.9;
+}
+
+/* Content Styling */
+.who-we-are-content {
+    /* max-width: 900px; */
+    margin: 0 auto;
+    text-align: center;
+}
+
+.who-we-are-content p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--wings-primary);
+    font-weight: 400;
+    margin-bottom: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+    .who-we-are-title {
+        padding-left: 0;
+        /* text-align: center; */
+        margin-top: 2rem;
     }
-    .search-box input {
-        width: 250px;
+    
+    .who-we-are-title .title-light {
+        font-size: 3.5rem;
+    }
+    
+    .who-we-are-title .title-bold {
+        font-size: 4.5rem;
+    }
+}
+
+@media (max-width: 767px) {
+	.who-we-are-area {
+		padding-top: 40px; /* Reduce top padding */
+		padding-bottom: 40px; /* Reduce bottom padding */
+	}
+	
+	.who-we-are-area .mb-5 {
+		margin-bottom: 2rem !important; /* Reduce margin between title/image and content */
+	}
+	
+	.who-we-are-title {
+        margin-bottom: 0; /* Remove bottom margin between title and image */
+        padding-left: 1rem; /* Add some left padding for mobile */
+    }
+    
+    .who-we-are-title .title-light {
+        font-size: 2rem; /* Smaller font size for mobile */
+        margin-bottom: -5px; /* Adjust spacing */
+    }
+    
+    .who-we-are-title .title-bold {
+        font-size: 2.2rem; /* Smaller font size for mobile */
+		padding-top: 0;
+		line-height: 1;
+    }
+    
+    .who-we-are-content {
+    	margin-top: 0; /* Remove extra margin above content */
+    }
+    
+    .who-we-are-content p {
+        font-size: 1rem; /* Slightly smaller font for mobile */
+        line-height: 1.6;
+        margin-bottom: 0; /* Remove bottom margin from content */
     }
 }

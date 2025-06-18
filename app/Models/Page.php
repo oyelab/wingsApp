@@ -11,7 +11,7 @@ class Page extends Model
 {
     use HasFactory;
 
-	protected $fillable = ['title', 'content', 'image', 'slug', 'type', 'order'];
+	protected $fillable = ['title', 'second_title', 'content', 'image', 'slug', 'type', 'order'];
 
 
 	public function getImagePathAttribute()

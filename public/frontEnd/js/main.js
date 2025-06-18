@@ -386,4 +386,40 @@
     //         cookieAlert.style.display = "none";
     //     });
     // });
+
+    // Customer Stories "See More" functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if reviews need "See More" buttons
+        const reviewTexts = document.querySelectorAll('.review-text');
+        
+        reviewTexts.forEach(function(reviewText) {
+            const seeMoreBtn = reviewText.nextElementSibling;
+            
+            // Check if the text is being truncated with a small buffer
+            const isOverflowing = reviewText.scrollHeight > (reviewText.clientHeight + 5);
+            
+            if (isOverflowing) {
+                seeMoreBtn.style.display = 'block';
+            }
+        });
+    });
+
+    window.toggleReview = function(button) {
+        const reviewWrapper = button.closest('.review-content-wrapper');
+        const reviewText = reviewWrapper.querySelector('.review-text');
+        const customerContent = button.closest('.customer-stories-content');
+        
+        if (reviewText.classList.contains('expanded')) {
+            // Collapse the review
+            reviewText.classList.remove('expanded');
+            customerContent.classList.remove('expanded');
+            button.textContent = 'See More';
+        } else {
+            // Expand the review
+            reviewText.classList.add('expanded');
+            customerContent.classList.add('expanded');
+            button.textContent = 'See Less';
+        }
+    };
+
 })(jQuery);
