@@ -53,7 +53,6 @@ class HomeController extends Controller
 		$siteReviews = Review::with('user', 'products')
 			->where('status', true)
 			->orderBy('rating', 'desc')
-			->limit(9)
 			->get();		// return $siteReviews;
 
 		$showcases = Showcase::where('status', 1)
