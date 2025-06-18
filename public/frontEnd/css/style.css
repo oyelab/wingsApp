@@ -2769,7 +2769,6 @@ a {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    min-height: 0; /* Allow flex child to shrink */
 }
 
 .customer-stories-content h3 {
