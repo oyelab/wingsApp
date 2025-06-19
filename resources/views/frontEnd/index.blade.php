@@ -28,7 +28,7 @@
 		<!-- Row 1: Image and Title with alternating layout -->
 		<div class="row align-items-end mb-4">
 			<!-- Image column: Left on even indexes (0,2,4), Right on odd indexes (1,3,5) -->
-			<div class="col-lg-6 col-md-6 col-6 {{ $index % 2 == 0 ? 'order-md-1' : 'order-md-2' }}">
+			<div class="col-lg-6 col-md-6 col-6 {{ $index % 2 == 0 ? 'order-md-1 order-1' : 'order-md-2 order-2' }}">
 				<div class="who-we-are-image">
 					<img src="{{ $item->imagePath }}" class="img-fluid" alt="Wings Sportswear Athlete" draggable="false"
 						loading="lazy" />
@@ -36,8 +36,8 @@
 			</div>
 
 			<!-- Title column: Right on even indexes (0,2,4), Left on odd indexes (1,3,5) -->
-			<div class="col-lg-6 col-md-6 col-6 {{ $index % 2 == 0 ? 'order-md-2' : 'order-md-1' }}">
-				<div class="who-we-are-title">
+			<div class="col-lg-6 col-md-6 col-6 {{ $index % 2 == 0 ? 'order-md-2 order-2' : 'order-md-1 order-1' }}">
+				<div class="who-we-are-title {{ $index % 2 == 0 ? 'text-start' : 'text-end' }}">
 					<h3 class="title-light">{{ $item->title }}</h3>
 					<h2 class="title-bold">{{ $item->second_title }}</h2>
 				</div>
@@ -117,7 +117,7 @@
 </section> -->
 
 <!-- Bulk Order -->
-<!-- <section class="bulk-order-area section-buttom-padding">
+<section class="bulk-order-area section-buttom-padding">
 	<div class="container">
 		<div class="row">
 			<div class="col-12">
@@ -147,7 +147,8 @@
 			</div>
 		</div>
 	</div>
-</section> -->
+</section>
+
 <!-- Wings Edited -->
 <section class="wings-edited-area section-padding bg-black">
 	<div class="container">
@@ -313,7 +314,7 @@
 		</div>
 		<div class="row">
 			@foreach($latestProducts as $product)
-			<div class="col-lg-3 col-md-4 col-sm-6 col-6 mb-4">
+			<div class="col-lg-3 col-md-6 col-sm-6 col-6 mb-4">
 				<div class="product-item">
 					<div class="product-img product_img">
 						<a href="{{ route('sections.products.details', [
@@ -543,7 +544,7 @@
 							<!-- <h4>{{ '@' . str_replace(' ', '', strtolower($review->user->name ?? $review->username )) }}</h4> -->
 							@php
 								$username = strtolower(str_replace(' ', '', $review->user->name ?? $review->username));
-								$displayName = strlen($username) > 21 ? substr($username, 0, 21) . '...' : $username;
+								$displayName = strlen($username) > 15 ? substr($username, 0, 15) . '...' : $username;
 							@endphp
 							<h4 class="customer-username">
 								&#64;{{ $displayName }}

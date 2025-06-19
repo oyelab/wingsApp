@@ -2768,7 +2768,8 @@ a {
     flex: 1;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    /* overflow: hidden; */
+    justify-content: flex-start; /* Align content to top */
 }
 
 .customer-stories-content h3 {
@@ -2790,7 +2791,8 @@ a {
     -webkit-box-orient: vertical; /* Ensures that the content is treated as a block */
     white-space: normal; /* Allow text to wrap within the container */
     transition: all 0.3s ease;
-    flex: 1; /* Allow text to take available space */
+    margin-bottom: 0; /* Remove default paragraph margin */
+    flex-shrink: 0; /* Prevent text from shrinking */
 }
 
 .customer-stories-content p.expanded {
@@ -2812,18 +2814,21 @@ a {
     border: none;
     color: var(--wings-alternative);
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700; /* Increased font weight for better visibility */
     cursor: pointer;
-    padding: 5px 0;
-    margin-top: 8px;
-    text-decoration: underline;
+    padding: 0;
+    margin-top: 5px;
+    text-decoration: none; /* Remove underline by default */
     align-self: flex-start;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
     flex-shrink: 0; /* Prevent button from shrinking */
+    opacity: 1; /* Ensure full opacity */
 }
 
 .see-more-btn:hover {
     color: var(--wings-secondary);
+    text-decoration: underline; /* Add underline on hover */
+    transform: translateY(-1px); /* Subtle lift effect */
 }
 
 .see-more-btn:focus {
@@ -2858,6 +2863,11 @@ a {
 .customer-stories .swiper-pagination-bullet-active {
     background-color: var(--wings-secondary);
     opacity: 1;
+}
+.customer-stories .swiper-pagination {
+    position: relative !important;
+    margin-top: 30px !important;
+    bottom: auto !important;
 }
 .mobile-close-icon {
     display: none;
@@ -3010,9 +3020,11 @@ a {
     /* Wings Showcase Tablet Layout */
     .wings-showcase-items {
         grid-template-columns: repeat(2, 1fr);
-        gap: 18px;
+        gap: 30px;
     }
-    
+	.wings-showcase-item {
+    	border: 3px solid var(--wings-off);
+	}    
     /* mobile desktop view */
     .wings-edited-item {
         margin-bottom: 24px;
@@ -3205,8 +3217,12 @@ a {
     /* Wings Showcase Responsive */
     .wings-showcase-items {
         grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        gap: 20px;
     }
+	.wings-showcase-item {
+    	border: 2px solid var(--wings-off);
+	}
+
     
     .wings-behind-tab-content-wrap {
         flex-direction: column;
@@ -3547,17 +3563,18 @@ a {
 
 /* Content Styling */
 .who-we-are-content {
-    /* max-width: 900px; */
-    margin: 0 auto;
-    text-align: center;
+	max-width: 900px;
+	margin: 0 auto;
+	text-align: center;
 }
 
 .who-we-are-content p {
-    font-size: 1.2rem;
-    line-height: 1.8;
-    color: var(--wings-primary);
-    font-weight: 400;
-    margin-bottom: 0;
+	font-size: 1.2rem;
+	line-height: 1.5;
+	color: var(--wings-primary);
+	font-weight: 400;
+	margin-bottom: 0;
+	/* text-align: justify; */
 }
 
 /* Responsive Design */
@@ -3577,10 +3594,9 @@ a {
     }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 576px) {
 	.who-we-are-area {
-		padding-top: 40px; /* Reduce top padding */
-		padding-bottom: 40px; /* Reduce bottom padding */
+		padding: 40px 20px; /* Top/bottom 40px, left/right 20px */
 	}
 	
 	.who-we-are-area .mb-5 {
@@ -3589,7 +3605,6 @@ a {
 	
 	.who-we-are-title {
         margin-bottom: 0; /* Remove bottom margin between title and image */
-        padding-left: 1rem; /* Add some left padding for mobile */
     }
     
     .who-we-are-title .title-light {
@@ -3604,12 +3619,13 @@ a {
     }
     
     .who-we-are-content {
+		max-width: 330px;
     	margin-top: 0; /* Remove extra margin above content */
     }
     
     .who-we-are-content p {
         font-size: 1rem; /* Slightly smaller font for mobile */
-        line-height: 1.6;
+        line-height: 1.3;
         margin-bottom: 0; /* Remove bottom margin from content */
     }
 }
