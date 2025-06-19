@@ -12,7 +12,7 @@ class Asset extends Model
 {
     use HasFactory;
 
-	protected $fillable = ['type', 'title', 'file', 'description'];
+	protected $fillable = ['type', 'title', 'file', 'description', 'url'];
 
 
 	public function getFilePathAttribute()

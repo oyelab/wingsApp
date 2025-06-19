@@ -27,7 +27,16 @@ Assets
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $asset->type }}</td>
-                        <td>{{ $asset->title }}</td>
+                        <td>
+                            @if($asset->url)
+                                <a href="{{ $asset->url }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+                                    {{ $asset->title }}
+                                    <i class="fas fa-external-link-alt ms-1" style="font-size: 12px;"></i>
+                                </a>
+                            @else
+                                {{ $asset->title }}
+                            @endif
+                        </td>
                         <td>
                             @if($asset->filePath)
                                 <img src="{{ $asset->filePath }}" alt="{{ $asset->title }}" class="img-thumbnail" style="max-width: 100px;">

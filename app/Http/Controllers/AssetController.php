@@ -31,7 +31,7 @@ class AssetController extends Controller
     public function index()
     {
         $assets = Asset::all();  // Or paginate for large datasets
-        return view("{$this->dir}.index", compact('assets'));
+		return view('backEnd.assets.index', compact('assets'));
     }
 
     /**
@@ -57,12 +57,13 @@ class AssetController extends Controller
         $request->validate([
             'type' => 'required|integer',
             'title' => 'required|string|max:255',
+			'url' => 'nullable|url|max:255',
             'file' => 'required|file|mimes:jpg,jpeg,png,gif,webp,svg|max:2048',
             'description' => 'nullable|string',
         ]);
 
         $asset = new Asset();
-		$asset->fill($request->only(['type', 'title', 'description']));
+		$asset->fill($request->only(['type', 'title', 'description', 'url']));
 
 		// Check if a file is uploaded
 		if ($request->hasFile('file')) {
@@ -113,12 +114,13 @@ class AssetController extends Controller
 		$request->validate([
 			'type' => 'required|integer',
 			'title' => 'required|string|max:255',
+			'url' => 'nullable|url|max:255',
 			'file' => 'nullable|file|mimes:jpg,jpeg,png,gif,webp,svg|max:2048',
 			'description' => 'nullable|string',
 		]);
 
 		// Mass-assign attributes
-		$asset->fill($request->only(['type', 'title', 'description']));
+		$asset->fill($request->only(['type', 'title', 'description', 'url']));
 
 		// Check if a new file is uploaded
 		if ($request->hasFile('file')) {

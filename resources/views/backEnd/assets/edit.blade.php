@@ -27,6 +27,11 @@ Update Asset
         </div>
 
         <div class="form-group">
+            <label for="url">URL</label>
+            <input type="url" name="url" class="form-control" value="{{ old('url', $asset->url) }}" placeholder="https://example.com">
+        </div>
+
+        <div class="form-group">
             <label for="file">Upload File</label>
             <input type="file" name="file" class="form-control">
         </div>
