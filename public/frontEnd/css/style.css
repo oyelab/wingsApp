@@ -3563,7 +3563,7 @@ a {
 
 /* Content Styling */
 .who-we-are-content {
-	max-width: 900px;
+	/* max-width: 900px; */
 	margin: 0 auto;
 	text-align: center;
 }
@@ -3619,7 +3619,7 @@ a {
     }
     
     .who-we-are-content {
-		max-width: 330px;
+		/* max-width: 330px; */
     	margin-top: 0; /* Remove extra margin above content */
     }
     
