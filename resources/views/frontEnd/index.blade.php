@@ -575,7 +575,7 @@
 		<div class="row">
 			<div class="col-md-4">
 				<div class="official-manufacture-content">
-					<h3>Official Manufacturer</h3>
+					<h3>Proud Kit Partner</h3>
 					@if($manufactureLogo && $manufactureLogo->filePath)
 					<img src="{{ $manufactureLogo->filePath }}" class="img-fluid" alt="{{ $manufactureLogo->title }}"
 						loading="lazy" />
@@ -585,7 +585,7 @@
 
 			<div class="col-md-8">
 				<div class="proud-kit-partner-content">
-					<h3>Proud Kit Partners</h3>
+					<h3>Official Kit Manufacturer</h3>
 					<div class="partner_logo_wrap swiper proudKitPartner">
 						<div class="swiper-wrapper">
 							@foreach ($partnerLogos as $partner)
