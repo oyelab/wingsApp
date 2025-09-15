@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use App\Models\Order;
 use App\Models\Delivery;
+use App\Models\SiteSetting;
 use App\Services\OrderService;
 use Log;
 
@@ -27,9 +28,19 @@ class DeliveryController extends Controller
 		$recipientCity = $request->input('recipient_city');
 		$recipientZone = $request->input('recipient_zone');
 		$quantity = $request->input('quantity');
+
+		// Get access token from database
+		$accessToken = SiteSetting::getPathaoAccessToken();
+		
+		// Check if access token exists
+		if (!$accessToken) {
+			return response()->json([
+				'error' => 'Pathao access token not found. Please configure token in site settings.'
+			], 500);
+		}
 	
 		$response = Http::withHeaders([
-			'Authorization' => "Bearer " . env('PATHAO_ACCESS_TOKEN'),
+			'Authorization' => "Bearer " . $accessToken,
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 		])->post(env('PATHAO_BASE_URL') . '/aladdin/api/v1/merchant/price-plan',
@@ -193,22 +204,13 @@ class DeliveryController extends Controller
 	}
     public function issueToken(Request $request)
     {
-       // Validate the incoming request data
-		$request->validate([
-			'client_id' => 'required|string',
-			'client_secret' => 'required|string',
-			'username' => 'required|email',
-			'password' => 'required|string',
-			'grant_type' => 'required|string',
-		]);
-
-		// Prepare the request body
+		// Prepare the request body using config values
 		$requestBody = [
-			'client_id' => $request->client_id,
-			'client_secret' => $request->client_secret,
-			'username' => $request->username,
-			'password' => $request->password,
-			'grant_type' => $request->grant_type,
+			'client_id' => config('pathao.client_id'),
+			'client_secret' => config('pathao.client_secret'),
+			'username' => config('pathao.client_email'),
+			'password' => config('pathao.client_password'),
+			'grant_type' => 'password',
 		];
 
 		// Get the base URL from the config
@@ -218,7 +220,7 @@ class DeliveryController extends Controller
 		$response = Http::withHeaders([
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
-		])->post("{$baseUrl}/aladdin/api/v1/issue-token", $requestBody);  // Use $baseUrl
+		])->post("{$baseUrl}/aladdin/api/v1/issue-token", $requestBody);
 
 		// Check the response status and return the appropriate response
 		if ($response->successful()) {

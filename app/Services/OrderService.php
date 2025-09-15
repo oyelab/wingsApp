@@ -5,6 +5,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use App\Models\SiteSetting;
 
 class OrderService
 {
@@ -25,8 +26,12 @@ class OrderService
 
     protected function getHeaders()
     {
+        // Always get the latest token from database
+        $latestToken = SiteSetting::getPathaoAccessToken();
+        $token = $latestToken ?: $this->accessToken; // Fallback to constructor token if database is empty
+
         return [
-            'Authorization' => "Bearer {$this->accessToken}",
+            'Authorization' => "Bearer {$token}",
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
         ];

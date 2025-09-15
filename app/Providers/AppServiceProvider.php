@@ -25,7 +25,9 @@ class AppServiceProvider extends ServiceProvider
 	public function register(): void
 	{
 		$this->app->singleton(OrderService::class, function ($app) {
-			return new OrderService(config('pathao.base_url'), $app['config']['pathao.access_token']);
+			$accessToken = SiteSetting::getPathaoAccessToken();
+			// Pass empty string if no token found - OrderService should handle this gracefully
+			return new OrderService(config('pathao.base_url'), $accessToken ?: '');
 		});
 	}
 

@@ -184,6 +184,21 @@ Update your site settings
 			</div>
 		</div>
 
+		<!-- Pathao Access Token Row -->
+		<div class="row mb-3">
+			<div class="col-md-12">
+				<label for="pathao_access_token" class="col-form-label text-start">Pathao Access Token:</label>
+				<div class="input-group">
+					<textarea class="form-control" name="pathao_access_token" id="pathao_access_token" rows="3" readonly>{{ old('pathao_access_token', $settings->pathao_access_token ?? '') }}</textarea>
+					<button type="button" class="btn btn-primary" onclick="regeneratePathaoToken()">Regenerate Token</button>
+				</div>
+				<small class="text-muted">This token is automatically generated from your Pathao API credentials. Click "Regenerate Token" to get a new one.</small>
+				@error('pathao_access_token')
+					<div class="text-danger">{{ $message }}</div>
+				@enderror
+			</div>
+		</div>
+
 		<!-- Social Links Row -->
 		<div class="row mb-3">
 			<div class="col-md-12">
@@ -344,6 +359,32 @@ Update your site settings
 		});
 		updateAvailablePlatforms();
 	});
+
+	// Function to regenerate Pathao access token
+	function regeneratePathaoToken() {
+		const button = event.target;
+		const originalText = button.innerHTML;
+		
+		// Disable button and show loading state
+		button.disabled = true;
+		button.innerHTML = 'Regenerating...';
+
+		// Create a form and submit it
+		const form = document.createElement('form');
+		form.method = 'POST';
+		form.action = '{{ route("settings.regenerate.pathao.token") }}';
+		
+		// Add CSRF token
+		const csrfToken = document.createElement('input');
+		csrfToken.type = 'hidden';
+		csrfToken.name = '_token';
+		csrfToken.value = '{{ csrf_token() }}';
+		form.appendChild(csrfToken);
+		
+		// Add to body and submit
+		document.body.appendChild(form);
+		form.submit();
+	}
 
 
 </script>

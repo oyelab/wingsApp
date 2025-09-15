@@ -123,6 +123,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function() {
 	Route::delete('sections/{section}', [SectionController::class, 'destroy'])->name('sections.destroy'); // New delete route
 	Route::get('siteSettings', [SiteSettingController::class, 'index'])->name('settings.index');
 	Route::put('siteSettings', [SiteSettingController::class, 'update'])->name('settings.update');
+	Route::post('siteSettings/regenerate-pathao-token', [SiteSettingController::class, 'regeneratePathaoToken'])->name('settings.regenerate.pathao.token');
 
 	Route::get('/emails', [GitController::class, 'gits'])->name('gits.index');
 
@@ -175,8 +176,8 @@ Route::middleware(['auth', 'role'])->group(function () {
 });
 
 /* For Developer */
-Route::get('/delivery/issue-token', [DeliveryController::class, 'issueTokenGenerate'])->name('generate.token');
-Route::post('/delivery/issue-token', [DeliveryController::class, 'issueToken'])->name('issue.token');
+// Route::get('/delivery/issue-token', [DeliveryController::class, 'issueTokenGenerate'])->name('generate.token');
+Route::get('/delivery/issue-token', [DeliveryController::class, 'issueToken'])->name('issue.token');
 
 Route::post('/delivery/create-order', [DeliveryController::class, 'createOrder'])->name('create.order');
 

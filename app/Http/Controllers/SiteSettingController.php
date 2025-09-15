@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Storage;
+use Illuminate\Support\Facades\Http;
 
 class SiteSettingController extends Controller
 {
@@ -58,6 +59,7 @@ class SiteSettingController extends Controller
 			'address' => 'nullable|string',
 			'social_platforms.*' => 'nullable|string',
 			'social_usernames.*' => 'nullable|string',
+			'pathao_access_token' => 'nullable|string',
 		]);
 	
 		// Handle image uploads using their original filenames
@@ -105,6 +107,7 @@ class SiteSettingController extends Controller
 			'email' => $request->input('email'),
 			'phone' => $request->input('phone'),
 			'address' => $request->input('address'),
+			'pathao_access_token' => $request->input('pathao_access_token'),
 		]);
 	
 		// Save the settings
@@ -112,6 +115,53 @@ class SiteSettingController extends Controller
 	
 		return redirect()->back()->with('success', 'Settings updated successfully.');
 	}
-	
+
+	// Method to regenerate Pathao access token
+	public function regeneratePathaoToken()
+	{
+		// Prepare the request body using config values
+		$requestBody = [
+			'client_id' => config('pathao.client_id'),
+			'client_secret' => config('pathao.client_secret'),
+			'username' => config('pathao.client_email'),
+			'password' => config('pathao.client_password'),
+			'grant_type' => 'password',
+		];
+
+		// Get the base URL from the config
+		$baseUrl = config('pathao.base_url');
+
+		try {
+			// Make the POST request to issue the token
+			$response = Http::withHeaders([
+				'Accept' => 'application/json',
+				'Content-Type' => 'application/json',
+			])->post("{$baseUrl}/aladdin/api/v1/issue-token", $requestBody);
+
+			// Check if the request was successful
+			if ($response->successful()) {
+				$responseData = $response->json();
+				
+				// Extract the access token from response
+				$accessToken = $responseData['access_token'] ?? null;
+
+				if ($accessToken) {
+					// Update the site settings with the new token
+					$siteSettings = SiteSetting::firstOrCreate([]);
+					$siteSettings->pathao_access_token = $accessToken;
+					$siteSettings->save();
+
+					return redirect()->back()->with('success', 'Pathao access token regenerated successfully!');
+				} else {
+					return redirect()->back()->with('error', 'Failed to extract access token from response.');
+				}
+			} else {
+				$errorMessage = $response->json()['message'] ?? 'Unknown error occurred';
+				return redirect()->back()->with('error', 'Failed to regenerate token: ' . $errorMessage);
+			}
+		} catch (\Exception $e) {
+			return redirect()->back()->with('error', 'Error connecting to Pathao API: ' . $e->getMessage());
+		}
+	}
 	
 }

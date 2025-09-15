@@ -21,6 +21,7 @@ class SiteSetting extends Model
         'phone',
         'address',
         'social_links',
+        'pathao_access_token',
     ];
 
     // Cast social links as an array
@@ -63,5 +64,19 @@ class SiteSetting extends Model
             'whatsapp' => 'bi bi-whatsapp',
             // Add more mappings as needed
         ];
+    }
+
+    // Static method to get Pathao access token from database
+    public static function getPathaoAccessToken()
+    {
+        $settings = self::first();
+        
+        // Return database token only - no env fallback
+        if ($settings && !empty($settings->pathao_access_token)) {
+            return $settings->pathao_access_token;
+        }
+        
+        // Return null if no token is found in database
+        return null;
     }
 }
