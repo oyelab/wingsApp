@@ -139,6 +139,15 @@ class DeliveryController extends Controller
 			'item_description' => $request->item_description,
 		];
 
+		// Log the order creation attempt
+		Log::info('Pathao Order Creation Attempt', [
+			'merchant_order_id' => $request->order_ref,
+			'recipient_name' => $request->recipient_name,
+			'recipient_phone' => $request->recipient_phone,
+			'amount_to_collect' => $request->amount_to_collect,
+			'request_body' => $requestBody
+		]);
+
 		// return $requestBody;
 	
 		// Send the request to create the order
@@ -149,6 +158,15 @@ class DeliveryController extends Controller
 	
 		// Check the response status and proceed based on the success of the response
 		if ($response->successful()) {
+			// Log successful order creation
+			Log::info('Pathao Order Created Successfully', [
+				'merchant_order_id' => $request->order_ref,
+				'status_code' => $response->status(),
+				'consignment_id' => $response['data']['consignment_id'] ?? 'N/A',
+				'delivery_fee' => $response['data']['delivery_fee'] ?? 'N/A',
+				'response_data' => $response->json()
+			]);
+
 			// Retrieve the order reference ID and find the order to update the status
 			$orderRef = $response['data']['merchant_order_id'];
 			$order = Order::where('ref', $orderRef)->first();
@@ -190,6 +208,17 @@ class DeliveryController extends Controller
 			
 
 		} else {
+			// Log failed order creation
+			Log::error('Pathao Order Creation Failed', [
+				'merchant_order_id' => $request->order_ref,
+				'status_code' => $response->status(),
+				'error_response' => $response->json(),
+				'request_data' => $requestBody,
+				'recipient_name' => $request->recipient_name,
+				'recipient_phone' => $request->recipient_phone,
+				'amount_to_collect' => $request->amount_to_collect
+			]);
+
 			// Handle the error and redirect back
 			return redirect()->back()->with('response', $response->json());
 		}
