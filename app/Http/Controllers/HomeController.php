@@ -43,6 +43,16 @@ class HomeController extends Controller
 		->where('slug', 'wings-edited')
 		->first();		
 
+				// Create a mock object if not found
+		if (!$wingsEdited) {
+			$wingsEdited = (object) [
+				'title' => 'Wings Edited',
+				'products' => collect(),
+				'imagePath' => null,
+				'description' => 'Custom apparel design and printing services'
+			];
+		}
+
 		$behindWings = Page::where('type', 3)->orderBy('order', 'asc')->get();
 		// return $behindWings;
 
@@ -82,8 +92,19 @@ class HomeController extends Controller
 		$titlesData = Section::all(); // Assuming you have a `Title` model
 		$bulksData = $titlesData->firstWhere('type', 'bulks');
 
-		// Convert titles to an associative array
+		// Convert titles to an associative array with default values
 		$titles = $titlesData->pluck('title', 'type')->toArray();
+		
+		// Provide default titles if not found in database
+		$defaultTitles = [
+			'topPicks' => 'Top Picks',
+			'latest' => 'Latest',
+			'mostViewed' => 'Most Viewed',
+			'hotDeals' => 'Hot Deals',
+			'trending' => 'Trending',
+			'bulks' => 'Bulks'
+		];
+		$titles = array_merge($defaultTitles, $titles);
 
 		// return $titles;
         

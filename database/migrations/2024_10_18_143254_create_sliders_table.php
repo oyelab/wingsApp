@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('sliders', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('title')->unique(); // Optional title for the slider
-        //     $table->integer('order');// Display order
-        //     $table->boolean('status')->default(1); // Status (1 = active, 0 = inactive)
-		// 	$table->string('image'); // Store image filename
-        //     $table->timestamps();
-        // });
+        Schema::create('sliders', function (Blueprint $table) {
+            $table->id();
+            $table->string('title'); // Optional title for the slider (removed unique constraint)
+            $table->integer('order');// Display order
+            $table->boolean('status')->default(1); // Status (1 = active, 0 = inactive)
+            $table->string('image'); // Store image filename
+            $table->timestamps();
+        });
     }
 
     /**
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Schema::dropIfExists('sliders');
+        Schema::dropIfExists('sliders');
     }
 };

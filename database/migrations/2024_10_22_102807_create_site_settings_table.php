@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('og_image')->nullable();       // Open Graph Image (for sharing)
             $table->string('logo_v1')->nullable();        // Primary logo
             $table->string('logo_v2')->nullable();        // Secondary logo
+            $table->string('favicon')->nullable();        // Favicon
             $table->string('email')->nullable();          // Contact email
             $table->string('phone')->nullable();          // Contact phone
             $table->string('address')->nullable();        // Contact address

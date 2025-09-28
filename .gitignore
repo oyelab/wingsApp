@@ -1,25 +1,55 @@
-/.phpunit.cache
+# Dependencies
 /node_modules
-# /public/build
-/public/hot
-/public/storage
-/storage/*.key
 /vendor
+
+# Environment files
 .env
 .env.backup
 .env.production
+.env.local
+.env.*.local
+
+# Build files
+/public/build
+/public/build/*
+/public/hot
+/public/storage
+/public/mix-manifest.json
+
+# Cache and logs
+/bootstrap/cache/*.php
+/storage/app/
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/testing/
+/storage/framework/views/
+/storage/logs/
+/storage/*.key
+/.phpunit.cache
 .phpunit.result.cache
-Homestead.json
-Homestead.yaml
-auth.json
-npm-debug.log
-yarn-error.log
+
+# IDE and editors
 /.fleet
 /.idea
 /.vscode
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Development
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Custom
 /wings
 /resources/views/test
-/storage/*
-/storage/app/
-/storage/app/public/
-.DS_Store
+
+# Compiled assets (should be built on deployment)
+/public/css/
+/public/js/
+/public/mix-manifest.json

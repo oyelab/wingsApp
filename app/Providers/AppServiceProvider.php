@@ -62,7 +62,7 @@ class AppServiceProvider extends ServiceProvider
 			$socialLinks = $settings->social_links;
 		}
 
-		$iconMapping = $settings->getSocialIconMapping();
+		$iconMapping = $settings ? $settings->getSocialIconMapping() : [];
 		$cartCount = count(Session::get('cart', []));
 		$baseUrl = request()->getSchemeAndHttpHost();
 
