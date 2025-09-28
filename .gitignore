@@ -18,7 +18,8 @@
 
 # Cache and logs
 /bootstrap/cache/*.php
-/storage/app/
+/storage/app/*
+!/storage/app/.gitignore
 /storage/framework/cache/
 /storage/framework/sessions/
 /storage/framework/testing/
