@@ -48,7 +48,10 @@
 		<div class="row">
 			<div class="col-12">
 				<div class="who-we-are-content">
-					<p>{!! $item->content !!}</p>
+					<div class="content-container">
+						{!! $item->content !!}
+					</div>
+					<button class="content-toggle-btn" onclick="toggleBehindWingsContent(this)" style="display: none;">See More</button>
 				</div>
 			</div>
 		</div>

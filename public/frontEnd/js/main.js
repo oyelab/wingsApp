@@ -422,4 +422,35 @@
         }
     };
 
+    // Behind Wings Content Toggle Function
+    window.toggleBehindWingsContent = function(button) {
+        const contentContainer = button.parentElement.querySelector('.content-container');
+        
+        if (contentContainer.classList.contains('collapsed')) {
+            contentContainer.classList.remove('collapsed');
+            contentContainer.classList.add('expanded');
+            button.textContent = 'See Less';
+        } else {
+            contentContainer.classList.remove('expanded');
+            contentContainer.classList.add('collapsed');
+            button.textContent = 'See More';
+        }
+    };
+
+    // Initialize content on page load
+    $(document).ready(function() {
+        $('.content-container').each(function() {
+            const container = this;
+            const button = $(this).siblings('.content-toggle-btn');
+            
+            // Check if content is taller than our collapse height
+            if (container.scrollHeight > 150) {
+                $(container).addClass('collapsed');
+                button.show();
+            } else {
+                button.hide();
+            }
+        });
+    });
+
 })(jQuery);

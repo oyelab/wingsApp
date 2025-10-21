@@ -3577,6 +3577,56 @@ a {
 	/* text-align: justify; */
 }
 
+/* Behind Wings Content Toggle */
+.content-container {
+    position: relative;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.content-container.collapsed {
+    max-height: 150px;
+}
+
+.content-container.collapsed::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: linear-gradient(transparent, var(--wings-secondary));
+    pointer-events: none;
+}
+
+.content-container.expanded::after {
+    display: none;
+}
+
+.content-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--wings-primary);
+    font-weight: 600;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin: 15px 0;
+    padding: 8px 0;
+    text-decoration: underline;
+    transition: opacity 0.2s ease;
+    display: block;
+    text-align: center;
+    width: 100%;
+}
+
+.content-toggle-btn:hover {
+    opacity: 0.8;
+}
+
+.content-toggle-btn:focus {
+    outline: none;
+}
+
 /* Responsive Design */
 @media (max-width: 991px) {
     .who-we-are-title {
